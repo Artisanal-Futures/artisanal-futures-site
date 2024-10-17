@@ -127,7 +127,14 @@ const AboutUsPage = () => {
           Support
         </h2>
         <p className="leading-7 [&:not(:first-child)]:mt-6">
-          Questions? Reach out to our Support Team for assistance.
+          Questions? Reach out to our Support Team at{" "}
+          <a
+            href="mailto:support@artisanalfutures.org"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            support@artisanalfutures.org
+          </a>{" "}
+          for assistance
           {/* on the{" "} <Link
             href="/contact-us"
             className="font-medium text-primary underline underline-offset-4"
