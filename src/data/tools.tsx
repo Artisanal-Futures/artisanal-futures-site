@@ -36,4 +36,11 @@ export const TOOLS_DATA = [
     image: "img/ai_cloth.png",
     url: "/tools/sankofa-sizer",
   },
+  {
+    title: "AI Agent",
+    subtitle: "Upcycle your old scraps into new designs",
+    type: "Design",
+    image: "img/ai_cloth.png",
+    url: "https://generate.dev.artisanalfutures.org/",
+  },
 ];
