@@ -1,16 +1,15 @@
-import Container from "~/components/ui/container";
-import PageLoader from "~/components/ui/page-loader";
-
-import { ProductCard, useStoreProducts } from "~/apps/product";
+import Container from '~/app/_components/container'
+import { ProductCard, useStoreProducts } from '~/apps/product'
+import PageLoader from '~/components/ui/page-loader'
 
 const ArtisanProductsGrid = ({
   shopName,
 }: {
-  shopName: string | undefined;
+  shopName: string | undefined
 }) => {
-  const { products, isLoading } = useStoreProducts(shopName ?? "");
+  const { products, isLoading } = useStoreProducts(shopName ?? '')
 
-  if (isLoading) return <PageLoader />;
+  if (isLoading) return <PageLoader />
 
   if (products?.length === 0)
     return (
@@ -20,7 +19,7 @@ const ArtisanProductsGrid = ({
           have!
         </p>
       </div>
-    );
+    )
 
   return (
     <>
@@ -37,7 +36,7 @@ const ArtisanProductsGrid = ({
         </div>
       </Container>
     </>
-  );
-};
+  )
+}
 
-export default ArtisanProductsGrid;
+export default ArtisanProductsGrid

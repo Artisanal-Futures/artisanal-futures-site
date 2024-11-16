@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from "react";
-import Navbar from "~/components/navbar";
-import { api } from "~/utils/api";
+import Navbar from '~/app/_components/navbar'
+import { api } from '~/utils/api'
+
+import { useEffect } from 'react'
 
 const RouteLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -16,6 +17,6 @@ const RouteLayout = ({ children }: { children: React.ReactNode }) => {
     //   <Navbar />
     //   <div className="relative flex min-h-0 flex-1">{children}</div>
     // </main>
-  );
-};
-export default RouteLayout;
+  )
+}
+export default RouteLayout

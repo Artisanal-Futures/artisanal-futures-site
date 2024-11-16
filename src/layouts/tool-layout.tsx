@@ -1,4 +1,4 @@
-import Navbar from "~/components/navbar";
+import Navbar from '~/app/_components/navbar'
 
 const ToolLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -8,6 +8,6 @@ const ToolLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
     </main>
-  );
-};
-export default ToolLayout;
+  )
+}
+export default ToolLayout

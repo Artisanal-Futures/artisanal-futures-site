@@ -1,7 +1,7 @@
 import { markdownToBlocks } from "@instantish/mack";
 import type { Post } from "@prisma/client";
 import { marked } from "marked";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 export async function postToSlackIfEnabled({
   post,

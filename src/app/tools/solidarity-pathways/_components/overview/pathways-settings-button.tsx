@@ -1,0 +1,15 @@
+import { Settings } from 'lucide-react'
+
+import { PathwaysSettingsMenu } from '~/app/tools/solidarity-pathways/_components/settings/pathways-settings-menu.wip'
+import { Button } from '~/components/ui/button'
+
+export const PathwaySettingsButton = () => {
+  return (
+    <PathwaysSettingsMenu>
+      <Button className="mx-0 flex gap-2 px-0 " variant={'link'}>
+        <Settings />
+        Settings
+      </Button>
+    </PathwaysSettingsMenu>
+  )
+}

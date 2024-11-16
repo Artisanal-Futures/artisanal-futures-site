@@ -1,17 +1,23 @@
-import { z } from "zod";
-import { addressSchema } from "~/apps/solidarity-routing/schemas.wip";
+import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { addressSchema } from '~/app/tools/solidarity-pathways/_validators/schemas.wip'
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 
 export const depotRouter = createTRPCRouter({
+  getCurrentDepot: protectedProcedure.query(async ({ ctx }) => {
+    const depot = await ctx.db.depot.findFirst({
+      where: { ownerId: ctx.session.user.id },
+    })
+    return depot
+  }),
   getDepot: protectedProcedure
     .input(z.object({ depotId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const depot = await ctx.prisma.depot.findFirst({
+      const depot = await ctx.db.depot.findFirst({
         where: { id: input.depotId },
         include: { address: true },
-      });
-      return depot;
+      })
+      return depot
     }),
 
   createDepot: protectedProcedure
@@ -20,28 +26,28 @@ export const depotRouter = createTRPCRouter({
         name: z.string().optional(),
         address: addressSchema.optional(),
         magicCode: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const depot = await ctx.prisma.depot.create({
+      const depot = await ctx.db.depot.create({
         data: {
           ownerId: ctx.session.user.id,
           name: input.name,
           magicCode: input.magicCode,
         },
-      });
+      })
 
-      if (!input.address) return depot;
+      if (!input.address) return depot
 
-      const address = await ctx.prisma.address.create({
+      const address = await ctx.db.address.create({
         data: {
           formatted: input.address.formatted,
           latitude: input.address.latitude,
           longitude: input.address.longitude,
         },
-      });
+      })
 
-      return ctx.prisma.depot.update({
+      return ctx.db.depot.update({
         where: {
           id: depot.id,
         },
@@ -52,7 +58,7 @@ export const depotRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
 
   updateDepot: protectedProcedure
@@ -62,10 +68,10 @@ export const depotRouter = createTRPCRouter({
         name: z.string().optional(),
         address: addressSchema.optional(),
         magicCode: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const depot = await ctx.prisma.depot.update({
+      const depot = await ctx.db.depot.update({
         where: {
           id: input.depotId,
         },
@@ -73,11 +79,11 @@ export const depotRouter = createTRPCRouter({
           name: input.name,
           magicCode: input.magicCode,
         },
-      });
+      })
 
-      if (!input.address) return depot;
+      if (!input.address) return depot
 
-      const address = await ctx.prisma.address.upsert({
+      const address = await ctx.db.address.upsert({
         where: {
           depotId: depot?.id,
         },
@@ -91,9 +97,9 @@ export const depotRouter = createTRPCRouter({
           latitude: input.address.latitude,
           longitude: input.address.longitude,
         },
-      });
+      })
 
-      return ctx.prisma.depot.update({
+      return ctx.db.depot.update({
         where: {
           id: input.depotId,
         },
@@ -104,16 +110,16 @@ export const depotRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
 
   deleteDepot: protectedProcedure
     .input(z.object({ depotId: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      return ctx.prisma.depot.delete({
+      return ctx.db.depot.delete({
         where: {
           id: input.depotId,
         },
-      });
+      })
     }),
-});
+})

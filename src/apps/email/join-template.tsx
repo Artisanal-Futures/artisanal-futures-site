@@ -1,10 +1,10 @@
-import { Terminal } from "lucide-react";
+import { Terminal } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
+import { env } from '~/env'
 
-import * as React from "react";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { env } from "~/env.mjs";
+import * as React from 'react'
 
-import Container from "../../components/ui/container";
+import Container from '../../app/_components/container'
 
 export const JoinTemplate = () => (
   <Container>
@@ -14,15 +14,15 @@ export const JoinTemplate = () => (
     <h1>Hey!</h1>
 
     <p>
-      You are invited to join <strong>Artisanal Futures</strong>. What is{" "}
+      You are invited to join <strong>Artisanal Futures</strong>. What is{' '}
       <strong>Artisanal Futures</strong>? It is a web platform for research on
-      grassroots economic support systems.{" "}
+      grassroots economic support systems.{' '}
     </p>
 
     <p>
-      Here is how you join. First, head to{" "}
-      <a href="https://www.artisanalfutures.org/sign-up">
-        https://www.artisanalfutures.org/sign-up
+      Here is how you join. First, head to{' '}
+      <a href="https://www.artisanalfutures.org/auth/sign-up">
+        https://www.artisanalfutures.org/auth/sign-up
       </a>
       . Once there, you will be prompted to enter a password.
     </p>
@@ -39,16 +39,16 @@ export const JoinTemplate = () => (
       From there, you will see our available sign up options You are able to
       sign in with your existing Google account, as well as create a new account
       with your email address. If you have any questions, please reach out to us
-      at{" "}
+      at{' '}
       <a href="mailto:artisanalfutures@gmail.com">artisanalfutures@gmail.com</a>
     </p>
 
     <hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
     <p className="text-[12px] leading-[24px] text-[#666666]">
       This invitation was auto generated from an admin user on Artisanal
-      Futures. Do not respond to this email. Contact us as{" "}
-      <a href="mailto:artisanalfutures@gmail.com">artisanalfutures@gmail.com</a>{" "}
+      Futures. Do not respond to this email. Contact us as{' '}
+      <a href="mailto:artisanalfutures@gmail.com">artisanalfutures@gmail.com</a>{' '}
       if you have any questions or concerns.
     </p>
   </Container>
-);
+)

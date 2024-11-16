@@ -1,22 +1,21 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
+import type { DriverVehicleBundle } from '~/app/tools/solidarity-pathways/_validators/types.wip'
 import {
   driverSchema,
   driverVehicleSchema,
   vehicleSchema,
-  type DriverVehicleBundle,
-} from "~/apps/solidarity-routing/types.wip";
-
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+} from '~/app/tools/solidarity-pathways/_validators/types.wip'
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 
 export const driverRouter = createTRPCRouter({
   setDepotVehicles: protectedProcedure
     .input(
-      z.object({ data: z.array(driverVehicleSchema), depotId: z.string() })
+      z.object({ data: z.array(driverVehicleSchema), depotId: z.string() }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.depot.update({
+      await ctx.db.depot.update({
         where: { id: input.depotId },
 
         data: {
@@ -27,11 +26,11 @@ export const driverRouter = createTRPCRouter({
             deleteMany: {},
           },
         },
-      });
+      })
 
       const res = await Promise.all(
         input.data.map(async (driverVehicle) => {
-          const driver = await ctx.prisma.driver.create({
+          const driver = await ctx.db.driver.create({
             data: {
               depotId: input.depotId,
               name: driverVehicle.driver.name,
@@ -48,9 +47,9 @@ export const driverRouter = createTRPCRouter({
             include: {
               address: true,
             },
-          });
+          })
 
-          const vehicle = await ctx.prisma.vehicle.create({
+          const vehicle = await ctx.db.vehicle.create({
             data: {
               depotId: input.depotId,
               startAddress: {
@@ -62,8 +61,8 @@ export const driverRouter = createTRPCRouter({
               },
               shiftStart: driverVehicle.vehicle.shiftStart,
               shiftEnd: driverVehicle.vehicle.shiftEnd,
-              cargo: driverVehicle.vehicle.cargo ?? "",
-              notes: driverVehicle.vehicle.notes ?? "",
+              cargo: driverVehicle.vehicle.cargo ?? '',
+              notes: driverVehicle.vehicle.notes ?? '',
 
               capacity: driverVehicle.vehicle.capacity,
               maxTasks: driverVehicle.vehicle.maxTasks,
@@ -81,9 +80,9 @@ export const driverRouter = createTRPCRouter({
               startAddress: true,
               endAddress: true,
             },
-          });
+          })
 
-          await ctx.prisma.driver.update({
+          await ctx.db.driver.update({
             where: { id: driver.id },
             data: {
               vehicles: {
@@ -93,21 +92,21 @@ export const driverRouter = createTRPCRouter({
               },
               defaultVehicleId: vehicle.id,
             },
-          });
+          })
 
-          return { driver, vehicle } as DriverVehicleBundle;
-        })
+          return { driver, vehicle } as DriverVehicleBundle
+        }),
       )
         .then((data) => data)
         .catch((e) => {
-          console.error(e);
+          console.error(e)
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something happened while creating drivers and vehicles",
-          });
-        });
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something happened while creating drivers and vehicles',
+          })
+        })
 
-      return res;
+      return res
     }),
 
   // This creates and adds to existing depots / routes
@@ -118,13 +117,13 @@ export const driverRouter = createTRPCRouter({
         depotId: z.string(),
         routeId: z.string().optional(),
         override: z.boolean().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const res = await Promise.all(
         input.data.map(async (driverVehicle) => {
           //Create driver for depot
-          const driver = await ctx.prisma.driver.create({
+          const driver = await ctx.db.driver.create({
             data: {
               depotId: input.depotId,
               name: driverVehicle.driver.name,
@@ -141,10 +140,10 @@ export const driverRouter = createTRPCRouter({
             include: {
               address: true,
             },
-          });
+          })
 
           //Create default vehicle for driver
-          const vehicle = await ctx.prisma.vehicle.create({
+          const vehicle = await ctx.db.vehicle.create({
             data: {
               depotId: input.depotId,
 
@@ -157,8 +156,8 @@ export const driverRouter = createTRPCRouter({
               },
               shiftStart: driverVehicle.vehicle.shiftStart,
               shiftEnd: driverVehicle.vehicle.shiftEnd,
-              cargo: driverVehicle.vehicle.cargo ?? "",
-              notes: driverVehicle.vehicle.notes ?? "",
+              cargo: driverVehicle.vehicle.cargo ?? '',
+              notes: driverVehicle.vehicle.notes ?? '',
 
               capacity: driverVehicle.vehicle.capacity,
               maxTasks: driverVehicle.vehicle.maxTasks,
@@ -177,10 +176,10 @@ export const driverRouter = createTRPCRouter({
               endAddress: true,
               breaks: true,
             },
-          });
+          })
 
           //Connect default vehicle to driver
-          await ctx.prisma.driver.update({
+          await ctx.db.driver.update({
             where: { id: driver.id },
             data: {
               vehicles: {
@@ -190,17 +189,17 @@ export const driverRouter = createTRPCRouter({
               },
               defaultVehicleId: vehicle.id,
             },
-          });
+          })
 
           if (driverVehicle.vehicle.endAddress) {
-            const endAddress = await ctx.prisma.address.create({
+            const endAddress = await ctx.db.address.create({
               data: {
                 formatted: driverVehicle?.vehicle?.endAddress?.formatted,
                 latitude: driverVehicle.vehicle.endAddress.latitude,
                 longitude: driverVehicle.vehicle.endAddress.longitude,
               },
-            });
-            await ctx.prisma.vehicle.update({
+            })
+            await ctx.db.vehicle.update({
               where: { id: vehicle.id },
               data: {
                 endAddress: {
@@ -209,11 +208,11 @@ export const driverRouter = createTRPCRouter({
                   },
                 },
               },
-            });
+            })
           }
           //If routeId is provided, connect new vehicle to route
           if (input.routeId) {
-            const routeVehicle = await ctx.prisma.vehicle.create({
+            const routeVehicle = await ctx.db.vehicle.create({
               data: {
                 depotId: input.depotId,
                 driverId: driver.id,
@@ -227,8 +226,8 @@ export const driverRouter = createTRPCRouter({
 
                 shiftStart: driverVehicle.vehicle.shiftStart,
                 shiftEnd: driverVehicle.vehicle.shiftEnd,
-                cargo: driverVehicle.vehicle.cargo ?? "",
-                notes: driverVehicle.vehicle.notes ?? "",
+                cargo: driverVehicle.vehicle.cargo ?? '',
+                notes: driverVehicle.vehicle.notes ?? '',
 
                 capacity: driverVehicle.vehicle.capacity,
                 maxTasks: driverVehicle.vehicle.maxTasks,
@@ -242,17 +241,17 @@ export const driverRouter = createTRPCRouter({
                   })),
                 },
               },
-            });
+            })
 
             if (driverVehicle.vehicle.endAddress) {
-              const routeEndAddress = await ctx.prisma.address.create({
+              const routeEndAddress = await ctx.db.address.create({
                 data: {
                   formatted: driverVehicle?.vehicle?.endAddress.formatted,
                   latitude: driverVehicle.vehicle.endAddress.latitude,
                   longitude: driverVehicle.vehicle.endAddress.longitude,
                 },
-              });
-              await ctx.prisma.vehicle.update({
+              })
+              await ctx.db.vehicle.update({
                 where: { id: routeVehicle.id },
                 data: {
                   endAddress: {
@@ -261,10 +260,10 @@ export const driverRouter = createTRPCRouter({
                     },
                   },
                 },
-              });
+              })
             }
 
-            await ctx.prisma.route.update({
+            await ctx.db.route.update({
               where: { id: input.routeId },
               data: {
                 vehicles: {
@@ -273,38 +272,38 @@ export const driverRouter = createTRPCRouter({
                   },
                 },
               },
-            });
+            })
           }
 
-          return { driver, vehicle } as DriverVehicleBundle;
-        })
+          return { driver, vehicle } as DriverVehicleBundle
+        }),
       )
         .then((data) => data)
         .catch((e) => {
-          console.error(e);
+          console.error(e)
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something happened while creating drivers and vehicles",
-          });
-        });
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something happened while creating drivers and vehicles',
+          })
+        })
 
-      return res;
+      return res
     }),
 
   deleteVehicle: protectedProcedure
     .input(z.object({ vehicleId: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.vehicle.delete({
+      return ctx.db.vehicle.delete({
         where: { id: input.vehicleId },
-      });
+      })
     }),
 
   deleteDriver: protectedProcedure
     .input(z.object({ driverId: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.driver.delete({
+      return ctx.db.driver.delete({
         where: { id: input.driverId },
-      });
+      })
     }),
 
   deleteVehicleBundle: protectedProcedure
@@ -312,29 +311,29 @@ export const driverRouter = createTRPCRouter({
       z.object({
         driverId: z.string(),
         vehicleId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const driver = await ctx.prisma.driver.findUnique({
+      const driver = await ctx.db.driver.findUnique({
         where: { id: input.driverId },
         include: { vehicles: true },
-      });
+      })
 
       if (driver?.vehicles) {
-        await ctx.prisma.vehicle.deleteMany({
+        await ctx.db.vehicle.deleteMany({
           where: {
             id: {
               in: driver.vehicles.map((v) => v.id),
             },
           },
-        });
+        })
       }
 
-      return ctx.prisma.driver.delete({
+      return ctx.db.driver.delete({
         where: {
           id: input.driverId,
         },
-      });
+      })
     }),
 
   updateDriverDefaults: protectedProcedure
@@ -343,23 +342,23 @@ export const driverRouter = createTRPCRouter({
         defaultId: z.string(),
         depotId: z.string(),
         bundle: driverVehicleSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const defaultVehicle = await ctx.prisma.vehicle.findUnique({
+      const defaultVehicle = await ctx.db.vehicle.findUnique({
         where: {
           id: input.defaultId,
         },
-      });
+      })
 
       if (!defaultVehicle) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Default vehicle not found",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Default vehicle not found',
+        })
       }
 
-      await ctx.prisma.vehicle.update({
+      await ctx.db.vehicle.update({
         where: {
           id: input.defaultId,
         },
@@ -368,9 +367,9 @@ export const driverRouter = createTRPCRouter({
             deleteMany: {},
           },
         },
-      });
+      })
 
-      const updatedVehicle = await ctx.prisma.vehicle.update({
+      const updatedVehicle = await ctx.db.vehicle.update({
         where: {
           id: defaultVehicle.id,
         },
@@ -385,8 +384,8 @@ export const driverRouter = createTRPCRouter({
 
           shiftStart: input.bundle.vehicle.shiftStart,
           shiftEnd: input.bundle.vehicle.shiftEnd,
-          cargo: input.bundle.vehicle.cargo ?? "",
-          notes: input.bundle.vehicle.notes ?? "",
+          cargo: input.bundle.vehicle.cargo ?? '',
+          notes: input.bundle.vehicle.notes ?? '',
           capacity: input.bundle.vehicle.capacity,
           maxTasks: input.bundle.vehicle.maxTasks,
           maxTravelTime: input.bundle.vehicle.maxTravelTime,
@@ -399,13 +398,13 @@ export const driverRouter = createTRPCRouter({
             })),
           },
         },
-      });
+      })
 
       if (!input.bundle.vehicle.endAddress) {
-        return updatedVehicle;
+        return updatedVehicle
       }
 
-      return ctx.prisma.vehicle.update({
+      return ctx.db.vehicle.update({
         where: {
           id: defaultVehicle.id,
         },
@@ -425,13 +424,13 @@ export const driverRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
 
   updateDriverDetails: protectedProcedure
     .input(z.object({ driverId: z.string(), driver: driverSchema }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.driver.update({
+      return ctx.db.driver.update({
         where: {
           id: input.driverId,
         },
@@ -454,13 +453,13 @@ export const driverRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
 
   updateVehicleDetails: protectedProcedure
     .input(z.object({ vehicle: vehicleSchema, routeId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.vehicle.update({
+      await ctx.db.vehicle.update({
         where: {
           id: input.vehicle.id,
           routeId: input.routeId,
@@ -470,9 +469,9 @@ export const driverRouter = createTRPCRouter({
             deleteMany: {},
           },
         },
-      });
+      })
 
-      const updatedVehicle = await ctx.prisma.vehicle.update({
+      const updatedVehicle = await ctx.db.vehicle.update({
         where: {
           id: input.vehicle.id,
           routeId: input.routeId,
@@ -495,8 +494,8 @@ export const driverRouter = createTRPCRouter({
 
           shiftStart: input.vehicle.shiftStart,
           shiftEnd: input.vehicle.shiftEnd,
-          cargo: input.vehicle.cargo ?? "",
-          notes: input.vehicle.notes ?? "",
+          cargo: input.vehicle.cargo ?? '',
+          notes: input.vehicle.notes ?? '',
           capacity: input.vehicle.capacity,
           maxTasks: input.vehicle.maxTasks,
           maxTravelTime: input.vehicle.maxTravelTime,
@@ -509,13 +508,13 @@ export const driverRouter = createTRPCRouter({
             })),
           },
         },
-      });
+      })
 
       if (!input.vehicle.endAddress) {
-        return updatedVehicle;
+        return updatedVehicle
       }
 
-      return ctx.prisma.vehicle.update({
+      return ctx.db.vehicle.update({
         where: {
           id: updatedVehicle.id,
         },
@@ -535,7 +534,7 @@ export const driverRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
     }),
 
   getDepotDrivers: protectedProcedure
@@ -543,12 +542,12 @@ export const driverRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       if (!input.depotId) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Depot ID is required",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Depot ID is required',
+        })
       }
 
-      const drivers = await ctx.prisma.driver.findMany({
+      const drivers = await ctx.db.driver.findMany({
         where: { depotId: input.depotId },
         include: {
           address: true,
@@ -560,26 +559,26 @@ export const driverRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
       //Format into the DriverVehicleBundle type
       const bundles = drivers.map((driver) => {
         const defaultVehicle = driver.vehicles.find(
-          (vehicle) => vehicle.id === driver.defaultVehicleId
-        );
+          (vehicle) => vehicle.id === driver.defaultVehicleId,
+        )
         return {
           driver,
           vehicle: defaultVehicle,
-        };
-      });
+        }
+      })
 
-      return bundles as DriverVehicleBundle[];
+      return bundles as DriverVehicleBundle[]
     }),
 
   getRouteVehicles: protectedProcedure
     .input(z.object({ routeId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const vehicles = await ctx.prisma.vehicle.findMany({
+      const vehicles = await ctx.db.vehicle.findMany({
         where: {
           routeId: input.routeId,
         },
@@ -593,38 +592,38 @@ export const driverRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
       //Format into the DriverVehicleBundle type
       const bundles = vehicles.map((vehicle) => ({
         driver: vehicle.driver,
         vehicle,
-      }));
+      }))
 
-      return bundles as DriverVehicleBundle[];
+      return bundles as DriverVehicleBundle[]
     }),
 
   deleteAllDepotDrivers: protectedProcedure
     .input(z.object({ depotId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const drivers = await ctx.prisma.driver.deleteMany({
+      const drivers = await ctx.db.driver.deleteMany({
         where: {
           depotId: input.depotId,
         },
-      });
+      })
 
-      return drivers;
+      return drivers
     }),
 
   deleteAllVehicles: protectedProcedure
     .input(z.object({ depotId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const vehicle = await ctx.prisma.vehicle.deleteMany({
+      const vehicle = await ctx.db.vehicle.deleteMany({
         where: {
           depotId: input.depotId,
         },
-      });
+      })
 
-      return vehicle;
+      return vehicle
     }),
-});
+})

@@ -1,39 +1,40 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
 
 export const surveysRouter = createTRPCRouter({
   getAllSurveys: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.survey.findMany();
+    return ctx.db.survey.findMany()
   }),
 
   getSurvey: protectedProcedure
     .input(z.object({ surveyId: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.survey.findUnique({
+      return ctx.db.survey.findUnique({
         where: {
           id: input.surveyId,
           ownerId: ctx.session.user.id,
         },
-      });
+      })
     }),
   getCurrentUserSurvey: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.survey.findFirst({
+    return ctx.db.survey.findFirst({
       where: {
         ownerId: ctx.session.user.id,
       },
-    });
+    })
   }),
 
   getCurrentUserShopSurvey: protectedProcedure
     .input(z.object({ shopId: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.survey.findFirst({
+      return ctx.db.survey.findFirst({
         where: {
           ownerId: ctx.session.user.id,
           shopId: input.shopId,
         },
-      });
+      })
     }),
   createSurvey: protectedProcedure
     .input(
@@ -49,10 +50,10 @@ export const surveysRouter = createTRPCRouter({
         privateForm: z.boolean().default(false),
         supplyChain: z.boolean().default(false),
         messagingOptIn: z.boolean().default(false),
-      })
+      }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.survey.create({
+      return ctx.db.survey.create({
         data: {
           shopId: input.shopId,
           ownerId: ctx.session.user.id,
@@ -67,7 +68,7 @@ export const surveysRouter = createTRPCRouter({
           supplyChain: input.supplyChain,
           messagingOptIn: input.messagingOptIn,
         },
-      });
+      })
     }),
 
   updateSurvey: protectedProcedure
@@ -85,16 +86,16 @@ export const surveysRouter = createTRPCRouter({
         privateForm: z.boolean().default(false),
         supplyChain: z.boolean().default(false),
         messagingOptIn: z.boolean().default(false),
-      })
+      }),
     )
     .mutation(({ ctx, input }) => {
       if (!input.surveyId)
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Shop id is required",
-        });
+          code: 'BAD_REQUEST',
+          message: 'Shop id is required',
+        })
 
-      return ctx.prisma.survey
+      return ctx.db.survey
         .findFirst({
           where: {
             id: input.surveyId,
@@ -104,13 +105,13 @@ export const surveysRouter = createTRPCRouter({
         .then((shopByUserId) => {
           if (!shopByUserId) {
             throw new TRPCError({
-              code: "UNAUTHORIZED",
-              message: "Shop id does not belong to current user",
-            });
+              code: 'UNAUTHORIZED',
+              message: 'Shop id does not belong to current user',
+            })
           }
         })
         .then(() => {
-          return ctx.prisma.survey.update({
+          return ctx.db.survey.update({
             where: {
               id: input.surveyId,
             },
@@ -126,31 +127,31 @@ export const surveysRouter = createTRPCRouter({
               supplyChain: input.supplyChain,
               messagingOptIn: input.messagingOptIn,
             },
-          });
+          })
         })
         .catch((err) => {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong. Please try again later.",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something went wrong. Please try again later.',
             cause: err,
-          });
-        });
+          })
+        })
     }),
 
   deleteSurvey: protectedProcedure
     .input(
       z.object({
         surveyId: z.string(),
-      })
+      }),
     )
     .mutation(({ ctx, input }) => {
       if (!input.surveyId)
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "surveyId is required",
-        });
+          code: 'BAD_REQUEST',
+          message: 'surveyId is required',
+        })
 
-      return ctx.prisma.survey
+      return ctx.db.survey
         .findFirst({
           where: {
             id: input.surveyId,
@@ -160,24 +161,24 @@ export const surveysRouter = createTRPCRouter({
         .then((shopByUserId) => {
           if (!shopByUserId) {
             throw new TRPCError({
-              code: "UNAUTHORIZED",
-              message: "survey id does not belong to current user",
-            });
+              code: 'UNAUTHORIZED',
+              message: 'survey id does not belong to current user',
+            })
           }
         })
         .then(() => {
-          return ctx.prisma.survey.delete({
+          return ctx.db.survey.delete({
             where: {
               id: input.surveyId,
             },
-          });
+          })
         })
         .catch((err) => {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong. Please try again later.",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Something went wrong. Please try again later.',
             cause: err,
-          });
-        });
+          })
+        })
     }),
-});
+})

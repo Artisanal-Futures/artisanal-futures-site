@@ -1,9 +1,3 @@
-import { EmailService } from "./factory";
-import { availableServices } from "./processors/available";
+import { EmailProcessorFactory } from './factory'
 
-const selectedService =
-  availableServices["resend" as keyof typeof availableServices];
-
-export const emailService = new EmailService<typeof selectedService.client>(
-  selectedService
-);
+export const emailService = EmailProcessorFactory.createEmailService('resend')

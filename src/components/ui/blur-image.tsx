@@ -1,14 +1,19 @@
-import Image, { type ImageProps } from "next/image";
-import { useState, type FC } from "react";
-import { cn } from "~/utils/styles";
+'use client'
+
+import type { ImageProps } from 'next/image'
+import type { FC } from 'react'
+import { useState } from 'react'
+import Image from 'next/image'
+
+import { cn } from '~/utils/styles'
 
 interface IProps extends ImageProps {
-  src: string;
+  src: string
 }
 
 const BlurImage: FC<IProps> = ({ src, ...props }) => {
-  const [isLoading, setLoading] = useState(true);
-  const [imgSrc, setImgSrc] = useState(src);
+  const [isLoading, setLoading] = useState(true)
+  const [imgSrc, setImgSrc] = useState(src)
   return (
     <Image
       {...props}
@@ -16,18 +21,18 @@ const BlurImage: FC<IProps> = ({ src, ...props }) => {
       fill
       priority
       alt=""
-      onError={() => setImgSrc("/background-fallback.jpg")}
+      onError={() => setImgSrc('/background-fallback.jpg')}
       className={cn(
-        "duration-700 ease-in-out",
+        'duration-700 ease-in-out',
         isLoading
-          ? "scale-100 blur-xl grayscale"
-          : "scale-100 blur-0 grayscale-0"
+          ? 'scale-100 blur-xl grayscale'
+          : 'scale-100 blur-0 grayscale-0',
       )}
       onLoadingComplete={() => setLoading(false)}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
     />
-  );
-};
+  )
+}
 
-export default BlurImage;
+export default BlurImage
 // "scale-110 blur-2xl grayscale"

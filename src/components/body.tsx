@@ -1,21 +1,22 @@
-import Container from "~/components/ui/container";
-import CookieConsent from "./cookie-banner";
-import Footer from "./footer";
-import Navbar from "./navbar";
-import { SeoMetadataHead } from "./seo-metadata-head";
+import Container from '~/app/_components/container'
+
+import Navbar from '../app/_components/navbar'
+import CookieConsent from './cookie-banner'
+import Footer from './footer'
+import { SeoMetadataHead } from './seo-metadata-head'
 
 const Body = ({
   children,
-  title = "Artisanal Futures",
-  description = "Shop worker-owned stores, share knowledge and tech, & participate in the transition to a decolonized circular economy.",
+  title = 'Artisanal Futures',
+  description = 'Shop worker-owned stores, share knowledge and tech, & participate in the transition to a decolonized circular economy.',
 }: {
-  children: React.ReactNode;
-  title?: string;
-  description?: string;
+  children: React.ReactNode
+  title?: string
+  description?: string
 }) => {
   return (
     <>
-      <SeoMetadataHead title={title} description={description} />
+      {/* <SeoMetadataHead title={title} description={description} /> */}
       <main className="flex min-h-screen flex-col">
         <>
           <Navbar />
@@ -27,6 +28,6 @@ const Body = ({
       </main>
       <CookieConsent />
     </>
-  );
-};
-export default Body;
+  )
+}
+export default Body

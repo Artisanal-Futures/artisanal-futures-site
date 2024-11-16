@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 // import defaultImage from "~/assets/images/default.jpg";
 

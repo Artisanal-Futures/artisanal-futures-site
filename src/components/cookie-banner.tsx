@@ -1,10 +1,13 @@
-import { hasCookie, setCookie } from "cookies-next";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+'use client'
 
-import { CookieIcon } from "lucide-react";
-import { cn } from "~/utils/styles";
+import { cn } from '~/utils/styles'
+import { hasCookie, setCookie } from 'cookies-next'
+import { CookieIcon } from 'lucide-react'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+
+import { Button } from './ui/button'
 
 // const CookieConsent = () => {
 //   const [showConsent, setShowConsent] = useState(true);
@@ -50,51 +53,51 @@ export default function CookieConsent({
   onAcceptCallback = () => void 0,
   onDeclineCallback = () => void 0,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hide, setHide] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [hide, setHide] = useState(false)
 
   const accept = () => {
-    setIsOpen(false);
+    setIsOpen(false)
     document.cookie =
-      "cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+      'cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT'
     setTimeout(() => {
-      setHide(true);
-    }, 700);
-    onAcceptCallback();
-  };
+      setHide(true)
+    }, 700)
+    onAcceptCallback()
+  }
 
   const decline = () => {
-    setIsOpen(false);
+    setIsOpen(false)
     setTimeout(() => {
-      setHide(true);
-    }, 700);
-    onDeclineCallback();
-  };
+      setHide(true)
+    }, 700)
+    onDeclineCallback()
+  }
 
   useEffect(() => {
     try {
-      setIsOpen(true);
-      if (document.cookie.includes("cookieConsent=true")) {
+      setIsOpen(true)
+      if (document.cookie.includes('cookieConsent=true')) {
         if (!demo) {
-          setIsOpen(false);
+          setIsOpen(false)
           setTimeout(() => {
-            setHide(true);
-          }, 700);
+            setHide(true)
+          }, 700)
         }
       }
     } catch (e) {
       // console.log("Error: ", e);
     }
-  }, []);
+  }, [])
 
   return (
     <div
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-[200] w-full transition-transform duration-700 sm:bottom-4 sm:left-4 sm:max-w-md",
+        'fixed bottom-0 left-0 right-0 z-[200] w-full transition-transform duration-700 sm:bottom-4 sm:left-4 sm:max-w-md',
         !isOpen
-          ? "translate-y-8 opacity-0 transition-[opacity,transform]"
-          : "translate-y-0 opacity-100 transition-[opacity,transform]",
-        hide && "hidden"
+          ? 'translate-y-8 opacity-0 transition-[opacity,transform]'
+          : 'translate-y-0 opacity-100 transition-[opacity,transform]',
+        hide && 'hidden',
       )}
     >
       <div className="m-2 rounded-md border bg-secondary shadow">
@@ -136,5 +139,5 @@ export default function CookieConsent({
         </div>
       </div>
     </div>
-  );
+  )
 }

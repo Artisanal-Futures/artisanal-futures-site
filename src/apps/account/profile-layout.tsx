@@ -1,46 +1,45 @@
-import { useSession } from "next-auth/react";
-import Head from "next/head";
+import { useMemo } from 'react'
+import Head from 'next/head'
+import { useSession } from 'next-auth/react'
 
-import { useMemo } from "react";
-
-import ShopSwitcher from "~/apps/account/components/shop-switcher";
-import { SidebarNav } from "~/apps/account/components/sidebar-nav";
-import Body from "~/components/body";
-import { Label } from "~/components/ui/label";
-import PageLoader from "~/components/ui/page-loader";
-import { Separator } from "~/components/ui/separator";
-import { api } from "~/utils/api";
+import ShopSwitcher from '~/app/(site)/profile/_components/shop-switcher'
+import { SidebarNav } from '~/app/(site)/profile/_components/sidebar-nav'
+import Body from '~/components/body'
+import { Label } from '~/components/ui/label'
+import PageLoader from '~/components/ui/page-loader'
+import { Separator } from '~/components/ui/separator'
+import { api } from '~/utils/api'
 
 interface SettingsLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function ProfileLayout({ children }: SettingsLayoutProps) {
-  const { data: shop } = api.shops.getCurrentUserShop.useQuery();
-  const { data: sessionData, status } = useSession();
-  const { data: shops } = api.shops.getAllCurrentUserShops.useQuery();
+  const { data: shop } = api.shops.getCurrentUserShop.useQuery()
+  const { data: sessionData, status } = useSession()
+  const { data: shops } = api.shops.getAllCurrentUserShops.useQuery()
 
   const navItems = useMemo(() => {
     return [
       {
-        title: "Profile",
-        href: "/profile",
+        title: 'Profile',
+        href: '/profile',
       },
       {
-        title: "My Shop",
-        href: shop ? `/profile/shop/${shop?.id}` : "/profile/shop",
+        title: 'My Shop',
+        href: shop ? `/profile/shop/${shop?.id}` : '/profile/shop',
       },
 
       {
-        title: "Survey",
-        href: "/profile/survey",
+        title: 'Survey',
+        href: '/profile/survey',
       },
       {
-        title: "Tool Data",
-        href: "/profile/tool-data",
+        title: 'Tool Data',
+        href: '/profile/tool-data',
       },
-    ];
-  }, [shop]);
+    ]
+  }, [shop])
 
   return (
     <>
@@ -50,7 +49,7 @@ export default function ProfileLayout({ children }: SettingsLayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Body>
-        {status === "loading" ? (
+        {status === 'loading' ? (
           <PageLoader />
         ) : (
           <>
@@ -87,5 +86,5 @@ export default function ProfileLayout({ children }: SettingsLayoutProps) {
         )}
       </Body>
     </>
-  );
+  )
 }

@@ -1,5 +1,5 @@
 // import Pusher from "pusher";
-// import { env } from "~/env.mjs";
+// import { env } from "~/env";
 
 // export const pusher = new Pusher({
 //   appId: env.NEXT_PUBLIC_PUSHER_APP_ID,

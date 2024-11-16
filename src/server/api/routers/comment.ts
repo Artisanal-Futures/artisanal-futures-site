@@ -1,7 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { markdownToHtml } from "~/utils/forum/editor";
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { markdownToHtml } from '~/utils/forum/editor'
 
 export const commentRouter = createTRPCRouter({
   add: protectedProcedure
@@ -9,10 +10,10 @@ export const commentRouter = createTRPCRouter({
       z.object({
         postId: z.number(),
         content: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const comment = await ctx.prisma.comment.create({
+      const comment = await ctx.db.comment.create({
         data: {
           content: input.content,
           contentHtml: markdownToHtml(input.content),
@@ -27,9 +28,9 @@ export const commentRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
-      return comment;
+      return comment
     }),
 
   edit: protectedProcedure
@@ -39,12 +40,12 @@ export const commentRouter = createTRPCRouter({
         data: z.object({
           content: z.string().min(1),
         }),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, data } = input;
+      const { id, data } = input
 
-      const comment = await ctx.prisma.comment.findUnique({
+      const comment = await ctx.db.comment.findUnique({
         where: { id },
         select: {
           author: {
@@ -53,29 +54,29 @@ export const commentRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
-      const commentBelongsToUser = comment?.author.id === ctx.session.user.id;
+      const commentBelongsToUser = comment?.author.id === ctx.session.user.id
 
       if (!commentBelongsToUser) {
-        throw new TRPCError({ code: "FORBIDDEN" });
+        throw new TRPCError({ code: 'FORBIDDEN' })
       }
 
-      const updatedComment = await ctx.prisma.comment.update({
+      const updatedComment = await ctx.db.comment.update({
         where: { id },
         data: {
           content: data.content,
           contentHtml: markdownToHtml(data.content),
         },
-      });
+      })
 
-      return updatedComment;
+      return updatedComment
     }),
 
   delete: protectedProcedure
     .input(z.number())
     .mutation(async ({ ctx, input: id }) => {
-      const comment = await ctx.prisma.comment.findUnique({
+      const comment = await ctx.db.comment.findUnique({
         where: { id },
         select: {
           author: {
@@ -84,15 +85,15 @@ export const commentRouter = createTRPCRouter({
             },
           },
         },
-      });
+      })
 
-      const commentBelongsToUser = comment?.author.id === ctx.session.user.id;
+      const commentBelongsToUser = comment?.author.id === ctx.session.user.id
 
       if (!commentBelongsToUser) {
-        throw new TRPCError({ code: "FORBIDDEN" });
+        throw new TRPCError({ code: 'FORBIDDEN' })
       }
 
-      await ctx.prisma.comment.delete({ where: { id } });
-      return id;
+      await ctx.db.comment.delete({ where: { id } })
+      return id
     }),
-});
+})

@@ -1,6 +1,6 @@
-import EventBulletinBoard from "./components/event-bulletin-board";
-import Hero from "./components/hero";
-import HomePageCard from "./components/homepage-card";
-import { CARD_DATA } from "./data";
+import EventBulletinBoard from '../../app/(site)/(homepage)/_components/event-bulletin-board'
+import Hero from '../../app/(site)/(homepage)/_components/hero'
+import HomePageCard from '../../app/(site)/(homepage)/_components/homepage-card'
+import { CARD_DATA } from './data'
 
-export { CARD_DATA, EventBulletinBoard, Hero, HomePageCard };
+export { CARD_DATA, EventBulletinBoard, Hero, HomePageCard }
