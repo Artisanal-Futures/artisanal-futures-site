@@ -87,6 +87,8 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
         if (url.startsWith('/')) return `${baseUrl}${url}`
         // Allows callback URLs on the same origin
         else if (new URL(url).origin === baseUrl) return url
+        // Allow redirects to env.HOSTNAME
+        else if (new URL(url).hostname === env.HOSTNAME) return url
         return baseUrl
       },
     },
@@ -146,15 +148,15 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
           secure: useSecureCookies,
         },
       },
-      callbackUrl: {
-        name: `${cookiePrefix}next-auth.callback-url`,
-        options: {
-          sameSite: 'lax',
-          path: '/',
-          domain: '.' + hostName,
-          secure: useSecureCookies,
-        },
-      },
+      // callbackUrl: {
+      //   name: `${cookiePrefix}next-auth.callback-url`,
+      //   options: {
+      //     sameSite: 'lax',
+      //     path: '/',
+      //     domain: '.' + hostName,
+      //     secure: useSecureCookies,
+      //   },
+      // },
       csrfToken: {
         name: `${cookiePrefix}next-auth.csrf-token`,
         options: {

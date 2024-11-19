@@ -1,8 +1,11 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter as useNavigationRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import {
+  useRouter as useNavigationRouter,
+  useSearchParams,
+} from 'next/navigation'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
@@ -25,6 +28,8 @@ type PassCodeFormValues = z.infer<typeof formSchema>
 
 export const AuthForm = ({ loading }: { loading: boolean }) => {
   const router = useNavigationRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/'
 
   const [error, setError] = useState<string | null>(null)
   const form = useForm<PassCodeFormValues>({
@@ -46,7 +51,9 @@ export const AuthForm = ({ loading }: { loading: boolean }) => {
     }
 
     if (res.success) {
-      router.push('/auth/sign-up')
+      router.push(
+        `/auth/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+      )
     }
   }
 

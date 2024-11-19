@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 import {
   CardContent,
@@ -15,6 +16,9 @@ type Props = {
   storeName: string
 }
 export function ProviderSignInForm({ children, storeName }: Props) {
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/'
+
   return (
     <>
       <CardHeader>
@@ -32,7 +36,10 @@ export function ProviderSignInForm({ children, storeName }: Props) {
 
         <p className="w-full py-4 text-center font-medium text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link href={'/auth/register'} className="underline">
+          <Link
+            href={`/auth/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            className="underline"
+          >
             <span className="font-bold hover:text-slate-800">Sign up</span>
           </Link>
         </p>

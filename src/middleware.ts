@@ -13,7 +13,10 @@ export function middleware(request: NextRequest) {
     if (urlCode) {
       const twoMinutes = 60 * 2000
       const response = NextResponse.redirect(
-        new URL(`/auth/sign-up?callbackUrl=${callbackUrl ?? '/'}`, request.url),
+        new URL(
+          `/auth/sign-up?callbackUrl=${encodeURIComponent(callbackUrl ?? '/')}`,
+          request.url,
+        ),
       )
       response.cookies.set('code', urlCode, {
         path: '/',
@@ -26,7 +29,10 @@ export function middleware(request: NextRequest) {
     // If no code cookie and not already logged in, redirect to password protect
     if (!codeCookie && !loginCookie) {
       return NextResponse.redirect(
-        new URL('/auth/password-protect', request.url),
+        new URL(
+          `/auth/password-protect?callbackUrl=${encodeURIComponent(callbackUrl ?? '/')}`,
+          request.url,
+        ),
       )
     }
   }

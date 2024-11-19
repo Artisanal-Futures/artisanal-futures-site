@@ -14,13 +14,14 @@ export const metadata = {
 export default function SignInPage() {
   const providers = [
     {
-      id: 'discord',
-      name: 'Discord',
-    },
-    {
       id: 'google',
       name: 'Google',
     },
+    {
+      id: 'discord',
+      name: 'Discord',
+    },
+
     {
       id: 'auth0',
       name: 'Auth0',
