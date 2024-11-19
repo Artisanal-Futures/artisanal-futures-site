@@ -133,7 +133,7 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
     pages: {
       signIn: '/auth/sign-in',
       error: '/auth/sign-in/?errors=invalid-credentials',
-      newUser: '/onboarding',
+      newUser: '/welcome',
     },
     cookies: {
       sessionToken: {

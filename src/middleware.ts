@@ -7,12 +7,13 @@ export function middleware(request: NextRequest) {
     const codeCookie = request.cookies.get('code')
     const loginCookie = request.cookies.get('login')
     const urlCode = request.nextUrl.searchParams.get('code')
+    const callbackUrl = request.nextUrl.searchParams.get('callbackUrl')
 
     // If code is in URL params, set it as a cookie and redirect
     if (urlCode) {
       const twoMinutes = 60 * 2000
       const response = NextResponse.redirect(
-        new URL('/auth/sign-up', request.url),
+        new URL(`/auth/sign-up?callbackUrl=${callbackUrl ?? '/'}`, request.url),
       )
       response.cookies.set('code', urlCode, {
         path: '/',

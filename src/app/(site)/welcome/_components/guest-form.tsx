@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -32,6 +33,7 @@ const GuestSchema = z.object({
 
 export default function ArtisanRegistrationForm() {
   const apiUtils = api.useUtils()
+  const sessionData = useSession()
 
   const { data: isCompleted, isPending } = api.guest.isCompleted.useQuery()
 
@@ -43,7 +45,7 @@ export default function ArtisanRegistrationForm() {
       state: '',
       artisanalPractice: '',
       otherPractice: '',
-      email: '',
+      email: sessionData.data?.user?.email ?? '',
     },
   })
 
@@ -61,7 +63,6 @@ export default function ArtisanRegistrationForm() {
   })
 
   const handleSubmit = (data: z.infer<typeof GuestSchema>) => {
-    console.log('Form submitted:', data)
     guestRegistrationMutation.mutate(data)
     // Here you would typically send the data to your server
   }
@@ -166,6 +167,7 @@ export default function ArtisanRegistrationForm() {
                 name="email"
                 label="Email"
                 placeholder="Enter your email address"
+                disabled={!!sessionData?.data?.user?.email}
               />
             </div>
           </CardContent>
