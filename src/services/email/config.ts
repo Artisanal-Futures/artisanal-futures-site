@@ -12,7 +12,7 @@ export const emailConfig = {
     'Artisanal Futures Support <support@artisanalfutures.org',
   logo:
     process.env.LOGO_URL ??
-    'https://storage.artisanalfutures.org/ubuntu-ai-backup/logo-ui.png',
+    'https://storage.artisanalfutures.org/artisanal-futures/logo_mobile.png',
   baseURL: process.env.BASE_URL ?? 'https://artisanalfutures.org',
   signature: process.env.EMAIL_SIGNATURE ?? 'Team Artisanal Futures',
   storeName: process.env.STORE_NAME ?? 'Artisanal Futures',

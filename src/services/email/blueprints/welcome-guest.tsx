@@ -22,15 +22,15 @@ export const WelcomeGuestEmail = (props: Props) => {
     >
       <SingleColumn pX={25}>
         <EmailLogo />
-        <Text>Welcome to Artisanal Futures</Text>
+        <Text>Welcome to Artisanal Futures, Ubuntu-AI Artisans!</Text>
 
         <Text>Hello {props.name},</Text>
 
         <Text>
-          Welcome Ubuntu-ai artisans! As you can see we are working with
-          &quot;Artisanal Futures&quot; in Detroit. The Artisanal Futures
-          Upcycling AI tool will be available to you for FREE. Attend our
-          webinar to learn more. Please join us!
+          Welcome! As you can see we are working with &quot;Artisanal
+          Futures&quot; in Detroit. The Artisanal Futures Upcycling AI tool will
+          be available to you for FREE. Attend our webinar to learn more. Please
+          join us!
         </Text>
 
         <EmailImportantText>
