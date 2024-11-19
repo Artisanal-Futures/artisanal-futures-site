@@ -1,8 +1,9 @@
-import Link from "next/link";
-import Container from "./ui/container";
+import Link from 'next/link'
+
+import Container from '../app/_components/container'
 
 const Footer = () => {
-  const year = new Date().getFullYear();
+  const year = new Date().getFullYear()
   return (
     <footer className="mt-16 border-t bg-slate-50 text-slate-700">
       <Container>
@@ -17,7 +18,7 @@ const Footer = () => {
             <div className="flex-start flex flex-col gap-2">
               <h5 className="pb-2 text-lg font-semibold">The Collective</h5>
               <Link href="/about-us">About Us</Link>
-              <Link href="/sign-up">Become an Artisan</Link>
+              <Link href="/auth/sign-up">Become an Artisan</Link>
               <Link href="/contact">Contact Us</Link>
             </div>
             <div className="flex-start flex flex-col gap-2">
@@ -43,7 +44,7 @@ const Footer = () => {
         </p>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

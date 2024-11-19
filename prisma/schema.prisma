@@ -11,6 +11,7 @@ enum Role {
   ADMIN
   ARTISAN
   DRIVER
+  GUEST
 }
 
 datasource db {
@@ -660,4 +661,13 @@ model Modification {
   @@index([userId])
 }
 
-
+model GuestSurvey {
+  id                String    @id @default(cuid())
+  name              String?
+  country           String?
+  state             String?
+  artisanalPractice String?
+  otherPractice     String?
+  email             String
+  createdAt         DateTime  @default(now())
+}

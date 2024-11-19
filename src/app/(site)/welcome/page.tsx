@@ -1,0 +1,19 @@
+import { redirect } from 'next/navigation'
+
+import { env } from '~/env'
+import { getServerAuthSession } from '~/server/auth'
+import ArtisanRegistrationForm from './_components/guest-form'
+
+export default async function WelcomePage() {
+  const sessionData = await getServerAuthSession()
+
+  if (!sessionData) redirect(`/auth/sign-in?callbackUrl=/welcome`)
+  // if (
+  //   sessionData?.user?.role !== 'GUEST' &&
+  //   sessionData?.user?.role !== 'ADMIN'
+  // ) {
+  //   redirect('/')
+  // }
+
+  return <ArtisanRegistrationForm />
+}

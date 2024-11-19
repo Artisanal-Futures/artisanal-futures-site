@@ -7,77 +7,34 @@
  * need to use are documented accordingly near the end.
  */
 
-// import type {
-//   SignedInAuthObject,
-//   SignedOutAuthObject,
-// } from "@clerk/nextjs/api";
+import { initTRPC, TRPCError } from '@trpc/server'
+import superjson from 'superjson'
+import { ZodError } from 'zod'
 
-import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { getServerAuthSession } from '~/server/auth'
+import { db } from '~/server/db'
 
-import { serialize } from "cookie";
-import { type NextApiRequest, type NextApiResponse } from "next";
-import { type Session } from "next-auth";
-import superjson from "superjson";
-import { ZodError } from "zod";
-import { getServerAuthSession } from "~/server/auth";
-import { prisma } from "~/server/db";
 /**
  * 1. CONTEXT
  *
  * This section defines the "contexts" that are available in the backend API.
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
- */
-
-// interface AuthContext {
-//   auth: SignedInAuthObject | SignedOutAuthObject;
-// }
-interface CreateContextOptions {
-  session: Session | null;
-  req: NextApiRequest;
-  res: NextApiResponse;
-  // auth: SignedInAuthObject | SignedOutAuthObject;
-}
-
-/**
- * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
- * it from here.
  *
- * Examples of things you may need it for:
- * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createSSGHelpers`, where we don't have req/res
+ * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
+ * wrap this and provides the required context.
  *
- * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
+ * @see https://trpc.io/docs/server/context
  */
-const createInnerTRPCContext = ({
-  session,
-  req,
-  res,
-}: CreateContextOptions) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await getServerAuthSession()
+
   return {
+    db,
     session,
-    // auth,
-    prisma,
-    req,
-    res,
-  };
-};
-
-/**
- * This is the actual context you will use in your router. It will be used to process every request
- * that goes through your tRPC endpoint.
- *
- * @see https://trpc.io/docs/context
- */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-
-  // Get the session from the server using the getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
-
-  return createInnerTRPCContext({ session, req, res });
-};
+    ...opts,
+  }
+}
 
 /**
  * 2. INITIALIZATION
@@ -86,7 +43,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
@@ -97,11 +53,16 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
-    };
+    }
   },
-});
+})
 
-// check if the user is signed in, otherwise through a UNAUTHORIZED CODE
+/**
+ * Create a server-side caller.
+ *
+ * @see https://trpc.io/docs/server/server-side-calls
+ */
+export const createCallerFactory = t.createCallerFactory
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -115,7 +76,30 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
  *
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const createTRPCRouter = t.router
+
+/**
+ * Middleware for timing procedure execution and adding an articifial delay in development.
+ *
+ * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
+ * network latency that would occur in production but not in local development.
+ */
+const timingMiddleware = t.middleware(async ({ next, path }) => {
+  const start = Date.now()
+
+  if (t._config.isDev) {
+    // artificial delay in dev
+    const waitMs = Math.floor(Math.random() * 400) + 100
+    await new Promise((resolve) => setTimeout(resolve, waitMs))
+  }
+
+  const result = await next()
+
+  const end = Date.now()
+  console.log(`[TRPC] ${path} took ${end - start}ms to execute`)
+
+  return result
+})
 
 /**
  * Public (unauthenticated) procedure
@@ -124,51 +108,7 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
-
-/** Reusable middleware that enforces users are logged in before running the procedure. */
-const isAuthed = t.middleware(({ ctx, next }) => {
-  const verifiedDriver = ctx.req.cookies.verifiedDriver;
-
-  if (ctx.session?.user) {
-    ctx.res.setHeader("Set-Cookie", [
-      serialize("verifiedDriver", "", {
-        maxAge: -1,
-        path: "/",
-      }),
-    ]);
-
-    // Assume that if it is an authed user, they don't need a verifiedDriver cookie
-
-    return next({
-      ctx: {
-        // infers the `session` as non-nullable
-        session: { ...ctx.session, user: ctx.session.user },
-      },
-    });
-  }
-
-  if (verifiedDriver) {
-    return next({
-      ctx: {
-        session: {
-          ...ctx.session,
-          user: { role: "DRIVER", id: "0", name: "Driver" },
-        },
-      },
-    });
-  }
-
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  });
-});
+export const publicProcedure = t.procedure.use(timingMiddleware)
 
 /**
  * Protected (authenticated) procedure
@@ -178,4 +118,33 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(isAuthed);
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    })
+  })
+
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user || ctx.session.user.role !== 'ADMIN') {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You are not authorized to perform this action.',
+    })
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  })
+})
+
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin)
