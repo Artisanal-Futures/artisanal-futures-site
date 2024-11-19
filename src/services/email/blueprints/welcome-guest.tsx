@@ -27,10 +27,9 @@ export const WelcomeGuestEmail = (props: Props) => {
         <Text>Hello {props.name},</Text>
 
         <Text>
-          Welcome! As you can see we are working with &quot;Artisanal
-          Futures&quot; in Detroit. The Artisanal Futures Upcycling AI tool will
-          be available to you for FREE. Attend our webinar to learn more. Please
-          join us!
+          As you can see, we are working with &quot;Artisanal Futures&quot; in
+          Detroit. The Artisanal Futures Upcycling AI tool will be available to
+          you for FREE. Attend our webinar to learn more. Please join us!
         </Text>
 
         <EmailImportantText>
@@ -48,10 +47,8 @@ export const WelcomeGuestEmail = (props: Props) => {
       <SingleColumn pX={25}>
         <Text>
           If you have any questions, please don&apos;t hesitate to reach out to
-          the coordinator of this event, Zita.
-          <Link href={`mailto:${`zitaechere@gmail.com`}`}>
-            {`zitaechere@gmail.com`}
-          </Link>
+          the coordinator of this event, Zita, at{' '}
+          <Link href={`mailto:zitaechere@gmail.com`}>zitaechere@gmail.com</Link>
           .
         </Text>
 
