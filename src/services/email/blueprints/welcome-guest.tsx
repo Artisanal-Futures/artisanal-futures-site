@@ -37,7 +37,7 @@ export const WelcomeGuestEmail = (props: Props) => {
         </Text>
 
         <EmailImportantText>
-          The webinar will be held on Thursday, November 21st at 11:30 AM EST.
+          The webinar will be held on Thursday, November 21st at 5:30 PM WAT.
         </EmailImportantText>
       </SingleColumn>
 
