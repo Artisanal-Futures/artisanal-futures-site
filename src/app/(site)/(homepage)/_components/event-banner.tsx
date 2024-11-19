@@ -1,12 +1,11 @@
 import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
 
-const EventBanner = ({
-  description,
-  children,
-}: {
+type Props = {
   description: string
   children: React.ReactNode
-}) => {
+}
+
+export const EventBanner = ({ description, children }: Props) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -22,5 +21,3 @@ const EventBanner = ({
     </Dialog>
   )
 }
-
-export default EventBanner

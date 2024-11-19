@@ -12,15 +12,15 @@ import getCaretCoordinates from 'textarea-caret'
 import TextareaMarkdown from 'textarea-markdown-editor'
 import { useItemList } from 'use-item-list'
 
-import { HtmlView } from '~/app/forum/components/html-view'
+import { HtmlView } from '~/app/forum/_components/html-view'
 import {
   BoldIcon,
   ItalicIcon,
   LinkIcon,
   ListIcon,
-} from '~/app/forum/components/icons'
+} from '~/app/forum/_components/icons'
 import { env } from '~/env'
-import { api } from '~/utils/api'
+import { api } from '~/trpc/react'
 import {
   getSuggestionData,
   markdownToHtml,
@@ -364,12 +364,12 @@ function Suggestion({
   const isMentionType = state.type === 'mention'
   const isEmojiType = state.type === 'emoji'
 
-  const emojiListQuery = api.user.emojiList.useQuery({
+  const emojiListQuery = api.user.getForumEmojiList.useQuery({
     enabled: state.isOpen && isEmojiType,
     staleTime: Infinity,
   })
 
-  const mentionListQuery = api.user.mentionList.useQuery(
+  const mentionListQuery = api.user.getForumMentionList.useQuery(
     {},
     {
       enabled: state.isOpen && isMentionType,

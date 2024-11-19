@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
-import type { RouterInputs } from '~/utils/api'
+import type { RouterInputs } from '~/trpc/react'
 import { AuthorWithDate } from '~/app/forum/_components/author-with-date'
 import { Avatar } from '~/app/forum/_components/avatar'
 import { Banner } from '~/app/forum/_components/banner'

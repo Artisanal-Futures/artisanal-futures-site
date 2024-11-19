@@ -3,7 +3,7 @@ import axios from 'axios'
 import { z } from 'zod'
 
 import type { Artisan, Attribute } from '~/types'
-import { type Product } from '~/apps/product/types'
+import { type Product } from '~/app/(site)/products/_validators/types'
 import {
   createTRPCRouter,
   protectedProcedure,

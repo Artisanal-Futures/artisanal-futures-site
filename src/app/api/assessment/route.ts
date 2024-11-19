@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import axios from 'axios'
 
-import type { Product } from '~/apps/product/types'
+import type { Product } from '~/app/(site)/products/_validators/types'
 
 // import data from "~/json/ecodata.json";
 

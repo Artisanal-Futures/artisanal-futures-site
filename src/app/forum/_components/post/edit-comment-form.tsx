@@ -1,12 +1,12 @@
 import type { SubmitHandler } from 'react-hook-form'
 import { type FC } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
 
-import type { RouterInputs, RouterOutputs } from '~/utils/api'
-import { Button } from '~/app/forum/components/button'
-import { MarkdownEditor } from '~/app/forum/components/markdown-editor'
-import { api } from '~/utils/api'
+import type { RouterInputs, RouterOutputs } from '~/trpc/react'
+import { Button } from '~/app/forum/_components/button'
+import { MarkdownEditor } from '~/app/forum/_components/markdown-editor'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 interface IProps {
   postId: number
@@ -21,13 +21,16 @@ type CommentFormData = {
   content: string
 }
 const EditCommentForm: FC<IProps> = ({ postId, comment, onDone }) => {
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const editCommentMutation = api.comment.edit.useMutation({
     onSuccess: () => {
       return utils.post.detail.invalidate(getPostQueryPathAndInput(postId))
     },
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: `Something went wrong: ${error.message}`,
+      })
     },
   })
   const { control, handleSubmit } = useForm<CommentFormData>({
@@ -71,7 +74,7 @@ const EditCommentForm: FC<IProps> = ({ postId, comment, onDone }) => {
       <div className="mt-4 flex gap-4">
         <Button
           type="submit"
-          isLoading={editCommentMutation.isLoading}
+          isLoading={editCommentMutation.isPending}
           loadingChildren="Updating comment"
         >
           Update comment

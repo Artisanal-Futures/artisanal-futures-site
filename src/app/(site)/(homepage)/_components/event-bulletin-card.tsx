@@ -1,6 +1,10 @@
-import Image from "next/image";
+import Image from 'next/image'
 
-const EventBulletinCard = ({ imageUrl }: { imageUrl: string }) => {
+type Props = {
+  imageUrl: string
+}
+
+export const EventBulletinCard = ({ imageUrl }: Props) => {
   return (
     <Image
       width={200}
@@ -11,6 +15,5 @@ const EventBulletinCard = ({ imageUrl }: { imageUrl: string }) => {
       loading="lazy"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
     />
-  );
-};
-export default EventBulletinCard;
+  )
+}

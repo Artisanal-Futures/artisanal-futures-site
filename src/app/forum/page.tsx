@@ -3,10 +3,11 @@
 import type { User } from '@prisma/client'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 import type { PostSummaryProps } from '~/app/forum/_components/post-summary'
-import type { RouterInputs } from '~/utils/api'
+import type { RouterInputs } from '~/trpc/react'
 import {
   getQueryPaginationInput,
   Pagination,
@@ -25,11 +26,9 @@ const PostSummary = dynamic<PostSummaryProps>(
 
 const POSTS_PER_PAGE = 20
 
-type Props = {
-  user: User
-}
-export default function Home({ user }: Props) {
-  const router = useRouter()
+export default function Home() {
+  const { data: session } = useSession()
+  const user = session?.user
   const params = useParams()
   const currentPageNumber = params.page ? Number(params.page) : 1
   const utils = api.useUtils()
@@ -56,7 +55,7 @@ export default function Home({ user }: Props) {
                       {
                         user: {
                           id: user.id,
-                          name: user.name,
+                          name: user.name ?? null,
                         },
                       },
                     ],
@@ -77,6 +76,7 @@ export default function Home({ user }: Props) {
   })
   const unlikeMutation = api.post.unlike.useMutation({
     onMutate: async (unlikedPostId) => {
+      if (!user) return
       await utils.post.feed.invalidate(feedQueryPathAndInput)
 
       const previousQuery = utils.post.feed.getData(feedQueryPathAndInput)

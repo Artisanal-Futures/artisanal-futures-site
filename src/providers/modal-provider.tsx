@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { ShopModal } from "~/apps/admin/components/modals/shop-modal";
+'use client'
+
+import { useEffect, useState } from 'react'
+
+import { ShopModal } from '~/components/modals/shop-modal'
 
 export const ModalProvider = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   if (!isMounted) {
-    return null;
+    return null
   }
 
   return (
     <>
       <ShopModal />
     </>
-  );
-};
+  )
+}

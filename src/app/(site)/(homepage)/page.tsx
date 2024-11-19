@@ -1,9 +1,9 @@
-import { EventBulletinBoard, Hero, HomePageCard } from '~/apps/homepage'
+import Image from 'next/image'
 import { Cog, GraduationCap, Store } from 'lucide-react'
 
-import Image from 'next/image'
+import { EventBulletinBoard, Hero, HomePageCard } from './_components'
 
-export const CARD_DATA = [
+const CARD_DATA = [
   {
     link: '/shops',
     title: 'Browse our shops',

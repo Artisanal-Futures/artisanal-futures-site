@@ -1,10 +1,10 @@
 import type { Role } from '@prisma/client'
 import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { adminProcedure, createTRPCRouter } from '~/server/api/trpc'
 
 export const authRouter = createTRPCRouter({
-  changeRole: protectedProcedure
+  changeRole: adminProcedure
     .input(z.object({ role: z.string() }))
     .mutation(async ({ input, ctx }) => {
       await ctx.db.user.update({
@@ -12,7 +12,8 @@ export const authRouter = createTRPCRouter({
         data: { role: input.role as Role },
       })
       return {
-        response: `${ctx.session.user.name} was updated to ${ctx.session.user.role}`,
+        data: ctx.session.user,
+        message: `${ctx.session.user.name} was updated to ${ctx.session.user.role}`,
       }
     }),
 })

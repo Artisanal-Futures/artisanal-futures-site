@@ -1,9 +1,10 @@
+'use client'
+
 import type { FC } from 'react'
 import { useRef } from 'react'
-import toast from 'react-hot-toast'
 
-import type { RouterInputs } from '~/utils/api'
-import { Button } from '~/app/forum/components/button'
+import type { RouterInputs } from '~/trpc/react'
+import { Button } from '~/app/forum/_components/button'
 import {
   Dialog,
   DialogActions,
@@ -11,8 +12,9 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '~/app/forum/components/dialog'
-import { api } from '~/utils/api'
+} from '~/app/forum/_components/dialog'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 function getPostQueryPathAndInput(id: number): RouterInputs['post']['detail'] {
   return { id }
@@ -31,13 +33,16 @@ const ConfirmDeleteCommentDialog: FC<IProps> = ({
   onClose,
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const deleteCommentMutation = api.comment.delete.useMutation({
     onSuccess: () => {
       return utils.post.detail.invalidate(getPostQueryPathAndInput(postId))
     },
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Something went wrong',
+      })
     },
   })
 
@@ -54,7 +59,7 @@ const ConfirmDeleteCommentDialog: FC<IProps> = ({
         <Button
           variant="secondary"
           className="!text-forum-red"
-          isLoading={deleteCommentMutation.isLoading}
+          isLoading={deleteCommentMutation.isPending}
           loadingChildren="Deleting comment"
           onClick={() => {
             deleteCommentMutation.mutate(commentId, {

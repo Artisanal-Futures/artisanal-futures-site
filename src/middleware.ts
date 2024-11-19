@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth/sign-')
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth/sign-up')
   if (isAuthRoute) {
     const codeCookie = request.cookies.get('code')
     const loginCookie = request.cookies.get('login')

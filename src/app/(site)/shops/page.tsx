@@ -1,8 +1,8 @@
 import type { Shop } from '@prisma/client'
-import ShopCard from '~/apps/artisan-shops/components/shop-card'
-import { api } from '~/trpc/server'
-
 import Link from 'next/link'
+
+import ShopCard from '~/app/(site)/shops/_components/shop-card'
+import { api } from '~/trpc/server'
 
 export const metadata = {
   title: 'Shops',

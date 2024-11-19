@@ -1,4 +1,5 @@
 import { api } from '~/trpc/server'
+import { OnboardingForm } from './_components/onboarding-form'
 import { OnboardingTabs } from './_components/onboarding-tabs'
 
 export const metadata = {
@@ -11,7 +12,8 @@ export default async function OnboardingPage() {
   const survey = await api.surveys.getCurrentUserSurvey()
   return (
     <>
-      <OnboardingTabs shop={shop} survey={survey} />
+      {/* <OnboardingTabs shop={shop} survey={survey} /> */}
+      <OnboardingForm />
     </>
   )
 }

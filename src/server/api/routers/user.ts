@@ -1,58 +1,21 @@
-import { Role } from '@prisma/client'
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from '~/server/api/trpc'
 import { uploadImage } from '~/utils/forum/cloudinary'
 
 export const userRouter = createTRPCRouter({
-  getAllUsers: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.session.user.role !== 'ADMIN') {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: `You are not authorized to perform this action`,
-      })
-    }
+  getAll: adminProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany()
-
     return users
   }),
 
-  updateUserRole: protectedProcedure
-    .input(z.object({ id: z.string(), role: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== 'ADMIN') {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `You are not authorized to perform this action`,
-        })
-      }
-      if (!Object.values(Role).includes(input.role as Role)) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `Role '${input.role}' does not exist`,
-        })
-      }
-      const user = await ctx.db.user.update({
-        where: { id: input.id },
-        data: {
-          role: input.role as Role,
-        },
-      })
-
-      return user
-    }),
-
-  getUser: protectedProcedure
+  get: adminProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== 'ADMIN') {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `You are not authorized to perform this action`,
-        })
-      }
-
       const user = await ctx.db.user.findUnique({
         where: { id: input.userId },
         include: {
@@ -62,49 +25,22 @@ export const userRouter = createTRPCRouter({
         },
       })
 
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `No profile with id '${input.userId}'`,
-        })
-      }
-
       return user
     }),
 
-  getAllAccounts: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.session.user.role !== 'ADMIN') {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: `You are not authorized to perform this action`,
-      })
-    }
-
-    const accounts = await ctx.db.account.findMany({
-      include: {
-        user: true,
-      },
-    })
-
-    return accounts
-  }),
-
-  deleteUser: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== 'ADMIN') {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `You are not authorized to perform this action`,
-        })
-      }
       const user = await ctx.db.user.delete({
         where: { id: input.id },
       })
 
-      return user
+      return {
+        data: user,
+        message: `User with id '${input.id}' was deleted`,
+      }
     }),
-  updateUser: protectedProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -112,12 +48,6 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== 'ADMIN') {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `You are not authorized to perform this action`,
-        })
-      }
       const user = await ctx.db.user.update({
         where: { id: input.id },
         data: {
@@ -125,10 +55,13 @@ export const userRouter = createTRPCRouter({
         },
       })
 
-      return user
+      return {
+        data: user,
+        message: `User with id '${input.id}' was updated`,
+      }
     }),
 
-  profile: protectedProcedure
+  getForumProfile: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { id } = input
@@ -142,18 +75,10 @@ export const userRouter = createTRPCRouter({
         },
       })
 
-      console.log(user)
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `No profile with id '${id}'`,
-        })
-      }
-
       return user
     }),
 
-  edit: protectedProcedure
+  editForumProfile: protectedProcedure
     .input(z.object({ name: z.string().min(1), title: z.string().nullish() }))
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.update({
@@ -167,7 +92,7 @@ export const userRouter = createTRPCRouter({
       return user
     }),
 
-  updateAvatar: protectedProcedure
+  updateForumAvatar: protectedProcedure
     .input(z.object({ image: z.string().nullish() }))
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.update({
@@ -180,7 +105,7 @@ export const userRouter = createTRPCRouter({
       return user
     }),
 
-  mentionList: protectedProcedure
+  getForumMentionList: protectedProcedure
     .input(z.object({}).nullable())
     .query(({ ctx }) => {
       const users = ctx.db.user.findMany({
@@ -196,13 +121,14 @@ export const userRouter = createTRPCRouter({
       return users
     }),
 
-  emojiList: protectedProcedure
+  getForumEmojiList: protectedProcedure
     .input(z.object({}).nullable())
     .query(async ({}) => {
       const gemoji = (await import('gemoji')).gemoji
       return gemoji
     }),
-  uploadImage: protectedProcedure
+
+  uploadForumImage: protectedProcedure
     .input(z.any())
     .mutation(async ({ input: file }) => {
       return uploadImage(file as File)

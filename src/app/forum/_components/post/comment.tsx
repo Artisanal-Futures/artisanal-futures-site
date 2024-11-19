@@ -1,20 +1,22 @@
+'use client'
+
 import type { FC } from 'react'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
-import { AuthorWithDate } from '~/app/forum/components/author-with-date'
-import { Avatar } from '~/app/forum/components/avatar'
-import { HtmlView } from '~/app/forum/components/html-view'
-import { IconButton } from '~/app/forum/components/icon-button'
-import { DotsIcon } from '~/app/forum/components/icons'
+import { AuthorWithDate } from '~/app/forum/_components/author-with-date'
+import { Avatar } from '~/app/forum/_components/avatar'
+import { HtmlView } from '~/app/forum/_components/html-view'
+import { IconButton } from '~/app/forum/_components/icon-button'
+import { DotsIcon } from '~/app/forum/_components/icons'
 import {
   Menu,
   MenuButton,
   MenuItemButton,
   MenuItems,
   MenuItemsContent,
-} from '~/app/forum/components/menu'
-import { type RouterOutputs } from '~/utils/api'
+} from '~/app/forum/_components/menu'
+import { type RouterOutputs } from '~/trpc/react'
 import ConfirmDeleteCommentDialog from './confirm-delete-comment-dialog'
 import EditCommentForm from './edit-comment-form'
 

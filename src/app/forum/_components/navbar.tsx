@@ -1,18 +1,19 @@
-import Image from "next/image";
-import Link from "next/link";
+'use client'
 
-import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { SearchIcon } from 'lucide-react'
 
-import { Button } from "~/components/ui/button";
-import UserNav from "~/components/ui/user-nav";
-import { SearchDialog } from "./search-dialog";
+import UserNav from '~/app/_components/user-nav'
+import { Button } from '~/components/ui/button'
+import { SearchDialog } from './search-dialog'
 
 const Navbar = () => {
-  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   return (
     <>
-      {" "}
+      {' '}
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/" className=" flex items-center gap-x-2 lg:ml-0">
@@ -40,12 +41,12 @@ const Navbar = () => {
           {/* <MainNav className="mx-6" /> */}
           <Button
             onClick={() => {
-              setIsSearchDialogOpen(true);
+              setIsSearchDialogOpen(true)
             }}
-            variant={"secondary"}
+            variant={'secondary'}
             className="mx-auto w-3/5 justify-start gap-2 text-left"
           >
-            {" "}
+            {' '}
             <SearchIcon className="h-4 w-4" /> Search Forums
           </Button>
           <div className="ml-auto flex items-center space-x-4">
@@ -59,14 +60,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <SearchDialog
-        isOpen={isSearchDialogOpen}
-        onClose={() => {
-          setIsSearchDialogOpen(false);
-        }}
-      />
+      <SearchDialog />
     </>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

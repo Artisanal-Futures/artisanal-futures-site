@@ -23,14 +23,9 @@ export default async function ProfileLayout({ children }: Props) {
       title: 'My Shop',
       href: shop ? `/profile/shop/${shop?.id}` : '/profile/shop',
     },
-
     {
       title: 'Survey',
       href: '/profile/survey',
-    },
-    {
-      title: 'Tool Data',
-      href: '/profile/tool-data',
     },
   ]
 

@@ -1,7 +1,10 @@
-import { useRouter } from 'next/router'
+import { usePathname, useSearchParams } from 'next/navigation'
 
-import { ButtonLink } from '~/app/forum/components/button-link'
-import { ChevronLeftIcon, ChevronRightIcon } from '~/app/forum/components/icons'
+import { ButtonLink } from '~/app/forum/_components/button-link'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '~/app/forum/_components/icons'
 
 type PaginationProps = {
   itemCount: number
@@ -27,7 +30,9 @@ export function Pagination({
   itemsPerPage,
   currentPageNumber,
 }: PaginationProps) {
-  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const params = Object.fromEntries(searchParams.entries())
 
   const totalPages = Math.ceil(itemCount / itemsPerPage)
 
@@ -39,8 +44,8 @@ export function Pagination({
     <div className="mt-12 flex justify-center gap-4">
       <ButtonLink
         href={{
-          pathname: router.pathname,
-          query: { ...router.query, page: currentPageNumber - 1 },
+          pathname: pathname,
+          query: { ...params, page: currentPageNumber - 1 },
         }}
         variant="secondary"
         className={
@@ -54,8 +59,8 @@ export function Pagination({
       </ButtonLink>
       <ButtonLink
         href={{
-          pathname: router.pathname,
-          query: { ...router.query, page: currentPageNumber + 1 },
+          pathname: pathname,
+          query: { ...params, page: currentPageNumber + 1 },
         }}
         variant="secondary"
         className={

@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image'
+import Link from 'next/link'
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <div className="relative mt-10 overflow-hidden bg-white">
       <div className="mx-auto max-w-7xl">
@@ -27,7 +27,7 @@ const Hero = () => {
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                 <Link
                   className="rounded-md bg-slate-100 px-3 py-2 font-semibold transition-all hover:bg-slate-200 focus:bg-slate-300"
-                  href={"/shops"}
+                  href={'/shops'}
                 >
                   Browse Our Artisans
                 </Link>
@@ -35,7 +35,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>{' '}
       <div className=" block border border-solid border-transparent lg:absolute lg:bottom-0 lg:right-0 lg:top-0 lg:w-1/2">
         <div className="max-lg:aspect-[1.628] ">
           <Image
@@ -57,7 +57,7 @@ const Hero = () => {
             alt="Montage of artisans from African Futurist Collective"
             className="fade-pic absolute  aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
-            blurDataURL={"/img/montage2.webp"}
+            blurDataURL={'/img/montage2.webp'}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
@@ -69,7 +69,7 @@ const Hero = () => {
             alt="Montage of artisans from African Futurist Collective"
             className="fade-pic absolute  aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
-            blurDataURL={"/img/montage3.webp"}
+            blurDataURL={'/img/montage3.webp'}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <Image
@@ -80,7 +80,7 @@ const Hero = () => {
             alt="Montage of artisans from African Futurist Collective"
             className="fade-pic object absolute  aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
-            blurDataURL={"/img/montage4.webp"}
+            blurDataURL={'/img/montage4.webp'}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <Image
@@ -91,13 +91,11 @@ const Hero = () => {
             alt="Montage of artisans from African Futurist Collective"
             className="fade-pic absolute  aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
-            blurDataURL={"/img/montage5.webp"}
+            blurDataURL={'/img/montage5.webp'}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       </div>
     </div>
-  );
-};
-
-export default Hero;
+  )
+}

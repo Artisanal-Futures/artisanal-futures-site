@@ -1,4 +1,4 @@
-import ToolCard from '~/components/tools/tool-card'
+import ToolCard from '~/app/tools/_components/tool-card'
 import { TOOLS_DATA } from '~/data/tools'
 
 export const metadata = {

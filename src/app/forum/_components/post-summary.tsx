@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import * as React from 'react'
 import Link from 'next/link'
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { formatDistanceToNow } from 'date-fns'
 import { useSession } from 'next-auth/react'
 
-import type { RouterOutputs } from '~/utils/api'
-import { AuthorWithDate } from '~/app/forum/components/author-with-date'
-import { Banner } from '~/app/forum/components/banner'
-import { HtmlView } from '~/app/forum/components/html-view'
+import type { RouterOutputs } from '~/trpc/react'
+import { AuthorWithDate } from '~/app/forum/_components/author-with-date'
+import { Banner } from '~/app/forum/_components/banner'
+import { HtmlView } from '~/app/forum/_components/html-view'
 import {
   ChevronRightIcon,
   HeartFilledIcon,
   HeartIcon,
   MessageIcon,
-} from '~/app/forum/components/icons'
-import { MAX_LIKED_BY_SHOWN } from '~/app/forum/components/like-button'
+} from '~/app/forum/_components/icons'
+import { MAX_LIKED_BY_SHOWN } from '~/app/forum/_components/like-button'
 import {
   Tooltip,
   // TooltipArrow,

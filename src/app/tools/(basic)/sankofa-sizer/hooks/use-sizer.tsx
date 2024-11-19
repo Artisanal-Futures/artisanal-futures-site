@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import type { BodyPart, BodyParts, Part } from '../types'
+import type { BodyPart, BodyParts, Part } from '../_validators/types'
 import { DEFAULT_BODY_PARTS } from '../_data/body-parts'
 
 type SizerState = {

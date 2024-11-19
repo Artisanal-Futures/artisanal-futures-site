@@ -1,29 +1,36 @@
-import Image from "next/image";
-import * as React from "react";
-import { isCharacterALetter } from "~/utils/forum/text";
+import * as React from 'react'
+import Image from 'next/image'
 
-type AvatarSize = "sm" | "md" | "lg";
+import {
+  Avatar as AvatarComponent,
+  AvatarFallback,
+  AvatarImage,
+} from '~/components/ui/avatar'
+import { isCharacterALetter } from '~/utils/forum/text'
+import { cn } from '~/utils/styles'
+
+type AvatarSize = 'sm' | 'md' | 'lg'
 
 type AvatarProps = {
-  size?: AvatarSize;
-  name: string;
-  src?: string | null;
-};
+  size?: AvatarSize
+  name: string
+  src?: string | null
+}
 
 const dimension: Record<AvatarSize, number> = {
   sm: 34,
   md: 48,
   lg: 128,
-};
+}
 
 const initialSize: Record<AvatarSize, string> = {
-  sm: "w-5 h-5",
-  md: "w-6 h-6",
-  lg: "w-16 h-16",
-};
+  sm: 'w-5 h-5',
+  md: 'w-6 h-6',
+  lg: 'w-16 h-16',
+}
 
-export function Avatar({ size = "md", name, src }: AvatarProps) {
-  const initial = name.charAt(0).toLocaleLowerCase();
+export function Avatar({ size = 'md', name, src }: AvatarProps) {
+  const initial = name.charAt(0).toLocaleLowerCase()
 
   return (
     <div className="relative inline-flex flex-shrink-0 rounded-full">
@@ -42,12 +49,19 @@ export function Avatar({ size = "md", name, src }: AvatarProps) {
         <div className="grid">
           <div className="col-start-1 col-end-1 row-start-1 row-end-1 flex">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <AvatarComponent
+              className={cn(
+                `w-[${dimension[size]}px] h-[${dimension[size]}px]`,
+              )}
+            >
+              <AvatarFallback>{initial}</AvatarFallback>
+            </AvatarComponent>
+            {/* <img
               src={`/api/avatar?name=${encodeURIComponent(name)}`}
               alt={name}
               width={dimension[size]}
               height={dimension[size]}
-            />
+            /> */}
           </div>
           {isCharacterALetter(initial) && (
             <div className="relative col-start-1 col-end-1 row-start-1 row-end-1 flex items-center justify-center">
@@ -62,5 +76,5 @@ export function Avatar({ size = "md", name, src }: AvatarProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

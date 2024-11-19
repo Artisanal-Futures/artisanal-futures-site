@@ -23,34 +23,25 @@ export const env = createEnv({
     // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
-    SUPABASE_URL: z.string().url(),
-    SUPABASE_API_KEY: z.string().min(1),
-
-    ENABLE_SLACK_POSTING: z
-      .string()
-      .refine((s) => s === 'true' || s === 'false')
-      .transform((s) => s === 'true')
-      .optional(),
-    SLACK_WEBHOOK_URL: z.string().url().optional(),
 
     CLOUDINARY_CLOUD_NAME: z.string().min(1),
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
+
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+
     AUTH0_CLIENT_ID: z.string().min(1),
     AUTH0_CLIENT_SECRET: z.string().min(1),
     AUTH0_ISSUER: z.string().min(1),
 
-    PUSHER_APP_ID: z.string().min(1),
-
-    PUSHER_APP_SECRET: z.string().min(1),
-
-    GOOGLE_API_KEY: z.string(),
-
-    REDIS_URL: z.string().url().optional(),
     HOSTNAME: z.string(),
+
     RESEND_API_KEY: z.string(),
+
+    GOOGLE_PLACES_API_KEY: z.string(),
+
+    AI_AGENT_BACKEND_URL: z.string().url(),
   },
 
   /**
@@ -59,19 +50,14 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-    NEXT_PUBLIC_GOOGLE_MAP_API_KEY: z.string().min(1),
-    NEXT_PUBLIC_OPEN_ROUTE_API_KEY: z.string().min(1),
-    NEXT_PUBLIC_RESEND_API_KEY: z.string().min(1),
     NEXT_PUBLIC_ENABLE_IMAGE_UPLOAD: z
       .string()
       .refine((s) => s === 'true' || s === 'false')
       .transform((s) => s === 'true')
       .optional(),
+
     NEXT_PUBLIC_PASSWORD_PROTECT: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_APP_KEY: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_HOST: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_PORT: z.string().optional(),
+
     NEXT_PUBLIC_APP_URL: z.string().url(),
   },
 
@@ -89,13 +75,7 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    SUPABASE_URL: process.env.SUPABASE_URL,
-    SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
-    NEXT_PUBLIC_GOOGLE_MAP_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY,
-    NEXT_PUBLIC_OPEN_ROUTE_API_KEY: process.env.NEXT_PUBLIC_OPEN_ROUTE_API_KEY,
-    NEXT_PUBLIC_RESEND_API_KEY: process.env.NEXT_PUBLIC_RESEND_API_KEY,
-    ENABLE_SLACK_POSTING: process.env.ENABLE_SLACK_POSTING,
-    SLACK_WEBHOOK_URL: process.env.SLACK_WEBHOOK_URL,
+
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_ENABLE_IMAGE_UPLOAD:
       process.env.NEXT_PUBLIC_ENABLE_IMAGE_UPLOAD,
@@ -105,15 +85,12 @@ export const env = createEnv({
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
     AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
     AUTH0_ISSUER: process.env.AUTH0_ISSUER,
+
     NEXT_PUBLIC_PASSWORD_PROTECT: process.env.NEXT_PUBLIC_PASSWORD_PROTECT,
-    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
-    NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
-    PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
-    NEXT_PUBLIC_PUSHER_HOST: process.env.NEXT_PUBLIC_PUSHER_HOST,
-    NEXT_PUBLIC_PUSHER_PORT: process.env.NEXT_PUBLIC_PUSHER_PORT,
-    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-    REDIS_URL: process.env.REDIS_URL,
+
     HOSTNAME: process.env.HOSTNAME,
+    GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
+    AI_AGENT_BACKEND_URL: process.env.AI_AGENT_BACKEND_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

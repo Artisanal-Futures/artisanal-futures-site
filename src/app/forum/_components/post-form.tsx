@@ -3,11 +3,11 @@ import * as React from 'react'
 import Link from 'next/link'
 import { Controller, useForm } from 'react-hook-form'
 
-import { Button } from '~/app/forum/components/button'
-import { ButtonLink } from '~/app/forum/components/button-link'
-import { MarkdownIcon } from '~/app/forum/components/icons'
-import { MarkdownEditor } from '~/app/forum/components/markdown-editor'
-import { TextField } from '~/app/forum/components/text-field'
+import { Button } from '~/app/forum/_components/button'
+import { ButtonLink } from '~/app/forum/_components/button-link'
+import { MarkdownIcon } from '~/app/forum/_components/icons'
+import { MarkdownEditor } from '~/app/forum/_components/markdown-editor'
+import { TextField } from '~/app/forum/_components/text-field'
 import { useLeaveConfirm } from '~/utils/forum/form'
 
 type FormData = {

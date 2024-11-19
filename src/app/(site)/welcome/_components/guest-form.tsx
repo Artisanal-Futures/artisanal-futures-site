@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -20,7 +18,7 @@ import {
 import { Form } from '~/components/ui/form'
 import { Label } from '~/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
-import { notificationService } from '~/services/notification'
+import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const GuestSchema = z.object({
@@ -51,10 +49,10 @@ export default function ArtisanRegistrationForm() {
 
   const guestRegistrationMutation = api.guest.create.useMutation({
     onSuccess: ({ message }) => {
-      notificationService.notifySuccess({ message })
+      toastService.success({ message })
     },
     onError: (error) => {
-      notificationService.notifyError({
+      toastService.error({
         error,
         message: 'There was an issue submitting the survey. Please try again.',
       })
@@ -95,7 +93,7 @@ export default function ArtisanRegistrationForm() {
         </CardDescription>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <form onSubmit={(e) => void form.handleSubmit(handleSubmit)(e)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <InputFormField

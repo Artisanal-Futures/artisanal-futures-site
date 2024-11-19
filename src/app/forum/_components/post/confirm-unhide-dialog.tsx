@@ -2,8 +2,8 @@ import type { FC } from 'react'
 import { useRef } from 'react'
 import toast from 'react-hot-toast'
 
-import type { RouterInputs } from '~/utils/api'
-import { Button } from '~/app/forum/components/button'
+import type { RouterInputs } from '~/trpc/react'
+import { Button } from '~/app/forum/_components/button'
 import {
   Dialog,
   DialogActions,
@@ -11,8 +11,9 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '~/app/forum/components/dialog'
-import { api } from '~/utils/api'
+} from '~/app/forum/_components/dialog'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 interface IProps {
   postId: number
@@ -26,13 +27,16 @@ function getPostQueryPathAndInput(id: number): RouterInputs['post']['detail'] {
 
 const ConfirmUnhideDialog: FC<IProps> = ({ postId, isOpen, onClose }) => {
   const cancelRef = useRef<HTMLButtonElement>(null)
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const unhidePostMutation = api.post.unhide.useMutation({
     onSuccess: () => {
       return utils.post.detail.invalidate(getPostQueryPathAndInput(postId))
     },
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Something went wrong',
+      })
     },
   })
 
@@ -48,7 +52,7 @@ const ConfirmUnhideDialog: FC<IProps> = ({ postId, isOpen, onClose }) => {
       <DialogActions>
         <Button
           variant="secondary"
-          isLoading={unhidePostMutation.isLoading}
+          isLoading={unhidePostMutation.isPending}
           loadingChildren="Unhiding post"
           onClick={() => {
             unhidePostMutation.mutate(postId, {

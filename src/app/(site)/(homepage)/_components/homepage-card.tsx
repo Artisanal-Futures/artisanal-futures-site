@@ -1,15 +1,14 @@
-import Link from "next/link";
-import type { FC } from "react";
+import Link from 'next/link'
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
-interface IProps {
-  link: string;
-  title: string;
-  icon: React.ReactNode;
-  description: string;
+type Props = {
+  link: string
+  title: string
+  icon: React.ReactNode
+  description: string
 }
-const HomePageCard: FC<IProps> = ({ link, title, icon, description }) => (
+export const HomePageCard = ({ link, title, icon, description }: Props) => (
   <Link href={link}>
     <Card className="hover:bg-slate-50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
@@ -21,6 +20,4 @@ const HomePageCard: FC<IProps> = ({ link, title, icon, description }) => (
       </CardContent>
     </Card>
   </Link>
-);
-
-export default HomePageCard;
+)

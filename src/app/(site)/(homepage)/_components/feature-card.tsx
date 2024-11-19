@@ -1,12 +1,10 @@
-import type { FC } from "react";
-
-interface IProps {
-  title: string;
-  text: string;
-  icon: JSX.Element;
-  onClick: () => void;
+type Props = {
+  title: string
+  text: string
+  icon: JSX.Element
+  onClick: () => void
 }
-const FeatureCard: FC<IProps> = ({ title, text, icon, onClick }) => {
+export const FeatureCard = ({ title, text, icon, onClick }: Props) => {
   return (
     <div
       className="hover:gray-100 h-full min-h-full cursor-pointer bg-white pb-8 pt-8 text-center hover:shadow-md"
@@ -20,7 +18,5 @@ const FeatureCard: FC<IProps> = ({ title, text, icon, onClick }) => {
         <p className="slate-300">{text}</p>
       </div>
     </div>
-  );
-};
-
-export default FeatureCard;
+  )
+}

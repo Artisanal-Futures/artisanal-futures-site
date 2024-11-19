@@ -7,7 +7,6 @@ import { EmailCallToActionButton } from '../components/email-call-to-action-butt
 import { EmailImportantText } from '../components/email-important-text'
 import { EmailLogo } from '../components/email-logo'
 import { EmailSignature } from '../components/email-signature'
-import { emailConfig } from '../config'
 
 type Props = {
   name: string
@@ -16,11 +15,9 @@ type Props = {
 }
 
 export const WelcomeGuestEmail = (props: Props) => {
-  const strippedSupportEmail = emailConfig.stripEmail(emailConfig.supportEmail)
-
   return (
     <EmailBody
-      previewText={`Welcome to Artisanal Futures!`}
+      previewText="Welcome to Artisanal Futures!"
       isPreview={props.isPreview}
     >
       <SingleColumn pX={25}>
@@ -30,13 +27,13 @@ export const WelcomeGuestEmail = (props: Props) => {
         <Text>Hello {props.name},</Text>
 
         <Text>
-          We're thrilled to welcome you to Artisanal Futures! We're excited to
-          have you join our community of artisans and creators.
+          We&apos;re thrilled to welcome you to Artisanal Futures! We&apos;re
+          excited to have you join our community of artisans and creators.
         </Text>
 
         <Text>
-          To help you get started, we'd like to invite you to our upcoming
-          webinar where you'll learn more about our latest AI Agent tool.
+          To help you get started, we&apos;d like to invite you to our upcoming
+          webinar where you&apos;ll learn more about our latest AI Agent tool.
         </Text>
 
         <EmailImportantText>
@@ -53,8 +50,8 @@ export const WelcomeGuestEmail = (props: Props) => {
 
       <SingleColumn pX={25}>
         <Text>
-          If you have any questions, please don't hesitate to reach out to the
-          coordinator of this event, Zita.
+          If you have any questions, please don&apos;t hesitate to reach out to
+          the coordinator of this event, Zita.
           <Link href={`mailto:${`zitaechere@gmail.com`}`}>
             {`zitaechere@gmail.com`}
           </Link>

@@ -3,7 +3,7 @@
 import type { ItemOptions } from 'use-item-list'
 import * as React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { useDebounce } from 'use-debounce'
 import { useItemList } from 'use-item-list'
@@ -68,9 +68,7 @@ function SearchField({ onSelect }: { onSelect: () => void }) {
 
   const { moveHighlightedItem, selectHighlightedItem, useItem } = useItemList({
     onSelect: (item) => {
-      router.push(`/forum/post/${item.value.id}`).catch((err) => {
-        console.error(err)
-      })
+      void router.push(`/forum/post/${item.value.id}`)
       onSelect()
     },
   })

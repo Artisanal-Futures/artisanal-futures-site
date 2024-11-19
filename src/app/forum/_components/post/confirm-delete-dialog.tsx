@@ -1,9 +1,8 @@
 import type { FC } from 'react'
 import { useRef } from 'react'
-import { useRouter } from 'next/router'
-import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
-import { Button } from '~/app/forum/components/button'
+import { Button } from '~/app/forum/_components/button'
 import {
   Dialog,
   DialogActions,
@@ -11,8 +10,9 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '~/app/forum/components/dialog'
-import { api } from '~/utils/api'
+} from '~/app/forum/_components/dialog'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 interface IProps {
   postId: number
@@ -24,7 +24,10 @@ const ConfirmDeleteDialog: FC<IProps> = ({ postId, isOpen, onClose }) => {
   const router = useRouter()
   const deletePostMutation = api.post.delete.useMutation({
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Something went wrong',
+      })
     },
   })
 
@@ -41,7 +44,7 @@ const ConfirmDeleteDialog: FC<IProps> = ({ postId, isOpen, onClose }) => {
         <Button
           variant="secondary"
           className="!text-forum-red"
-          isLoading={deletePostMutation.isLoading}
+          isLoading={deletePostMutation.isPending}
           loadingChildren="Deleting post"
           onClick={() => {
             deletePostMutation.mutate(postId, {

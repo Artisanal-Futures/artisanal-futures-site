@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import type { ButtonVariant } from '~/app/forum/components/button'
+import type { ButtonVariant } from '~/app/forum/_components/button'
 import { classNames } from '~/utils/styles'
 
 export type IconButtonOwnProps = {

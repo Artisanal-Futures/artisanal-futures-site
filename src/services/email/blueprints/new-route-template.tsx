@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   Body,
   Container,
@@ -8,22 +9,19 @@ import {
   Link,
   Preview,
   Text,
-} from "@react-email/components";
-import * as React from "react";
+} from '@react-email/components'
 
-import { env } from "~/env";
-
-interface RoutingMagicLinkProps {
-  url: string;
-  loginCode?: string;
+interface Props {
+  url: string
+  loginCode?: string
 }
 
-const baseUrl = "https://artisanalfutures.org";
+const baseUrl = 'https://artisanalfutures.org'
 
 export const NewRouteTemplate = ({
   url,
-  loginCode = "sparo-ndigo-amurt-secan",
-}: RoutingMagicLinkProps) => (
+  loginCode = 'sparo-ndigo-amurt-secan',
+}: Props) => (
   <Html>
     <Head />
     <Preview>Access new route with magic link</Preview>
@@ -38,15 +36,15 @@ export const NewRouteTemplate = ({
             target="_blank"
             style={{
               ...link,
-              display: "block",
-              marginBottom: "16px",
+              display: 'block',
+              marginBottom: '16px',
             }}
           >
             Click here to give yourself access to the route with this magic link
           </Link>
         )}
 
-        <Text style={{ ...text, marginBottom: "14px" }}>
+        <Text style={{ ...text, marginBottom: '14px' }}>
           Or, copy and paste this magic code in the route page along with your
           email:
         </Text>
@@ -54,9 +52,9 @@ export const NewRouteTemplate = ({
         <Text
           style={{
             ...text,
-            color: "#ababab",
-            marginTop: "14px",
-            marginBottom: "16px",
+            color: '#ababab',
+            marginTop: '14px',
+            marginBottom: '16px',
           }}
         >
           If you weren&apos;t expecting a route assignment, you can safely
@@ -65,9 +63,9 @@ export const NewRouteTemplate = ({
         <Text
           style={{
             ...text,
-            color: "#ababab",
-            marginTop: "12px",
-            marginBottom: "38px",
+            color: '#ababab',
+            marginTop: '12px',
+            marginBottom: '38px',
           }}
         >
           Hint: Make sure to use the same email address your depot has for you.
@@ -82,7 +80,7 @@ export const NewRouteTemplate = ({
           <Link
             href="https://artisanalfutures.org"
             target="_blank"
-            style={{ ...link, color: "#898989" }}
+            style={{ ...link, color: '#898989' }}
           >
             Artisanal Futures
           </Link>
@@ -93,62 +91,62 @@ export const NewRouteTemplate = ({
       </Container>
     </Body>
   </Html>
-);
+)
 
-export default NewRouteTemplate;
+export default NewRouteTemplate
 
 const main = {
-  backgroundColor: "#ffffff",
-};
+  backgroundColor: '#ffffff',
+}
 
 const container = {
-  paddingLeft: "12px",
-  paddingRight: "12px",
-  margin: "0 auto",
-};
+  paddingLeft: '12px',
+  paddingRight: '12px',
+  margin: '0 auto',
+}
 
 const h1 = {
-  color: "#333",
+  color: '#333',
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-  fontSize: "24px",
-  fontWeight: "bold",
-  margin: "40px 0",
-  padding: "0",
-};
+  fontSize: '24px',
+  fontWeight: 'bold',
+  margin: '40px 0',
+  padding: '0',
+}
 
 const link = {
-  color: "#2754C5",
+  color: '#2754C5',
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-  fontSize: "14px",
-  textDecoration: "underline",
-};
+  fontSize: '14px',
+  textDecoration: 'underline',
+}
 
 const text = {
-  color: "#333",
+  color: '#333',
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-  fontSize: "14px",
-  margin: "24px 0",
-};
+  fontSize: '14px',
+  margin: '24px 0',
+}
 
 const footer = {
-  color: "#898989",
+  color: '#898989',
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
-  fontSize: "12px",
-  lineHeight: "22px",
-  marginTop: "12px",
-  marginBottom: "24px",
-};
+  fontSize: '12px',
+  lineHeight: '22px',
+  marginTop: '12px',
+  marginBottom: '24px',
+}
 
 const code = {
-  display: "inline-block",
-  padding: "16px 4.5%",
-  width: "90.5%",
-  backgroundColor: "#f4f4f4",
-  borderRadius: "5px",
-  border: "1px solid #eee",
-  color: "#333",
-};
+  display: 'inline-block',
+  padding: '16px 4.5%',
+  width: '90.5%',
+  backgroundColor: '#f4f4f4',
+  borderRadius: '5px',
+  border: '1px solid #eee',
+  color: '#333',
+}

@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <article className="prose  lg:prose-xl">
+    <article className="prose lg:prose-xl">
       <h3 id="terms-of-service">Terms of Use</h3>
       <p>
         These terms govern use of the Internet forum at{' '}

@@ -8,7 +8,6 @@ import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
-import { toast } from '~/apps/notifications/libs/toast'
 import { DeleteItem } from '~/components/delete-item'
 import { Button } from '~/components/ui/button'
 import * as Form from '~/components/ui/form'
@@ -17,6 +16,7 @@ import LogoUpload from '~/components/ui/logo-upload'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { useModal } from '~/hooks/use-modal'
+import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const formSchema = z.object({
@@ -77,14 +77,21 @@ export const ShopForm: React.FC<TShopFormProps> = ({
   })
 
   const { mutate: updateRole } = api.auth.changeRole.useMutation({
-    onSuccess: () => toast.success('Role updated.'),
+    onSuccess: () => toastService.success({ message: 'Role updated.' }),
     onError: (error) =>
-      toast.error('Something went wrong with updating your role.', error),
+      toastService.error({
+        message: 'Something went wrong with updating your role.',
+        error,
+      }),
   })
 
   const { mutate: updateShop } = api.shops.updateShop.useMutation({
-    onSuccess: () => toast.success('Shop updated.'),
-    onError: (error) => toast.error('Something went wrong', error),
+    onSuccess: () => toastService.success({ message: 'Shop updated.' }),
+    onError: (error) =>
+      toastService.error({
+        message: 'Something went wrong',
+        error,
+      }),
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
@@ -96,10 +103,13 @@ export const ShopForm: React.FC<TShopFormProps> = ({
     onSuccess: () => {
       if (sessionData?.user?.role !== 'ADMIN') updateRole({ role: 'USER' })
       router.push('/profile')
-      toast.success('Shop deleted.')
+      toastService.success({ message: 'Shop deleted.' })
     },
     onError: (error) =>
-      toast.error('An error has occurred deleting your shop.', error),
+      toastService.error({
+        message: 'An error has occurred deleting your shop.',
+        error,
+      }),
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)

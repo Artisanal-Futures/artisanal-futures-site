@@ -1,45 +1,40 @@
-import { useRouter } from "next/router";
-import * as React from "react";
-import { useBeforeunload } from "react-beforeunload";
-import { type FieldValues, type FormState } from "react-hook-form";
+import * as React from 'react'
+import { useBeforeunload } from 'react-beforeunload'
+import { type FieldValues, type FormState } from 'react-hook-form'
 
 type Props<T extends FieldValues> = {
-  formState: FormState<T>;
-  message?: string;
-};
+  formState: FormState<T>
+  message?: string
+}
 
-const defaultMessage = "Are you sure to leave without saving?";
+const defaultMessage = 'Are you sure to leave without saving?'
 
 export function useLeaveConfirm<T extends FieldValues>({
   formState,
   message = defaultMessage,
 }: Props<T>) {
-  const Router = useRouter();
-
-  const { isDirty } = formState;
-
-  const onRouteChangeStart = React.useCallback(() => {
-    if (isDirty) {
-      if (window.confirm(message)) {
-        return true;
-      }
-      throw "Abort route change by user's confirmation.";
-    }
-  }, [isDirty, message]);
+  const { isDirty } = formState
 
   React.useEffect(() => {
-    Router.events.on("routeChangeStart", onRouteChangeStart);
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault()
+        e.returnValue = message
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
 
     return () => {
-      Router.events.off("routeChangeStart", onRouteChangeStart);
-    };
-  }, [Router.events, onRouteChangeStart]);
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [isDirty, message])
 
   useBeforeunload((event) => {
     if (isDirty) {
-      event.preventDefault();
+      event.preventDefault()
     }
-  });
+  })
 
-  return;
+  return
 }

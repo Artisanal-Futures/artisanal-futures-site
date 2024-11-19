@@ -14,9 +14,7 @@ import {
 } from 'lucide-react'
 
 import Container from '~/app/_components/container'
-import { OnboardingShopForm } from '~/apps/onboarding/components/onboarding-shop-form'
-import { OnboardingSurveyForm } from '~/apps/onboarding/components/onboarding-survey-form'
-import StepBtn from '~/apps/onboarding/components/step-btn'
+import StepBtn from '~/app/(site)/onboarding/_components/step-btn'
 import Logo from '~/components/logo'
 import BlurImage from '~/components/ui/blur-image'
 import { Button } from '~/components/ui/button'
@@ -31,6 +29,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { cn } from '~/utils/styles'
 import { MobileOnboardingNavigation } from './mobile-onboarding-navigation'
+import { OnboardingShopForm } from './onboarding-shop-form'
+import { OnboardingSurveyForm } from './onboarding-survey-form'
 
 type Steps = 'get-started' | 'shop' | 'survey' | 'next-steps'
 

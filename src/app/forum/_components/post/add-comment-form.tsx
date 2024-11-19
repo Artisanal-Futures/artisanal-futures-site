@@ -1,13 +1,15 @@
+'use client'
+
 import type { FC } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
 
-import type { RouterInputs } from '~/utils/api'
-import { Button } from '~/app/forum/components/button'
-import { MarkdownEditor } from '~/app/forum/components/markdown-editor'
-import { api } from '~/utils/api'
+import type { RouterInputs } from '~/trpc/react'
+import { Button } from '~/app/forum/_components/button'
+import { MarkdownEditor } from '~/app/forum/_components/markdown-editor'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 function getPostQueryPathAndInput(id: number): RouterInputs['post']['detail'] {
   return { id }
@@ -17,13 +19,16 @@ type CommentFormData = {
 }
 const AddCommentForm: FC<{ postId: number }> = ({ postId }) => {
   const [markdownEditorKey, setMarkdownEditorKey] = useState(0)
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const addCommentMutation = api.comment.add.useMutation({
     onSuccess: () => {
       return utils.post.detail.invalidate(getPostQueryPathAndInput(postId))
     },
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Something went wrong',
+      })
     },
   })
   const { control, handleSubmit, reset } = useForm<CommentFormData>()
@@ -64,7 +69,7 @@ const AddCommentForm: FC<{ postId: number }> = ({ postId }) => {
       <div className="mt-4">
         <Button
           type="submit"
-          isLoading={addCommentMutation.isLoading}
+          isLoading={addCommentMutation.isPending}
           loadingChildren="Adding comment"
         >
           Add comment

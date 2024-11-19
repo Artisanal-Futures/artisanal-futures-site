@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 
-import { MobileNav } from '~/app/tools/solidarity-pathways/_components/layout/mobile-nav'
+import { MobileNav } from '~/app/_components/mobile-nav'
 import { useMediaQuery } from '~/hooks/use-media-query'
-import UserNav from '../../components/ui/user-nav'
+import UserNav from './user-nav'
 
 const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)

@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useRouter as useNavigationRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
 import * as z from 'zod'
 
 import { Button } from '~/components/ui/button'
@@ -18,6 +17,8 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 const emailSchema = z.object({
   email: z.string().email(),
@@ -28,7 +29,17 @@ const emailSchema = z.object({
 type EmailFormValues = z.infer<typeof emailSchema>
 
 export const EmailForm = ({ loading }: { loading: boolean }) => {
-  const navigate = useNavigationRouter()
+  const router = useRouter()
+
+  const sendInquiryMutation = api.guest.sendInquiry.useMutation({
+    onSuccess: ({ message }) => {
+      toastService.success({ message })
+      router.push('/')
+    },
+    onError: (error) => {
+      toastService.error({ message: error.message })
+    },
+  })
 
   const form = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -39,33 +50,8 @@ export const EmailForm = ({ loading }: { loading: boolean }) => {
     },
   })
 
-  const onSubmit = async (values: EmailFormValues) => {
-    const req = await fetch('/api/send-inquiry', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    })
-
-    // if (req.status === 200) {
-    //   toast.success("Email sent.");
-    // } else {
-    //   toast.error("Something went wrong. Please try again.");
-    // }
-
-    const res = await req.json()
-
-    if (res?.statusCode) {
-      const error = res?.message ?? 'Something went wrong. Please try again.'
-      toast.error(error as string)
-      return
-    }
-
-    toast.success('Email sent. We will get back to you shortly.')
-
-    navigate.push('/')
-    return
+  const onSubmit = (values: EmailFormValues) => {
+    sendInquiryMutation.mutate(values)
   }
   return (
     <>

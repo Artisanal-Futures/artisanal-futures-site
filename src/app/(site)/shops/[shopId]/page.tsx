@@ -1,10 +1,10 @@
-import ProfileCard from '~/apps/artisan-shops/components/profile-card'
-import { api } from '~/trpc/server'
-
 import dynamic from 'next/dynamic'
 
+import ProfileCard from '~/app/(site)/shops/_components/profile-card'
+import { api } from '~/trpc/server'
+
 const ArtisanProductsGrid = dynamic(
-  () => import('~/apps/artisan-shops/components/artisan-products-grid'),
+  () => import('~/app/(site)/shops/_components/artisan-products-grid'),
   { ssr: false },
 )
 

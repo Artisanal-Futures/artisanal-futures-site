@@ -1,20 +1,20 @@
 import type { FC } from 'react'
 import type { SubmitHandler } from 'react-hook-form'
-import { useRouter } from 'next/router'
+import { useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
-import type { RouterInputs } from '~/utils/api'
-import { Button } from '~/app/forum/components/button'
+import type { RouterInputs } from '~/trpc/react'
+import { Button } from '~/app/forum/_components/button'
 import {
   Dialog,
   DialogActions,
   DialogCloseButton,
   DialogContent,
   DialogTitle,
-} from '~/app/forum/components/dialog'
-import { TextField } from '~/app/forum/components/text-field'
-import { api } from '~/utils/api'
+} from '~/app/forum/_components/dialog'
+import { TextField } from '~/app/forum/_components/text-field'
+import { api } from '~/trpc/react'
 
 type EditFormData = {
   name: string
@@ -32,7 +32,7 @@ interface IProps {
 
 function getProfileQueryPathAndInput(
   id: string,
-): RouterInputs['user']['profile'] {
+): RouterInputs['user']['getForumProfile'] {
   return { id }
 }
 
@@ -43,13 +43,14 @@ const EditProfileDialog: FC<IProps> = ({ user, isOpen, onClose }) => {
       title: user.title,
     },
   })
-  const router = useRouter()
-  const utils = api.useContext()
-  const editUserMutation = api.user.edit.useMutation({
+
+  const params = useParams()
+  const utils = api.useUtils()
+  const editUserMutation = api.user.editForumProfile.useMutation({
     onSuccess: () => {
       window.location.reload()
-      return utils.user.profile.invalidate(
-        getProfileQueryPathAndInput(String(router.query.userId)),
+      return utils.user.getForumProfile.invalidate(
+        getProfileQueryPathAndInput(String(params?.userId)),
       )
     },
     onError: (error) => {
@@ -93,7 +94,7 @@ const EditProfileDialog: FC<IProps> = ({ user, isOpen, onClose }) => {
         <DialogActions>
           <Button
             type="submit"
-            isLoading={editUserMutation.isLoading}
+            isLoading={editUserMutation.isPending}
             loadingChildren="Saving"
           >
             Save

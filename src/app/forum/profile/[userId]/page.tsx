@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
 import type { PostSummaryProps } from '~/app/forum/_components/post-summary'
-import type { RouterInputs } from '~/utils/api'
+import type { RouterInputs } from '~/trpc/react'
 import { Avatar } from '~/app/forum/_components/avatar'
 import { IconButton } from '~/app/forum/_components/icon-button'
 import { EditIcon } from '~/app/forum/_components/icons'
@@ -34,7 +34,7 @@ const POSTS_PER_PAGE = 20
 
 function getProfileQueryPathAndInput(
   id: string,
-): RouterInputs['user']['profile'] {
+): RouterInputs['user']['getForumProfile'] {
   return { id }
 }
 
@@ -59,7 +59,9 @@ function ProfileInfo() {
   const profileQueryPathAndInput = getProfileQueryPathAndInput(
     String(params.userId),
   )
-  const profileQuery = api.user.profile.useQuery(profileQueryPathAndInput)
+  const profileQuery = api.user.getForumProfile.useQuery(
+    profileQueryPathAndInput,
+  )
 
   const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] =
     React.useState(false)

@@ -1,14 +1,14 @@
-import EventBulletinCard from "./event-bulletin-card";
+import { EventBulletinCard } from './event-bulletin-card'
 
 export type BulletinBoardEvent = {
-  imageUrl: string;
-};
+  imageUrl: string
+}
 
-const EventBulletinBoard = ({
-  upcomingEvents,
-}: {
-  upcomingEvents: BulletinBoardEvent[];
-}) => {
+type Props = {
+  upcomingEvents: BulletinBoardEvent[]
+}
+
+export const EventBulletinBoard = ({ upcomingEvents }: Props) => {
   return (
     <>
       <h1 className="mt-12  px-4 pt-4 text-2xl font-semibold">
@@ -32,7 +32,5 @@ const EventBulletinBoard = ({
         )}
       </div>
     </>
-  );
-};
-
-export default EventBulletinBoard;
+  )
+}

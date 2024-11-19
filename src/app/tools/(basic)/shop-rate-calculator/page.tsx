@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react'
 
-import Body from '~/components/body'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import Breakdown from './_components/breakdown'
 import HourlyPieChart from './_components/hourly-pie-chart'
@@ -51,7 +50,7 @@ export default function ShopRateCalculator() {
   }, [breakdown, monthly])
 
   return (
-    <Body>
+    <>
       <div className="mx-auto grid w-full grid-cols-1 gap-10 md:grid-cols-2 lg:gap-32">
         <div className="flex flex-col ">
           <div className="mx-auto flex max-w-lg gap-8 rounded-xl p-4 sm:p-6 md:p-8">
@@ -91,6 +90,6 @@ export default function ShopRateCalculator() {
           <Breakdown {...breakdown} />
         </div>
       </div>
-    </Body>
+    </>
   )
 }

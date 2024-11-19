@@ -1,7 +1,13 @@
 import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc'
 import { emailService } from '~/services/email'
+import { InquiryTemplate } from '~/services/email/blueprints/inquiry-template'
 import { WelcomeGuestEmail } from '~/services/email/blueprints/welcome-guest'
 import { emailConfig } from '~/services/email/config'
 
@@ -54,4 +60,120 @@ export const guestRouter = createTRPCRouter({
     })
     return guests.length > 0
   }),
+
+  getAll: adminProcedure.query(async ({ ctx }) => {
+    const guests = await ctx.db.guestSurvey.findMany()
+    return guests
+  }),
+
+  sendInquiry: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        body: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const email = await emailService.sendEmail({
+        from: emailConfig.noRespondEmail,
+        to: input.email,
+        subject: 'New Inquiry',
+        template: InquiryTemplate,
+        data: {
+          fullName: input.name,
+          message: input.body,
+          email: input.email,
+        },
+      })
+
+      return {
+        data: email,
+        message: 'Email sent. We will get back to you shortly',
+      }
+    }),
+
+  // onboard: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       businessType: z
+  //         .string()
+  //         .min(1, { message: 'Business type is required' }),
+  //       experience: z.enum(['beginner', 'intermediate', 'expert'], {
+  //         required_error: 'Experience level is required',
+  //       }),
+  //       goals: z.string().min(1, { message: 'Goals are required' }),
+  //       storeName: z.string().min(1, { message: 'Store name is required' }),
+
+  //       firstName: z.string().min(1, { message: 'First name is required' }),
+  //       lastName: z.string().min(1, { message: 'Last name is required' }),
+  //       bio: z.string().min(1, { message: 'Bio is required' }),
+  //       processes: z.string().optional(),
+  //       materials: z.string().optional(),
+  //       principles: z.string().optional(),
+  //       description: z.string().optional(),
+  //       unmoderatedForm: z.boolean().default(false),
+  //       moderatedForm: z.boolean().default(false),
+  //       hiddenForm: z.boolean().default(false),
+  //       privateForm: z.boolean().default(false),
+  //       supplyChain: z.boolean().default(false),
+  //       messagingOptIn: z.boolean().default(false),
+  //       logoPhoto: z.string().optional(),
+  //       ownerPhoto: z.string().optional(),
+  //       street: z.string().optional(),
+  //       additional: z.string().optional(),
+  //       city: z.string().optional(),
+  //       state: z.string().optional(),
+  //       zip: z.string().optional(),
+  //       country: z.string().optional(),
+  //       phone: z.string().optional(),
+  //       email: z.string().optional(),
+  //       website: z.string().optional(),
+  //     }),
+  //   )
+  //   .mutation(async ({ ctx, input }) => {
+  //     const store = await ctx.db.shop.findFirst({
+  //       where: {
+  //         ownerId: ctx.session.user.id,
+  //       },
+  //     })
+
+  //     const survey = await ctx.db.survey.findFirst({
+  //       where: {
+  //         ownerId: ctx.session.user.id,
+  //       },
+  //     })
+
+  //     if (!store) {
+  //       const newStore = await ctx.db.shop.create({
+  //         data: {
+  //           ownerId: ctx.session.user.id,
+  //           shopName: input.storeName,
+  //           description: input.description,
+  //           address: input.street,
+  //           city: input.city,
+  //           state: input.state,
+  //           zip: input.zip,
+  //           country: input.country,
+  //           logoPhoto: input.logoPhoto,
+  //           email: input.email,
+  //           phone: input.phone,
+  //           website: input.website,
+  //           ownerName: `${input.firstName} ${input.lastName}`,
+  //         },
+  //       })
+  //     }
+
+  //     if (!survey) {
+  //       const newSurvey = await ctx.db.survey.create({
+  //         data: {
+  //           ownerId: ctx.session.user.id,
+  //           shopId: store?.id,
+  //           processes: input.processes,
+  //           materials: input.materials,
+  //           principles: input.principles,
+  //         },
+  //       })
+  //     }
+  //   }),
 })

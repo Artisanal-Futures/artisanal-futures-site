@@ -1,8 +1,10 @@
-import Image from "next/image";
-import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import Image from 'next/image'
 
-//Intended to be used on the homepage to expand additional details about an artisan's event
-const EventPopup = ({ imageUrl }: { imageUrl: string }) => {
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+
+type Props = { imageUrl: string }
+
+export const EventPopup = ({ imageUrl }: Props) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -24,7 +26,5 @@ const EventPopup = ({ imageUrl }: { imageUrl: string }) => {
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
-
-export default EventPopup;
+  )
+}

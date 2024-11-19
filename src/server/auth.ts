@@ -3,11 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { DefaultSession, NextAuthOptions } from 'next-auth'
-import { cookies } from 'next/headers'
-import { NextRequest } from 'next/server'
+import { type NextRequest } from 'next/server'
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { Role } from '@prisma/client'
-import { parse } from 'cookie'
+import { type Role } from '@prisma/client'
 import { getServerSession } from 'next-auth'
 import { type Adapter } from 'next-auth/adapters'
 import Auth0Provider from 'next-auth/providers/auth0'
@@ -19,6 +17,7 @@ import { db } from '~/server/db'
 
 const useSecureCookies = env.NEXTAUTH_URL.startsWith('https://')
 const cookiePrefix = useSecureCookies ? '__Secure-' : ''
+
 const hostName = !useSecureCookies
   ? new URL(env.NEXTAUTH_URL).hostname
   : env.HOSTNAME
@@ -54,12 +53,12 @@ declare module 'next-auth' {
 export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
   return {
     callbacks: {
-      session: ({ session, token }) => ({
+      session: ({ session, user }) => ({
         ...session,
         user: {
           ...session.user,
-          id: token.sub,
-          role: token.role,
+          id: user.id,
+          role: user.role,
         },
       }),
 
@@ -90,14 +89,10 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
         else if (new URL(url).origin === baseUrl) return url
         return baseUrl
       },
-
-      jwt({ token, user }) {
-        return { ...token, ...user }
-      },
     },
 
     adapter: PrismaAdapter(db) as Adapter,
-    session: { strategy: 'jwt' },
+    // session: { strategy: 'jwt' },
 
     providers: [
       DiscordProvider({
@@ -152,23 +147,22 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
         },
       },
       callbackUrl: {
-        name: `__Secure-next-auth.callback-url`,
+        name: `${cookiePrefix}next-auth.callback-url`,
         options: {
           sameSite: 'lax',
-          secure: true,
-          httpOnly: true,
           path: '/',
           domain: '.' + hostName,
+          secure: useSecureCookies,
         },
       },
       csrfToken: {
-        name: `next-auth.csrf-token`,
+        name: `${cookiePrefix}next-auth.csrf-token`,
         options: {
-          sameSite: 'lax',
-          secure: true,
           httpOnly: true,
+          sameSite: 'lax',
           path: '/',
           domain: '.' + hostName,
+          secure: useSecureCookies,
         },
       },
     },

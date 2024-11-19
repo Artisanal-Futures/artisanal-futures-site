@@ -1,17 +1,17 @@
 import type { FC } from 'react'
 import { useRef, useState } from 'react'
-import toast from 'react-hot-toast'
 
-import { Avatar } from '~/app/forum/components/avatar'
-import { Button } from '~/app/forum/components/button'
+import { Avatar } from '~/app/forum/_components/avatar'
+import { Button } from '~/app/forum/_components/button'
 import {
   Dialog,
   DialogActions,
   DialogCloseButton,
   DialogContent,
   DialogTitle,
-} from '~/app/forum/components/dialog'
-import { api } from '~/utils/api'
+} from '~/app/forum/_components/dialog'
+import { toastService } from '~/services/toasts'
+import { api } from '~/trpc/react'
 
 interface IProps {
   user: {
@@ -25,17 +25,23 @@ interface IProps {
 const UpdateAvatarDialog: FC<IProps> = ({ user, isOpen, onClose }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadedImage, setUploadedImage] = useState(user.image)
-  const updateUserAvatarMutation = api.user.updateAvatar.useMutation({
+  const updateUserAvatarMutation = api.user.updateForumAvatar.useMutation({
     onSuccess: () => {
       window.location.reload()
     },
     onError: (error) => {
-      toast.error(`Something went wrong: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Something went wrong',
+      })
     },
   })
-  const uploadImageMutation = api.user.uploadImage.useMutation({
+  const uploadImageMutation = api.user.uploadForumImage.useMutation({
     onError: (error) => {
-      toast.error(`Error uploading image: ${error.message}`)
+      toastService.error({
+        error,
+        message: 'Error uploading image',
+      })
     },
   })
 
@@ -97,7 +103,9 @@ const UpdateAvatarDialog: FC<IProps> = ({ user, isOpen, onClose }) => {
                 if (files && files.length > 0) {
                   const file = files[0]!
                   if (file.size > 5242880) {
-                    toast.error('Image is bigger than 5MB')
+                    toastService.error({
+                      message: 'Image is bigger than 5MB',
+                    })
                     return
                   }
                   setUploadedImage(URL.createObjectURL(file))
@@ -131,7 +139,7 @@ const UpdateAvatarDialog: FC<IProps> = ({ user, isOpen, onClose }) => {
       <DialogActions>
         <Button
           isLoading={
-            updateUserAvatarMutation.isLoading || uploadImageMutation.isLoading
+            updateUserAvatarMutation.isPending || uploadImageMutation.isPending
           }
           loadingChildren="Saving changes"
           onClick={saveChanges}

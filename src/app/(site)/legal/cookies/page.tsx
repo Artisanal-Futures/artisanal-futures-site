@@ -47,7 +47,13 @@ export default function CookiePolicyPage() {
       <h2>Contact Us</h2>
       <p>
         If you have any questions about our Cookie Policy, please contact us at
-        [insert contact email].
+        <a
+          href="mailto:support@artisanalfutures.org"
+          className="font-medium text-primary underline underline-offset-4"
+        >
+          support@artisanalfutures.org
+        </a>
+        .
       </p>
     </article>
   )

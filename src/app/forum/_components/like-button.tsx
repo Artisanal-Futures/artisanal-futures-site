@@ -2,8 +2,8 @@ import * as React from 'react'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
-import { Button } from '~/app/forum/components/button'
-import { HeartFilledIcon, HeartIcon } from '~/app/forum/components/icons'
+import { Button } from '~/app/forum/_components/button'
+import { HeartFilledIcon, HeartIcon } from '~/app/forum/_components/icons'
 import {
   Tooltip,
   // TooltipArrow,

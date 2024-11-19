@@ -1,15 +1,15 @@
-import AdminLayout from '~/apps/admin/admin-layout'
+import { redirect } from 'next/navigation'
+
 import { env } from '~/env'
 import { getServerAuthSession } from '~/server/auth'
-
-import { redirect } from 'next/navigation'
+import AdminPanelLayout from './_components/admin-panel/admin-panel-layout'
 
 type Props = {
   searchParams?: { token?: string }
   children: React.ReactNode
 }
 
-export default async function AdminPanelLayout(props: Props) {
+export default async function AdminLayout(props: Props) {
   const session = await getServerAuthSession()
 
   if (!session?.user) {
@@ -24,5 +24,5 @@ export default async function AdminPanelLayout(props: Props) {
     redirect(`/unauthorized`)
   }
 
-  return <AdminLayout>{props.children}</AdminLayout>
+  return <AdminPanelLayout>{props.children}</AdminPanelLayout>
 }

@@ -3,7 +3,7 @@
 import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { StickyNote, Store, Trophy, User2 } from 'lucide-react'
 
-import StepBtn from '~/apps/onboarding/components/step-btn'
+import StepBtn from '~/app/(site)/onboarding/_components/step-btn'
 import {
   Sheet,
   SheetContent,

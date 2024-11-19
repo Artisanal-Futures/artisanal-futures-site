@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
 
-import { XIcon } from '~/app/forum/components/icons'
+import { XIcon } from '~/app/forum/_components/icons'
 
 type DialogProps = {
   isOpen: boolean

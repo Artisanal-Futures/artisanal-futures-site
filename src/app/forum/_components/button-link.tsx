@@ -2,8 +2,8 @@ import type { LinkProps } from 'next/link'
 import * as React from 'react'
 import Link from 'next/link'
 
-import type { ButtonVariant } from '~/app/forum/components/button'
-import { buttonClasses } from '~/app/forum/components/button'
+import type { ButtonVariant } from '~/app/forum/_components/button'
+import { buttonClasses } from '~/app/forum/_components/button'
 
 type ButtonLinkProps = {
   variant?: ButtonVariant

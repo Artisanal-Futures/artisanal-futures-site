@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth'
 import NextTopLoader from 'nextjs-toploader'
 
 import { Toaster } from '~/components/ui/sonner'
+import { ModalProvider } from '~/providers/modal-provider'
 import { ThemeProvider } from '~/providers/theme-provider'
 import { authOptions } from '~/server/auth'
 import { TRPCReactProvider } from '~/trpc/react'
@@ -35,6 +36,7 @@ export default async function RootLayout({ children }: Props) {
               <NextTopLoader />
               {children}
               <Toaster />
+              <ModalProvider />
             </TRPCReactProvider>
           </ThemeProvider>
         </SessionProviderClientComponent>

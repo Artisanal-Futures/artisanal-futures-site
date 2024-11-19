@@ -23,15 +23,7 @@ export function ProviderSignInButton(props: {
       type="submit"
       variant={'outline'}
       className="inline-flex w-full gap-2"
-      onClick={() =>
-        void signIn(
-          props.id,
-          { callbackUrl: callbackUrl ?? '/' },
-          {
-            newUser: 'TIMMY',
-          },
-        )
-      }
+      onClick={() => void signIn(props.id, { callbackUrl })}
       // className="inline-flex h-10 w-full flex-1 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent text-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
     >
       <Image

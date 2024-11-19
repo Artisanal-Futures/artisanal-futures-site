@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
-import { toast } from '~/apps/notifications/libs/toast'
 import { DeleteItem } from '~/components/delete-item'
 import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
@@ -15,6 +14,7 @@ import * as Form from '~/components/ui/form'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { useModal } from '~/hooks/use-modal'
+import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const formSchema = z.object({
@@ -43,7 +43,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
 }) => {
   const alertModal = useModal((state) => state)
 
-  const apiContext = api.useContext()
+  const apiContext = api.useUtils()
   const router = useNavigationRouter()
 
   const [loading, setLoading] = useState(false)
@@ -64,8 +64,9 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
   })
 
   const { mutate: createSurvey } = api.surveys.createSurvey.useMutation({
-    onSuccess: () => toast.success('Survey created.'),
-    onError: (error) => toast.error('Something went wrong', error),
+    onSuccess: () => toastService.success({ message: 'Survey created.' }),
+    onError: (error) =>
+      toastService.error({ message: 'Something went wrong', error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
@@ -74,8 +75,9 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
   })
 
   const { mutate: updateSurvey } = api.surveys.updateSurvey.useMutation({
-    onSuccess: () => toast.success('Shop updated.'),
-    onError: (error) => toast.error('Something went wrong', error),
+    onSuccess: () => toastService.success({ message: 'Shop updated.' }),
+    onError: (error) =>
+      toastService.error({ message: 'Something went wrong', error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
@@ -86,13 +88,14 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
   const { mutate: deleteSurvey } = api.surveys.deleteSurvey.useMutation({
     onSuccess: () => {
       router.push('/profile')
-      toast.success('Shop deleted.')
+      toastService.success({ message: 'Shop deleted.' })
     },
     onError: (error) =>
-      toast.error(
-        'There was an error deleting the survey. Please try again later.',
+      toastService.error({
+        message:
+          'There was an error deleting the survey. Please try again later.',
         error,
-      ),
+      }),
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)

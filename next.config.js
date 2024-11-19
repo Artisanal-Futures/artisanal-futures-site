@@ -1,4 +1,4 @@
-import withPWA from 'next-pwa'
+// import withPWA from 'next-pwa'
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
@@ -9,12 +9,12 @@ await import('./src/env.js')
 /** @type {import("next").NextConfig} */
 
 // Configuration object tells the next-pwa plugin
-const withNextPWA = withPWA({
-  dest: 'public', // Destination directory for the PWA files
-  disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
-  register: true, // Register the PWA service worker
-  skipWaiting: true, // Skip waiting for service worker activation
-})
+// const withNextPWA = withPWA({
+//   dest: 'public', // Destination directory for the PWA files
+//   disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
+//   register: true, // Register the PWA service worker
+//   skipWaiting: true, // Skip waiting for service worker activation
+// })
 
 const config = {
   reactStrictMode: true,

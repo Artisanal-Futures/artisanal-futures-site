@@ -1,6 +1,6 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
 
 import { env } from '~/env'
 import { getServerAuthSession } from '~/server/auth'
@@ -18,7 +18,7 @@ export const metadata = {
 type Props = {
   searchParams: { code: string }
 }
-export default async function SignUpPage({ searchParams }: Props) {
+export default function SignUpPage({ searchParams }: Props) {
   // const session = await getServerAuthSession()
   // if (session) redirect('/')
 
@@ -59,7 +59,6 @@ export default async function SignUpPage({ searchParams }: Props) {
       </Suspense>
 
       <ProviderSignUpForm storeName={'Artisanal Futures'}>
-
         <Suspense fallback={<div>Loading...</div>}>
           {providers &&
             Object.values(providers).map((provider) => {

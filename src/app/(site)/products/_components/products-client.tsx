@@ -5,13 +5,10 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDown } from 'lucide-react'
 
-import type { Product } from '~/apps/product/types'
-import AiSort from '~/apps/product/components/ai-sort'
-import ArtisanField from '~/apps/product/components/artisan-field'
-import AttributeField from '~/apps/product/components/attribute-field'
-import ProductCard from '~/apps/product/components/product-card'
-import SearchBar from '~/apps/product/components/search-bar'
-import useProducts from '~/apps/product/hooks/useProducts'
+import type { Product } from '~/app/(site)/products/_validators/types'
+import { ProductCard } from '~/app/(site)/products/_components/product-card'
+import { SearchBar } from '~/app/(site)/products/_components/search-bar'
+import useProducts from '~/app/(site)/products/_hooks/useProducts'
 import PageLoader from '~/components/ui/page-loader'
 import {
   Select,
@@ -20,6 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select'
+import { AiSort } from './ai-sort'
+import { ArtisanField } from './artisan-field'
+import { AttributeField } from './attribute-field'
 
 export const ProductsClient: React.FC = () => {
   const {

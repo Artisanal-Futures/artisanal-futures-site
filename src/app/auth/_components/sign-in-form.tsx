@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import { signIn } from "next-auth/react";
@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from '~/components/ui/card'
 
-// import { Form, FormLabel } from "@dws/ui/blocks/form";
+// import { Form, FormLabel } from "~/components/ui/form";
 // import { LoginSchema } from "~/schemas/auth";
 
 type Props = {
@@ -55,7 +55,7 @@ export default function SignInForm({ children }: Props) {
     <>
       <CardHeader>
         <CardTitle className="text-center text-2xl">
-          Login to Ubuntu-AI
+          Login to Artisanal Futures
         </CardTitle>
         <CardDescription className="text-center">
           Enter your email below to login to your account
