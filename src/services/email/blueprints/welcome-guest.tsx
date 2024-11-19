@@ -27,13 +27,10 @@ export const WelcomeGuestEmail = (props: Props) => {
         <Text>Hello {props.name},</Text>
 
         <Text>
-          We&apos;re thrilled to welcome you to Artisanal Futures! We&apos;re
-          excited to have you join our community of artisans and creators.
-        </Text>
-
-        <Text>
-          To help you get started, we&apos;d like to invite you to our upcoming
-          webinar where you&apos;ll learn more about our latest AI Agent tool.
+          Welcome Ubuntu-ai artisans! As you can see we are working with
+          &quot;Artisanal Futures&quot; in Detroit. The Artisanal Futures
+          Upcycling AI tool will be available to you for FREE. Attend our
+          webinar to learn more. Please join us!
         </Text>
 
         <EmailImportantText>
