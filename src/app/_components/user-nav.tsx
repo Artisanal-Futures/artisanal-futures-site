@@ -109,10 +109,19 @@ const UserNav = () => {
               </>
             )}
 
-            {sessionData?.user?.role === 'GUEST' && (
+            {(sessionData?.user?.role === 'GUEST' ||
+              sessionData?.user?.role === 'ADMIN') && (
               <DropdownMenuItem>
                 <Link href="/welcome" className="w-full">
                   Guest Survey
+                </Link>
+              </DropdownMenuItem>
+            )}
+
+            {sessionData?.user?.role === 'ADMIN' && (
+              <DropdownMenuItem>
+                <Link href="/admin/dashboard" className="w-full">
+                  Admin Dashboard
                 </Link>
               </DropdownMenuItem>
             )}

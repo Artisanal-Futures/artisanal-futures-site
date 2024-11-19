@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: Props) {
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <SessionProviderClientComponent session={session}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             <TRPCReactProvider>
               <NextTopLoader />
               {children}
