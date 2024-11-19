@@ -81,6 +81,7 @@ model User {
   generationSurveys   GenerationSurvey[]
   variations          Variation[]
   modifications       Modification[]
+  guestSurveys        GuestSurvey[]
 }
 
 model VerificationToken {
@@ -670,4 +671,8 @@ model GuestSurvey {
   otherPractice     String?
   email             String
   createdAt         DateTime  @default(now())
+  userId            String?
+  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
 }

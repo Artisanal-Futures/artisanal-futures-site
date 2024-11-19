@@ -32,6 +32,7 @@ export const guestRouter = createTRPCRouter({
           artisanalPractice: input.artisanalPractice,
           otherPractice: input.otherPractice,
           email: ctx.session.user.email!,
+          userId: ctx.session.user.id,
         },
       })
 
@@ -53,12 +54,15 @@ export const guestRouter = createTRPCRouter({
     }),
 
   isCompleted: protectedProcedure.query(async ({ ctx }) => {
-    const guests = await ctx.db.guestSurvey.findMany({
+    const guests = await ctx.db.guestSurvey.findFirst({
       where: {
-        email: ctx.session.user.email!,
+        OR: [
+          { userId: ctx.session.user.id },
+          { email: ctx.session.user.email! },
+        ],
       },
     })
-    return guests.length > 0
+    return !!guests
   }),
 
   getAll: adminProcedure.query(async ({ ctx }) => {
