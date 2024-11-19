@@ -7,6 +7,7 @@ import { z } from 'zod'
 
 import { AbsolutePageLoader } from '~/components/absolute-page-loader'
 import { InputFormField } from '~/components/inputs/input-form-field'
+import { LoadButton } from '~/components/load-button'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -90,7 +91,9 @@ export default function ArtisanRegistrationForm() {
       <CardHeader>
         <CardTitle>Guest Registration</CardTitle>
         <CardDescription>
-          Welcome! Please fill out the form below to register as a guest.
+          Welcome! Please fill out the form below to register as a guest. You
+          need to complete this form in order to get additional details about
+          the webinar coming up.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -172,9 +175,13 @@ export default function ArtisanRegistrationForm() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <LoadButton
+              type="submit"
+              className="w-full"
+              isLoading={guestRegistrationMutation.isPending}
+            >
               Register
-            </Button>
+            </LoadButton>
           </CardFooter>
         </form>
       </Form>
