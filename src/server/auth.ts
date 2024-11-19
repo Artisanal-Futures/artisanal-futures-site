@@ -2,15 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { DefaultSession, NextAuthOptions } from 'next-auth'
-import { type NextRequest } from 'next/server'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { type Role } from '@prisma/client'
+import type { DefaultSession, NextAuthOptions } from 'next-auth'
 import { getServerSession } from 'next-auth'
 import { type Adapter } from 'next-auth/adapters'
 import Auth0Provider from 'next-auth/providers/auth0'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
+import { type NextRequest } from 'next/server'
 
 import { env } from '~/env'
 import { db } from '~/server/db'
@@ -113,9 +113,12 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
         clientSecret: env.GOOGLE_CLIENT_SECRET,
         authorization: {
           params: {
-            prompt: 'consent',
+            prompt: 'select_account', // Changed from 'consent' to 'select_account'
             access_type: 'offline',
             response_type: 'code',
+            // Add these parameters:
+            include_granted_scopes: true,
+            scope: 'openid email profile'
           },
         },
       }),

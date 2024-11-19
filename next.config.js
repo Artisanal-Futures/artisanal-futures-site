@@ -28,15 +28,37 @@ const config = {
     locales: ['en'],
     defaultLocale: 'en',
   },
+
   images: {
-    domains: [
-      'res.cloudinary.com',
-      'media.githubusercontent.com',
-      'img.clerk.com',
-      'avatars.githubusercontent.com',
-      'cdn.discordapp.com',
-      'lh3.googleusercontent.com',
-      's.gravatar.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.discordapp.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 's.gravatar.com',
+      },
     ],
   },
 }
