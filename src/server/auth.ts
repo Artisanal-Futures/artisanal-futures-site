@@ -111,6 +111,13 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
       GoogleProvider({
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
+        authorization: {
+          params: {
+            prompt: 'consent',
+            access_type: 'offline',
+            response_type: 'code',
+          },
+        },
       }),
       Auth0Provider({
         clientId: env.AUTH0_CLIENT_ID,
@@ -119,6 +126,8 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
         authorization: {
           params: {
             prompt: 'login',
+            access_type: 'offline',
+            response_type: 'code',
           },
         },
       }),
