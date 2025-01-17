@@ -19,6 +19,7 @@
     "@auth/prisma-adapter": "^1.6.0",
     "@clerk/nextjs": "^4.23.2",
     "@daybrush/utils": "^1.13.0",
+    "@dreamwalker-studios/toasts": "^0.1.4",
     "@formkit/auto-animate": "^0.8.2",
     "@headlessui/react": "^1.7.16",
     "@hookform/resolvers": "^3.9.0",
