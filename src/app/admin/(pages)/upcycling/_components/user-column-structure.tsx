@@ -4,6 +4,9 @@ import { type ColumnDef } from '@tanstack/react-table'
 
 // import { CellActions } from '~/app/admin/_components/cell-actions'
 import { RowLink } from '~/app/admin/_components/row-link'
+import { AdvancedDataTableColumnHeader } from '~/components/tables/advanced-data-table-header'
+import { buttonVariants } from '~/components/ui/button'
+import { cn } from '~/utils/styles'
 import { type UpcyclingColumn } from '../_validators/types'
 import { DeleteItemBtn } from './delete-item-btn'
 import { ViewLikeDialog } from './view-like-dialog'
@@ -11,12 +14,40 @@ import { ViewPromptDialog } from './view-prompt-dialog'
 
 export const attributeColumnStructure: ColumnDef<UpcyclingColumn>[] = [
   {
+    id: 'user',
+    accessorFn: (row) =>
+      `${row.user?.name ?? 'Guest'} ${row.user?.email ?? 'No email'}`,
     header: 'User',
     cell: ({ row }) => (
-      <RowLink
-        id={row.original.user?.id ?? ''}
-        name={row.original.user?.email ?? 'Guest'}
-      />
+      <div className="flex flex-col items-start space-y-1">
+        <div className={cn('mx-0 px-0 text-sm font-medium text-gray-700')}>
+          {row.original.user?.name ?? 'Guest'}
+        </div>
+        <div className="text-xs text-gray-500">
+          {row.original.user?.email ?? 'No email'}
+        </div>
+        <div className="text-xs text-gray-400">
+          ID: {row.original.user?.id ?? 'No ID'}
+        </div>
+      </div>
+    ),
+  },
+
+  {
+    accessorKey: 'generation_date',
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Created At" />
+    ),
+    cell: ({ row }) => (
+      <div className="flex flex-col items-start">
+        <div className={cn('mx-0 px-0 text-sm font-medium text-gray-700')}>
+          {new Date(row.original.generation_date).toLocaleDateString()} at{' '}
+          {new Date(row.original.generation_date).toLocaleTimeString()}
+        </div>
+        <div className="text-xs text-gray-500">
+          Generation took {row.original.generation_time}s
+        </div>
+      </div>
     ),
   },
   {

@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { toastService } from '@dreamwalker-studios/toasts'
+import { Loader2, Trash } from 'lucide-react'
 
 import {
   AlertDialog,
@@ -15,7 +16,6 @@ import {
   AlertDialogTitle,
 } from '~/components/ui/alert-dialog'
 import { Button, buttonVariants } from '~/components/ui/button'
-import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 import { cn } from '~/utils/styles'
 
@@ -89,9 +89,10 @@ export function DeleteItemBtn({ id }: { id: number }) {
       <Button
         variant="destructive"
         size="sm"
-        className=" h-8 "
+        className=" h-8 gap-1 "
         onClick={() => setIsDeleteOpen(true)}
       >
+        <Trash className="h-4 w-4" />
         Delete
       </Button>{' '}
       <DeleteDialog

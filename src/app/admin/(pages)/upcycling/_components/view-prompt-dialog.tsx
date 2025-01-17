@@ -1,5 +1,7 @@
 'use client'
 
+import { Eye } from 'lucide-react'
+
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
@@ -19,8 +21,8 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className=" h-8 ">
-          View Details
+        <Button variant="outline" size="sm" className=" h-8 gap-1">
+          <Eye className="h-4 w-4" /> View
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
@@ -85,6 +87,10 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
               <div className="text-sm text-muted-foreground">
                 <p>ID: {item.id}</p>
                 <p>User ID: {item.user_id}</p>
+                <p>
+                  Created At: {new Date(item.generation_date).toLocaleString()}
+                </p>
+                <p>Generation Time: {item.generation_time} seconds</p>
               </div>
             </div>
           </div>

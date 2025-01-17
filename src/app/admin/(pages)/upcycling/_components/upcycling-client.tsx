@@ -12,7 +12,7 @@ export function UpcyclingClient({ upcycling }: Props) {
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="name"
+        searchKey="user"
         columns={attributeColumnStructure}
         data={upcycling as UpcyclingColumn[]}
         addButton={<ExportAsCSV upcycling={upcycling} />}
