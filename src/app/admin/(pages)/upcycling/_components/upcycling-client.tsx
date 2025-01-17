@@ -1,8 +1,8 @@
 'use client'
 
+import type { UpcyclingColumn } from '../_validators/types'
+import type { UpcyclingItem } from '~/types'
 import { AdvancedDataTable } from '~/components/tables/advanced-data-table'
-import { UpcyclingItem } from '~/types'
-import { UpcyclingColumn } from '../_validators/types'
 import { ExportAsCSV } from './export-as-csv'
 import { attributeColumnStructure } from './user-column-structure'
 

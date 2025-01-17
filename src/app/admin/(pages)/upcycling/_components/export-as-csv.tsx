@@ -33,7 +33,7 @@ export function ExportAsCSV({ upcycling }: ExportAsCSVProps) {
         `"${item.like?.is_liked ? 'Liked' : item.like?.is_liked === false ? 'Disliked' : 'No Rating'}"`,
         `"${item.like?.mod_category ?? ''}"`,
         `"${item.like?.reason?.replace(/"/g, '""') ?? ''}"`,
-        new Date(item.like?.liked_at ?? '').toLocaleString(),
+        new Date(item.generation_date ?? '').toLocaleString(),
       ].join(',')
     })
 

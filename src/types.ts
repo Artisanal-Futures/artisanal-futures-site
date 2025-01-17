@@ -370,6 +370,8 @@ export type UpcyclingItem = {
   llm_response: string
   user: User | null
   like: Like | null
+  generation_time: number
+  generation_date: Date
 }
 
 export type Like = {
