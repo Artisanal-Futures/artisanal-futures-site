@@ -1,8 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-
 import { buttonVariants } from '~/components/ui/button'
 import { cn } from '~/utils/styles'
 
@@ -13,9 +10,7 @@ type Props = {
   isActive?: boolean
 }
 
-export const RowLink = ({ id, name, href, isActive }: Props) => {
-  const pathname = usePathname()
-
+export const RowLink = ({ id, name, isActive }: Props) => {
   return (
     // <div className="flex flex-col items-start">
     //   <Link

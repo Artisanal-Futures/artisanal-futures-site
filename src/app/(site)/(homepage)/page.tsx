@@ -33,7 +33,6 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-
       <div className="mt-12 grid grid-cols-1 gap-5 bg-slate-200 p-4 md:grid-cols-3 md:gap-10">
         {CARD_DATA.map((item, idx) => (
           <HomePageCard {...item} key={idx} />

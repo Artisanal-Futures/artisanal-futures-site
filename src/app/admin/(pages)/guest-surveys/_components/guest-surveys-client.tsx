@@ -13,7 +13,7 @@ export function GuestSurveysClient({ guests }: Props) {
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="name"
+        searchKey="user"
         columns={guestSurveyColumnStructure}
         data={guests as GuestSurveyColumn[]}
         addButton={<ExportAsCSV surveys={guests} />}

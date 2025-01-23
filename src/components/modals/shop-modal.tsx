@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
 import * as z from 'zod'
 
 import { Button } from '~/components/ui/button'
@@ -39,7 +39,7 @@ export const ShopModal = () => {
       setLoading(false)
     },
     onError: (error) => {
-      toast.error('Something went wrong with creating your shop.')
+      toastService.error('Something went wrong with creating your shop.')
       console.error(error)
       setLoading(false)
     },
@@ -50,10 +50,10 @@ export const ShopModal = () => {
 
   const { mutate: updateRole } = api.auth.changeRole.useMutation({
     onSuccess: () => {
-      toast.success('Role updated.')
+      toastService.success('Role updated.')
     },
     onError: (error) => {
-      toast.error('Something went wrong with updating your role.')
+      toastService.error('Something went wrong with updating your role.')
       console.error(error)
     },
   })

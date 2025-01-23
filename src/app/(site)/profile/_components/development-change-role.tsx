@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { toast } from 'react-hot-toast'
+import { toastService } from '@dreamwalker-studios/toasts'
 
 import { Button } from '~/components/ui/button'
 import { api } from '~/trpc/react'
@@ -11,11 +11,11 @@ const DevelopmentChangeRole = () => {
 
   const { mutate: updateRole } = api.auth.changeRole.useMutation({
     onSuccess: () => {
-      toast.success('Role updated.')
+      toastService.success('Role updated.')
       router.refresh()
     },
     onError: (error) => {
-      toast.error('Something went wrong')
+      toastService.error('Something went wrong')
       console.error(error)
     },
   })

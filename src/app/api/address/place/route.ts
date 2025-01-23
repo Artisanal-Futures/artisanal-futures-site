@@ -1,6 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
-import { AddressType } from '~/components/inputs/address-autocomplete'
+import type { AddressType } from '~/components/inputs/address-autocomplete'
 import { env } from '~/env'
 
 export async function GET(request: NextRequest) {

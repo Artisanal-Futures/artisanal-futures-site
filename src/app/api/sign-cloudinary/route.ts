@@ -1,17 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { v2 as cloudinary } from 'cloudinary'
 import { getServerSession } from 'next-auth/next'
 
 import { env } from '~/env'
 import { authOptions } from '~/server/auth'
-
-type Data = {
-  timestamp: number
-  folder: string
-  signature: string
-  apiKey: string
-  cloudName: string
-}
 
 cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
@@ -25,7 +17,7 @@ const apiSecret = cloudinary.config().api_secret!
 const apiKey = cloudinary.config().api_key!
 const folder = 'beam'
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const session = await getServerSession(authOptions)
 
   if (!session) {

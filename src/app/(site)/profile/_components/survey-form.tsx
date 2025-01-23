@@ -3,6 +3,7 @@
 import type { Shop, Survey } from '@prisma/client'
 import { useState } from 'react'
 import { useRouter as useNavigationRouter } from 'next/navigation'
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -14,7 +15,6 @@ import * as Form from '~/components/ui/form'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { useModal } from '~/hooks/use-modal'
-import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const formSchema = z.object({

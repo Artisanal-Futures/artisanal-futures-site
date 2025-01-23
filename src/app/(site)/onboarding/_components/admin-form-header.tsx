@@ -1,21 +1,19 @@
-import type { ElementRef, FC, HTMLAttributes } from "react";
+import type { ElementRef, FC, HTMLAttributes } from 'react'
 
-import { Heading } from "~/components/ui/heading";
-import { Separator } from "~/components/ui/separator";
-import { cn } from "~/utils/styles";
-import { BackToButton } from "./back-to-button";
+import { Separator } from '~/components/ui/separator'
+import { cn } from '~/utils/styles'
 
 type Props = {
-  link: string;
-  contentName: string;
-  title: string;
-  description?: string;
-} & HTMLAttributes<ElementRef<"div">>;
+  link: string
+  contentName: string
+  title: string
+  description?: string
+} & HTMLAttributes<ElementRef<'div'>>
 export const AdminFormHeader: FC<Props> = ({
   title,
-  contentName,
+
   description,
-  link,
+
   children,
   className,
   ...props
@@ -24,8 +22,8 @@ export const AdminFormHeader: FC<Props> = ({
     <header className="sticky top-0 z-30 bg-white ">
       <div
         className={cn(
-          " mx-auto flex max-w-7xl items-center justify-between px-8 py-4",
-          className
+          ' mx-auto flex max-w-7xl items-center justify-between px-8 py-4',
+          className,
         )}
         {...props}
       >
@@ -41,5 +39,5 @@ export const AdminFormHeader: FC<Props> = ({
       </div>
       <Separator className="sticky top-32  z-30 shadow" />
     </header>
-  );
-};
+  )
+}

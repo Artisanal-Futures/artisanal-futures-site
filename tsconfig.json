@@ -27,7 +27,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -37,9 +38,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
+    ".next/types/**/*.ts",
+
     "node_modules",
     "cypress",
     "**/*.cy.js",
@@ -48,5 +48,6 @@
     "**/*.spec.ts",
     "cypress.config.js",
     "myfirsttest.js"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

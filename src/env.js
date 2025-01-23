@@ -42,6 +42,10 @@ export const env = createEnv({
     GOOGLE_PLACES_API_KEY: z.string(),
 
     AI_AGENT_BACKEND_URL: z.string().url(),
+
+    MINIO_ACCESS_KEY: z.string(),
+    MINIO_SECRET_KEY: z.string(),
+    MINIO_ENDPOINT: z.string(),
   },
 
   /**
@@ -50,6 +54,19 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_STORAGE_URL: z.string(),
+    NEXT_PUBLIC_HEART_VOTE_DISABLED: z.preprocess(
+      (str) => str === 'true' || str === true,
+      z.boolean().optional().default(false),
+    ),
+    NEXT_PUBLIC_VOTE_DISABLED: z.preprocess(
+      (str) => str === 'true' || str === true,
+      z.boolean().optional().default(false),
+    ),
+    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED: z.preprocess(
+      (str) => str === 'true' || str === true,
+      z.boolean().optional().default(false),
+    ),
     NEXT_PUBLIC_ENABLE_IMAGE_UPLOAD: z
       .string()
       .refine((s) => s === 'true' || s === 'false')
@@ -66,6 +83,16 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
+    MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,
+    MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
+    MINIO_ENDPOINT: process.env.MINIO_ENDPOINT,
+
+    NEXT_PUBLIC_VOTE_DISABLED: process.env.NEXT_PUBLIC_VOTE_DISABLED,
+    NEXT_PUBLIC_HEART_VOTE_DISABLED:
+      process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
+    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED:
+      process.env.NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,

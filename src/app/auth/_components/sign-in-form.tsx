@@ -1,9 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import { signIn } from "next-auth/react";
@@ -27,9 +25,6 @@ type Props = {
   children: ReactNode
 }
 export default function SignInForm({ children }: Props) {
-  const [loading, isLoading] = useState(false)
-  const searchParams = useSearchParams()
-
   // const form = useForm<z.infer<typeof LoginSchema>>({
   //   resolver: zodResolver(LoginSchema),
   //   defaultValues: { email: "", password: "" },

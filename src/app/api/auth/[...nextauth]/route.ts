@@ -1,4 +1,5 @@
-import { NextRequest } from 'next/server'
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import type { NextRequest } from 'next/server'
 import NextAuth from 'next-auth'
 
 import { generateAuthOptions } from '~/server/auth'

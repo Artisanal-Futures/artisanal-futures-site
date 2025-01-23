@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NextResponse } from 'next/server'
 import axios from 'axios'
 

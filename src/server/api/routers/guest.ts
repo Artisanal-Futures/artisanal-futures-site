@@ -1,3 +1,5 @@
+import { emailService } from '@dreamwalker-studios/email'
+import { env as emailEnv } from '@dreamwalker-studios/email/env'
 import { z } from 'zod'
 
 import {
@@ -6,10 +8,8 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc'
-import { emailService } from '~/services/email'
 import { InquiryTemplate } from '~/services/email/blueprints/inquiry-template'
 import { WelcomeGuestEmail } from '~/services/email/blueprints/welcome-guest'
-import { emailConfig } from '~/services/email/config'
 
 export const guestRouter = createTRPCRouter({
   create: protectedProcedure
@@ -37,7 +37,7 @@ export const guestRouter = createTRPCRouter({
       })
 
       await emailService.sendEmail({
-        from: emailConfig.noRespondEmail,
+        from: emailEnv.NO_RESPOND_EMAIL,
         to: ctx.session.user.email!,
         subject: 'Welcome to Artisanal Futures',
         template: WelcomeGuestEmail,
@@ -80,7 +80,7 @@ export const guestRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const email = await emailService.sendEmail({
-        from: emailConfig.noRespondEmail,
+        from: emailEnv.NO_RESPOND_EMAIL,
         to: input.email,
         subject: 'New Inquiry',
         template: InquiryTemplate,

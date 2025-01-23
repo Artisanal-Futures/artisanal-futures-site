@@ -1,12 +1,14 @@
 import * as React from 'react'
-import { Link, Text } from '@react-email/components'
-import { SingleColumn } from 'responsive-react-email'
-
-import { EmailBody } from '../components/email-body'
-import { EmailCallToActionButton } from '../components/email-call-to-action-button'
-import { EmailImportantText } from '../components/email-important-text'
-import { EmailLogo } from '../components/email-logo'
-import { EmailSignature } from '../components/email-signature'
+import {
+  EmailBody,
+  EmailCallToActionButton,
+  EmailImportantText,
+  EmailLogo,
+  EmailSignature,
+  Link,
+  SingleColumn,
+  Text,
+} from '@dreamwalker-studios/email/components'
 
 type Props = {
   name: string

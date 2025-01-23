@@ -4,7 +4,7 @@ import type { ElementRef, FC, HTMLAttributes } from 'react'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 
-import { BreadcrumbItem } from '~/components/ui/breadcrumb'
+import type { BreadcrumbItem } from '~/components/ui/breadcrumb'
 import { buttonVariants } from '~/components/ui/button'
 import { cn } from '~/utils/styles'
 

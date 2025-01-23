@@ -1,8 +1,8 @@
 'use client'
 
+import type { Role } from '@prisma/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Role } from '@prisma/client'
 import { ShieldCheck, Store, User } from 'lucide-react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 

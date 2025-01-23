@@ -1,5 +1,6 @@
 'use client'
 
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -8,7 +9,6 @@ import { z } from 'zod'
 import { AbsolutePageLoader } from '~/components/absolute-page-loader'
 import { InputFormField } from '~/components/inputs/input-form-field'
 import { LoadButton } from '~/components/load-button'
-import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,7 +20,6 @@ import {
 import { Form } from '~/components/ui/form'
 import { Label } from '~/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
-import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const GuestSchema = z.object({
@@ -51,9 +50,7 @@ export default function ArtisanRegistrationForm() {
   })
 
   const guestRegistrationMutation = api.guest.create.useMutation({
-    onSuccess: ({ message }) => {
-      toastService.success({ message })
-    },
+    onSuccess: ({ message }) => toastService.success(message),
     onError: (error) => {
       toastService.error({
         error,
@@ -63,10 +60,8 @@ export default function ArtisanRegistrationForm() {
     onSettled: () => void apiUtils.guest.invalidate(),
   })
 
-  const handleSubmit = (data: z.infer<typeof GuestSchema>) => {
+  const handleSubmit = (data: z.infer<typeof GuestSchema>) =>
     guestRegistrationMutation.mutate(data)
-    // Here you would typically send the data to your server
-  }
 
   if (isPending) return <AbsolutePageLoader />
 

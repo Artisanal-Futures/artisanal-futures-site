@@ -1,4 +1,4 @@
-import { type GuestSurvey } from '@prisma/client'
+import { type GuestSurvey, type User } from '@prisma/client'
 import * as z from 'zod'
 
 import type { AdminColumn } from '~/types'
@@ -12,5 +12,7 @@ export const guestSurveySchema = z.object({
   artisanalPractice: z.string(),
 })
 
-export type GuestSurveyColumn = AdminColumn<GuestSurvey>
+export type GuestSurveyColumn = AdminColumn<GuestSurvey> & {
+  user: User | null
+}
 export type GuestSurveyFormValues = z.infer<typeof guestSurveySchema>

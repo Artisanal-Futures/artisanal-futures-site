@@ -1,8 +1,9 @@
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc'
 import { authRouter } from './routers/auth'
-import { commentRouter } from './routers/forum/comment'
-import { postRouter } from './routers/forum/post'
+import { forumRouter } from './routers/forum'
+import { forumSubredditRouter } from './routers/forum-subreddit'
 import { guestRouter } from './routers/guest'
+import { migrationRouter } from './routers/migration'
 import { productsRouter } from './routers/products'
 import { shopsRouter } from './routers/shops'
 import { surveysRouter } from './routers/surveys'
@@ -20,11 +21,12 @@ export const appRouter = createTRPCRouter({
 
   auth: authRouter,
   user: userRouter,
-  post: postRouter,
-  comment: commentRouter,
+
+  migration: migrationRouter,
 
   products: productsRouter,
-
+  forum: forumRouter,
+  forumSubreddit: forumSubredditRouter,
   guest: guestRouter,
   upcycling: upcyclingRouter,
 })

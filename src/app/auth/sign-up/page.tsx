@@ -1,25 +1,14 @@
 import { Suspense } from 'react'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 import { Separator } from '~/components/ui/separator'
-import { env } from '~/env'
-import { getServerAuthSession } from '~/server/auth'
-import {
-  ErrorText,
-  ProviderSignInButton,
-  ProviderSignInForm,
-} from '../_components'
+import { ErrorText, ProviderSignInButton } from '../_components'
 import { ProviderSignUpForm } from '../_components/provider-sign-up-form'
 
 export const metadata = {
   title: 'Sign In ',
 }
 
-type Props = {
-  searchParams: { code: string }
-}
-export default function SignUpPage({ searchParams }: Props) {
+export default function SignUpPage() {
   // const session = await getServerAuthSession()
   // if (session) redirect('/')
 

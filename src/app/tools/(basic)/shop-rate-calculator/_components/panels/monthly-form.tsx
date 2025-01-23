@@ -1,5 +1,6 @@
 'use client'
 
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -18,7 +19,6 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
-import { toast } from '~/components/ui/use-toast'
 import { useShopCalculator } from '../../_hooks/use-shop-calculator'
 
 const monthlyFormSchema = z.object({
@@ -73,13 +73,8 @@ export function MonthlyCostForm() {
 
     setMonthlyExpenses(data as MonthlyCosts)
 
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    toastService.feedback({
+      object: data,
     })
   }
 

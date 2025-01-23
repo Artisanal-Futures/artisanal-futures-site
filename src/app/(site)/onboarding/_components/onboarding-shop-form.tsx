@@ -2,7 +2,7 @@
 
 import type { Shop } from '@prisma/client'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -22,7 +22,6 @@ import {
 import { Input } from '~/components/ui/input'
 import LogoUpload from '~/components/ui/logo-upload'
 import { Textarea } from '~/components/ui/textarea'
-import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 import { AdminFormBody } from './admin-form-body'
 import { AdminFormHeader } from './admin-form-header'
@@ -57,9 +56,7 @@ export const OnboardingShopForm: React.FC<SettingsFormProps> = ({
   initialData,
   successCallback,
 }) => {
-  console.log(initialData)
-  const params = useRouter()
-  const apiContext = api.useContext()
+  const apiContext = api.useUtils()
 
   const { data: sessionData } = useSession()
 

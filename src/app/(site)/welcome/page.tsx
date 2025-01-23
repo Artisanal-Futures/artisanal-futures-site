@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 
-import { env } from '~/env'
 import { getServerAuthSession } from '~/server/auth'
 import ArtisanRegistrationForm from './_components/guest-form'
 

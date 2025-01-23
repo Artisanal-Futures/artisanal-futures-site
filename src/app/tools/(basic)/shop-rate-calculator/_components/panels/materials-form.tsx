@@ -1,5 +1,6 @@
 'use client'
 
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trash } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -26,7 +27,6 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
-import { toast } from '~/components/ui/use-toast'
 import { useShopCalculator } from '../../_hooks/use-shop-calculator'
 
 const materialsFormSchema = z.object({
@@ -87,13 +87,8 @@ export function MaterialsCostForm() {
     }, 0)
     setMaterials((materialCosts ?? 0) / (hours === 0 ? 1 : hours))
     setMaterialExpenses(data as MaterialCosts)
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    toastService.feedback({
+      object: data,
     })
   }
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -16,7 +17,6 @@ import {
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { toast } from '~/components/ui/use-toast'
 import { useShopCalculator } from '../../_hooks/use-shop-calculator'
 
 const laborFormSchema = z.object({
@@ -44,13 +44,8 @@ export function LaborCostForm() {
     // }, 0);
     setLabor(AVG_WEEK_PER_MONTH * hours * rate)
     setLaborExpenses(data as LaborCosts)
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    toastService.feedback({
+      object: data,
     })
   }
 

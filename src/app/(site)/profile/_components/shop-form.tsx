@@ -3,6 +3,7 @@
 import type { Shop } from '@prisma/client'
 import { useState } from 'react'
 import { useRouter as useNavigationRouter, useParams } from 'next/navigation'
+import { toastService } from '@dreamwalker-studios/toasts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -16,7 +17,6 @@ import LogoUpload from '~/components/ui/logo-upload'
 import { Separator } from '~/components/ui/separator'
 import { Textarea } from '~/components/ui/textarea'
 import { useModal } from '~/hooks/use-modal'
-import { toastService } from '~/services/toasts'
 import { api } from '~/trpc/react'
 
 const formSchema = z.object({

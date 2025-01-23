@@ -1,11 +1,11 @@
 import '~/styles/globals.css'
 
 import { type Metadata } from 'next'
+import { Toaster } from '@dreamwalker-studios/toasts'
 import { GeistSans } from 'geist/font/sans'
 import { getServerSession } from 'next-auth'
 import NextTopLoader from 'nextjs-toploader'
 
-import { Toaster } from '~/components/ui/sonner'
 import { ModalProvider } from '~/providers/modal-provider'
 import { ThemeProvider } from '~/providers/theme-provider'
 import { authOptions } from '~/server/auth'
