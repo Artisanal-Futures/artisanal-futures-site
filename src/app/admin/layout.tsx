@@ -2,14 +2,14 @@ import { redirect } from 'next/navigation'
 
 import { env } from '~/env'
 import { getServerAuthSession } from '~/server/auth'
-import AdminPanelLayout from './_components/admin-panel/admin-panel-layout'
+import SidebarWrapper from './_components/sidebar-wrapper'
 
 type Props = {
   searchParams?: { token?: string }
   children: React.ReactNode
 }
 
-export default async function AdminLayout(props: Props) {
+export default async function AdminPanelLayout(props: Props) {
   const session = await getServerAuthSession()
 
   if (!session?.user) {
@@ -20,9 +20,9 @@ export default async function AdminLayout(props: Props) {
     )
   }
 
-  if (session?.user?.role !== 'ADMIN') {
+  if (session?.user?.role === 'USER') {
     redirect(`/unauthorized`)
   }
 
-  return <AdminPanelLayout>{props.children}</AdminPanelLayout>
+  return <SidebarWrapper>{props.children}</SidebarWrapper>
 }

@@ -59,6 +59,14 @@ const config = {
         protocol: 'https',
         hostname: 's.gravatar.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.shopify.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.artisanalfutures.org',
+      },
     ],
   },
 }

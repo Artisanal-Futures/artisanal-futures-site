@@ -1,13 +1,5 @@
-'use client'
+"use client";
 
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-} from '@tanstack/react-table'
-import * as React from 'react'
-import { DialogTrigger } from '@radix-ui/react-dialog'
 import {
   flexRender,
   getCoreRowModel,
@@ -17,26 +9,13 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { uniqueId } from 'lodash'
-import { type LucideIcon } from 'lucide-react'
-import {
-  type ArrayPath,
-  type FieldValues,
-  type Path,
-  type UseFormReturn,
-} from 'react-hook-form'
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+} from "@tanstack/react-table";
 
-import { Button } from '~/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog'
-import { FormField } from '~/components/ui/form'
+import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -45,7 +24,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
+} from "~/components/ui/select";
 import {
   Table,
   TableBody,
@@ -53,45 +32,66 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '~/components/ui/table'
-import { DataTablePagination } from './advanced-data-table-pagination'
-import { DataTableToolbar } from './advanced-data-table-toolbar'
+} from "~/components/ui/table";
+import { DataTablePagination } from "./advanced-data-table-pagination";
+import { DataTableToolbar } from "./advanced-data-table-toolbar";
+
+import { uniqueId } from "lodash";
+import { type LucideIcon } from "lucide-react";
+import {
+  type ArrayPath,
+  type FieldValues,
+  type Path,
+  type UseFormReturn,
+} from "react-hook-form";
+
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { FormField } from "~/components/ui/form";
 
 export type FilterOption = {
-  column: string
-  title: string
+  column: string;
+  title: string;
   filters: {
-    value: string
-    label: string
-    icon: LucideIcon
-  }[]
-}
+    value: string;
+    label: string;
+    icon: LucideIcon;
+  }[];
+};
 
 export type MassSelectOption = {
-  label: string
-  icon?: LucideIcon
-  onClick: (data: unknown) => void
-}
+  label: string;
+  icon?: LucideIcon;
+  onClick: (data: unknown) => void;
+};
 
 interface DataTableProps<
   TData,
   TValue,
   FData extends FieldValues,
   SData extends {
-    id: string
-    [key: string]: string | number | Date | string[]
+    id: string;
+    [key: string]: string | number | Date | string[];
   },
 > {
-  columns: ColumnDef<TData, TValue>[]
-  handleOnMediaDelete?: (url: string) => void
-  data: TData[]
-  searchKey: string
-  forceUpdate?: () => void
-  filters?: FilterOption[]
-  form: UseFormReturn<FData>
-  formKey: ArrayPath<FData>
-  ignoreColumns?: string[]
-  renderSelect?: SData[]
+  columns: ColumnDef<TData, TValue>[];
+  handleOnMediaDelete?: (url: string) => void;
+  data: TData[];
+  searchKey: string;
+  forceUpdate?: () => void;
+  filters?: FilterOption[];
+  form: UseFormReturn<FData>;
+  formKey: ArrayPath<FData>;
+  ignoreColumns?: string[];
+  renderSelect?: SData[];
 }
 
 export function AdvancedDataTableForm<
@@ -99,8 +99,8 @@ export function AdvancedDataTableForm<
   TValue,
   FData extends FieldValues,
   SData extends {
-    id: string
-    [key: string]: string | number | Date | string[]
+    id: string;
+    [key: string]: string | number | Date | string[];
   },
 >({
   columns,
@@ -112,13 +112,13 @@ export function AdvancedDataTableForm<
 
   renderSelect,
 }: DataTableProps<TData, TValue, FData, SData>) {
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -146,7 +146,7 @@ export function AdvancedDataTableForm<
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     autoResetAll: false,
-  })
+  });
 
   return (
     <div className="w-full space-y-4">
@@ -167,7 +167,7 @@ export function AdvancedDataTableForm<
                               header.getContext(),
                             )}
                       </TableHead>
-                    )
+                    );
                   })}
                 </TableRow>
               ))}
@@ -177,7 +177,7 @@ export function AdvancedDataTableForm<
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
+                    data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
@@ -205,7 +205,7 @@ export function AdvancedDataTableForm<
       </div>
       <DataTablePagination table={table} />
     </div>
-  )
+  );
 }
 
 export function EditVariationDialog<
@@ -221,31 +221,31 @@ export function EditVariationDialog<
 
   cellId,
 }: {
-  id: number
-  currentVal: string
+  id: number;
+  currentVal: string;
   // onAccept: (e: number | string) => void;
   // open: boolean;
-  formKey: ArrayPath<FData>
-  form: UseFormReturn<FData>
-  renderSelect?: SData[]
-  cellId: string
+  formKey: ArrayPath<FData>;
+  form: UseFormReturn<FData>;
+  renderSelect?: SData[];
+  cellId: string;
 }) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     if (!open) {
       setTimeout(() => {
-        document.body.style.pointerEvents = ''
-      }, 500)
+        document.body.style.pointerEvents = "";
+      }, 500);
     }
-  }, [open])
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <Button
           onClick={() => {
-            setOpen(true)
-            document.body.style.pointerEvents = 'none'
+            setOpen(true);
+            document.body.style.pointerEvents = "none";
           }}
           variant="link"
           type="button"
@@ -267,25 +267,25 @@ export function EditVariationDialog<
                 render={({ field }) => (
                   <>
                     {renderSelect?.map((selectItem, idx) => {
-                      const currentValues = currentVal?.split(`, `)
+                      const currentValues = currentVal?.split(`, `);
 
                       // const currentValues = field.value?.split(`, `);
 
                       return (
                         <Select
                           key={`${selectItem.id}-${uniqueId()}`}
-                          defaultValue={currentValues?.[idx] ?? ''}
+                          defaultValue={currentValues?.[idx] ?? ""}
                           onValueChange={(value) => {
                             const newValues = (field.value as string).split(
-                              ', ',
-                            )
-                            newValues[idx] = value
-                            field.onChange(newValues.join(', '))
+                              ", ",
+                            );
+                            newValues[idx] = value;
+                            field.onChange(newValues.join(", "));
                           }}
                         >
                           <SelectTrigger
                             className="w-24"
-                            defaultValue={currentValues?.[idx] ?? ''}
+                            defaultValue={currentValues?.[idx] ?? ""}
                           >
                             <SelectValue
                               placeholder={`Select a ${
@@ -299,7 +299,7 @@ export function EditVariationDialog<
                                 {selectItem.name as string}
                               </SelectLabel>
                               {(selectItem?.values as string)
-                                ?.split(';')
+                                ?.split(";")
                                 .map((value: string) => (
                                   <SelectItem
                                     value={value}
@@ -311,7 +311,7 @@ export function EditVariationDialog<
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                      )
+                      );
                     })}
                   </>
                 )}
@@ -330,5 +330,5 @@ export function EditVariationDialog<
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

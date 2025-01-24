@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { cn } from '~/utils/styles'
+import { cn } from '~/lib/utils'
 
 type Props<CurrentForm extends FieldValues> = {
   form: UseFormReturn<CurrentForm>
@@ -22,6 +22,7 @@ type Props<CurrentForm extends FieldValues> = {
   onChange?: (value: string) => void
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
   inputId?: string
+  type?: HTMLInputElement['type']
 }
 
 export const InputFormField = <CurrentForm extends FieldValues>({
@@ -35,6 +36,7 @@ export const InputFormField = <CurrentForm extends FieldValues>({
   onChange,
   onKeyDown,
   inputId,
+  type,
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -47,6 +49,7 @@ export const InputFormField = <CurrentForm extends FieldValues>({
             <Input
               disabled={disabled}
               placeholder={placeholder ?? ''}
+              type={type}
               {...field}
               onChange={(e) => {
                 if (!!onChange) {

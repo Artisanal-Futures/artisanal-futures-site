@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
+import { ModeToggle } from '~/components/admin/mode-toggle'
 import { buttonVariants } from '~/components/ui/button'
 import { Separator } from '~/components/ui/separator'
 import {
@@ -10,7 +11,6 @@ import {
   SidebarTrigger,
 } from '~/components/ui/sidebar'
 import { cn } from '~/lib/utils'
-import { ModeToggle } from '../admin/_components/mode-toggle'
 import { AppSidebar } from './_components/app-sidebar'
 import { SearchBar } from './_components/search-bar'
 

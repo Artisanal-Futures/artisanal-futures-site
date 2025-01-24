@@ -1,6 +1,6 @@
 import { Trash } from 'lucide-react'
 
-import { AlertModal } from '~/app/admin/_components/modals/alert-modal'
+import { AlertModal } from './admin/alert-modal'
 import { Button } from './ui/button'
 
 type TDeleteItemProps = {

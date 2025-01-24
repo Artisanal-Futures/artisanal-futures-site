@@ -7,10 +7,12 @@
  * need to use are documented accordingly near the end.
  */
 
+import type { Role } from '@prisma/client'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
 
+import { env } from '~/env'
 import { getServerAuthSession } from '~/server/auth'
 import { db } from '~/server/db'
 
@@ -132,19 +134,64 @@ export const protectedProcedure = t.procedure
     })
   })
 
-const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user || ctx.session.user.role !== 'ADMIN') {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You are not authorized to perform this action.',
-    })
-  }
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  })
-})
+export const elevatedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
 
-export const adminProcedure = t.procedure.use(enforceUserIsAdmin)
+    const validRoles = ['ADMIN', 'ARTISAN'] as Role[]
+
+    if (!validRoles.includes(ctx.session.user.role))
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You are not authorized to perform this action.',
+      })
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    })
+  })
+
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+
+    if (ctx.session.user.role !== 'ADMIN') {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only administrators can perform this action.',
+      })
+    }
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    })
+  })
+
+export const protectedDevelopmentProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (env.NODE_ENV !== 'development') {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    })
+  })

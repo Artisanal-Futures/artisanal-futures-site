@@ -3,9 +3,7 @@ import Footer from '~/app/_components/footer'
 import Navbar from '~/app/_components/navbar'
 import CookieConsent from '~/components/cookie-banner'
 
-type Props = {
-  children: React.ReactNode
-}
+type Props = { children: React.ReactNode }
 
 export default function SiteLayout({ children }: Props) {
   return (

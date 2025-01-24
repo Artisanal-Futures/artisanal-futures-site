@@ -54,6 +54,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_HOSTNAME: z.string(),
+    NEXT_PUBLIC_SUPPORT_EMAIL: z.string(),
     NEXT_PUBLIC_STORAGE_URL: z.string(),
     NEXT_PUBLIC_HEART_VOTE_DISABLED: z.preprocess(
       (str) => str === 'true' || str === true,
@@ -84,6 +86,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
+    NEXT_PUBLIC_HOSTNAME: process.env.NEXT_PUBLIC_HOSTNAME,
+    NEXT_PUBLIC_SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
     MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,
     MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
     MINIO_ENDPOINT: process.env.MINIO_ENDPOINT,

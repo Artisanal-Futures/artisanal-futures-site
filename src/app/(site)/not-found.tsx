@@ -1,14 +1,13 @@
 import Link from 'next/link'
 
 import { Button } from '~/components/ui/button'
+import { env } from '~/env'
 
 export const metadata = {
   title: '404 Not Found',
 }
 
 export default function NotFoundPage() {
-  const strippedSupportEmail = 'support@artisanalfutures.org'
-
   return (
     <div className="mx-auto flex h-full w-full max-w-7xl flex-grow flex-col items-stretch p-8">
       <div className="centered-page my-auto">
@@ -18,10 +17,10 @@ export default function NotFoundPage() {
             It appears that this page does not exist. If you believe this is an
             this is an error, please contact us at{' '}
             <Link
-              href={`mailto:${strippedSupportEmail}`}
+              href={`mailto:${env.NEXT_PUBLIC_SUPPORT_EMAIL}`}
               className="text-blue-500 underline"
             >
-              {strippedSupportEmail}
+              {env.NEXT_PUBLIC_SUPPORT_EMAIL}
             </Link>
           </h2>
           <Link href="/contact-us">

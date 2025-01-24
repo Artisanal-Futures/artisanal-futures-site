@@ -1,70 +1,68 @@
-'use client'
-
-import type { Table } from '@tanstack/react-table'
-import { useEffect } from 'react'
+import type { Table } from "@tanstack/react-table";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeft,
   ChevronsRight,
-} from 'lucide-react'
+} from "lucide-react";
+import { useEffect } from "react";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
+} from "~/components/ui/select";
 
 interface DataTablePaginationProps<TData> {
-  table: Table<TData>
+  table: Table<TData>;
 }
 
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   useEffect(() => {
-    const url = new URL(window.location.href)
-    const pageParam = url.searchParams.get('page')
-    const rowsPerPageParam = url.searchParams.get('rows')
+    const url = new URL(window.location.href);
+    const pageParam = url.searchParams.get("page");
+    const rowsPerPageParam = url.searchParams.get("rows");
 
     if (rowsPerPageParam) {
-      const rowsPerPage = parseInt(rowsPerPageParam, 10)
+      const rowsPerPage = parseInt(rowsPerPageParam, 10);
       if (!isNaN(rowsPerPage) && rowsPerPage > 0) {
-        table.setPageSize(rowsPerPage)
+        table.setPageSize(rowsPerPage);
       }
     }
 
     if (pageParam) {
-      const pageIndex = parseInt(pageParam, 10) - 1
+      const pageIndex = parseInt(pageParam, 10) - 1;
       if (
         !isNaN(pageIndex) &&
         pageIndex >= 0 &&
         pageIndex < table.getPageCount()
       ) {
-        table.setPageIndex(pageIndex)
+        table.setPageIndex(pageIndex);
       }
     }
-  }, [table])
+  }, [table]);
 
   const updatePageInUrl = (pageIndex: number) => {
-    const url = new URL(window.location.href)
-    url.searchParams.set('page', `${pageIndex + 1}`)
-    window.history.replaceState({}, '', url.toString())
-  }
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", `${pageIndex + 1}`);
+    window.history.replaceState({}, "", url.toString());
+  };
 
   const updateRowsPerPageInUrl = (rowsPerPage: number) => {
-    const url = new URL(window.location.href)
-    url.searchParams.set('rows', `${rowsPerPage}`)
-    window.history.replaceState({}, '', url.toString())
-  }
+    const url = new URL(window.location.href);
+    url.searchParams.set("rows", `${rowsPerPage}`);
+    window.history.replaceState({}, "", url.toString());
+  };
 
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
+        {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
@@ -73,9 +71,9 @@ export function DataTablePagination<TData>({
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              const rowsPerPage = Number(value)
-              table.setPageSize(rowsPerPage)
-              updateRowsPerPageInUrl(rowsPerPage)
+              const rowsPerPage = Number(value);
+              table.setPageSize(rowsPerPage);
+              updateRowsPerPageInUrl(rowsPerPage);
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
@@ -91,7 +89,7 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">
@@ -99,8 +97,8 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              table.setPageIndex(0)
-              updatePageInUrl(0)
+              table.setPageIndex(0);
+              updatePageInUrl(0);
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -111,8 +109,8 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => {
-              table.previousPage()
-              updatePageInUrl(table.getState().pagination.pageIndex - 1)
+              table.previousPage();
+              updatePageInUrl(table.getState().pagination.pageIndex - 1);
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -123,8 +121,8 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => {
-              table.nextPage()
-              updatePageInUrl(table.getState().pagination.pageIndex + 1)
+              table.nextPage();
+              updatePageInUrl(table.getState().pagination.pageIndex + 1);
             }}
             disabled={!table.getCanNextPage()}
           >
@@ -135,9 +133,9 @@ export function DataTablePagination<TData>({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              const lastPage = table.getPageCount() - 1
-              table.setPageIndex(lastPage)
-              updatePageInUrl(lastPage)
+              const lastPage = table.getPageCount() - 1;
+              table.setPageIndex(lastPage);
+              updatePageInUrl(lastPage);
             }}
             disabled={!table.getCanNextPage()}
           >
@@ -147,5 +145,5 @@ export function DataTablePagination<TData>({
         </div>
       </div>
     </div>
-  )
+  );
 }

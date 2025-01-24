@@ -1,13 +1,14 @@
-'use client'
+"use client";
+
+import type { LucideIcon } from "lucide-react";
+import * as React from "react";
 
 import type {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-} from '@tanstack/react-table'
-import type { LucideIcon } from 'lucide-react'
-import * as React from 'react'
+} from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -17,9 +18,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Table,
   TableBody,
@@ -27,37 +28,40 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '~/components/ui/table'
-import { cn } from '~/utils/styles'
-import { DataTablePagination } from './advanced-data-table-pagination'
-import { DataTableToolbar } from './advanced-data-table-toolbar'
+} from "~/components/ui/table";
+import { cn } from "~/lib/utils";
+import { DataTablePagination } from "./advanced-data-table-pagination";
+import { DataTableToolbar } from "./advanced-data-table-toolbar";
 
 export type FilterOption = {
-  column: string
-  title: string
+  column: string;
+  title: string;
   filters: {
-    value: string
-    label: string
-    icon?: LucideIcon
-  }[]
-}
+    value: string;
+    label: string;
+    icon?: LucideIcon;
+  }[];
+};
 
 export type MassSelectOption = {
-  label: string
-  icon?: LucideIcon
-  onClick: (data: unknown) => void
-}
+  label: string;
+  icon?: LucideIcon;
+  onClick: (data: unknown) => void;
+};
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchKey: string
-  filters?: FilterOption[]
-  handleMassDelete?: (data: TData[]) => void
-  handleAdd?: () => void
-  addButtonLabel?: string
-  addButton?: React.ReactNode
-  moreOptions?: React.ReactNode
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchKey: string;
+  filters?: FilterOption[];
+  handleMassDelete?: (data: TData[]) => void;
+  handleAdd?: () => void;
+  addButtonLabel?: string;
+  addButton?: React.ReactNode;
+  moreOptions?: React.ReactNode;
+  searchPlaceholder?: string;
+  defaultColumnVisibility?: VisibilityState;
+  showViewOptions?: boolean;
 }
 
 export function AdvancedDataTable<TData, TValue>({
@@ -67,17 +71,20 @@ export function AdvancedDataTable<TData, TValue>({
   filters,
   handleMassDelete,
   handleAdd,
-  addButtonLabel = 'Add',
+  addButtonLabel = "Add",
   addButton,
   moreOptions,
+  searchPlaceholder,
+  defaultColumnVisibility,
+  showViewOptions = false,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>(defaultColumnVisibility ?? {});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  );
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
     data,
@@ -99,27 +106,29 @@ export function AdvancedDataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   const handleToolbarChange = React.useMemo(() => {
-    return table.getSelectedRowModel().rows.length > 0 && !!handleMassDelete
-  }, [table, handleMassDelete])
+    return table.getSelectedRowModel().rows.length > 0 && !!handleMassDelete;
+  }, [table, handleMassDelete]);
 
   return (
     <div className="w-full space-y-4 transition-all duration-300 ease-in-out">
-      <div className={cn('w-full', handleToolbarChange && 'hidden')}>
+      <div className={cn("w-full", handleToolbarChange && "hidden")}>
         <DataTableToolbar
           table={table}
           searchKey={searchKey}
+          searchPlaceholder={searchPlaceholder}
           filters={filters}
           handleAdd={handleAdd}
           addButtonLabel={addButtonLabel}
           addButton={addButton}
           moreOptions={moreOptions}
+          showViewOptions={showViewOptions}
         />
       </div>
 
-      <div className={cn('hidden space-x-2', handleToolbarChange && 'flex')}>
+      <div className={cn("hidden space-x-2", handleToolbarChange && "flex")}>
         <Button size="sm" className="max-h-[32px]">
           Duplicate
         </Button>
@@ -149,7 +158,7 @@ export function AdvancedDataTable<TData, TValue>({
                             header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -159,7 +168,7 @@ export function AdvancedDataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -186,5 +195,5 @@ export function AdvancedDataTable<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
     </div>
-  )
+  );
 }

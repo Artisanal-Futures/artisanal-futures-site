@@ -1,0 +1,60 @@
+enum ProductScrapeMethod {
+    MANUAL
+    WORDPRESS
+    SHOPIFY
+    SQUARESPACE
+}
+
+
+model Shop {
+  id                String   @id @default(cuid())
+  shopName          String
+  ownerName         String
+  bio               String?   @db.Text
+  description       String?
+  ownerPhoto        String?
+  logoPhoto         String?
+  coverPhoto        String?
+  address           String?
+  city              String?
+  state             String?
+  zip               String?
+  country           String?
+  phone             String?
+  email             String?
+  website           String?
+  ownerId           String
+  attributeTags     String[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  products          Product[]
+}
+
+
+
+
+
+
+model Product {
+  id                String   @id @default(cuid())
+  shopProductId     String?
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  productUrl        String?
+  attributeTags     String[]
+  materialTags      String[]
+  environmentalTags String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  scrapeMethod      ProductScrapeMethod @default(MANUAL)
+  shopId            String
+  shop              Shop @relation(fields: [shopId], references: [id])
+
+
+  @@unique([shopId, shopProductId])
+}
+
