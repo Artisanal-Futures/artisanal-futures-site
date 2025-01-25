@@ -1,30 +1,31 @@
 import type { FC } from "react";
-
-import type { Shop } from "@prisma/client";
+import { cn } from "~/utils/styles";
 import { Store, User } from "lucide-react";
 
-import BlurImage from "~/components/ui/blur-image";
+import type { Shop } from "@prisma/client";
 
-import { cn } from "~/utils/styles";
+import { env } from "~/env";
+import BlurImage from "~/components/ui/blur-image";
 
 type IProps = Shop & React.HTMLAttributes<HTMLDivElement>;
 
 const ShopCard: FC<IProps> = ({
   id,
   ownerName,
-  shopName,
+  name,
   website,
   logoPhoto,
   bio,
   className,
   ownerPhoto,
 }) => {
-  const availableImage =
+  const availableImage = `${env.NEXT_PUBLIC_STORAGE_URL}/shops/${
     ownerPhoto! && ownerPhoto != ""
       ? ownerPhoto
       : logoPhoto! && logoPhoto != ""
-      ? logoPhoto
-      : "/background-fallback.jpg";
+        ? logoPhoto
+        : "background-fallback.jpg"
+  }`;
 
   return (
     <div className={cn("", className)}>
@@ -34,12 +35,12 @@ const ShopCard: FC<IProps> = ({
         </div>
 
         <div className="flex w-full items-center justify-between">
-          <div className="flex flex-col ">
+          <div className="flex flex-col">
             <h3 className="text-xl font-semibold">{ownerName}</h3>
-            <p className="font-normal text-slate-500">{shopName}</p>
+            <p className="font-normal text-slate-500">{name}</p>
           </div>
 
-          <div className="flex  gap-2">
+          <div className="flex gap-2">
             {bio && logoPhoto && (
               <a
                 className="block rounded bg-slate-400 p-2 text-white"

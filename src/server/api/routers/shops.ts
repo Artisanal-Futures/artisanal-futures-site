@@ -24,7 +24,8 @@ export const shopsRouter = createTRPCRouter({
   }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const shops = await ctx.db.shop.findMany({
-      include: { owner: true },
+      include: { owner: true, address: true },
+      orderBy: { createdAt: "desc" },
     });
 
     return shops.map((shop) => ({
@@ -50,6 +51,9 @@ export const shopsRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          address: true,
+        },
       });
 
       return shop;
@@ -61,6 +65,9 @@ export const shopsRouter = createTRPCRouter({
         where: {
           id: input.shopId,
           ownerId: ctx.session.user.id,
+        },
+        include: {
+          address: true,
         },
       });
 
