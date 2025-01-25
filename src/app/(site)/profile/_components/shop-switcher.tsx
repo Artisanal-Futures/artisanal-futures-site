@@ -42,7 +42,7 @@ export default function ShopSwitcher({
 
   const onStoreSelect = (store: { value: string; label: string }) => {
     setOpen(false)
-    void context.shops.invalidate()
+    void context.shop.invalidate()
     void router.replace(`/profile/shop/${store.value.toString()}`)
   }
 

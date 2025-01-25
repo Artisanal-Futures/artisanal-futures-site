@@ -1,14 +1,25 @@
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import {
+  adminProcedure,
+  createTRPCRouter,
+  elevatedProcedure,
+  protectedProcedure,
+} from "~/server/api/trpc";
+import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc'
+import { TRPCError } from "@trpc/server";
+
+import { surveySchema } from "~/lib/validators/survey";
 
 export const surveysRouter = createTRPCRouter({
-  getAllSurveys: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.survey.findMany()
+  getAll: adminProcedure.query(({ ctx }) => {
+    return ctx.db.survey.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
   }),
 
-  getSurvey: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ surveyId: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.survey.findUnique({
@@ -16,14 +27,14 @@ export const surveysRouter = createTRPCRouter({
           id: input.surveyId,
           ownerId: ctx.session.user.id,
         },
-      })
+      });
     }),
   getCurrentUserSurvey: protectedProcedure.query(({ ctx }) => {
     return ctx.db.survey.findFirst({
       where: {
         ownerId: ctx.session.user.id,
       },
-    })
+    });
   }),
 
   getCurrentUserShopSurvey: protectedProcedure
@@ -34,26 +45,12 @@ export const surveysRouter = createTRPCRouter({
           ownerId: ctx.session.user.id,
           shopId: input.shopId,
         },
-      })
+      });
     }),
-  createSurvey: protectedProcedure
-    .input(
-      z.object({
-        shopId: z.string(),
-        processes: z.string().optional(),
-        materials: z.string().optional(),
-        principles: z.string().optional(),
-        description: z.string().optional(),
-        unmoderatedForm: z.boolean().default(false),
-        moderatedForm: z.boolean().default(false),
-        hiddenForm: z.boolean().default(false),
-        privateForm: z.boolean().default(false),
-        supplyChain: z.boolean().default(false),
-        messagingOptIn: z.boolean().default(false),
-      }),
-    )
-    .mutation(({ ctx, input }) => {
-      return ctx.db.survey.create({
+  create: elevatedProcedure
+    .input(surveySchema)
+    .mutation(async ({ ctx, input }) => {
+      const survey = await ctx.db.survey.create({
         data: {
           shopId: input.shopId,
           ownerId: ctx.session.user.id,
@@ -68,117 +65,101 @@ export const surveysRouter = createTRPCRouter({
           supplyChain: input.supplyChain,
           messagingOptIn: input.messagingOptIn,
         },
-      })
+      });
+
+      return {
+        data: survey,
+        message: "Survey created successfully",
+      };
     }),
 
-  updateSurvey: protectedProcedure
+  update: elevatedProcedure
     .input(
-      z.object({
-        surveyId: z.string(),
-
-        processes: z.string().optional(),
-        materials: z.string().optional(),
-        principles: z.string().optional(),
-        description: z.string().optional(),
-        unmoderatedForm: z.boolean().default(false),
-        moderatedForm: z.boolean().default(false),
-        hiddenForm: z.boolean().default(false),
-        privateForm: z.boolean().default(false),
-        supplyChain: z.boolean().default(false),
-        messagingOptIn: z.boolean().default(false),
-      }),
-    )
-    .mutation(({ ctx, input }) => {
-      if (!input.surveyId)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Shop id is required',
-        })
-
-      return ctx.db.survey
-        .findFirst({
-          where: {
-            id: input.surveyId,
-            ownerId: ctx.session.user.id,
-          },
-        })
-        .then((shopByUserId) => {
-          if (!shopByUserId) {
-            throw new TRPCError({
-              code: 'UNAUTHORIZED',
-              message: 'Shop id does not belong to current user',
-            })
-          }
-        })
-        .then(() => {
-          return ctx.db.survey.update({
-            where: {
-              id: input.surveyId,
-            },
-            data: {
-              processes: input.processes,
-              materials: input.materials,
-              principles: input.principles,
-              description: input.description,
-              unmoderatedForm: input.unmoderatedForm,
-              moderatedForm: input.moderatedForm,
-              hiddenForm: input.hiddenForm,
-              privateForm: input.privateForm,
-              supplyChain: input.supplyChain,
-              messagingOptIn: input.messagingOptIn,
-            },
-          })
-        })
-        .catch((err) => {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Something went wrong. Please try again later.',
-            cause: err,
-          })
-        })
-    }),
-
-  deleteSurvey: protectedProcedure
-    .input(
-      z.object({
+      surveySchema.extend({
         surveyId: z.string(),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      if (!input.surveyId)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'surveyId is required',
-        })
+    .mutation(async ({ ctx, input }) => {
+      const survey = await ctx.db.survey.findFirst({
+        where: { id: input.surveyId },
+      });
 
-      return ctx.db.survey
-        .findFirst({
-          where: {
-            id: input.surveyId,
-            ownerId: ctx.session.user.id,
-          },
-        })
-        .then((shopByUserId) => {
-          if (!shopByUserId) {
-            throw new TRPCError({
-              code: 'UNAUTHORIZED',
-              message: 'survey id does not belong to current user',
-            })
-          }
-        })
-        .then(() => {
-          return ctx.db.survey.delete({
-            where: {
-              id: input.surveyId,
-            },
-          })
-        })
-        .catch((err) => {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Something went wrong. Please try again later.',
-            cause: err,
-          })
-        })
+      if (!survey) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Survey not found",
+        });
+      }
+
+      if (
+        survey.ownerId !== ctx.session.user.id &&
+        ctx.session.user.role !== "ADMIN"
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to update this survey",
+        });
+      }
+
+      const updatedSurvey = await ctx.db.survey.update({
+        where: {
+          id: input.surveyId,
+        },
+        data: {
+          shopId: input.shopId,
+          ownerId: input.ownerId,
+          processes: input.processes,
+          materials: input.materials,
+          principles: input.principles,
+          description: input.description,
+          unmoderatedForm: input.unmoderatedForm,
+          moderatedForm: input.moderatedForm,
+          hiddenForm: input.hiddenForm,
+          privateForm: input.privateForm,
+          supplyChain: input.supplyChain,
+          messagingOptIn: input.messagingOptIn,
+        },
+      });
+
+      return {
+        data: updatedSurvey,
+        message: "Survey updated successfully",
+      };
     }),
-})
+
+  delete: elevatedProcedure
+    .input(z.object({ surveyId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const survey = await ctx.db.survey.findFirst({
+        where: { id: input.surveyId },
+      });
+
+      if (!survey) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "surveyId is required",
+        });
+      }
+
+      if (
+        survey.ownerId !== ctx.session.user.id &&
+        ctx.session.user.role !== "ADMIN"
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to delete this survey",
+        });
+      }
+
+      const deletedSurvey = await ctx.db.survey.delete({
+        where: {
+          id: input.surveyId,
+        },
+      });
+
+      return {
+        data: deletedSurvey,
+        message: "Survey deleted successfully",
+      };
+    }),
+});

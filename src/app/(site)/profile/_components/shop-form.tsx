@@ -85,7 +85,7 @@ export const ShopForm: React.FC<TShopFormProps> = ({
       }),
   })
 
-  const { mutate: updateShop } = api.shops.updateShop.useMutation({
+  const { mutate: updateShop } = api.shop.update.useMutation({
     onSuccess: () => toastService.success({ message: 'Shop updated.' }),
     onError: (error) =>
       toastService.error({
@@ -95,11 +95,11 @@ export const ShopForm: React.FC<TShopFormProps> = ({
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
-      void apiContext.shops.invalidate()
+      void apiContext.shop.invalidate()
     },
   })
 
-  const { mutate: deleteShop } = api.shops.deleteShop.useMutation({
+  const { mutate: deleteShop } = api.shop.delete.useMutation({
     onSuccess: () => {
       if (sessionData?.user?.role !== 'ADMIN') updateRole({ role: 'USER' })
       router.push('/profile')
@@ -113,7 +113,7 @@ export const ShopForm: React.FC<TShopFormProps> = ({
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
-      void apiContext.shops.invalidate()
+      void apiContext.shop.invalidate()
       alertModal.onClose()
     },
   })

@@ -8,7 +8,7 @@ export const metadata = {
   title: 'New Shop',
 }
 export default async function ProfileShopPage() {
-  const shop = await api.shops.getCurrentUserShop()
+  const shop = await api.shop.getCurrentUserShop()
 
   if (shop) {
     redirect(`/profile/shop/${shop.id}`)

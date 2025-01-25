@@ -30,7 +30,7 @@ export const ShopModal = () => {
 
   const { data: sessionData } = useSession()
 
-  const { mutate } = api.shops.createShop.useMutation({
+  const { mutate } = api.shop.create.useMutation({
     onSuccess: ({ id }) => {
       if (sessionData?.user?.role !== 'ADMIN') {
         updateRole({ role: 'ARTISAN' })

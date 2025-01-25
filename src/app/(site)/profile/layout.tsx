@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default async function ProfileLayout({ children }: Props) {
-  const shop = await api.shops.getCurrentUserShop()
+  const shop = await api.shop.getCurrentUserShop()
   const session = await getServerAuthSession()
 
   const navItems = [

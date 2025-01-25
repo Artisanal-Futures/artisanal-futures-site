@@ -101,7 +101,7 @@ export const OnboardingShopForm: React.FC<SettingsFormProps> = ({
     })
   }, [initialData, form])
 
-  const { mutate: updateShop } = api.shops.updateShop.useMutation({
+  const { mutate: updateShop } = api.shop.update.useMutation({
     onSuccess: () => {
       toastService.success({ message: 'Shop updated.' })
       successCallback!()
@@ -111,11 +111,11 @@ export const OnboardingShopForm: React.FC<SettingsFormProps> = ({
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
-      void apiContext.shops.invalidate()
+      void apiContext.shop.invalidate()
     },
   })
 
-  const { mutate: createShop } = api.shops.createShop.useMutation({
+  const { mutate: createShop } = api.shop.create.useMutation({
     onSuccess: () => {
       toastService.success({ message: 'Shop created.' })
       successCallback!()
@@ -125,7 +125,7 @@ export const OnboardingShopForm: React.FC<SettingsFormProps> = ({
     onMutate: () => setLoading(true),
     onSettled: () => {
       setLoading(false)
-      void apiContext.shops.invalidate()
+      void apiContext.shop.invalidate()
     },
   })
 

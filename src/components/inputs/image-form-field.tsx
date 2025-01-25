@@ -2,6 +2,7 @@ import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { useState } from "react";
 import Image from "next/image";
 
+import { cn } from "~/lib/utils";
 import {
   FormControl,
   FormDescription,
@@ -11,7 +12,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { cn } from "~/lib/utils";
 
 type Props<CurrentForm extends FieldValues> = {
   form: UseFormReturn<CurrentForm>;

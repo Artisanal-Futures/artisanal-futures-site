@@ -18,7 +18,7 @@ export const metadata = {
 }
 
 export default async function ProfilePage({ params }: Props) {
-  const shop = await api.shops.getShopById({
+  const shop = await api.shop.getById({
     id: params?.shopId,
   })
 

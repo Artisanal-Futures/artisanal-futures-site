@@ -1,34 +1,33 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Ellipsis, LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Role } from '@prisma/client'
+import { Ellipsis, LogOut } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 
-import { UserRole } from "@prisma/client";
-
-import { CollapseMenuButton } from "~/components/admin/collapse-menu-button";
-import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import { CollapseMenuButton } from '~/components/admin/collapse-menu-button'
+import { Button } from '~/components/ui/button'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { env } from "~/env";
-import { getMenuList } from "~/lib/admin-menu-list";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/tooltip'
+import { env } from '~/env'
+import { getMenuList } from '~/lib/admin-menu-list'
+import { cn } from '~/lib/utils'
 
 type Props = {
-  isOpen: boolean | undefined;
-};
+  isOpen: boolean | undefined
+}
 
 export function Menu({ isOpen }: Props) {
-  const { data: session } = useSession();
-  const userRole = session?.user?.role ?? UserRole.CONTRIBUTOR;
-  const pathname = usePathname();
-  const menuList = getMenuList(pathname);
+  const { data: session } = useSession()
+  const userRole = session?.user?.role ?? Role.ARTISAN
+  const pathname = usePathname()
+  const menuList = getMenuList(pathname)
   const filteredMenuList = menuList
     .map((group) => ({
       ...group,
@@ -41,14 +40,14 @@ export function Menu({ isOpen }: Props) {
         }))
         .filter((menu) => !menu.restrictedAccess.includes(userRole)),
     }))
-    .filter((group) => group.menus.length > 0);
+    .filter((group) => group.menus.length > 0)
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
       <nav className="mt-8 h-full w-full">
         <ul className="flex min-h-[calc(100vh-48px-36px-16px-32px-16px)] flex-col items-start space-y-1 px-2 lg:min-h-[calc(100vh-32px-40px-32px-16px)]">
           {filteredMenuList.map(({ groupLabel, menus }, index) => (
-            <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
+            <li className={cn('w-full', groupLabel ? 'pt-5' : '')} key={index}>
               {((isOpen && groupLabel) ?? isOpen === undefined) ? (
                 <p className="max-w-[248px] truncate px-4 pb-2 text-sm font-medium text-muted-foreground">
                   {groupLabel}
@@ -77,22 +76,22 @@ export function Menu({ isOpen }: Props) {
                         <Tooltip delayDuration={100}>
                           <TooltipTrigger asChild>
                             <Button
-                              variant={active ? "secondary" : "ghost"}
+                              variant={active ? 'secondary' : 'ghost'}
                               className="mb-1 h-10 w-full justify-start"
                               asChild
                             >
                               <Link href={href}>
                                 <span
-                                  className={cn(isOpen === false ? "" : "mr-4")}
+                                  className={cn(isOpen === false ? '' : 'mr-4')}
                                 >
                                   <Icon size={18} />
                                 </span>
                                 <p
                                   className={cn(
-                                    "max-w-[200px] truncate",
+                                    'max-w-[200px] truncate',
                                     isOpen === false
-                                      ? "-translate-x-96 opacity-0"
-                                      : "translate-x-0 opacity-100",
+                                      ? '-translate-x-96 opacity-0'
+                                      : 'translate-x-0 opacity-100',
                                   )}
                                 >
                                   {label}
@@ -135,13 +134,13 @@ export function Menu({ isOpen }: Props) {
                     variant="outline"
                     className="mt-5 h-10 w-full justify-center"
                   >
-                    <span className={cn(isOpen === false ? "" : "mr-4")}>
+                    <span className={cn(isOpen === false ? '' : 'mr-4')}>
                       <LogOut size={18} />
                     </span>
                     <p
                       className={cn(
-                        "whitespace-nowrap",
-                        isOpen === false ? "hidden opacity-0" : "opacity-100",
+                        'whitespace-nowrap',
+                        isOpen === false ? 'hidden opacity-0' : 'opacity-100',
                       )}
                     >
                       Sign out
@@ -157,5 +156,5 @@ export function Menu({ isOpen }: Props) {
         </ul>
       </nav>
     </ScrollArea>
-  );
+  )
 }

@@ -11,7 +11,7 @@ export const metadata = {
   title: 'Shop Dashboard ',
 }
 export default async function ShopPage({ params }: Props) {
-  const shop = await api.shops.getShopById({
+  const shop = await api.shop.getById({
     id: params.shopId,
   })
 

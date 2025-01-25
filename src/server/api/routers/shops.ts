@@ -1,24 +1,38 @@
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-
 import {
+  adminProcedure,
   createTRPCRouter,
+  elevatedProcedure,
   protectedProcedure,
   publicProcedure,
-} from '~/server/api/trpc'
+} from "~/server/api/trpc";
+import { z } from "zod";
+
+import { TRPCError } from "@trpc/server";
+
+import { env } from "~/env";
+import { shopSchema } from "~/lib/validators/shop";
 
 export const shopsRouter = createTRPCRouter({
   getAllValidShops: publicProcedure.query(({ ctx }) => {
     return ctx.db.shop.findMany({
       where: {
-        shopName: { not: '' },
-        OR: [{ logoPhoto: { not: '' } }, { ownerPhoto: { not: '' } }],
-        website: { not: '' },
+        name: { not: "" },
+        OR: [{ logoPhoto: { not: "" } }, { ownerPhoto: { not: "" } }],
+        website: { not: "" },
       },
-    })
+    });
   }),
-  getAllShops: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.shop.findMany()
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const shops = await ctx.db.shop.findMany({
+      include: { owner: true },
+    });
+
+    return shops.map((shop) => ({
+      ...shop,
+      logoPhoto: `${shop?.logoPhoto}`,
+      ownerPhoto: `${shop?.ownerPhoto}`,
+      coverPhoto: `${shop?.coverPhoto}`,
+    }));
   }),
 
   getAllCurrentUserShops: protectedProcedure.query(({ ctx }) => {
@@ -26,29 +40,43 @@ export const shopsRouter = createTRPCRouter({
       where: {
         ownerId: ctx.session.user.id,
       },
-    })
+    });
   }),
 
-  getShopById: publicProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.findUnique({
         where: {
           id: input.id,
         },
-      })
+      });
 
-      return shop
+      return shop;
     }),
-  getShop: protectedProcedure
+  get: protectedProcedure
     .input(z.object({ shopId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.shop.findUnique({
+    .query(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
         where: {
           id: input.shopId,
           ownerId: ctx.session.user.id,
         },
-      })
+      });
+
+      if (!shop) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Shop not found",
+        });
+      }
+
+      return {
+        ...shop,
+        logoPhoto: `${shop?.logoPhoto}`,
+        ownerPhoto: `${shop?.ownerPhoto}`,
+        coverPhoto: `${shop?.coverPhoto}`,
+      };
     }),
 
   getCurrentUserShop: protectedProcedure.query(({ ctx }) => {
@@ -56,176 +84,125 @@ export const shopsRouter = createTRPCRouter({
       where: {
         ownerId: ctx.session.user.id,
       },
-    })
+    });
   }),
-  createShop: protectedProcedure
+  create: elevatedProcedure
     .input(
-      z.object({
-        shopName: z.string(),
-        ownerId: z.string().optional(),
-        ownerName: z.string().optional(),
-        bio: z.string().optional().or(z.null()),
-        description: z.string().optional().or(z.null()),
-        logoPhoto: z.string().optional().or(z.null()),
-        ownerPhoto: z.string().optional().or(z.null()),
-        country: z.string().optional().or(z.null()),
-        address: z.string().optional().or(z.null()),
-        city: z.string().optional().or(z.null()),
-        state: z.string().optional().or(z.null()),
-        zip: z.string().optional().or(z.null()),
-        phone: z.string().optional().or(z.null()),
-        email: z.string().optional().or(z.null()),
-        website: z.string().optional().or(z.null()),
+      shopSchema.extend({
+        logoPhoto: z.string().optional().nullish(),
+        ownerPhoto: z.string().optional().nullish(),
+        coverPhoto: z.string().optional().nullish(),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.db.shop.create({
+    .mutation(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.create({
         data: {
-          shopName: input.shopName,
+          name: input.name,
           ownerName: input.ownerName
             ? input.ownerName
-            : (ctx.session.user?.name ?? ''),
+            : (ctx.session.user?.name ?? ""),
           ownerId: input.ownerId ? input.ownerId : ctx.session.user.id,
-          bio: input.bio ?? '',
-          description: input.description ?? '',
-          logoPhoto: input.logoPhoto ?? '',
-          ownerPhoto: input.ownerPhoto ?? '',
-          address: input.address ?? '',
-          city: input.city ?? '',
-          state: input.state ?? '',
-          zip: input.zip ?? '',
-          country: input.country ?? '',
-          phone: input.phone ?? '',
-          email: input.email ?? '',
-          website: input.website ?? '',
+          bio: input.bio ?? "",
+          description: input.description ?? "",
+          logoPhoto: input.logoPhoto,
+          ownerPhoto: input.ownerPhoto,
+          coverPhoto: input.coverPhoto,
+
+          address: {
+            create: {
+              address: input.address ?? "",
+              city: input.city ?? "",
+              state: input.state ?? "",
+              zip: input.zip ?? "",
+              country: input.country ?? "",
+            },
+          },
+          phone: input.phone ?? "",
+          email: input.email ?? "",
+          website: input.website ?? "",
         },
-      })
+      });
+
+      return { data: shop, message: "Shop created successfully" };
     }),
 
-  updateShop: protectedProcedure
+  update: elevatedProcedure
     .input(
-      z.object({
-        shopId: z.string(),
-        shopName: z.string(),
-        ownerName: z.string(),
-        ownerId: z.string().optional(),
-        bio: z.string().optional().or(z.null()),
-        description: z.string().optional().or(z.null()),
-        logoPhoto: z.string().optional().or(z.null()),
-        ownerPhoto: z.string().optional().or(z.null()),
-        country: z.string().optional().or(z.null()),
-        address: z.string().optional().or(z.null()),
-        city: z.string().optional().or(z.null()),
-        state: z.string().optional().or(z.null()),
-        zip: z.string().optional().or(z.null()),
-        phone: z.string().optional().or(z.null()),
-        email: z.string().optional().or(z.null()),
-        website: z.string().optional().or(z.null()),
+      shopSchema.extend({
+        id: z.string(),
+        logoPhoto: z.string().optional().nullish(),
+        ownerPhoto: z.string().optional().nullish(),
+        coverPhoto: z.string().optional().nullish(),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      if (!input.shopName)
+    .mutation(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
+        where: { id: input.id },
+      });
+
+      if (
+        shop?.ownerId !== ctx.session.user.id &&
+        ctx.session.user.role !== "ADMIN"
+      ) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Name is required',
-        })
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
 
-      if (!input.shopId)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Shop id is required',
-        })
+      const updatedShop = await ctx.db.shop.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          ownerName: input.ownerName,
+          bio: input?.bio ?? "",
+          ownerId: input?.ownerId ?? ctx.session.user.id,
+          description: input?.description ?? "",
+          logoPhoto: input.logoPhoto,
+          ownerPhoto: input.ownerPhoto,
+          coverPhoto: input.coverPhoto,
+          phone: input?.phone ?? "",
+          email: input?.email ?? "",
+          website: input?.website ?? "",
+        },
+      });
 
-      return ctx.db.shop
-        .findFirst({
-          where: {
-            id: input.shopId,
-            ownerId: ctx.session.user.id,
-          },
-        })
-        .then((shopByUserId) => {
-          if (ctx.session.user.role !== 'ADMIN' && !shopByUserId) {
-            throw new TRPCError({
-              code: 'UNAUTHORIZED',
-              message: 'Shop id does not belong to current user',
-            })
-          }
-        })
-        .then(() => {
-          return ctx.db.shop.update({
-            where: {
-              id: input.shopId,
-            },
-            data: {
-              shopName: input.shopName,
-              ownerName: input.ownerName,
-              bio: input?.bio ?? '',
-              ownerId: input?.ownerId ?? ctx.session.user.id,
-              description: input?.description ?? '',
-              logoPhoto: input?.logoPhoto ?? '',
-              ownerPhoto: input?.ownerPhoto ?? '',
-              address: input?.address ?? '',
-              city: input?.city ?? '',
-              state: input?.state ?? '',
-              zip: input?.zip ?? '',
-
-              country: input?.country ?? '',
-              phone: input?.phone ?? '',
-              email: input?.email ?? '',
-              website: input?.website ?? '',
-            },
-          })
-        })
-        .catch((err) => {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Something went wrong. Please try again later.',
-            cause: err,
-          })
-        })
+      await ctx.db.shopAddress.update({
+        where: { shopId: input.id },
+        data: {
+          address: input?.address ?? "",
+          city: input?.city ?? "",
+          state: input?.state ?? "",
+          zip: input?.zip ?? "",
+          country: input?.country ?? "",
+        },
+      });
+      return { data: updatedShop, message: "Shop updated successfully" };
     }),
 
-  deleteShop: protectedProcedure
-    .input(
-      z.object({
-        shopId: z.string(),
-      }),
-    )
-    .mutation(({ ctx, input }) => {
-      if (!input.shopId)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Color id is required',
-        })
+  delete: elevatedProcedure
+    .input(z.object({ shopId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
+        where: {
+          id: input.shopId,
+        },
+      });
 
-      return ctx.db.shop
-        .findFirst({
-          where: {
-            id: input.shopId,
-            ownerId: ctx.session.user.id,
-          },
-        })
-        .then((shopByUserId) => {
-          if (ctx.session.user.role !== 'ADMIN' && !shopByUserId) {
-            throw new TRPCError({
-              code: 'UNAUTHORIZED',
-              message: 'Shop id does not belong to current user',
-            })
-          }
-        })
-        .then(() => {
-          return ctx.db.shop.delete({
-            where: {
-              id: input.shopId,
-            },
-          })
-        })
-        .catch((err) => {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Something went wrong. Please try again later.',
-            cause: err,
-          })
-        })
+      if (
+        shop?.ownerId !== ctx.session.user.id &&
+        ctx.session.user.role !== "ADMIN"
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
+      await ctx.db.shop.delete({
+        where: { id: input.shopId },
+      });
+
+      return { data: null, message: "Shop deleted successfully" };
     }),
-})
+});

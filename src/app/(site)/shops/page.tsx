@@ -10,7 +10,7 @@ export const metadata = {
 }
 
 export default async function ShopsPage() {
-  const shops = await api.shops.getAllValidShops()
+  const shops = await api.shop.getAllValidShops()
 
   return (
     <>

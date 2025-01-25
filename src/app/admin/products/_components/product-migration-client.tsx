@@ -76,7 +76,7 @@ export function DatabaseMigrationClient() {
   const productMigration =
     api.product.importProducts.useMutation(defaultActions)
 
-  const { data: shops } = api.shops.getAllShops.useQuery()
+  const { data: shops } = api.shop.getAll.useQuery()
 
   const checkDuplicates = (field: string) => {
     const valueMap = new Map<string, number>()

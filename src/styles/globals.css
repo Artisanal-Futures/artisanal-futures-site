@@ -156,7 +156,7 @@ body,
   }
 }
 
-body,
+/* body,
 .radix-dialog-content {
   min-height: 100vh;
   min-height: stretch;
@@ -165,4 +165,4 @@ body,
 html {
   height: stretch;
   height: -webkit-fill-available;
-}
+} */

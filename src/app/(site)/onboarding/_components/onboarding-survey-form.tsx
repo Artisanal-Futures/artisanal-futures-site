@@ -1,15 +1,16 @@
-'use client'
+"use client";
 
-import type { Survey } from '@prisma/client'
-import { useState } from 'react'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { EditSection } from '~/components/sections/edit-section.admin'
-import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
+import type { Survey } from "@prisma/client";
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { api } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -18,11 +19,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
-import { Textarea } from '~/components/ui/textarea'
-import { api } from '~/trpc/react'
-import { AdminFormBody } from './admin-form-body'
-import { AdminFormHeader } from './admin-form-header'
+} from "~/components/ui/form";
+import { Textarea } from "~/components/ui/textarea";
+import { EditSection } from "~/components/sections/edit-section.admin";
+
+import { AdminFormBody } from "./admin-form-body";
+import { AdminFormHeader } from "./admin-form-header";
 
 const formSchema = z.object({
   processes: z.string().optional(),
@@ -35,80 +37,80 @@ const formSchema = z.object({
   privateForm: z.boolean().default(false),
   supplyChain: z.boolean().default(false),
   messagingOptIn: z.boolean().default(false),
-})
+});
 
-type SettingsFormValues = z.infer<typeof formSchema>
+type SettingsFormValues = z.infer<typeof formSchema>;
 
 interface SettingsFormProps {
-  initialData: Survey | null
+  initialData: Survey | null;
 
-  successCallback?: () => void
+  successCallback?: () => void;
 }
 
 export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
   initialData,
   successCallback,
 }) => {
-  const { data: shop } = api.shops.getCurrentUserShop.useQuery()
-  const apiContext = api.useContext()
-  const [loading, setLoading] = useState(false)
+  const { data: shop } = api.shop.getCurrentUserShop.useQuery();
+  const apiContext = api.useContext();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      processes: initialData?.processes ?? '',
-      materials: initialData?.materials ?? '',
-      principles: initialData?.principles ?? '',
-      description: initialData?.description ?? '',
+      processes: initialData?.processes ?? "",
+      materials: initialData?.materials ?? "",
+      principles: initialData?.principles ?? "",
+      description: initialData?.description ?? "",
       unmoderatedForm: initialData?.unmoderatedForm ?? false,
       moderatedForm: initialData?.moderatedForm ?? false,
       hiddenForm: initialData?.hiddenForm ?? false,
       privateForm: initialData?.privateForm ?? false,
       supplyChain: initialData?.supplyChain ?? false,
     },
-  })
+  });
 
-  const { mutate: updateSurvey } = api.surveys.updateSurvey.useMutation({
+  const { mutate: updateSurvey } = api.survey.update.useMutation({
     onSuccess: () => {
-      toastService.success({ message: 'Survey updated.' })
-      successCallback!()
+      toastService.success({ message: "Survey updated." });
+      successCallback!();
     },
     onError: (error) =>
-      toastService.error({ message: 'Something went wrong', error }),
+      toastService.error({ message: "Something went wrong", error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
-      setLoading(false)
-      void apiContext.surveys.invalidate()
+      setLoading(false);
+      void apiContext.survey.invalidate();
     },
-  })
+  });
 
-  const { mutate: createSurvey } = api.surveys.createSurvey.useMutation({
+  const { mutate: createSurvey } = api.survey.create.useMutation({
     onSuccess: () => {
-      toastService.success({ message: 'Survey Created.' })
-      successCallback!()
+      toastService.success({ message: "Survey Created." });
+      successCallback!();
     },
     onError: (error) =>
-      toastService.error({ message: 'Something went wrong', error }),
+      toastService.error({ message: "Something went wrong", error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
-      setLoading(false)
-      void apiContext.surveys.invalidate()
+      setLoading(false);
+      void apiContext.survey.invalidate();
     },
-  })
+  });
 
   const onSubmit = (data: SettingsFormValues) => {
     if (!initialData) {
       createSurvey({
         ...data,
-        shopId: shop?.id ?? '',
-      })
+        shopId: shop?.id ?? "",
+      });
     } else {
       updateSurvey({
         ...data,
         surveyId: initialData.id,
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -118,7 +120,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
           className="w-full space-y-8"
         >
           <AdminFormHeader
-            title={'Diving deeper into your business'}
+            title={"Diving deeper into your business"}
             description={
               "Now that you have set up your shop, let's dive deeper into your business. Answer the following questions to the best of your abilities. This helps us better understand your business and how we can improve the platform."
             }
@@ -135,7 +137,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
               description="Be as descriptive as you can!"
               bodyClassName="gap-8 max-lg:space-y-8 md:grid md:grid-cols-3"
             >
-              {' '}
+              {" "}
               <FormField
                 control={form.control}
                 name="description"
@@ -161,7 +163,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />{' '}
+              />{" "}
               <FormField
                 control={form.control}
                 name="processes"
@@ -185,7 +187,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />{' '}
+              />{" "}
               <FormField
                 control={form.control}
                 name="materials"
@@ -208,7 +210,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />{' '}
+              />{" "}
               <FormField
                 control={form.control}
                 name="principles"
@@ -344,7 +346,7 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
                     </div>
                   </FormItem>
                 )}
-              />{' '}
+              />{" "}
               <FormField
                 control={form.control}
                 name="messagingOptIn"
@@ -375,5 +377,5 @@ export const OnboardingSurveyForm: React.FC<SettingsFormProps> = ({
         </form>
       </Form>
     </>
-  )
-}
+  );
+};

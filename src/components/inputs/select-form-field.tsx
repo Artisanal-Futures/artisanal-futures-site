@@ -1,5 +1,6 @@
-import type { FieldValues, Path, UseFormReturn } from 'react-hook-form'
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
+import { cn } from "~/lib/utils";
 import {
   FormControl,
   FormDescription,
@@ -7,32 +8,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
+} from "~/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
-import { cn } from '~/utils/styles'
+} from "~/components/ui/select";
 
 type Props<CurrentForm extends FieldValues> = {
-  form: UseFormReturn<CurrentForm>
-  name: Path<CurrentForm>
-  label?: string
-  description?: string
-  className?: string
-  disabled?: boolean
-  placeholder?: string
+  form: UseFormReturn<CurrentForm>;
+  name: Path<CurrentForm>;
+  label?: string;
+  description?: string;
+  className?: string;
+  disabled?: boolean;
+  placeholder?: string;
   values: {
-    value: string
-    label: string | React.ReactNode
-    isDisabled?: boolean
-  }[]
-  onValueChange?: (value: string) => void
-  defaultValue?: string
-}
+    value: string;
+    label: string | React.ReactNode;
+    isDisabled?: boolean;
+  }[];
+  onValueChange?: (value: string) => void;
+  defaultValue?: string;
+};
 
 export const SelectFormField = <CurrentForm extends FieldValues>({
   form,
@@ -51,15 +51,12 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className={cn('col-span-full', className)}>
+        <FormItem className={cn("col-span-full", className)}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Select
               disabled={disabled}
-              onValueChange={(e) => {
-                onValueChange?.(e)
-                field.onChange(e)
-              }}
+              onValueChange={onValueChange ?? field.onChange}
               value={field.value}
               defaultValue={defaultValue ?? field.value}
             >
@@ -67,7 +64,7 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
                 <SelectTrigger>
                   <SelectValue
                     defaultValue={field.value}
-                    placeholder={placeholder ?? 'Select an option'}
+                    placeholder={placeholder ?? "Select an option"}
                   />
                 </SelectTrigger>
               </FormControl>
@@ -89,5 +86,5 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
         </FormItem>
       )}
     />
-  )
-}
+  );
+};

@@ -1,21 +1,22 @@
-'use client'
+"use client";
 
-import type { Shop, Survey } from '@prisma/client'
-import { useState } from 'react'
-import { useRouter as useNavigationRouter } from 'next/navigation'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { useState } from "react";
+import { useRouter as useNavigationRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { DeleteItem } from '~/components/delete-item'
-import { Button } from '~/components/ui/button'
-import { Checkbox } from '~/components/ui/checkbox'
-import * as Form from '~/components/ui/form'
-import { Separator } from '~/components/ui/separator'
-import { Textarea } from '~/components/ui/textarea'
-import { useModal } from '~/hooks/use-modal'
-import { api } from '~/trpc/react'
+import type { Shop, Survey } from "@prisma/client";
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { api } from "~/trpc/react";
+import { useModal } from "~/hooks/use-modal";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
+import * as Form from "~/components/ui/form";
+import { Separator } from "~/components/ui/separator";
+import { Textarea } from "~/components/ui/textarea";
+import { DeleteItem } from "~/components/delete-item";
 
 const formSchema = z.object({
   processes: z.string().optional(),
@@ -28,111 +29,111 @@ const formSchema = z.object({
   privateForm: z.boolean().default(false),
   supplyChain: z.boolean().default(false),
   messagingOptIn: z.boolean().default(false),
-})
+});
 
-type SettingsFormValues = z.infer<typeof formSchema>
+type SettingsFormValues = z.infer<typeof formSchema>;
 
 type TSurveyFormProps = {
-  initialData: Survey | null
-  shop: Shop
-}
+  initialData: Survey | null;
+  shop: Shop;
+};
 
 export const SurveyForm: React.FC<TSurveyFormProps> = ({
   initialData,
   shop,
 }) => {
-  const alertModal = useModal((state) => state)
+  const alertModal = useModal((state) => state);
 
-  const apiContext = api.useUtils()
-  const router = useNavigationRouter()
+  const apiContext = api.useUtils();
+  const router = useNavigationRouter();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      processes: initialData?.processes ?? '',
-      materials: initialData?.materials ?? '',
-      principles: initialData?.principles ?? '',
-      description: initialData?.description ?? '',
+      processes: initialData?.processes ?? "",
+      materials: initialData?.materials ?? "",
+      principles: initialData?.principles ?? "",
+      description: initialData?.description ?? "",
       unmoderatedForm: initialData?.unmoderatedForm ?? false,
       moderatedForm: initialData?.moderatedForm ?? false,
       hiddenForm: initialData?.hiddenForm ?? false,
       privateForm: initialData?.privateForm ?? false,
       supplyChain: initialData?.supplyChain ?? false,
     },
-  })
+  });
 
-  const { mutate: createSurvey } = api.surveys.createSurvey.useMutation({
-    onSuccess: () => toastService.success({ message: 'Survey created.' }),
+  const { mutate: createSurvey } = api.survey.create.useMutation({
+    onSuccess: () => toastService.success({ message: "Survey created." }),
     onError: (error) =>
-      toastService.error({ message: 'Something went wrong', error }),
+      toastService.error({ message: "Something went wrong", error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
-      setLoading(false)
-      void apiContext.surveys.getCurrentUserShopSurvey.invalidate()
+      setLoading(false);
+      void apiContext.survey.getCurrentUserShopSurvey.invalidate();
     },
-  })
+  });
 
-  const { mutate: updateSurvey } = api.surveys.updateSurvey.useMutation({
-    onSuccess: () => toastService.success({ message: 'Shop updated.' }),
+  const { mutate: updateSurvey } = api.survey.update.useMutation({
+    onSuccess: () => toastService.success({ message: "Shop updated." }),
     onError: (error) =>
-      toastService.error({ message: 'Something went wrong', error }),
+      toastService.error({ message: "Something went wrong", error }),
     onMutate: () => setLoading(true),
     onSettled: () => {
-      setLoading(false)
-      void apiContext.surveys.getCurrentUserShopSurvey.invalidate()
+      setLoading(false);
+      void apiContext.survey.getCurrentUserShopSurvey.invalidate();
     },
-  })
+  });
 
-  const { mutate: deleteSurvey } = api.surveys.deleteSurvey.useMutation({
+  const { mutate: deleteSurvey } = api.survey.delete.useMutation({
     onSuccess: () => {
-      router.push('/profile')
-      toastService.success({ message: 'Shop deleted.' })
+      router.push("/profile");
+      toastService.success({ message: "Shop deleted." });
     },
     onError: (error) =>
       toastService.error({
         message:
-          'There was an error deleting the survey. Please try again later.',
+          "There was an error deleting the survey. Please try again later.",
         error,
       }),
     onMutate: () => setLoading(true),
     onSettled: () => {
-      setLoading(false)
-      alertModal.onClose()
-      void apiContext.surveys.getCurrentUserShopSurvey.invalidate()
+      setLoading(false);
+      alertModal.onClose();
+      void apiContext.survey.getCurrentUserShopSurvey.invalidate();
     },
-  })
+  });
 
   const onSubmit = (data: SettingsFormValues) => {
     if (initialData)
       updateSurvey({
         ...data,
         surveyId: initialData.id,
-      })
+      });
     else
       createSurvey({
         ...data,
         shopId: shop?.id,
-      })
-  }
+      });
+  };
 
   const onDelete = () => {
     if (initialData)
       deleteSurvey({
         surveyId: initialData?.id,
-      })
-  }
+      });
+  };
 
   return (
     <>
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-medium">
-            Survey Dashboard:{' '}
+            Survey Dashboard:{" "}
             <span>
-              {initialData?.id ? 'Update Survey' : 'New Survey'}{' '}
-              {shop ? `for ${shop.shopName ?? 'your shop'}` : ''}{' '}
+              {initialData?.id ? "Update Survey" : "New Survey"}{" "}
+              {shop ? `for ${shop.shopName ?? "your shop"}` : ""}{" "}
             </span>
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -155,7 +156,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
           className="w-full space-y-8"
         >
           <div className="gap-8 md:grid md:grid-cols-3">
-            {' '}
+            {" "}
             <Form.FormField
               control={form.control}
               name="description"
@@ -170,7 +171,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                       placeholder="e.g. Hey, my name is..."
                       {...field}
                     />
-                  </Form.FormControl>{' '}
+                  </Form.FormControl>{" "}
                   <Form.FormDescription>
                     Tell us about your business: the more you can say, the
                     better! Pretend its an interview -- what can you say that
@@ -183,7 +184,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                   <Form.FormMessage />
                 </Form.FormItem>
               )}
-            />{' '}
+            />{" "}
             <Form.FormField
               control={form.control}
               name="processes"
@@ -198,7 +199,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                       placeholder="e.g. textiles, bead making"
                       {...field}
                     />
-                  </Form.FormControl>{' '}
+                  </Form.FormControl>{" "}
                   <Form.FormDescription>
                     Some examples of processes could be: textiles, woodworking,
                     metalworking, digital fabrication, print media,
@@ -207,7 +208,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                   <Form.FormMessage />
                 </Form.FormItem>
               )}
-            />{' '}
+            />{" "}
             <Form.FormField
               control={form.control}
               name="materials"
@@ -222,7 +223,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                       placeholder="e.g. satin, silk, cotton, wool"
                       {...field}
                     />
-                  </Form.FormControl>{' '}
+                  </Form.FormControl>{" "}
                   <Form.FormDescription>
                     Some examples of processes could be: cotton, yarn, glass,
                     dyes, inks, etc.
@@ -230,7 +231,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                   <Form.FormMessage />
                 </Form.FormItem>
               )}
-            />{' '}
+            />{" "}
             <Form.FormField
               control={form.control}
               name="principles"
@@ -245,7 +246,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                       placeholder="e.g. black owned, sustainability, LGBTQ+ / Gender neutral"
                       {...field}
                     />
-                  </Form.FormControl>{' '}
+                  </Form.FormControl>{" "}
                   <Form.FormDescription>
                     Some examples of principles could be: black owned, female
                     owned, community education, african american civil rights,
@@ -255,7 +256,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                   <Form.FormMessage />
                 </Form.FormItem>
               )}
-            />{' '}
+            />{" "}
             <Form.FormField
               control={form.control}
               name="unmoderatedForm"
@@ -360,7 +361,7 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
                   </div>
                 </Form.FormItem>
               )}
-            />{' '}
+            />{" "}
             <Form.FormField
               control={form.control}
               name="messagingOptIn"
@@ -390,5 +391,5 @@ export const SurveyForm: React.FC<TSurveyFormProps> = ({
         </form>
       </Form.Form>
     </>
-  )
-}
+  );
+};
