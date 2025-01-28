@@ -1,7 +1,8 @@
-import { type GuestSurvey, type User } from '@prisma/client'
-import * as z from 'zod'
+import * as z from "zod";
 
-import type { AdminColumn } from '~/types'
+import { type GuestSurvey, type User } from "@prisma/client";
+
+import type { AdminColumn } from "~/types";
 
 export const guestSurveySchema = z.object({
   id: z.number(),
@@ -10,9 +11,9 @@ export const guestSurveySchema = z.object({
   country: z.string(),
   state: z.string(),
   artisanalPractice: z.string(),
-})
+});
 
 export type GuestSurveyColumn = AdminColumn<GuestSurvey> & {
-  user: User | null
-}
-export type GuestSurveyFormValues = z.infer<typeof guestSurveySchema>
+  user: User | null;
+};
+export type GuestSurveyFormValues = z.infer<typeof guestSurveySchema>;

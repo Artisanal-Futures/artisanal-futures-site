@@ -1,58 +1,31 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-const baseProjectSchema = z.object({
-  title: z.string(),
-  project_type: z
-    .array(z.string())
-    .refine((value) => value.some((item) => item), {
-      message: 'You have to select at least one item.',
-    }),
-  description: z.string().min(85, {
-    message:
-      'Description must be at least 85 words long. Please provide a detailed explanation of your project, including its goals, scope, and any specific requirements or challenges you anticipate. This will help potential contributors better understand and engage with your project.',
-  }),
-  image: z.any().optional().nullable(),
-
-  link_to_project: z.string().refine(
-    (value) => {
-      const urlPattern =
-        /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
-      return urlPattern.test(value)
-    },
-    {
-      message: 'Please enter a valid URL (with or without http/https)',
-    },
-  ),
-
-  is_public: z.boolean().default(false),
-  email: z.string().email(),
-})
-
-export const newProjectSchema = baseProjectSchema.extend({
-  first_prompt: z.string(),
-  second_prompt: z.string(),
-  third_prompt: z.string(),
-  online_demo: z.boolean().default(false),
-  needs_support: z.boolean().default(false),
-})
-
-export const updateProjectSchema = baseProjectSchema.extend({
-  email: z.string().email(),
-})
-
-export const projectSchema = baseProjectSchema.extend({
-  first_prompt: z.string(),
-  second_prompt: z.string(),
-  third_prompt: z.string(),
-  online_demo: z.boolean().default(false),
-  needs_support: z.boolean().default(false),
-  email: z.string().email(),
-})
 export const migrationTableSchema = z.object({
   type: z.string(),
   name: z.string(),
   database: z.string(),
   data: z.array(z.unknown()),
-})
+});
 
-export type MigrationTable = z.infer<typeof migrationTableSchema>
+export const productFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  image: z.any().nullable(),
+  priceInCents: z.coerce.number().nullable(),
+  tags: z.array(z.object({ text: z.string(), id: z.string() })),
+  currency: z.string().nullable(),
+  productUrl: z.string().nullable(),
+  attributeTags: z.array(z.string()),
+  materialTags: z.array(z.string()),
+  environmentalTags: z.array(z.string()),
+  aiGeneratedTags: z.array(z.string()),
+  imageUrl: z.string().nullable(),
+  shopId: z.string().min(1, "Shop is required"),
+  shopProductId: z.string(),
+  scrapeMethod: z
+    .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
+    .default("MANUAL"),
+});
+
+export type ProductForm = z.infer<typeof productFormSchema>;
+export type MigrationTable = z.infer<typeof migrationTableSchema>;

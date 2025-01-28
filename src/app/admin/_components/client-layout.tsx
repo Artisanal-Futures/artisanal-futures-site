@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
+
 import { ContentLayout } from "./content-layout";
 
 type Props = {

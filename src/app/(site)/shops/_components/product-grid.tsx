@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 import PageLoader from "~/components/ui/page-loader";
 import Container from "~/app/_components/container";
 
+import { NewProductCard } from "./new-product-card";
 import { ProductCard } from "./product-card";
 
 export const ProductGrid = ({ id }: { id: string }) => {
@@ -31,7 +32,13 @@ export const ProductGrid = ({ id }: { id: string }) => {
               className="flex basis-full justify-center p-4 md:basis-1/3 lg:basis-1/4"
               key={product.name}
             >
-              <ProductCard product={product as Product} key={product.id} />
+              <NewProductCard
+                product={{
+                  ...product,
+                  shop: product.shop ?? undefined,
+                }}
+                key={product.id}
+              />
             </div>
           ))}
         </div>

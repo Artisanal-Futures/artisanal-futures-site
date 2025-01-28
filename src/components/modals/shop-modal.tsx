@@ -1,13 +1,16 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useSession } from 'next-auth/react'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { Button } from '~/components/ui/button'
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { api } from "~/trpc/react";
+import { useShopModal } from "~/hooks/use-shop-modal";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,61 +18,59 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { Modal } from '~/components/ui/modal'
-import { useShopModal } from '~/hooks/use-shop-modal'
-import { api } from '~/trpc/react'
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+import { Modal } from "~/components/ui/modal";
 
 const formSchema = z.object({
-  shopName: z.string().min(1),
-})
+  name: z.string().min(1),
+});
 
 export const ShopModal = () => {
-  const ShopModal = useShopModal()
+  const ShopModal = useShopModal();
 
-  const { data: sessionData } = useSession()
+  const { data: sessionData } = useSession();
 
   const { mutate } = api.shop.create.useMutation({
-    onSuccess: ({ id }) => {
-      if (sessionData?.user?.role !== 'ADMIN') {
-        updateRole({ role: 'ARTISAN' })
+    onSuccess: ({ data }) => {
+      if (sessionData?.user?.role !== "ADMIN") {
+        updateRole({ role: "ARTISAN" });
       }
-      window.location.assign(`/profile/shop/${id}`)
-      setLoading(false)
+      window.location.assign(`/profile/shop/${data.id}`);
+      setLoading(false);
     },
     onError: (error) => {
-      toastService.error('Something went wrong with creating your shop.')
-      console.error(error)
-      setLoading(false)
+      toastService.error("Something went wrong with creating your shop.");
+      console.error(error);
+      setLoading(false);
     },
     onMutate: () => {
-      setLoading(true)
+      setLoading(true);
     },
-  })
+  });
 
   const { mutate: updateRole } = api.auth.changeRole.useMutation({
     onSuccess: () => {
-      toastService.success('Role updated.')
+      toastService.success("Role updated.");
     },
     onError: (error) => {
-      toastService.error('Something went wrong with updating your role.')
-      console.error(error)
+      toastService.error("Something went wrong with updating your role.");
+      console.error(error);
     },
-  })
+  });
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      shopName: '',
+      name: "",
     },
-  })
+  });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values)
-  }
+    mutate(values);
+  };
 
   return (
     <Modal
@@ -85,7 +86,7 @@ export const ShopModal = () => {
               <form onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}>
                 <FormField
                   control={form.control}
-                  name="shopName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
@@ -108,7 +109,7 @@ export const ShopModal = () => {
                     onClick={ShopModal.onClose}
                   >
                     Cancel
-                  </Button>{' '}
+                  </Button>{" "}
                   <Button disabled={loading} type="submit">
                     Continue
                   </Button>
@@ -119,5 +120,5 @@ export const ShopModal = () => {
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};

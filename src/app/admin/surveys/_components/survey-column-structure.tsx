@@ -1,4 +1,3 @@
-import type { User } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Survey } from "~/types/survey";
@@ -7,28 +6,14 @@ import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data
 import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteSurveyDialog } from "./delete-survey-dialog";
 import { SurveyForm } from "./survey-form";
+import { ViewSurveyDialog } from "./view-survey-dialog";
 
 export const surveyColumns: ColumnDef<Survey>[] = [
   {
-    accessorKey: "processes",
-    header: "Processes",
-    accessorFn: (row) => row.processes,
-    filterFn: "includesString",
+    accessorKey: "id",
+    header: "ID",
     cell: ({ row }) => (
-      <div className="flex flex-col space-y-1">
-        <span>{row.original.processes}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "materials",
-    header: "Materials",
-    accessorFn: (row) => row.materials,
-    filterFn: "includesString",
-    cell: ({ row }) => (
-      <div className="flex flex-col space-y-1">
-        <span>{row.original.materials}</span>
-      </div>
+      <span className="text-sm text-gray-500">{row.original.id}</span>
     ),
   },
   {
@@ -60,7 +45,9 @@ export const surveyColumns: ColumnDef<Survey>[] = [
     header: "Options",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <DeleteSurveyDialog shopId={row.original.id} />
+        <ViewSurveyDialog survey={row.original} />
+
+        <DeleteSurveyDialog surveyId={row.original.id} />
 
         <ItemDialog
           id={row.original.id}

@@ -1,18 +1,19 @@
-import { TrashIcon } from 'lucide-react'
+import { TrashIcon } from "lucide-react";
 
-import { useDefaultMutationActions } from '~/hooks/use-default-mutation-actions'
-import { api } from '~/trpc/react'
-import { SingleActionDialog } from '../../_components/single-action-dialog'
+import { api } from "~/trpc/react";
+import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
-type Props = { productId: string }
+import { SingleActionDialog } from "../../_components/single-action-dialog";
+
+type Props = { productId: string };
 
 export function DeleteProductDialog(props: Props) {
   const { defaultActions } = useDefaultMutationActions({
-    entity: 'product',
-  })
-  const deleteProduct = api.product.delete.useMutation(defaultActions)
+    entity: "product",
+  });
+  const deleteProduct = api.product.delete.useMutation(defaultActions);
 
-  const onSubmit = () => deleteProduct.mutate(props.productId)
+  const onSubmit = () => deleteProduct.mutate(props.productId);
 
   return (
     <SingleActionDialog
@@ -26,5 +27,5 @@ export function DeleteProductDialog(props: Props) {
       icon={TrashIcon}
       isLoading={deleteProduct.isPending}
     />
-  )
+  );
 }

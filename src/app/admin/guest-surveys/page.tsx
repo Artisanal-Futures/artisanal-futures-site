@@ -1,9 +1,14 @@
-import { api } from '~/trpc/server'
-import { AdminClientLayout } from '../_components/client-layout'
-import { GuestSurveysClient } from './_components/guest-surveys-client'
+import { api } from "~/trpc/server";
+
+import { AdminClientLayout } from "../_components/client-layout";
+import { GuestSurveysClient } from "./_components/guest-surveys-client";
+
+export const metadata = {
+  title: "Guest Surveys",
+};
 
 export default async function AdminGuestSurveysPage() {
-  const guests = await api.guest.getAll()
+  const guests = await api.guest.getAll();
 
   return (
     <AdminClientLayout
@@ -12,5 +17,5 @@ export default async function AdminGuestSurveysPage() {
     >
       <GuestSurveysClient guests={guests ?? []} />
     </AdminClientLayout>
-  )
+  );
 }

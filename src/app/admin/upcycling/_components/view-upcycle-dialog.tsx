@@ -1,28 +1,28 @@
-/* eslint-disable @next/next/no-img-element */
-'use client'
+"use client";
 
-import { Eye } from 'lucide-react'
+import Image from "next/image";
+import { type UpcyclingItem } from "~/types";
+import { Eye } from "lucide-react";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '~/components/ui/dialog'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { type UpcyclingItem } from '~/types'
+} from "~/components/ui/dialog";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
-interface ViewPromptDialogProps {
-  item: UpcyclingItem
-}
+type Props = {
+  item: UpcyclingItem;
+};
 
-export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
+export function ViewUpcycleDialog({ item }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className=" h-8 gap-1">
+        <Button variant="outline" size="sm" className="h-8 gap-1">
           <Eye className="h-4 w-4" /> View
         </Button>
       </DialogTrigger>
@@ -35,7 +35,7 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
             <div className="space-y-2">
               <h3 className="font-medium">User Information</h3>
               <p className="text-sm text-muted-foreground">
-                Email: {item.user?.email ?? 'Guest'}
+                Email: {item.user?.email ?? "Guest"}
               </p>
             </div>
 
@@ -64,10 +64,12 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
               {item.input_image_url && (
                 <div className="space-y-2">
                   <h3 className="font-medium">Input Image</h3>
-                  <img
+                  <Image
                     src={item.input_image_url}
                     alt="Input"
                     className="max-h-96 rounded-md object-contain"
+                    width={384}
+                    height={384}
                   />
                 </div>
               )}
@@ -75,10 +77,12 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
               {item.output_image_url && (
                 <div className="space-y-2">
                   <h3 className="font-medium">Output Image</h3>
-                  <img
+                  <Image
                     src={item.output_image_url}
                     alt="Output"
                     className="max-h-96 rounded-md object-contain"
+                    width={384}
+                    height={384}
                   />
                 </div>
               )}
@@ -98,5 +102,5 @@ export function ViewPromptDialog({ item }: ViewPromptDialogProps) {
         </ScrollArea>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -11,7 +11,7 @@ export type ProductColumnEntry = Product & {
   searchableString: string;
 };
 
-export const projectColumns: ColumnDef<ProductColumnEntry>[] = [
+export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   {
     accessorKey: "searchableString",
     header: "Title",

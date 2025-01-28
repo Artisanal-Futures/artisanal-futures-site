@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { type GuestSurvey } from '@prisma/client'
+import type { GuestSurvey } from "@prisma/client";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '~/components/ui/dialog'
-import { ScrollArea } from '~/components/ui/scroll-area'
+} from "~/components/ui/dialog";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
-interface ViewGuestSurveyDialogProps {
-  item: GuestSurvey
-}
+type Props = {
+  item: GuestSurvey;
+};
 
-export function ViewGuestSurveyDialog({ item }: ViewGuestSurveyDialogProps) {
+export function ViewGuestSurveyDialog({ item }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -75,5 +75,5 @@ export function ViewGuestSurveyDialog({ item }: ViewGuestSurveyDialogProps) {
         </ScrollArea>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

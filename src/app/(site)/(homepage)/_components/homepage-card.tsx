@@ -1,16 +1,16 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 type Props = {
-  link: string
-  title: string
-  icon: React.ReactNode
-  description: string
-}
+  link: string;
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+};
 export const HomePageCard = ({ link, title, icon, description }: Props) => (
   <Link href={link}>
-    <Card className="transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:bg-background/50 dark:border-accent/20 dark:bg-background/50 dark:hover:bg-background/75 dark:hover:border-accent/30">
+    <Card className="transition-all duration-200 hover:scale-[1.02] hover:bg-background/50 hover:shadow-lg dark:border-accent/20 dark:bg-background/50 dark:hover:border-accent/30 dark:hover:bg-background/75">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80">
           {description}
@@ -26,4 +26,4 @@ export const HomePageCard = ({ link, title, icon, description }: Props) => (
       </CardContent>
     </Card>
   </Link>
-)
+);

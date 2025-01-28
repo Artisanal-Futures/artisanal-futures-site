@@ -1,8 +1,8 @@
-import { AdminClientLayout } from '../_components/client-layout'
+import { AdminClientLayout } from "../_components/client-layout";
 
 export const metadata = {
-  title: 'Admin Dashboard',
-}
+  title: "Admin Dashboard",
+};
 
 export default function AdminPage() {
   return (
@@ -13,5 +13,5 @@ export default function AdminPage() {
         </p>
       </div>
     </AdminClientLayout>
-  )
+  );
 }

@@ -3,14 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { useState } from "react";
 
-import type { ShopifyData, SquareSpaceData } from '../_validators/types'
-import type { Product } from '~/types/product'
-import { Button } from '~/components/ui/button'
+import { toastService } from "@dreamwalker-studios/toasts";
+
+import type { ShopifyData, SquareSpaceData } from "../_validators/types";
+import type { Product } from "~/types/product";
+import { api } from "~/trpc/react";
+import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
+import { Button } from "~/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -19,14 +22,14 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '~/components/ui/pagination'
+} from "~/components/ui/pagination";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
+} from "~/components/ui/select";
 import {
   Table,
   TableBody,
@@ -34,64 +37,63 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '~/components/ui/table'
-import { Textarea } from '~/components/ui/textarea'
-import { useDefaultMutationActions } from '~/hooks/use-default-mutation-actions'
-import { api } from '~/trpc/react'
-import { convertToProduct } from '../_utils/convert-to-product'
+} from "~/components/ui/table";
+import { Textarea } from "~/components/ui/textarea";
 
-const ROWS_PER_PAGE = 10
+import { convertToProduct } from "../_utils/convert-to-product";
+
+const ROWS_PER_PAGE = 10;
 
 const PRODUCT_SOURCES = {
-  SHOPIFY: 'Shopify',
-  SQUARESPACE: 'Squarespace',
-} as const
+  SHOPIFY: "Shopify",
+  SQUARESPACE: "Squarespace",
+} as const;
 
-type ProductSource = keyof typeof PRODUCT_SOURCES
+type ProductSource = keyof typeof PRODUCT_SOURCES;
 
 export function DatabaseMigrationClient() {
-  const [jsonInput, setJsonInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [parsedFields, setParsedFields] = useState<string[]>([])
-  const [previewData, setPreviewData] = useState<Product[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [jsonInput, setJsonInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [parsedFields, setParsedFields] = useState<string[]>([]);
+  const [previewData, setPreviewData] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedSource, setSelectedSource] = useState<ProductSource | null>(
     null,
-  )
-  const [selectedShopId, setSelectedShopId] = useState<string | null>(null)
-  const [selectedField, setSelectedField] = useState<string | null>(null)
+  );
+  const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
+  const [selectedField, setSelectedField] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
-  >([])
+  >([]);
 
-  const totalPages = Math.ceil(previewData.length / ROWS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ROWS_PER_PAGE
-  const endIndex = startIndex + ROWS_PER_PAGE
-  const currentData = previewData.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(previewData.length / ROWS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+  const endIndex = startIndex + ROWS_PER_PAGE;
+  const currentData = previewData.slice(startIndex, endIndex);
 
   const { defaultActions } = useDefaultMutationActions({
-    entity: 'product',
-  })
+    entity: "product",
+  });
 
   const productMigration =
-    api.product.importProducts.useMutation(defaultActions)
+    api.product.importProducts.useMutation(defaultActions);
 
-  const { data: shops } = api.shop.getAll.useQuery()
+  const { data: shops } = api.shop.getAll.useQuery();
 
   const checkDuplicates = (field: string) => {
-    const valueMap = new Map<string, number>()
-    const duplicateValues: string[] = []
+    const valueMap = new Map<string, number>();
+    const duplicateValues: string[] = [];
 
     previewData.forEach((item) => {
-      const value = (item as any)[field]?.toString() ?? ''
-      valueMap.set(value, (valueMap.get(value) ?? 0) + 1)
-    })
+      const value = (item as any)[field]?.toString() ?? "";
+      valueMap.set(value, (valueMap.get(value) ?? 0) + 1);
+    });
 
     valueMap.forEach((count, value) => {
       if (count > 1) {
-        duplicateValues.push(value)
+        duplicateValues.push(value);
       }
-    })
+    });
 
     if (duplicateValues.length > 0) {
       setDuplicates([
@@ -100,80 +102,84 @@ export function DatabaseMigrationClient() {
           values: duplicateValues,
           count: duplicateValues.length,
         },
-      ])
+      ]);
     } else {
-      setDuplicates([])
+      setDuplicates([]);
     }
-  }
+  };
 
   // Parse JSON to extract field names and convert to Product type
   const parseJSON = () => {
     try {
       if (!selectedSource) {
-        throw new Error('Please select a product source')
+        throw new Error("Please select a product source");
       }
 
       if (!selectedShopId) {
-        throw new Error('Please select a shop')
+        throw new Error("Please select a shop");
       }
 
-      let convertedProducts: Partial<Product>[] = []
+      let convertedProducts: Partial<Product>[] = [];
 
       // Parse JSON for sources
-      const parsedJson = JSON.parse(jsonInput)
+      const parsedJson = JSON.parse(jsonInput);
 
-      if (selectedSource === 'SHOPIFY') {
-        const shopifyData = parsedJson as ShopifyData
+      if (selectedSource === "SHOPIFY") {
+        const shopifyData = parsedJson as ShopifyData;
         convertedProducts = shopifyData.products.map(
           (product) =>
             convertToProduct(product, selectedShopId) as Partial<Product>,
-        )
-      } else if (selectedSource === 'SQUARESPACE') {
-        const squarespaceData = parsedJson as SquareSpaceData
+        );
+      } else if (selectedSource === "SQUARESPACE") {
+        const squarespaceData = parsedJson as SquareSpaceData;
         convertedProducts = squarespaceData.items.map(
           (product) =>
             convertToProduct(product, selectedShopId) as Partial<Product>,
-        )
+        );
       }
 
       if (!convertedProducts.length) {
-        throw new Error('No products found in the data')
+        throw new Error("No products found in the data");
       }
       // Get fields from first product
-      const firstProduct = convertedProducts[0]
+      const firstProduct = convertedProducts[0];
       if (!firstProduct) {
-        throw new Error('No products found in the data')
+        throw new Error("No products found in the data");
       }
-      const fields = Object.keys(firstProduct)
-      setParsedFields(fields)
-      setPreviewData(convertedProducts as unknown as Product[])
+      const fields = Object.keys(firstProduct);
+      setParsedFields(fields);
+      setPreviewData(convertedProducts as unknown as Product[]);
 
-      toast.success('Products parsed successfully')
+      toastService.success("Products parsed successfully");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to parse data',
-      )
-      console.error(error)
+      toastService.error(
+        error instanceof Error ? error.message : "Failed to parse data",
+      );
+      console.error(error);
     }
-  }
+  };
 
   const handleMigration = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       productMigration.mutate(
-        previewData as unknown as (Product & { shopProductId: string })[],
-      )
-      toast.success('Migration completed successfully')
+        previewData.map((product) => ({
+          ...product,
+          shopId: product.shopId ?? "",
+          shopProductId: product.shopProductId ?? "",
+        })),
+      );
+      toastService.success("Migration completed successfully");
     } catch (error) {
-      toast.error('Failed to execute migration')
-      console.error(error)
+      toastService.error("Failed to execute migration");
+      console.error(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="space-y-12 mt-6">
+    <div className="mt-6 space-y-12">
       <div className="space-y-4">
         <h2 className="text-2xl font-bold tracking-tight">Product Migration</h2>
         <div className="flex gap-4">
@@ -199,7 +205,7 @@ export function DatabaseMigrationClient() {
             <SelectContent>
               {shops?.map((shop) => (
                 <SelectItem key={shop.id} value={shop.id}>
-                  {shop.shopName}
+                  {shop.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -209,16 +215,16 @@ export function DatabaseMigrationClient() {
         <div className="relative space-y-2">
           <div className="rounded-md bg-muted p-4 text-sm">
             <h4 className="mb-2 font-medium">How to get your product data:</h4>
-            {selectedSource === 'SHOPIFY' ? (
+            {selectedSource === "SHOPIFY" ? (
               <ol className="list-decimal space-y-1 pl-4">
                 <li>Go to your Shopify admin panel</li>
-                <li>Navigate to Products {'>'} All products</li>
+                <li>Navigate to Products {">"} All products</li>
                 <li>
                   Add &quot;/products.json?limit=250&quot; to your shop URL
                 </li>
                 <li>Copy the entire JSON response and paste it below</li>
               </ol>
-            ) : selectedSource === 'SQUARESPACE' ? (
+            ) : selectedSource === "SQUARESPACE" ? (
               <ol className="list-decimal space-y-1 pl-4">
                 <li>Go to your Squarespace site</li>
                 <li>
@@ -250,8 +256,8 @@ export function DatabaseMigrationClient() {
               <h3 className="text-lg font-semibold">Check Duplicates</h3>
               <Select
                 onValueChange={(value) => {
-                  setSelectedField(value)
-                  checkDuplicates(value)
+                  setSelectedField(value);
+                  checkDuplicates(value);
                 }}
               >
                 <SelectTrigger className="w-[200px]">
@@ -332,7 +338,7 @@ export function DatabaseMigrationClient() {
                         page === 1 ||
                         page === totalPages ||
                         Math.abs(currentPage - page) <= 1
-                      )
+                      );
                     })
                     .map((page, i, arr) => (
                       <PaginationItem key={page}>
@@ -362,10 +368,10 @@ export function DatabaseMigrationClient() {
           </div>
 
           <Button onClick={handleMigration} disabled={loading}>
-            {loading ? 'Migrating...' : 'Run Migration'}
+            {loading ? "Migrating..." : "Run Migration"}
           </Button>
         </>
       )}
     </div>
-  )
+  );
 }

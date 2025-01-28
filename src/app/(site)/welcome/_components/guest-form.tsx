@@ -1,14 +1,13 @@
-'use client'
+"use client";
 
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useSession } from 'next-auth/react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { AbsolutePageLoader } from '~/components/absolute-page-loader'
-import { InputFormField } from '~/components/inputs/input-form-field'
-import { LoadButton } from '~/components/load-button'
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { api } from "~/trpc/react";
 import {
   Card,
   CardContent,
@@ -16,11 +15,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '~/components/ui/card'
-import { Form } from '~/components/ui/form'
-import { Label } from '~/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
-import { api } from '~/trpc/react'
+} from "~/components/ui/card";
+import { Form } from "~/components/ui/form";
+import { Label } from "~/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { AbsolutePageLoader } from "~/components/absolute-page-loader";
+import { LoadButton } from "~/components/common/load-button";
+import { InputFormField } from "~/components/inputs/input-form-field";
 
 const GuestSchema = z.object({
   name: z.string(),
@@ -29,45 +30,45 @@ const GuestSchema = z.object({
   artisanalPractice: z.string(),
   otherPractice: z.string(),
   email: z.string().email(),
-})
+});
 
 export default function ArtisanRegistrationForm() {
-  const apiUtils = api.useUtils()
-  const sessionData = useSession()
+  const apiUtils = api.useUtils();
+  const sessionData = useSession();
 
-  const { data: isCompleted, isPending } = api.guest.isCompleted.useQuery()
+  const { data: isCompleted, isPending } = api.guest.isCompleted.useQuery();
 
   const form = useForm<z.infer<typeof GuestSchema>>({
     resolver: zodResolver(GuestSchema),
     defaultValues: {
-      name: '',
-      country: '',
-      state: '',
-      artisanalPractice: '',
-      otherPractice: '',
-      email: sessionData.data?.user?.email ?? '',
+      name: "",
+      country: "",
+      state: "",
+      artisanalPractice: "",
+      otherPractice: "",
+      email: sessionData.data?.user?.email ?? "",
     },
-  })
+  });
 
   const guestRegistrationMutation = api.guest.create.useMutation({
     onSuccess: ({ message }) => toastService.success(message),
     onError: (error) => {
       toastService.error({
         error,
-        message: 'There was an issue submitting the survey. Please try again.',
-      })
+        message: "There was an issue submitting the survey. Please try again.",
+      });
     },
     onSettled: () => void apiUtils.guest.invalidate(),
-  })
+  });
 
   const handleSubmit = (data: z.infer<typeof GuestSchema>) =>
-    guestRegistrationMutation.mutate(data)
+    guestRegistrationMutation.mutate(data);
 
-  if (isPending) return <AbsolutePageLoader />
+  if (isPending) return <AbsolutePageLoader />;
 
   if (isCompleted) {
     return (
-      <Card className="w-full max-w-2xl mx-auto">
+      <Card className="mx-auto w-full max-w-2xl">
         <CardHeader>
           <CardTitle>Thank You!</CardTitle>
         </CardHeader>
@@ -78,11 +79,11 @@ export default function ArtisanRegistrationForm() {
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="mx-auto w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Guest Registration</CardTitle>
         <CardDescription>
@@ -125,9 +126,9 @@ export default function ArtisanRegistrationForm() {
               <Label>Artisanal Practices</Label>
               <RadioGroup
                 onValueChange={(value) =>
-                  form.setValue('artisanalPractice', value)
+                  form.setValue("artisanalPractice", value)
                 }
-                value={form.watch('artisanalPractice')}
+                value={form.watch("artisanalPractice")}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="cloth" id="cloth" />
@@ -148,7 +149,7 @@ export default function ArtisanRegistrationForm() {
               </RadioGroup>
             </div>
 
-            {form.watch('artisanalPractice') === 'other' && (
+            {form.watch("artisanalPractice") === "other" && (
               <div className="space-y-2">
                 <InputFormField
                   form={form}
@@ -181,5 +182,5 @@ export default function ArtisanRegistrationForm() {
         </form>
       </Form>
     </Card>
-  )
+  );
 }

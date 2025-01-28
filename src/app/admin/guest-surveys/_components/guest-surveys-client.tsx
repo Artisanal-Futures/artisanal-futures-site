@@ -1,13 +1,14 @@
-'use client'
+"use client";
 
-import { type GuestSurvey } from '@prisma/client'
+import type { GuestSurvey } from "@prisma/client";
 
-import { AdvancedDataTable } from '~/components/tables/advanced-data-table'
-import { type GuestSurveyColumn } from '../_validators/types'
-import { ExportAsCSV } from './export-as-csv'
-import { guestSurveyColumnStructure } from './guest-survey-column-structure'
+import type { GuestSurveyColumn } from "../_validators/types";
+import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-type Props = { guests: GuestSurvey[] }
+import { ExportAsCSV } from "./export-as-csv";
+import { guestSurveyColumnStructure } from "./guest-survey-column-structure";
+
+type Props = { guests: GuestSurvey[] };
 
 export function GuestSurveysClient({ guests }: Props) {
   return (
@@ -19,5 +20,5 @@ export function GuestSurveysClient({ guests }: Props) {
         addButton={<ExportAsCSV surveys={guests} />}
       />
     </div>
-  )
+  );
 }

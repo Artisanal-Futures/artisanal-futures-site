@@ -1,26 +1,23 @@
-'use client'
+"use client";
 
-import type { User } from '@prisma/client'
+import type { User } from "@prisma/client";
 
-import {
-  AdvancedDataTable,
-  FilterOption,
-} from '~/components/tables/advanced-data-table'
-import { usePermissions } from '~/hooks/use-permissions'
-import { api } from '~/trpc/react'
-import { type Shop } from '~/types/shop'
-import { ItemDialog } from '../../_components/item-dialog'
-import { shopColumns } from './shop-column-structure'
-import { createShopFilters } from './shop-filters'
-import { ShopForm } from './shop-form'
-import { ShopHelpDialog } from './shop-help-dialog'
+import type { FilterOption } from "~/components/tables/advanced-data-table";
+import { type Shop } from "~/types/shop";
+import { usePermissions } from "~/hooks/use-permissions";
+import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-type Props = { shops: (Shop & { owner: User })[] }
+import { ItemDialog } from "../../_components/item-dialog";
+import { shopColumns } from "./shop-column-structure";
+import { createShopFilters } from "./shop-filters";
+import { ShopForm } from "./shop-form";
+
+type Props = { shops: (Shop & { owner: User })[] };
 
 export function ShopClient({ shops }: Props) {
-  const { isElevated } = usePermissions()
+  const { isElevated } = usePermissions();
 
-  const shopFilter = createShopFilters(shops, isElevated)
+  const shopFilter = createShopFilters(shops, isElevated);
 
   return (
     <div className="py-4">
@@ -45,5 +42,5 @@ export function ShopClient({ shops }: Props) {
         }
       />
     </div>
-  )
+  );
 }

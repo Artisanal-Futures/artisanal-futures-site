@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const shopSchema = z.object({
   name: z.string().min(1, "Shop name is required"),
-  ownerName: z.string().min(1, "Owner name is required"),
+  ownerName: z.string().optional(),
   ownerId: z.string().optional(),
   bio: z.string().optional().nullable(),
   description: z.string().optional().nullable(),

@@ -1,6 +1,6 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-export const metadata = { title: 'About Us ' }
+export const metadata = { title: "About Us" };
 
 export default function AboutUsPage() {
   return (
@@ -35,7 +35,7 @@ export default function AboutUsPage() {
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         To be part of the Artisanal Futures Platform, you first must get a code
-        from either us, or an existing artisan. Once you got that, go ahead and{' '}
+        from either us, or an existing artisan. Once you got that, go ahead and{" "}
         <Link
           href="/auth/sign-up"
           className="font-medium text-primary underline underline-offset-4"
@@ -63,7 +63,7 @@ export default function AboutUsPage() {
         </li>
       </ol>
 
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight ">
+      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         Disclaimer
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
@@ -85,27 +85,27 @@ export default function AboutUsPage() {
         User Agreement
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
-        You agree to abide by our{' '}
+        You agree to abide by our{" "}
         <Link
           href="/legal/privacy"
           className="font-medium text-primary underline underline-offset-4"
         >
           Privacy Policy
         </Link>
-        ,{' '}
+        ,{" "}
         <Link
           href="/legal/collective-agreement"
           className="font-medium text-primary underline underline-offset-4"
         >
           The Artisanal Futures Collective Agreement
         </Link>
-        , and{' '}
+        , and{" "}
         <Link
           href="/legal/terms-of-use"
           className="font-medium text-primary underline underline-offset-4"
         >
           Terms of Use.
-        </Link>{' '}
+        </Link>{" "}
         Please review them carefully.
       </p>
 
@@ -113,7 +113,7 @@ export default function AboutUsPage() {
         Support
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
-        Questions? Reach out to our Support Team at{' '}
+        Questions? Reach out to our Support Team at{" "}
         <a
           href="mailto:support@artisanalfutures.org"
           className="font-medium text-primary underline underline-offset-4"
@@ -123,5 +123,5 @@ export default function AboutUsPage() {
         for assistance
       </p>
     </>
-  )
+  );
 }

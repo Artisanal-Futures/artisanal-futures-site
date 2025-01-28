@@ -1,16 +1,17 @@
-import type { Shop } from '@prisma/client'
-import Link from 'next/link'
+import Link from "next/link";
 
-import ShopCard from '~/app/(site)/shops/_components/shop-card'
-import { api } from '~/trpc/server'
+import type { Shop } from "@prisma/client";
+
+import { api } from "~/trpc/server";
+import ShopCard from "~/app/(site)/shops/_components/shop-card";
 
 export const metadata = {
-  title: 'Shops',
-  description: 'Browse our featured artisans&apos; stores',
-}
+  title: "Shops",
+  description: "Browse our featured artisans&apos; stores",
+};
 
 export default async function ShopsPage() {
-  const shops = await api.shop.getAllValidShops()
+  const shops = await api.shop.getAllValid();
 
   return (
     <>
@@ -22,10 +23,10 @@ export default async function ShopsPage() {
       {shops?.length === 0 && (
         <p className="my-auto text-xl text-muted-foreground">
           Well, this is unfortunate. We don&apos;t have any shops set up at the
-          moment. If you are registered, you can create your shop,{' '}
+          moment. If you are registered, you can create your shop,{" "}
           <Link
             href="/profile/shop"
-            className=" font-semibold text-slate-800  hover:text-slate-800/50"
+            className="font-semibold text-slate-800 hover:text-slate-800/50"
           >
             here
           </Link>
@@ -37,12 +38,12 @@ export default async function ShopsPage() {
           {shops?.map((artisan: Shop) => (
             <ShopCard
               {...artisan}
-              className="flex basis-full p-4 md:basis-1/2 lg:basis-1/4 "
+              className="flex basis-full p-4 md:basis-1/2 lg:basis-1/4"
               key={artisan.id}
             />
           ))}
         </div>
       )}
     </>
-  )
+  );
 }

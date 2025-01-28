@@ -1,11 +1,10 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import type { SurveyFormSchema } from "../_validators/schema";
 import type { Survey } from "~/types/survey";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
@@ -18,20 +17,7 @@ import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
-const surveySchema = z.object({
-  processes: z.string().optional(),
-  materials: z.string().optional(),
-  principles: z.string().optional(),
-  description: z.string().optional(),
-  unmoderatedForm: z.boolean().default(false),
-  moderatedForm: z.boolean().default(false),
-  hiddenForm: z.boolean().default(false),
-  privateForm: z.boolean().default(false),
-  supplyChain: z.boolean().default(false),
-  messagingOptIn: z.boolean().default(false),
-  shopId: z.string().min(1, "Shop ID is required"),
-  ownerId: z.string().min(1, "Owner ID is required"),
-});
+import { surveyFormSchema } from "../_validators/schema";
 
 type Props = {
   initialData: Survey | null;
@@ -47,8 +33,8 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
   const { data: shops } = api.shop.getAll.useQuery();
   const { data: users } = api.user.getAll.useQuery();
 
-  const form = useForm<z.infer<typeof surveySchema>>({
-    resolver: zodResolver(surveySchema),
+  const form = useForm<SurveyFormSchema>({
+    resolver: zodResolver(surveyFormSchema),
     defaultValues: {
       processes: initialData?.processes ?? "",
       materials: initialData?.materials ?? "",
@@ -83,7 +69,7 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
     onSettled: defaultSettled,
   });
 
-  async function onSubmit(data: z.infer<typeof surveySchema>) {
+  async function onSubmit(data: SurveyFormSchema) {
     if (!initialData) {
       createSurvey.mutate(data);
     } else {
@@ -103,7 +89,7 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
         className="h-full space-y-8"
       >
         <ScrollArea className="h-[60svh]" type="always">
-          <div className="flex flex-col gap-4 p-1">
+          <div className="grid grid-cols-2 gap-4 p-1">
             {/* Basic Info Section */}
             <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
               <h3 className="mb-3 text-lg font-medium text-primary">

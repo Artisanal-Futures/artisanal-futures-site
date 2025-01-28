@@ -1,18 +1,19 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import Image from "next/image";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
-import { ModeToggle } from '~/components/admin/mode-toggle'
-import { buttonVariants } from '~/components/ui/button'
-import { Separator } from '~/components/ui/separator'
+import { cn } from "~/lib/utils";
+import { buttonVariants } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '~/components/ui/sidebar'
-import { cn } from '~/lib/utils'
-import { AppSidebar } from './_components/app-sidebar'
-import { SearchBar } from './_components/search-bar'
+} from "~/components/ui/sidebar";
+import { ModeToggle } from "~/components/common/mode-toggle";
+
+import { AppSidebar } from "./_components/app-sidebar";
+import { SearchBar } from "./_components/search-bar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,12 +29,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               alt="Artisanal Futures Logo"
               width={158}
               height={8}
-              className=" object-contain"
+              className="object-contain"
             />
           </div>
 
           <div className="flex w-full max-w-lg items-center gap-4 px-4">
-            {' '}
+            {" "}
             <div className="flex aspect-square items-center justify-center">
               <ModeToggle />
             </div>
@@ -41,8 +42,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link
               href="/forums/create"
               className={cn(
-                buttonVariants({ variant: 'outline', size: 'sm' }),
-                'flex items-center gap-1 text-xs',
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "flex items-center gap-1 text-xs",
               )}
             >
               <Plus />
@@ -57,5 +58,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

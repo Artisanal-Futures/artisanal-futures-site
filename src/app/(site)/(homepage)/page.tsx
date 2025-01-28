@@ -1,28 +1,30 @@
-import Image from 'next/image'
-import { Cog, GraduationCap, Store } from 'lucide-react'
+import Image from "next/image";
+import { Cog, GraduationCap, Store } from "lucide-react";
 
-import { EventBulletinBoard, Hero, HomePageCard } from './_components'
+import { EventBulletinBoard } from "./_components/event-bulletin-board";
+import { Hero } from "./_components/hero";
+import { HomePageCard } from "./_components/homepage-card";
 
 const CARD_DATA = [
   {
-    link: '/shops',
-    title: 'Browse our shops',
+    link: "/shops",
+    title: "Browse our shops",
     icon: <Store className="h-8 w-8 text-muted-foreground" />,
     description: "Browse our artisan's shops and sites",
   },
   {
-    link: '/forum',
-    title: 'Share Knowledge',
-    icon: <GraduationCap className="h-8  w-8  text-muted-foreground" />,
-    description: 'Share your artisanal knowledge with others',
+    link: "/forum",
+    title: "Share Knowledge",
+    icon: <GraduationCap className="h-8 w-8 text-muted-foreground" />,
+    description: "Share your artisanal knowledge with others",
   },
   {
-    link: '/tools',
-    title: 'Utilize Free Tools',
-    icon: <Cog className="h-8  w-8  text-muted-foreground" />,
-    description: 'Use our collection of free tools',
+    link: "/tools",
+    title: "Utilize Free Tools",
+    icon: <Cog className="h-8 w-8 text-muted-foreground" />,
+    description: "Use our collection of free tools",
   },
-]
+];
 
 export default function HomePage() {
   return (
@@ -36,7 +38,7 @@ export default function HomePage() {
 
       <EventBulletinBoard upcomingEvents={[]} />
 
-      <div className=" text-center">
+      <div className="text-center">
         <h2 className="mt-12 text-3xl font-bold">
           Artisanal Technologies for Generative Justice
         </h2>
@@ -46,11 +48,11 @@ export default function HomePage() {
           height={160}
           src="/img/flowchart.png"
           alt="Flowchart showing the generative nature of artisanal tech"
-          className="aspect-auto w-full "
+          className="aspect-auto w-full"
           loading="lazy"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
     </>
-  )
+  );
 }

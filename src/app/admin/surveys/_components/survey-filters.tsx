@@ -1,7 +1,5 @@
 "use client";
 
-import type { User } from "@prisma/client";
-
 import type { Survey } from "~/types/survey";
 
 export const createSurveyFilters = (surveys: Survey[], isElevated: boolean) => {
@@ -12,26 +10,6 @@ export const createSurveyFilters = (surveys: Survey[], isElevated: boolean) => {
   ].filter(Boolean);
 
   return [
-    {
-      column: "processes",
-      title: "Processes",
-      filters: surveys
-        .filter((survey) => survey.processes)
-        .map((survey) => ({
-          value: survey.processes!,
-          label: survey.processes!,
-        })),
-    },
-    {
-      column: "materials",
-      title: "Materials",
-      filters: surveys
-        .filter((survey) => survey.materials)
-        .map((survey) => ({
-          value: survey.materials!,
-          label: survey.materials!,
-        })),
-    },
     isElevated
       ? {
           column: "owner",

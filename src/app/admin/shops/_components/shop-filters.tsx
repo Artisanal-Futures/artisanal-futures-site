@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import type { User } from '@prisma/client'
+import type { User } from "@prisma/client";
 
-import type { Shop } from '~/types/shop'
+import type { Shop } from "~/types/shop";
 
 export const createShopFilters = (
   shops: (Shop & { owner: User })[],
@@ -10,12 +10,12 @@ export const createShopFilters = (
 ) => {
   const owners = [
     ...new Map(shops.map((shop) => [shop.owner?.id, shop.owner])).values(),
-  ].filter(Boolean)
+  ].filter(Boolean);
 
   return [
     {
-      column: 'name',
-      title: 'Shop Name',
+      column: "name",
+      title: "Shop Name",
       filters: shops.map((shop) => ({
         value: shop.name,
         label: shop.name,
@@ -23,13 +23,13 @@ export const createShopFilters = (
     },
     isElevated
       ? {
-          column: 'owner',
-          title: 'Owner',
+          column: "owner",
+          title: "Owner",
           filters: owners.map((owner) => ({
             value: owner.id,
             label: owner.name,
           })),
         }
       : [],
-  ].flat()
-}
+  ].flat();
+};

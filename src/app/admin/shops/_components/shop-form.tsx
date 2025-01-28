@@ -1,51 +1,42 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { type Shop } from "~/types/shop";
+import type { ShopFormSchema } from "../_validators/schema";
+import type { Shop } from "~/types/shop";
 import { env } from "~/env";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { Form } from "~/components/ui/form";
+import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { LoadButton } from "~/components/common/load-button";
 import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
-const shopSchema = z.object({
-  name: z.string().min(1, "Shop name is required"),
-  ownerName: z.string().min(1, "Owner name is required"),
-  bio: z.string().optional(),
-  description: z.string().optional(),
-  ownerPhoto: z.any().nullable(),
-  logoPhoto: z.any().nullable(),
-  coverPhoto: z.any().nullable(),
-  website: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zip: z.string().optional(),
-  country: z.string().optional(),
-  attributeTags: z.array(z.string()).optional(),
-
-  ownerPhotoUrl: z.string().optional().nullable(),
-  logoPhotoUrl: z.string().optional().nullable(),
-  coverPhotoUrl: z.string().optional().nullable(),
-});
+import { shopFormSchema } from "../_validators/schema";
 
 type Props = {
   initialData: Shop | null;
   onSuccessCallback: () => void;
 };
+
+const STORE_ATTRIBUTES = [
+  "African American Culture",
+  "African Culture",
+  "African American Civil Rights",
+  "Black Owned",
+  "Woman Owned",
+  "Community Education",
+  "Food Sovereignty",
+] as const;
 
 export function ShopForm({ initialData, onSuccessCallback }: Props) {
   const { uploadFile, isUploading } = useFileUpload({
@@ -59,8 +50,8 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
       entity: "shop",
     });
 
-  const form = useForm<z.infer<typeof shopSchema>>({
-    resolver: zodResolver(shopSchema),
+  const form = useForm<ShopFormSchema>({
+    resolver: zodResolver(shopFormSchema),
     defaultValues: {
       name: initialData?.name ?? "",
       ownerName: initialData?.ownerName ?? "",
@@ -99,7 +90,7 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
     onSettled: defaultSettled,
   });
 
-  async function onSubmit(data: z.infer<typeof shopSchema>) {
+  async function onSubmit(data: ShopFormSchema) {
     let ownerPhotoUrl = initialData?.ownerPhoto;
     let logoPhotoUrl = initialData?.logoPhoto;
     let coverPhotoUrl = initialData?.coverPhoto;
@@ -218,6 +209,43 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
                     label="Phone"
                     className="w-full"
                   />
+                </div>
+              </div>
+
+              {/* Store Attributes Section */}
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h3 className="mb-3 text-lg font-medium text-primary">
+                  Store Attributes
+                </h3>
+                <div className="flex flex-wrap gap-4">
+                  {STORE_ATTRIBUTES.map((attribute) => (
+                    <div
+                      key={attribute}
+                      className="flex items-center space-x-2"
+                    >
+                      <Checkbox
+                        id={attribute}
+                        checked={form
+                          ?.watch("attributeTags")
+                          ?.includes(attribute)}
+                        onCheckedChange={(checked) => {
+                          const currentTags = form.watch("attributeTags");
+                          if (checked) {
+                            form.setValue("attributeTags", [
+                              ...currentTags,
+                              attribute,
+                            ]);
+                          } else {
+                            form.setValue(
+                              "attributeTags",
+                              currentTags.filter((tag) => tag !== attribute),
+                            );
+                          }
+                        }}
+                      />
+                      <Label htmlFor={attribute}>{attribute}</Label>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

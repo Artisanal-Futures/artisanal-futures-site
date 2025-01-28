@@ -1,24 +1,25 @@
-import { TrashIcon } from 'lucide-react'
+import { TrashIcon } from "lucide-react";
 
-import { useDefaultMutationActions } from '~/hooks/use-default-mutation-actions'
-import { api } from '~/trpc/react'
-import { SingleActionDialog } from '../../_components/single-action-dialog'
+import { api } from "~/trpc/react";
+import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
-type Props = { shopId: string }
+import { SingleActionDialog } from "../../_components/single-action-dialog";
+
+type Props = { shopId: string };
 
 export function DeleteShopDialog({ shopId }: Props) {
   const { defaultSuccess, defaultError, defaultSettled } =
     useDefaultMutationActions({
-      entity: 'shop',
-    })
+      entity: "shop",
+    });
 
   const deleteShop = api.shop.delete.useMutation({
     onSuccess: ({ message }) => defaultSuccess({ message }),
     onError: defaultError,
     onSettled: defaultSettled,
-  })
+  });
 
-  const onSubmit = () => deleteShop.mutate({ shopId })
+  const onSubmit = () => deleteShop.mutate({ shopId });
 
   return (
     <SingleActionDialog
@@ -31,5 +32,5 @@ export function DeleteShopDialog({ shopId }: Props) {
       icon={TrashIcon}
       isLoading={deleteShop.isPending}
     />
-  )
+  );
 }

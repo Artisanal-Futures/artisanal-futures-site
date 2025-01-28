@@ -1,9 +1,14 @@
-import { api } from '~/trpc/server'
-import { AdminClientLayout } from '../_components/client-layout'
-import { UpcyclingClient } from './_components/upcycling-client'
+import { api } from "~/trpc/server";
+
+import { AdminClientLayout } from "../_components/client-layout";
+import { UpcyclingClient } from "./_components/upcycling-client";
+
+export const metadata = {
+  title: "Upcycling Generations",
+};
 
 export default async function AdminUpcyclingPage() {
-  const upcycling = await api.upcycling.getAll()
+  const upcycling = await api.upcycling.getAll();
 
   return (
     <AdminClientLayout
@@ -12,5 +17,5 @@ export default async function AdminUpcyclingPage() {
     >
       <UpcyclingClient upcycling={upcycling ?? []} />
     </AdminClientLayout>
-  )
+  );
 }

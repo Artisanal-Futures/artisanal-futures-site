@@ -51,6 +51,7 @@ model Product {
   currency          String?
   imageUrl          String?
   productUrl        String?
+  tags              String[]
   attributeTags     String[]
   materialTags      String[]
   environmentalTags String[]

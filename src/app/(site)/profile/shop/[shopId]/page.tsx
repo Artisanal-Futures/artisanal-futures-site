@@ -1,27 +1,25 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
-import { ShopForm } from '~/app/(site)/profile/_components/shop-form'
-import { api } from '~/trpc/server'
+import { api } from "~/trpc/server";
+import { ShopForm } from "~/app/(site)/profile/_components/shop-form";
 
 type Props = {
-  params: { shopId: string }
-}
+  params: { shopId: string };
+};
 
 export const metadata = {
-  title: 'Shop Dashboard ',
-}
+  title: "Shop Dashboard",
+};
 export default async function ShopPage({ params }: Props) {
-  const shop = await api.shop.getById({
-    id: params.shopId,
-  })
+  const shop = await api.shop.get(params.shopId);
 
   if (!shop) {
-    return redirect('/profile')
+    return redirect("/profile");
   }
 
   return (
     <div className="space-y-6">
       <ShopForm initialData={shop} />
     </div>
-  )
+  );
 }

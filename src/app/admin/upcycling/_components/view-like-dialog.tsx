@@ -1,37 +1,37 @@
-'use client'
+"use client";
 
-import { ThumbsDown, ThumbsUp } from 'lucide-react'
+import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { type UpcyclingItem } from "~/types";
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '~/components/ui/dialog'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { type UpcyclingItem } from '~/types'
+} from "~/components/ui/dialog";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
-interface ViewLikeDialogProps {
-  item: UpcyclingItem
-}
+type Props = {
+  item: UpcyclingItem;
+};
 
-export function ViewLikeDialog({ item }: ViewLikeDialogProps) {
+export function ViewLikeDialog({ item }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 h-8">
+        <Button variant="outline" size="sm" className="h-8 gap-2">
           {item.like === null
-            ? '(No Like)'
+            ? "(No Like)"
             : item.like.is_liked
-              ? '(Liked)'
-              : '(Disliked)'}
+              ? "(Liked)"
+              : "(Disliked)"}
           {item.like?.is_liked && (
-            <ThumbsUp className="size-4 text-green-500 bg-green-500/10 rounded-full" />
+            <ThumbsUp className="size-4 rounded-full bg-green-500/10 text-green-500" />
           )}
           {item.like?.is_liked === false && (
-            <ThumbsDown className="size-4 text-red-500 bg-red-500/10 rounded-full" />
+            <ThumbsDown className="size-4 rounded-full bg-red-500/10 text-red-500" />
           )}
         </Button>
       </DialogTrigger>
@@ -46,7 +46,7 @@ export function ViewLikeDialog({ item }: ViewLikeDialogProps) {
                 <div className="space-y-2">
                   <h3 className="font-medium">Like Status</h3>
                   <p className="text-sm text-muted-foreground">
-                    {item.like.is_liked ? 'Liked' : 'Not Liked'}
+                    {item.like.is_liked ? "Liked" : "Not Liked"}
                   </p>
                 </div>
 
@@ -82,5 +82,5 @@ export function ViewLikeDialog({ item }: ViewLikeDialogProps) {
         </ScrollArea>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

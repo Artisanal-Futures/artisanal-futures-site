@@ -1,17 +1,18 @@
-import { api } from '~/trpc/server'
-import { AdminClientLayout } from '../_components/client-layout'
-import { ProductClient } from './_components/product-client'
+import { api } from "~/trpc/server";
+
+import { AdminClientLayout } from "../_components/client-layout";
+import { ProductClient } from "./_components/product-client";
 
 export const metadata = {
-  title: 'Projects',
-}
+  title: "Products",
+};
 
-export default async function ProjectsAdminPage() {
-  const products = await api.product.getAll()
+export default async function ProductsAdminPage() {
+  const products = await api.product.getAll();
 
   return (
-    <AdminClientLayout currentPage="Projects" title="Projects">
+    <AdminClientLayout currentPage="Products" title="Products">
       <ProductClient products={products} />
     </AdminClientLayout>
-  )
+  );
 }

@@ -1,25 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircleIcon } from "lucide-react";
 
 import { type Product } from "~/types/product";
-import { env } from "~/env";
 import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
+import { productColumns } from "./product-column-structure";
 import { createProjectFilter } from "./product-filters";
 import { ProjectForm } from "./product-form";
-import { projectColumns } from "./project-column-structure";
+import { TagProductsButton } from "./tag-products-button";
 
 type Props = { products: Product[] };
 
 export function ProductClient({ products }: Props) {
-  const { isElevated, userRole } = usePermissions();
+  const { isElevated } = usePermissions();
 
   const productFilters = createProjectFilter(products ?? [], isElevated);
 
@@ -34,7 +32,7 @@ export function ProductClient({ products }: Props) {
       <AdvancedDataTable
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
-        columns={projectColumns}
+        columns={productColumns}
         data={enhancedProducts ?? []}
         filters={productFilters}
         defaultColumnVisibility={{
@@ -42,16 +40,17 @@ export function ProductClient({ products }: Props) {
         }}
         addButton={
           <>
-            {" "}
-            <Link
-              href="/admin/products/migrate"
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "h-8 text-xs",
-              )}
-            >
-              Migrate Products
-            </Link>
+            {process.env.NODE_ENV === "development" && (
+              <Link
+                href="/admin/products/migrate"
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "h-8 text-xs",
+                )}
+              >
+                Migrate Products
+              </Link>
+            )}
             <ItemDialog
               title={`Create project`}
               subtitle="Create a new project"
@@ -59,6 +58,7 @@ export function ProductClient({ products }: Props) {
               type="project"
               mode="create"
             />
+            <TagProductsButton />
           </>
         }
       />

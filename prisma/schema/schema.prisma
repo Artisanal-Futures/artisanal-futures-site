@@ -30,6 +30,8 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
+
+
 // Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
@@ -122,6 +124,7 @@ model Survey {
   shopId          String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
 }
 
 

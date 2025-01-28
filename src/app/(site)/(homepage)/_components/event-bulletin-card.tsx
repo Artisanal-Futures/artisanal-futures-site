@@ -1,8 +1,8 @@
-import Image from 'next/image'
+import Image from "next/image";
 
 type Props = {
-  imageUrl: string
-}
+  imageUrl: string;
+};
 
 export const EventBulletinCard = ({ imageUrl }: Props) => {
   return (
@@ -11,9 +11,9 @@ export const EventBulletinCard = ({ imageUrl }: Props) => {
       height={160}
       src={imageUrl}
       alt="Details on a new or upcoming event"
-      className="aspect-auto w-full "
+      className="aspect-auto w-full"
       loading="lazy"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
     />
-  )
-}
+  );
+};

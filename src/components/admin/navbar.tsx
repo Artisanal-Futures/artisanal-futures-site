@@ -1,10 +1,10 @@
-import { ModeToggle } from '~/components/admin/mode-toggle'
-import { SheetMenu } from '~/components/admin/sheet-menu'
-import { UserNav } from '~/components/layout/user-nav'
+import { SheetMenu } from "~/components/admin/sheet-menu";
+import { ModeToggle } from "~/components/common/mode-toggle";
+import { UserNav } from "~/components/layout/user-nav";
 
 type Props = {
-  title: string
-}
+  title: string;
+};
 
 export function Navbar({ title }: Props) {
   return (
@@ -20,5 +20,5 @@ export function Navbar({ title }: Props) {
         </div>
       </div>
     </header>
-  )
+  );
 }

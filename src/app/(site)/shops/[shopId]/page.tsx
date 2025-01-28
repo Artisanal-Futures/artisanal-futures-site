@@ -1,14 +1,7 @@
-import dynamic from "next/dynamic";
-
 import { api } from "~/trpc/server";
 import ProfileCard from "~/app/(site)/shops/_components/profile-card";
 
 import { ProductGrid } from "../_components/product-grid";
-
-const ArtisanProductsGrid = dynamic(
-  () => import("~/app/(site)/shops/_components/artisan-products-grid"),
-  { ssr: false },
-);
 
 type Props = {
   params: { shopId: string };
@@ -20,9 +13,7 @@ export const metadata = {
 };
 
 export default async function ProfilePage({ params }: Props) {
-  const shop = await api.shop.getById({
-    id: params?.shopId,
-  });
+  const shop = await api.shop.get(params?.shopId);
 
   return (
     <>

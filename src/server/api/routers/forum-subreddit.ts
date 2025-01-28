@@ -20,6 +20,9 @@ export type CachedPost = {
 };
 
 export const forumSubredditRouter = createTRPCRouter({
+  getAllPosts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany();
+  }),
   getAllSubreddits: publicProcedure.query(async ({ ctx }) => {
     return await ctx.db.subreddit.findMany();
   }),

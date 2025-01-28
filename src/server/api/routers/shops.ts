@@ -9,11 +9,10 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 
-import { env } from "~/env";
 import { shopSchema } from "~/lib/validators/shop";
 
 export const shopsRouter = createTRPCRouter({
-  getAllValidShops: publicProcedure.query(({ ctx }) => {
+  getAllValid: publicProcedure.query(({ ctx }) => {
     return ctx.db.shop.findMany({
       where: {
         name: { not: "" },
@@ -36,54 +35,15 @@ export const shopsRouter = createTRPCRouter({
     }));
   }),
 
-  getAllCurrentUserShops: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.shop.findMany({
-      where: {
-        ownerId: ctx.session.user.id,
-      },
-    });
-  }),
-
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
+  get: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: shopId }) => {
       const shop = await ctx.db.shop.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          address: true,
-        },
+        where: { id: shopId },
+        include: { address: true },
       });
 
       return shop;
-    }),
-  get: protectedProcedure
-    .input(z.object({ shopId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const shop = await ctx.db.shop.findUnique({
-        where: {
-          id: input.shopId,
-          ownerId: ctx.session.user.id,
-        },
-        include: {
-          address: true,
-        },
-      });
-
-      if (!shop) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Shop not found",
-        });
-      }
-
-      return {
-        ...shop,
-        logoPhoto: `${shop?.logoPhoto}`,
-        ownerPhoto: `${shop?.ownerPhoto}`,
-        coverPhoto: `${shop?.coverPhoto}`,
-      };
     }),
 
   getCurrentUserShop: protectedProcedure.query(({ ctx }) => {
@@ -114,7 +74,7 @@ export const shopsRouter = createTRPCRouter({
           logoPhoto: input.logoPhoto,
           ownerPhoto: input.ownerPhoto,
           coverPhoto: input.coverPhoto,
-
+          attributeTags: input.attributeTags ?? [],
           address: {
             create: {
               address: input.address ?? "",
@@ -171,6 +131,7 @@ export const shopsRouter = createTRPCRouter({
           phone: input?.phone ?? "",
           email: input?.email ?? "",
           website: input?.website ?? "",
+          attributeTags: input?.attributeTags ?? [],
         },
       });
 
