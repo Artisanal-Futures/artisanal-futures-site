@@ -45,7 +45,32 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: elevatedProcedure.query(async ({ ctx }) => {
+    const products = await ctx.db.product.findMany({
+      include: { shop: true },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const productsWithFullUrls = products.map((product) => ({
+      ...product,
+      imageUrl:
+        product.imageUrl && !product.imageUrl.startsWith("http")
+          ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
+          : product.imageUrl,
+    }));
+
+    if (ctx.session.user.role !== "ADMIN") {
+      return productsWithFullUrls.filter(
+        (product) => product.shop?.ownerId === ctx.session.user.id,
+      );
+    }
+
+    return productsWithFullUrls;
+  }),
+
+  getAllValid: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.db.product.findMany({
       include: { shop: true },
       orderBy: {

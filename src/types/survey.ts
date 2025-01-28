@@ -14,6 +14,13 @@ export type Survey = {
   shopId: string;
   createdAt: Date;
   updatedAt: Date;
+
+  businessType: string | null;
+  experience: string | null;
+  practice: string | null;
+  country: string | null;
+  state: string | null;
+  email: string | null;
 };
 
 export type GuestSurvey = {

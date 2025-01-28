@@ -307,7 +307,7 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
                         : undefined
                     }
                   />
-                  <ImageFormField
+                  {/* <ImageFormField
                     form={form}
                     name="coverPhoto"
                     label="Cover Photo"
@@ -317,7 +317,7 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
                         ? `${env.NEXT_PUBLIC_STORAGE_URL}/shops/${initialData.coverPhoto}`
                         : undefined
                     }
-                  />
+                  /> */}
                 </div>
               </div>
             </div>

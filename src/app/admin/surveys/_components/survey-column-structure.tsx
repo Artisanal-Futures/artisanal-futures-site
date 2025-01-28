@@ -8,7 +8,7 @@ import { DeleteSurveyDialog } from "./delete-survey-dialog";
 import { SurveyForm } from "./survey-form";
 import { ViewSurveyDialog } from "./view-survey-dialog";
 
-export const surveyColumns: ColumnDef<Survey>[] = [
+export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -47,7 +47,9 @@ export const surveyColumns: ColumnDef<Survey>[] = [
       <div className="flex gap-2">
         <ViewSurveyDialog survey={row.original} />
 
-        <DeleteSurveyDialog surveyId={row.original.id} />
+        {row.original.isAdmin && (
+          <DeleteSurveyDialog surveyId={row.original.id} />
+        )}
 
         <ItemDialog
           id={row.original.id}

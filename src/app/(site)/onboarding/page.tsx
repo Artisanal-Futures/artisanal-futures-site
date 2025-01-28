@@ -4,17 +4,12 @@ import { OnboardingForm } from "./_components/onboarding-form";
 import { OnboardingTabs } from "./_components/onboarding-tabs";
 
 export const metadata = {
-  title: "Onboarding",
-  description: "Set up your shop and survey",
+  title: "Welcome to Artisanal Futures",
+  description: "Join our community of artisans",
 };
 
 export default async function OnboardingPage() {
-  const shop = await api.shop.getCurrentUserShop();
-  const survey = await api.survey.getCurrentUserSurvey();
-  return (
-    <>
-      {/* <OnboardingTabs shop={shop} survey={survey} /> */}
-      <OnboardingForm />
-    </>
-  );
+  const { survey, shop } = await api.survey.getCurrent();
+
+  return <OnboardingForm surveyInitialData={survey} shopInitialData={shop} />;
 }

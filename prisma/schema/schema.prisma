@@ -86,6 +86,7 @@ model User {
   guestSurveys        GuestSurvey[]
 
 
+
       // Forum
     createdSubreddits Subreddit[]    @relation("CreatedBy")
     subscriptions     Subscription[]
@@ -120,12 +121,23 @@ model Survey {
   privateForm     Boolean  @default(false)
   supplyChain     Boolean  @default(false)
   messagingOptIn  Boolean  @default(false)
-  ownerId         String
+
   shopId          String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+
+  businessType    String?
+  experience      String?
+  practice        String?
+  country         String?
+  state           String?
+  email           String?
+
+  ownerId         String?
+
+  @@index([ownerId])
 }
+
 
 
 

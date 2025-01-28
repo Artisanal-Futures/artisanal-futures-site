@@ -15,9 +15,9 @@ import { ShopForm } from "./shop-form";
 type Props = { shops: (Shop & { owner: User })[] };
 
 export function ShopClient({ shops }: Props) {
-  const { isElevated } = usePermissions();
+  const { isAdmin } = usePermissions();
 
-  const shopFilter = createShopFilters(shops, isElevated);
+  const shopFilter = createShopFilters(shops, isAdmin);
 
   return (
     <div className="py-4">
@@ -28,17 +28,19 @@ export function ShopClient({ shops }: Props) {
         data={shops ?? []}
         filters={shopFilter as FilterOption[]}
         defaultColumnVisibility={{
-          owner: isElevated,
+          owner: isAdmin,
         }}
         addButton={
-          <ItemDialog
-            title={`Create shop`}
-            subtitle="Create a new shop"
-            FormComponent={ShopForm}
-            type="shop"
-            mode="create"
-            contentClassName="max-w-5xl w-full"
-          />
+          isAdmin && (
+            <ItemDialog
+              title={`Create shop`}
+              subtitle="Create a new shop"
+              FormComponent={ShopForm}
+              type="shop"
+              mode="create"
+              contentClassName="max-w-5xl w-full"
+            />
+          )
         }
       />
     </div>

@@ -13,4 +13,7 @@ export const surveySchema = z.object({
   privateForm: z.boolean().default(false),
   supplyChain: z.boolean().default(false),
   messagingOptIn: z.boolean().default(false),
+
+  experience: z.string().optional(),
+  businessType: z.string().optional(),
 });

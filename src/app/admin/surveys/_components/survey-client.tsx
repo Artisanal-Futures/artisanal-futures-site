@@ -13,30 +13,37 @@ import { SurveyForm } from "./survey-form";
 type Props = { surveys: Survey[] };
 
 export function SurveyClient({ surveys }: Props) {
-  const { isElevated } = usePermissions();
+  const { isAdmin } = usePermissions();
 
-  const surveyFilter = createSurveyFilters(surveys, isElevated);
+  const surveyFilter = createSurveyFilters(surveys, isAdmin);
+
+  const elevatedSurveyData = surveys.map((survey) => ({
+    ...survey,
+    isAdmin,
+  }));
 
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="surveyName"
-        searchPlaceholder="Filter by survey name..."
+        searchKey="createdAt"
+        searchPlaceholder="Filter by date..."
         columns={surveyColumns}
-        data={surveys ?? []}
+        data={elevatedSurveyData ?? []}
         filters={surveyFilter as FilterOption[]}
         defaultColumnVisibility={{
-          owner: isElevated,
+          owner: isAdmin,
         }}
         addButton={
-          <ItemDialog
-            title={`Create survey`}
-            subtitle="Create a new survey"
-            FormComponent={SurveyForm}
-            type="survey"
-            mode="create"
-            contentClassName="max-w-5xl w-full"
-          />
+          isAdmin && (
+            <ItemDialog
+              title={`Create survey`}
+              subtitle="Create a new survey"
+              FormComponent={SurveyForm}
+              type="survey"
+              mode="create"
+              contentClassName="max-w-5xl w-full"
+            />
+          )
         }
       />
     </div>

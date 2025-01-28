@@ -1,5 +1,6 @@
-import { createEnv } from '@t3-oss/env-nextjs'
-import { z } from 'zod'
+import { z } from "zod";
+
+import { createEnv } from "@t3-oss/env-nextjs";
 
 export const env = createEnv({
   /**
@@ -8,9 +9,9 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
-    NODE_ENV: z.enum(['development', 'test', 'production']),
+    NODE_ENV: z.enum(["development", "test", "production"]),
     NEXTAUTH_SECRET:
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === "production"
         ? z.string().min(1)
         : z.string().min(1).optional(),
     NEXTAUTH_URL: z.preprocess(
@@ -58,26 +59,31 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPPORT_EMAIL: z.string(),
     NEXT_PUBLIC_STORAGE_URL: z.string(),
     NEXT_PUBLIC_HEART_VOTE_DISABLED: z.preprocess(
-      (str) => str === 'true' || str === true,
+      (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
     NEXT_PUBLIC_VOTE_DISABLED: z.preprocess(
-      (str) => str === 'true' || str === true,
+      (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
     NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED: z.preprocess(
-      (str) => str === 'true' || str === true,
+      (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
     NEXT_PUBLIC_ENABLE_IMAGE_UPLOAD: z
       .string()
-      .refine((s) => s === 'true' || s === 'false')
-      .transform((s) => s === 'true')
+      .refine((s) => s === "true" || s === "false")
+      .transform((s) => s === "true")
       .optional(),
 
     NEXT_PUBLIC_PASSWORD_PROTECT: z.string().min(1),
 
     NEXT_PUBLIC_APP_URL: z.string().url(),
+
+    NEXT_PUBLIC_IS_GUEST_ONBOARDING: z.preprocess(
+      (str) => str === "true" || str === true,
+      z.boolean().optional().default(false),
+    ),
   },
 
   /**
@@ -85,6 +91,8 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    NEXT_PUBLIC_IS_GUEST_ONBOARDING:
+      process.env.NEXT_PUBLIC_IS_GUEST_ONBOARDING,
     NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
     NEXT_PUBLIC_HOSTNAME: process.env.NEXT_PUBLIC_HOSTNAME,
     NEXT_PUBLIC_SUPPORT_EMAIL: process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
@@ -128,4 +136,4 @@ export const env = createEnv({
    * This is especially useful for Docker builds.
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-})
+});

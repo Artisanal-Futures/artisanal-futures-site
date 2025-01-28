@@ -1,13 +1,15 @@
-'use client'
+"use client";
 
-import type { Role } from '@prisma/client'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { ShieldCheck, Store, User } from 'lucide-react'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ShieldCheck, Store, User } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Button } from '~/components/ui/button'
+import type { Role } from "@prisma/client";
+
+import { env } from "~/env";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,19 +18,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
+} from "~/components/ui/dropdown-menu";
 
 export const UserNav = () => {
-  const { data: sessionData } = useSession()
+  const { data: sessionData } = useSession();
 
-  const authorizedRoles: Role[] = ['ADMIN', 'ARTISAN']
-  const router = useRouter()
+  const authorizedRoles: Role[] = ["ADMIN", "ARTISAN"];
+  const router = useRouter();
+  const isImageUrl = (url: string) => {
+    return url.startsWith("http");
+  };
   if (!sessionData) {
     return (
       <>
         <Button
           onClick={sessionData ? () => void signOut() : () => void signIn()}
-          variant={'ghost'}
+          variant={"ghost"}
           className="max-md:w-full"
         >
           Sign In
@@ -40,7 +45,7 @@ export const UserNav = () => {
           Sign Up
         </Button>
       </>
-    )
+    );
   } else
     return (
       <DropdownMenu>
@@ -48,7 +53,12 @@ export const UserNav = () => {
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-9 w-9">
               <AvatarImage
-                src={sessionData?.user?.image ?? ''}
+                src={
+                  sessionData?.user?.image &&
+                  isImageUrl(sessionData?.user?.image ?? "")
+                    ? sessionData?.user?.image
+                    : `${env.NEXT_PUBLIC_STORAGE_URL}/shops/${sessionData?.user?.image}`
+                }
                 alt={`@${sessionData?.user?.name}`}
               />
               <AvatarFallback>
@@ -62,22 +72,22 @@ export const UserNav = () => {
             <div className="flex flex-col space-y-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium leading-none">
-                  {sessionData?.user?.name}{' '}
+                  {sessionData?.user?.name}{" "}
                 </p>
 
                 <>
-                  {sessionData?.user?.role === 'USER' ||
-                    (sessionData?.user?.role === 'GUEST' && (
+                  {sessionData?.user?.role === "USER" ||
+                    (sessionData?.user?.role === "GUEST" && (
                       <User className="w-[0.875rem] text-sm font-medium" />
                     ))}
                 </>
                 <>
-                  {sessionData?.user?.role === 'ADMIN' && (
+                  {sessionData?.user?.role === "ADMIN" && (
                     <ShieldCheck className="w-[0.875rem] text-sm font-medium" />
                   )}
                 </>
                 <>
-                  {sessionData?.user?.role === 'ARTISAN' && (
+                  {sessionData?.user?.role === "ARTISAN" && (
                     <Store className="w-[0.875rem] text-sm font-medium" />
                   )}
                 </>
@@ -109,8 +119,8 @@ export const UserNav = () => {
               </>
             )}
 
-            {(sessionData?.user?.role === 'GUEST' ||
-              sessionData?.user?.role === 'ADMIN') && (
+            {(sessionData?.user?.role === "GUEST" ||
+              sessionData?.user?.role === "ADMIN") && (
               <DropdownMenuItem>
                 <Link href="/welcome" className="w-full">
                   Guest Survey
@@ -118,7 +128,7 @@ export const UserNav = () => {
               </DropdownMenuItem>
             )}
 
-            {sessionData?.user?.role === 'ADMIN' && (
+            {sessionData?.user?.role === "ADMIN" && (
               <DropdownMenuItem>
                 <Link href="/admin/dashboard" className="w-full">
                   Admin Dashboard
@@ -138,5 +148,5 @@ export const UserNav = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    )
-}
+    );
+};

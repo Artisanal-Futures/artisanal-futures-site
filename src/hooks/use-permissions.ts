@@ -1,9 +1,10 @@
-import { useSession } from 'next-auth/react'
+import { useSession } from "next-auth/react";
 
 export const usePermissions = () => {
-  const { data: session } = useSession()
-  const userRole = session?.user.role ?? 'ARTISAN'
-  const isElevated = userRole !== 'ARTISAN'
+  const { data: session } = useSession();
+  const userRole = session?.user.role ?? "ARTISAN";
+  const isElevated = userRole !== "ARTISAN";
+  const isAdmin = userRole === "ADMIN";
 
-  return { isElevated, userRole, session }
-}
+  return { isElevated, isAdmin, userRole, session };
+};

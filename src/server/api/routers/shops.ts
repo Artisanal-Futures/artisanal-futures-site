@@ -21,11 +21,15 @@ export const shopsRouter = createTRPCRouter({
       },
     });
   }),
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: elevatedProcedure.query(async ({ ctx }) => {
     const shops = await ctx.db.shop.findMany({
       include: { owner: true, address: true },
       orderBy: { createdAt: "desc" },
     });
+
+    if (ctx.session.user.role !== "ADMIN") {
+      return shops.filter((shop) => shop.ownerId === ctx.session.user.id);
+    }
 
     return shops.map((shop) => ({
       ...shop,

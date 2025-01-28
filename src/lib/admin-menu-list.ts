@@ -6,6 +6,7 @@ import {
   NotebookTextIcon,
   SquarePen,
   StoreIcon,
+  UserIcon,
 } from "lucide-react";
 
 import { Role } from "@prisma/client";
@@ -85,13 +86,27 @@ export function getMenuList(pathname: string): Group[] {
           active: pathname.includes(`/admin/upcycling`),
           icon: ImageIcon,
           submenus: [],
-          restrictedAccess: [],
+          restrictedAccess: ["ARTISAN"],
         },
         {
           href: `/admin/guest-surveys`,
           label: "Guest Surveys",
           active: pathname.includes(`/admin/guest-surveys`),
           icon: SquarePen,
+          submenus: [],
+          restrictedAccess: ["ARTISAN"],
+        },
+      ],
+    },
+
+    {
+      groupLabel: "Account",
+      menus: [
+        {
+          href: `/admin/profile `,
+          label: "Profile",
+          active: pathname.includes(`/admin/profile`),
+          icon: UserIcon,
           submenus: [],
           restrictedAccess: [],
         },
