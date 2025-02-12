@@ -1,47 +1,48 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { getServerAuthSession } from "~/server/auth";
 
-import { SidebarNav } from '~/app/(site)/profile/_components/sidebar-nav'
-import { Separator } from '~/components/ui/separator'
-import { env } from '~/env'
-import { getServerAuthSession } from '~/server/auth'
-import { api } from '~/trpc/server'
+import { env } from "~/env";
+import { api } from "~/trpc/server";
+import { Separator } from "~/components/ui/separator";
+import { SidebarNav } from "~/app/(site)/profile/_components/sidebar-nav";
 
 type Props = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export default async function ProfileLayout({ children }: Props) {
-  const shop = await api.shop.getCurrentUserShop()
-  const session = await getServerAuthSession()
-
-  const navItems = [
-    {
-      title: 'Profile',
-      href: '/profile',
-    },
-    {
-      title: 'My Shop',
-      href: shop ? `/profile/shop/${shop?.id}` : '/profile/shop',
-    },
-    {
-      title: 'Survey',
-      href: '/profile/survey',
-    },
-  ]
+  const session = await getServerAuthSession();
 
   if (!session) {
     redirect(
       `/auth/sign-in?callbackUrl=${encodeURIComponent(
         `${env.NEXTAUTH_URL}/profile`,
       )}`,
-    )
+    );
   }
+
+  const shop = await api.shop.getCurrentUserShop();
+
+  const navItems = [
+    {
+      title: "Profile",
+      href: "/profile",
+    },
+    {
+      title: "My Shop",
+      href: shop ? `/profile/shop/${shop?.id}` : "/profile/shop",
+    },
+    {
+      title: "Survey",
+      href: "/profile/survey",
+    },
+  ];
 
   return (
     <>
-      <div className=" block space-y-6 py-5 pb-16">
+      <div className="block space-y-6 py-5 pb-16">
         <div className="flex items-center justify-between">
-          <div className="space-y-0.5 ">
+          <div className="space-y-0.5">
             <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
             <p className="text-muted-foreground">
               Manage your account settings , shop settings, and update
@@ -58,5 +59,5 @@ export default async function ProfileLayout({ children }: Props) {
         </div>
       </div>
     </>
-  )
+  );
 }

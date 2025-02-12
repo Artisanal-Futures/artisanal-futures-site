@@ -9,10 +9,11 @@ export const metadata = {
 
 export default async function ProductsAdminPage() {
   const products = await api.product.getAll();
+  const shops = await api.shop.getAll();
 
   return (
     <AdminClientLayout currentPage="Products" title="Products">
-      <ProductClient products={products} />
+      <ProductClient products={products} shops={shops} />
     </AdminClientLayout>
   );
 }

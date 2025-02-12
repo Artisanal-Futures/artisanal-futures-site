@@ -1,9 +1,5 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '~/server/api/trpc'
-import { db } from '~/server/db'
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { db } from "~/server/db";
 
 export const migrationRouter = createTRPCRouter({
   get: publicProcedure.query(async ({ ctx }) => {
@@ -14,9 +10,9 @@ export const migrationRouter = createTRPCRouter({
           notIn: (await db.user.findMany()).map((user) => user.id),
         },
       },
-    })
+    });
 
-    return orphanedSessions
+    return orphanedSessions;
   }),
 
   migrateUsernames: publicProcedure.mutation(async ({ ctx }) => {
@@ -26,15 +22,15 @@ export const migrationRouter = createTRPCRouter({
           not: null,
         },
       },
-    })
+    });
 
     for (const user of users) {
-      if (!user.name) continue
+      if (!user.name) continue;
 
       // Create base username by removing spaces and special chars
-      const baseUsername = user.name.toLowerCase().replace(/[^a-z0-9]/g, '')
-      let username = baseUsername
-      let usernameExists = true
+      const baseUsername = user.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      let username = baseUsername;
+      let usernameExists = true;
 
       while (usernameExists) {
         // Check if username exists
@@ -45,14 +41,14 @@ export const migrationRouter = createTRPCRouter({
               not: user.id, // Don't match the current user
             },
           },
-        })
+        });
 
         if (!existingUser) {
-          usernameExists = false
+          usernameExists = false;
         } else {
           // Add 4 random digits
-          const randomDigits = Math.floor(Math.random() * 9000 + 1000)
-          username = `${baseUsername}${randomDigits}`
+          const randomDigits = Math.floor(Math.random() * 9000 + 1000);
+          username = `${baseUsername}${randomDigits}`;
         }
       }
 
@@ -64,7 +60,7 @@ export const migrationRouter = createTRPCRouter({
         data: {
           username,
         },
-      })
+      });
     }
   }),
-})
+});

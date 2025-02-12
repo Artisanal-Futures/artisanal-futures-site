@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { CirclePlusIcon, PencilIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
 
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
@@ -65,7 +64,6 @@ export function ItemDialog<T>({
   mode = "update",
 }: Props<T>) {
   const [open, setOpen] = useState(false);
-  const { data: session } = useSession();
 
   useEffect(() => {
     if (!id) return;

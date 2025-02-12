@@ -7,15 +7,15 @@ import type { Shop } from "@prisma/client";
 import { env } from "~/env";
 import BlurImage from "~/components/ui/blur-image";
 
-type IProps = Shop & React.HTMLAttributes<HTMLDivElement>;
+type Props = Shop & React.HTMLAttributes<HTMLDivElement>;
 
-const ShopCard: FC<IProps> = ({
+export const ShopCard: FC<Props> = ({
   id,
   ownerName,
   name,
   website,
   logoPhoto,
-  bio,
+
   className,
   ownerPhoto,
 }) => {
@@ -29,35 +29,42 @@ const ShopCard: FC<IProps> = ({
 
   return (
     <div className={cn("", className)}>
-      <div className="w-full rounded bg-slate-50 p-4 shadow">
-        <div className="relative aspect-square w-full">
-          <BlurImage src={availableImage} alt="" />
-        </div>
+      <div className="group relative w-full overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg">
+        <a href={`/shops/${id}`}>
+          <div className="relative aspect-square w-full overflow-hidden">
+            <BlurImage
+              src={availableImage}
+              alt={`${name}'s shop image`}
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+        </a>
 
-        <div className="flex w-full items-center justify-between">
+        <div className="space-y-4 p-4">
           <div className="flex flex-col">
-            <h3 className="text-xl font-semibold">{ownerName}</h3>
-            <p className="font-normal text-slate-500">{name}</p>
+            <h3 className="text-xl font-semibold tracking-tight text-slate-900">
+              {ownerName}
+            </h3>
+            <p className="text-sm text-slate-500">{name}</p>
           </div>
 
           <div className="flex gap-2">
-            {bio && logoPhoto && (
-              <a
-                className="block rounded bg-slate-400 p-2 text-white"
-                href={`/shops/${id}`}
-              >
-                <span className="sr-only">Head to artisan profile</span>
-                <User />
-              </a>
-            )}
-
+            <a
+              href={`/shops/${id}`}
+              className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-100 py-2 text-center text-sm font-medium text-slate-900 transition-colors hover:bg-slate-200"
+            >
+              <Store className="h-4 w-4" />
+              View Shop
+            </a>
             {website && (
               <a
-                className="block rounded bg-slate-500 p-2 text-white"
                 href={website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-900 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-slate-800"
               >
-                <span className="sr-only">Head to artisan&apos;s website</span>
-                <Store />
+                <User className="h-4 w-4" />
+                Website
               </a>
             )}
           </div>
@@ -66,5 +73,3 @@ const ShopCard: FC<IProps> = ({
     </div>
   );
 };
-
-export default ShopCard;

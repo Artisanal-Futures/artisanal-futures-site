@@ -8,7 +8,7 @@ import { type TRPCClientErrorLike } from "@trpc/client";
 
 import { api } from "../trpc/react";
 
-type Entity = "product" | "shop" | "survey";
+type Entity = "product" | "shop" | "survey" | "guest";
 
 type Props = {
   entity: Entity;

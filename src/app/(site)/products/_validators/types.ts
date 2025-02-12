@@ -1,4 +1,4 @@
-export type Product = {
+export type FastAPIProduct = {
   name: string;
   description: string;
   principles: string;
@@ -6,11 +6,11 @@ export type Product = {
   url: string;
   image: string;
   craftID: string;
-  assessment: Assessment[];
+  assessment: FastAPIAssessment[];
   id: number;
 };
 
-type Assessment = {
+type FastAPIAssessment = {
   type: string;
   version: number;
   description: string;

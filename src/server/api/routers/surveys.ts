@@ -1,5 +1,4 @@
 import {
-  adminProcedure,
   createTRPCRouter,
   elevatedProcedure,
   protectedProcedure,
@@ -69,12 +68,6 @@ export const surveysRouter = createTRPCRouter({
           materials: input.materials,
           principles: input.principles,
           description: input.description,
-          unmoderatedForm: input.unmoderatedForm,
-          moderatedForm: input.moderatedForm,
-          hiddenForm: input.hiddenForm,
-          privateForm: input.privateForm,
-          supplyChain: input.supplyChain,
-          messagingOptIn: input.messagingOptIn,
         },
       });
 
@@ -123,12 +116,6 @@ export const surveysRouter = createTRPCRouter({
           materials: input.materials,
           principles: input.principles,
           description: input.description,
-          unmoderatedForm: input.unmoderatedForm,
-          moderatedForm: input.moderatedForm,
-          hiddenForm: input.hiddenForm,
-          privateForm: input.privateForm,
-          supplyChain: input.supplyChain,
-          messagingOptIn: input.messagingOptIn,
         },
       });
 

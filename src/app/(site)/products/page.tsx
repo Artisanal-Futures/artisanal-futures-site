@@ -1,5 +1,4 @@
 import { NewProductClient } from "./_components/new-product-client";
-import { ProductsClient } from "./_components/products-client";
 
 export const metadata = {
   title: "Products",
@@ -15,7 +14,7 @@ export default function ProductsPage() {
         Search through all our artisans&apos; products and support small
         businesses
       </p>
-      {/* <ProductsClient /> */}
+
       <NewProductClient />
     </>
   );

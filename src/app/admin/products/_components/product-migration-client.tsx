@@ -9,7 +9,11 @@ import { useState } from "react";
 
 import { toastService } from "@dreamwalker-studios/toasts";
 
-import type { ShopifyData, SquareSpaceData } from "../_validators/types";
+import type {
+  ShopifyData,
+  SquareSpaceData,
+  WordPressProduct,
+} from "../_validators/types";
 import type { Product } from "~/types/product";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
@@ -47,6 +51,7 @@ const ROWS_PER_PAGE = 10;
 const PRODUCT_SOURCES = {
   SHOPIFY: "Shopify",
   SQUARESPACE: "Squarespace",
+  WORDPRESS: "WordPress",
 } as const;
 
 type ProductSource = keyof typeof PRODUCT_SOURCES;
@@ -109,7 +114,7 @@ export function DatabaseMigrationClient() {
   };
 
   // Parse JSON to extract field names and convert to Product type
-  const parseJSON = () => {
+  const parseJSON = async () => {
     try {
       if (!selectedSource) {
         throw new Error("Please select a product source");
@@ -124,6 +129,8 @@ export function DatabaseMigrationClient() {
       // Parse JSON for sources
       const parsedJson = JSON.parse(jsonInput);
 
+      console.log(parsedJson);
+
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
         convertedProducts = shopifyData.products.map(
@@ -135,6 +142,17 @@ export function DatabaseMigrationClient() {
         convertedProducts = squarespaceData.items.map(
           (product) =>
             convertToProduct(product, selectedShopId) as Partial<Product>,
+        );
+      } else if (selectedSource === "WORDPRESS") {
+        const wordpressData = parsedJson as WordPressProduct[];
+        convertedProducts = await Promise.all(
+          wordpressData.map(
+            async (product) =>
+              (await convertToProduct(
+                product,
+                selectedShopId,
+              )) as Partial<Product>,
+          ),
         );
       }
 
@@ -231,6 +249,19 @@ export function DatabaseMigrationClient() {
                   Add &quot;?format=json-pretty&quot; to any collection page URL
                 </li>
                 <li>Copy the entire JSON response and paste it below</li>
+              </ol>
+            ) : selectedSource === "WORDPRESS" ? (
+              <ol className="list-decimal space-y-1 pl-4">
+                <li>Go to your WordPress site</li>
+                <li>
+                  Add &quot;/wp-json/wp/v2/product?per_page=100&page=1&quot; to
+                  your site URL
+                </li>
+                <li>Copy the entire JSON response and paste it below</li>
+                <li>
+                  Increase the page number and repeat until you don&apos;t get
+                  anymore products.
+                </li>
               </ol>
             ) : (
               <p>Please select a product source to see instructions</p>

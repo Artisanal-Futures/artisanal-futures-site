@@ -10,7 +10,7 @@ export type Survey = {
   privateForm: boolean;
   supplyChain: boolean;
   messagingOptIn: boolean;
-  ownerId: string;
+  ownerId: string | null;
   shopId: string;
   createdAt: Date;
   updatedAt: Date;

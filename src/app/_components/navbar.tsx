@@ -24,8 +24,8 @@ const Navbar = () => {
       name: "Products",
     },
     {
-      id: "forum",
-      name: "Forum",
+      id: "forums",
+      name: "Forums",
     },
     {
       id: "tools",

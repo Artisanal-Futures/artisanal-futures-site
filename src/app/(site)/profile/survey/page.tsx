@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
 
 import { api } from "~/trpc/server";
-import { SurveyForm } from "~/app/(site)/profile/_components/survey-form";
+import { SurveyForm } from "~/app/(site)/profile/survey/_components/survey-form";
+
+export const metadata = {
+  title: "Survey Dashboard",
+};
 
 export default async function ProfileSurveyPage() {
   const shop = await api.shop.getCurrentUserShop();

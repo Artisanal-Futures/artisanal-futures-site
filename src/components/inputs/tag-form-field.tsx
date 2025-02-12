@@ -8,14 +8,9 @@ import type {
 } from "react-hook-form";
 import React from "react";
 import { TagInput } from "emblor";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
 
 import { cn } from "~/lib/utils";
 import {
-  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -23,15 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-
-const FormSchema = z.object({
-  topics: z.array(
-    z.object({
-      id: z.string(),
-      text: z.string(),
-    }),
-  ),
-});
 
 type Props<CurrentForm extends FieldValues> = {
   form: UseFormReturn<CurrentForm>;

@@ -75,6 +75,18 @@ const config = {
         protocol: "https",
         hostname: "images.squarespace-cdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "trendanomaly.com",
+      },
+      {
+        protocol: "https",
+        hostname: "judysledge.com",
+      },
+      {
+        protocol: "https",
+        hostname: "detroitpollinatorcompany.com",
+      },
     ],
   },
 };

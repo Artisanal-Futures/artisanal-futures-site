@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
 
-import { type Product } from "~/types/product";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";

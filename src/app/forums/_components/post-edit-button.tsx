@@ -1,11 +1,12 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
-import { LoadButton } from '~/components/common/load-button'
+import { toastService } from "@dreamwalker-studios/toasts";
+
+import { api } from "~/trpc/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,68 +16,69 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '~/components/ui/alert-dialog'
-import { Button } from '~/components/ui/button'
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '~/components/ui/dialog'
+} from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
-import { api } from '~/trpc/react'
-import { EditEditor } from './edit-editor'
+} from "~/components/ui/dropdown-menu";
+import { LoadButton } from "~/components/common/load-button";
+
+import { EditEditor } from "./edit-editor";
 
 type Props = {
-  postId: string
-  title: string
-  content: unknown
-}
+  postId: string;
+  title: string;
+  content: unknown;
+};
 
 export function PostEditButton({ postId, title, content }: Props) {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(title)
-  const [editedContent, setEditedContent] = useState(content)
-  const apiUtils = api.useUtils()
-  const router = useRouter()
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  // const [editedTitle, setEditedTitle] = useState(title)
+  const [editedContent, setEditedContent] = useState(content);
+  const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const postEditMutation = api.forum.updateSubredditPost.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message)
-      setIsEditDialogOpen(false)
+      toastService.success(message);
+      setIsEditDialogOpen(false);
     },
     onError: ({ message }) => toastService.error(message),
     onSettled: () => {
-      void apiUtils.forum.invalidate()
-      void apiUtils.forumSubreddit.invalidate()
-      router.refresh()
+      void apiUtils.forum.invalidate();
+      void apiUtils.forumSubreddit.invalidate();
+      router.refresh();
     },
-  })
+  });
 
   const postDeleteMutation = api.forum.deleteSubredditPost.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message)
-      setIsDeleteAlertOpen(false)
-      router.push('/forums')
+      toastService.success(message);
+      setIsDeleteAlertOpen(false);
+      router.push("/forums");
     },
     onError: ({ message }) => toastService.error(message),
     onSettled: () => {
-      void apiUtils.forum.invalidate()
-      void apiUtils.forumSubreddit.invalidate()
+      void apiUtils.forum.invalidate();
+      void apiUtils.forumSubreddit.invalidate();
     },
-  })
+  });
 
   const handleDelete = () => {
-    postDeleteMutation.mutate(postId)
-  }
+    postDeleteMutation.mutate(postId);
+  };
 
   return (
     <>
@@ -128,7 +130,7 @@ export function PostEditButton({ postId, title, content }: Props) {
                 </LoadButton>
               </DialogFooter>
             </EditEditor>
-          </div>{' '}
+          </div>{" "}
         </DialogContent>
       </Dialog>
 
@@ -148,5 +150,5 @@ export function PostEditButton({ postId, title, content }: Props) {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

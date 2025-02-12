@@ -1,7 +1,11 @@
-import type { ShopifyProduct, SquareSpaceProduct } from "../_validators/types";
+import type {
+  ShopifyProduct,
+  SquareSpaceProduct,
+  WordPressProduct,
+} from "../_validators/types";
 
-export function convertToProduct(
-  product: ShopifyProduct | SquareSpaceProduct,
+export async function convertToProduct(
+  product: ShopifyProduct | SquareSpaceProduct | WordPressProduct,
   shopId: string,
 ) {
   // Handle Shopify product
@@ -22,6 +26,37 @@ export function convertToProduct(
       environmentalTags: [],
       aiGeneratedTags: [],
       scrapeMethod: "SHOPIFY",
+      shopId,
+    };
+  }
+
+  // Handle WordPress product
+  if ("class_list" in product) {
+    const getMedia = await fetch(
+      product._links["wp:featuredmedia"]?.[0]?.href ?? "",
+    );
+    const media = (await getMedia.json()) as {
+      guid: {
+        rendered: string;
+      };
+    };
+    const imageUrl = media.guid.rendered;
+    const description = product.content.rendered.replace(/<[^>]*>/g, "");
+
+    return {
+      shopProductId: product.id.toString(),
+      name: product.title.rendered,
+      description: description,
+      priceInCents: null, // WordPress core doesn't include price
+      currency: null,
+      imageUrl: imageUrl, // Would need to fetch featured media separately
+      productUrl: product.link,
+      attributeTags: [],
+      tags: [], // Would need to map product_tag if needed
+      materialTags: [],
+      environmentalTags: [],
+      aiGeneratedTags: [],
+      scrapeMethod: "WORDPRESS",
       shopId,
     };
   }

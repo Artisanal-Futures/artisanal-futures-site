@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Shop } from "@prisma/client";
 
 import { api } from "~/trpc/server";
-import ShopCard from "~/app/(site)/shops/_components/shop-card";
+import { ShopCard } from "~/app/(site)/shops/_components/shop-card";
 
 export const metadata = {
   title: "Shops",

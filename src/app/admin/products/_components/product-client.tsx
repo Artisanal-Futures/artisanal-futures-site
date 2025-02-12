@@ -2,30 +2,44 @@
 
 import Link from "next/link";
 
-import { type Product } from "~/types/product";
+import type { Product } from "~/types/product";
+import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
-import { buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { productColumns } from "./product-column-structure";
-import { createProjectFilter } from "./product-filters";
+import { createProductFilter } from "./product-filters";
 import { ProjectForm } from "./product-form";
 import { TagProductsButton } from "./tag-products-button";
 
-type Props = { products: Product[] };
+type Props = { products: Product[]; shops: Shop[] };
 
-export function ProductClient({ products }: Props) {
+export function ProductClient({ products, shops }: Props) {
   const { isElevated } = usePermissions();
 
-  const productFilters = createProjectFilter(products ?? [], isElevated);
+  const productFilters = createProductFilter(products ?? [], shops ?? []);
 
   const enhancedProducts = products.map((product) => ({
     ...product,
     searchableString:
       `${product.name} ${product.description} ${product.id}`.toLowerCase(),
   }));
+
+  const handlePrintProducts = () => {
+    const formattedProducts = products.reduce(
+      (acc, product) => {
+        acc[product.id] =
+          `${product.name} - ${product.description} - ${product.tags.join(", ")}`;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    console.log(formattedProducts);
+  };
 
   return (
     <div className="py-4">
@@ -51,6 +65,13 @@ export function ProductClient({ products }: Props) {
                 Migrate Products
               </Link>
             )}
+            <Button
+              variant="outline"
+              className="h-8 text-xs"
+              onClick={handlePrintProducts}
+            >
+              Print Products
+            </Button>
             <ItemDialog
               title={`Create project`}
               subtitle="Create a new project"

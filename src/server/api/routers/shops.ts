@@ -1,5 +1,4 @@
 import {
-  adminProcedure,
   createTRPCRouter,
   elevatedProcedure,
   protectedProcedure,

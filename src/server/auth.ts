@@ -151,7 +151,9 @@ export const generateAuthOptions = (req?: NextRequest): NextAuthOptions => {
     pages: {
       signIn: "/auth/sign-in",
       error: "/auth/sign-in/?errors=invalid-credentials",
-      newUser: env.NEXT_PUBLIC_IS_GUEST_ONBOARDING ? "/welcome" : "/onboarding",
+      newUser: env.NEXT_PUBLIC_IS_GUEST_ONBOARDING
+        ? "/guest-welcome"
+        : "/artisan-welcome",
     },
     cookies: {
       sessionToken: {

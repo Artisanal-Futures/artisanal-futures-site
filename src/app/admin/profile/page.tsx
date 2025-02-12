@@ -1,7 +1,5 @@
 import { getServerAuthSession } from "~/server/auth";
 
-import { api } from "~/trpc/server";
-
 import { AdminClientLayout } from "../_components/client-layout";
 import { ProfileForm } from "./_components/profile-form";
 

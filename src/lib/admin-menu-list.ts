@@ -9,7 +9,7 @@ import {
   UserIcon,
 } from "lucide-react";
 
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 
 type Submenu = {
   href: string;

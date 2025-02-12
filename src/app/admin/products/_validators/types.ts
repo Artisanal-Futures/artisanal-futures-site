@@ -236,3 +236,77 @@ export type WooCommerceProduct = {
 export type WooCommerceData = {
   products: WooCommerceProduct[];
 };
+
+export type WordPressProduct = {
+  id: number;
+  date: string;
+  date_gmt: string;
+  guid: {
+    rendered: string;
+  };
+  modified: string;
+  modified_gmt: string;
+  slug: string;
+  status: string;
+  type: string;
+  link: string;
+  title: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+    protected: boolean;
+  };
+  excerpt: {
+    rendered: string;
+    protected: boolean;
+  };
+  featured_media: number;
+  comment_status: string;
+  ping_status: string;
+  template: string;
+  meta: unknown[];
+  product_brand: unknown[];
+  product_cat: number[];
+  product_tag: unknown[];
+  class_list: Record<string, string>;
+  _links: {
+    self: Array<{
+      href: string;
+      targetHints?: {
+        allow: string[];
+      };
+    }>;
+    collection: Array<{
+      href: string;
+    }>;
+    about: Array<{
+      href: string;
+    }>;
+    replies: Array<{
+      embeddable: boolean;
+      href: string;
+    }>;
+    "wp:featuredmedia": Array<{
+      embeddable: boolean;
+      href: string;
+    }>;
+    "wp:attachment": Array<{
+      href: string;
+    }>;
+    "wp:term": Array<{
+      taxonomy: string;
+      embeddable: boolean;
+      href: string;
+    }>;
+    curies: Array<{
+      name: string;
+      href: string;
+      templated: boolean;
+    }>;
+  };
+};
+
+export type WordPressData = {
+  products: WordPressProduct[];
+};

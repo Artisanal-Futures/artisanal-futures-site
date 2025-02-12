@@ -1,26 +1,27 @@
-import DevelopmentChangeRole from '~/app/(site)/profile/_components/development-change-role'
-import { Separator } from '~/components/ui/separator'
-import { env } from '~/env'
+import { getServerAuthSession } from "~/server/auth";
 
-const isDev = env.NODE_ENV === 'development'
+import { env } from "~/env";
+import { Separator } from "~/components/ui/separator";
+import DevelopmentChangeRole from "~/app/(site)/profile/_components/development-change-role";
 
-export default function ProfilePage() {
+import { ProfileForm } from "./_components/profile-form";
+
+const isDev = env.NODE_ENV === "development";
+
+export const metadata = {
+  title: "Profile",
+};
+
+export default async function ProfilePage() {
+  const session = await getServerAuthSession();
+
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium">Profile</h3>
-          <p className="text-sm text-muted-foreground">
-            This is how others will see you on the site.
-          </p>
-        </div>
+        <ProfileForm {...session?.user} />
         <Separator />
-        <p>
-          Welcome! We are still a work in progress, so more settings will be
-          available soon.
-        </p>
         {isDev && <DevelopmentChangeRole />}
       </div>
     </>
-  )
+  );
 }

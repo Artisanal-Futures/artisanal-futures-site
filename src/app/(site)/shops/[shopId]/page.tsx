@@ -1,16 +1,19 @@
 import { api } from "~/trpc/server";
-import ProfileCard from "~/app/(site)/shops/_components/profile-card";
+import ProfileCard from "~/app/(site)/shops/[shopId]/_components/profile-card";
 
-import { ProductGrid } from "../_components/product-grid";
+import { ProductGrid } from "./_components/product-grid";
 
 type Props = {
   params: { shopId: string };
 };
 
-export const metadata = {
-  title: "Artisan Profile",
-  description: "The profile page for an artisan",
-};
+export async function generateMetadata({ params }: Props) {
+  const shop = await api.shop.get(params?.shopId);
+  return {
+    title: shop?.name ?? "Artisan Profile",
+    description: `View ${shop?.name}'s profile and products`,
+  };
+}
 
 export default async function ProfilePage({ params }: Props) {
   const shop = await api.shop.get(params?.shopId);
