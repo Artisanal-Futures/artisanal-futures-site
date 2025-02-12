@@ -19,11 +19,14 @@ export const artisanOnboardingFormSchema = z.object({
   logo: z.string().optional(),
   profilePic: z.string().optional(),
 
+  ownerName: z.string().optional(),
   ownerPhoto: z.any().nullable(),
   logoPhoto: z.any().nullable(),
 
   ownerPhotoUrl: z.string().optional().nullable(),
   logoPhotoUrl: z.string().optional().nullable(),
+
+  attributeTags: z.array(z.string()),
 });
 export type ArtisanOnboardingFormSchemaType = z.infer<
   typeof artisanOnboardingFormSchema

@@ -8,6 +8,7 @@ export const shopFormSchema = z.object({
   logoPhoto: z.string().optional(),
   ownerPhoto: z.string().optional(),
   website: z.string().optional(),
+  attributeTags: z.array(z.string()),
 });
 
 export type ShopFormValues = z.infer<typeof shopFormSchema>;

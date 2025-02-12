@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
 import type { Shop } from "@prisma/client";
 
-import { Product } from "~/types/product";
+import type { Product } from "~/types/product";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -18,7 +19,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,7 +37,9 @@ export const NewProductCard: FC<Props> = ({ product }) => {
   };
 
   const productUrl =
-    product.scrapeMethod === "SHOPIFY" || product.scrapeMethod === "SQUARESPACE"
+    product.scrapeMethod === "SHOPIFY" ||
+    product.scrapeMethod === "SQUARESPACE" ||
+    product.scrapeMethod === "WORDPRESS"
       ? `${product.shop?.website}${product.productUrl}`
       : product.productUrl;
 

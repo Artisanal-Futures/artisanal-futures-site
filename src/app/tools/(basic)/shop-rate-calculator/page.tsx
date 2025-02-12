@@ -1,95 +1,126 @@
-'use client'
+"use client";
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState } from "react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import Breakdown from './_components/breakdown'
-import HourlyPieChart from './_components/hourly-pie-chart'
-import { LaborCostForm } from './_components/panels/labor-form'
-import { MaterialsCostForm } from './_components/panels/materials-form'
-import { MonthlyCostForm } from './_components/panels/monthly-form'
-import { useShopCalculator } from './_hooks/use-shop-calculator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+
+import Breakdown from "./_components/breakdown";
+import HourlyPieChart from "./_components/hourly-pie-chart";
+import { LaborCostForm } from "./_components/panels/labor-form";
+import { MaterialsCostForm } from "./_components/panels/materials-form";
+import { MonthlyCostForm } from "./_components/panels/monthly-form";
+import { ProfitsPanel } from "./_components/panels/profit-panel";
+import { useShopCalculator } from "./_hooks/use-shop-calculator";
 
 export default function ShopRateCalculator() {
-  const [hourlyTotal] = useState(0)
+  const [profitPercentage, setProfitPercentage] = useState(0);
+  const HOURS_PER_YEAR = 2080; // 40 hours/week * 52 weeks
 
   const COST_COLORS = {
-    fixed: '#E38627',
-    material: '#C13C37',
-    labor: '#6A2135',
-    profits: '#f472b6',
-  }
+    fixed: "#E38627",
+    material: "#C13C37",
+    labor: "#6A2135",
+    profits: "#f472b6",
+  };
 
-  const { monthly, materials } = useShopCalculator((state) => state)
-  // const hoursWorked = laborExpenses?.hours ?? 0 * 4.33 * 12;
+  const { monthly, materials, labor } = useShopCalculator((state) => state);
 
   const breakdown = useMemo(() => {
+    const monthlyToHourly = monthly / (HOURS_PER_YEAR / 12);
+
     return {
       monthlyCost: monthly,
-
-      // monthlyHourly: monthlyExpenses?.cart
-      //   ? monthlyExpenses?.cart.reduce((total, item) => {
-      //       return (
-      //         total + (Number.isNaN(item?.amount ?? 0) ? 0 : item?.amount ?? 0)
-      //       );
-      //     }, 0) ?? 0
-      //   : 0,
-      monthlyHourly: (monthly / 2000) * 12 || 0,
+      monthlyHourly: monthlyToHourly,
       materialCost: materials,
-      materialHourly: 0,
-      laborHourly: 0,
-    }
-  }, [monthly, materials])
+      materialHourly: materials, // Already per hour from materials form
+      laborHourly: labor / (HOURS_PER_YEAR / 12), // Convert monthly labor to hourly
+    };
+  }, [monthly, materials, labor]);
 
-  const formattedPrice = useMemo(() => {
-    return (monthly + breakdown.monthlyHourly).toFixed(2)
-  }, [breakdown, monthly])
-
-  const totalCost = useMemo(() => {
-    return monthly + breakdown.monthlyHourly
-  }, [breakdown, monthly])
+  const totalHourlyRate = useMemo(() => {
+    const baseRate =
+      breakdown.monthlyHourly +
+      breakdown.materialHourly +
+      breakdown.laborHourly;
+    const profitAmount = baseRate * (profitPercentage / 100);
+    return baseRate + profitAmount;
+  }, [breakdown, profitPercentage]);
 
   return (
-    <>
-      <div className="mx-auto grid w-full grid-cols-1 gap-10 md:grid-cols-2 lg:gap-32">
-        <div className="flex flex-col ">
-          <div className="mx-auto flex max-w-lg gap-8 rounded-xl p-4 sm:p-6 md:p-8">
-            <Tabs defaultValue="monthly">
-              <TabsList>
-                <TabsTrigger value="monthly">Monthly Costs</TabsTrigger>
-                <TabsTrigger value="material">Material Costs</TabsTrigger>
-                <TabsTrigger value="labor">Labor Costs</TabsTrigger>
-                <TabsTrigger value="profit">Profits</TabsTrigger>
-              </TabsList>
+    <div className="container mx-auto py-8">
+      <div className="mb-12 text-center">
+        <h1 className="mb-4 text-4xl font-bold">Shop Rate Calculator</h1>
+        <p className="text-lg text-muted-foreground">
+          Calculate your shop&apos;s hourly rate based on fixed costs,
+          materials, labor, and desired profit margin
+        </p>
+      </div>
+
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        {/* Left Column - Forms */}
+        <div className="rounded-lg border bg-card shadow-sm">
+          <Tabs defaultValue="monthly" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="monthly">Monthly</TabsTrigger>
+              <TabsTrigger value="material">Materials</TabsTrigger>
+              <TabsTrigger value="labor">Labor</TabsTrigger>
+              <TabsTrigger value="profit">Profit</TabsTrigger>
+              {/* <TabsTrigger value="product">Product</TabsTrigger> */}
+            </TabsList>
+            <div className="p-6">
               <TabsContent value="monthly">
                 <MonthlyCostForm />
               </TabsContent>
               <TabsContent value="material">
                 <MaterialsCostForm />
-              </TabsContent>{' '}
+              </TabsContent>
               <TabsContent value="labor">
                 <LaborCostForm />
               </TabsContent>
-            </Tabs>
+              <TabsContent value="profit">
+                <ProfitsPanel
+                  sliderValue={profitPercentage}
+                  setSliderValue={(v) => setProfitPercentage(v as number)}
+                />
+              </TabsContent>
+              {/* <TabsContent value="product">
+                <ProductPricingForm
+                  shopHourlyRate={totalHourlyRate}
+                  laborHourlyRate={breakdown.laborHourly}
+                />
+              </TabsContent> */}
+            </div>
+          </Tabs>
+        </div>
+
+        {/* Right Column - Results */}
+        <div className="flex flex-col gap-8">
+          <div className="rounded-lg border bg-card p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-semibold">Shop Rate</h2>
+            <div className="flex items-baseline justify-between">
+              <span className="text-lg text-muted-foreground">
+                Total Hourly Rate
+              </span>
+              <span className="text-4xl font-bold text-primary">
+                ${totalHourlyRate.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-card p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-semibold">Cost Breakdown</h2>
+            <div className="mb-8">
+              <HourlyPieChart
+                {...breakdown}
+                hours={HOURS_PER_YEAR / 12}
+                isValid={totalHourlyRate > 0}
+                colors={COST_COLORS}
+              />
+            </div>
+            <Breakdown {...breakdown} />
           </div>
         </div>
-        <div className="flex flex-col gap-10 md:gap-20">
-          <h2 className="text-center text-4xl leading-tight md:text-left md:text-4xl lg:text-5xl">
-            Total Shop Rate Per Hour{' '}
-            <span className="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text font-semibold text-transparent">
-              ${formattedPrice}
-            </span>{' '}
-          </h2>
-
-          <HourlyPieChart
-            {...breakdown}
-            hours={hourlyTotal}
-            isValid={totalCost > 0 && hourlyTotal > 0}
-            colors={COST_COLORS}
-          />
-          <Breakdown {...breakdown} />
-        </div>
       </div>
-    </>
-  )
+    </div>
+  );
 }

@@ -14,36 +14,40 @@ export default async function ShopsPage() {
   const shops = await api.shop.getAllValid();
 
   return (
-    <>
-      <h1 className="text-4xl font-semibold">Shops</h1>
-      <p className="mb-3 mt-2 text-xl text-muted-foreground">
-        Browse our featured artisans&apos; stores
-      </p>
-
-      {shops?.length === 0 && (
-        <p className="my-auto text-xl text-muted-foreground">
-          Well, this is unfortunate. We don&apos;t have any shops set up at the
-          moment. If you are registered, you can create your shop,{" "}
-          <Link
-            href="/profile/shop"
-            className="font-semibold text-slate-800 hover:text-slate-800/50"
-          >
-            here
-          </Link>
-          .
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-12 text-center">
+        <h1 className="mb-4 text-5xl font-bold tracking-tight">
+          Artisanal Shops
+        </h1>
+        <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+          Discover unique handcrafted goods from our featured artisans
         </p>
-      )}
-      {shops?.length !== 0 && (
-        <div className="flex h-fit w-full flex-col md:flex-row md:flex-wrap">
-          {shops?.map((artisan: Shop) => (
+      </div>
+
+      {shops?.length === 0 ? (
+        <div className="rounded-lg bg-muted p-8 text-center">
+          <p className="text-xl text-muted-foreground">
+            We don&apos;t have any shops set up at the moment.{" "}
+            <Link
+              href="/profile/shop"
+              className="font-medium text-primary hover:underline"
+            >
+              Create your shop here
+            </Link>{" "}
+            and be the first to join our marketplace!
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {shops.map((artisan: Shop) => (
             <ShopCard
               {...artisan}
-              className="flex basis-full p-4 md:basis-1/2 lg:basis-1/4"
               key={artisan.id}
+              className="transform transition duration-300 hover:scale-105"
             />
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -16,14 +16,26 @@ import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
+import { Checkbox } from "~/components/ui/checkbox";
 import * as Form from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 import { Textarea } from "~/components/ui/textarea";
 import { ImageFormField } from "~/components/inputs";
 
 import { shopFormSchema } from "../_validators/schema";
+
+const STORE_ATTRIBUTES = [
+  "African American Culture",
+  "African Culture",
+  "African American Civil Rights",
+  "Black Owned",
+  "Woman Owned",
+  "Community Education",
+  "Food Sovereignty",
+] as const;
 
 type Props = {
   initialData: Shop | null;
@@ -53,6 +65,7 @@ export const ShopForm: React.FC<Props> = ({
       logoPhoto: initialData?.logoPhoto ?? "",
       ownerPhoto: initialData?.ownerPhoto ?? "",
       website: initialData?.website ?? "",
+      attributeTags: initialData?.attributeTags ?? [],
     },
   });
 
@@ -169,6 +182,37 @@ export const ShopForm: React.FC<Props> = ({
                   </Form.FormItem>
                 )}
               />
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="mb-6 text-lg font-medium">Store Attributes</h3>
+            <div className="space-y-4">
+              <div className="space-y-3">
+                {STORE_ATTRIBUTES.map((attribute) => (
+                  <div key={attribute} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={attribute}
+                      checked={form.watch("attributeTags")?.includes(attribute)}
+                      onCheckedChange={(checked) => {
+                        const currentTags = form.watch("attributeTags");
+                        if (checked) {
+                          form.setValue("attributeTags", [
+                            ...currentTags,
+                            attribute,
+                          ]);
+                        } else {
+                          form.setValue(
+                            "attributeTags",
+                            currentTags.filter((tag) => tag !== attribute),
+                          );
+                        }
+                      }}
+                    />
+                    <Label htmlFor={attribute}>{attribute}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </Card>
 

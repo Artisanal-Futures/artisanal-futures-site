@@ -1,16 +1,15 @@
-'use client'
+"use client";
 
-import type { FC } from 'react'
-import { useMemo } from 'react'
-
-import { formatPrice } from '~/utils/calculations'
+import type { FC } from "react";
+import { useMemo } from "react";
+import { formatPrice } from "~/utils/calculations";
 
 interface IProps {
-  monthlyCost: number
-  monthlyHourly: number
-  materialCost: number
-  materialHourly: number
-  laborHourly: number
+  monthlyCost: number;
+  monthlyHourly: number;
+  materialCost: number;
+  materialHourly: number;
+  laborHourly: number;
 }
 const Breakdown: FC<IProps> = ({
   monthlyCost,
@@ -27,63 +26,70 @@ const Breakdown: FC<IProps> = ({
       material_hourly: formatPrice(materialHourly),
       labor_hourly: formatPrice(laborHourly),
       subtotal: formatPrice(monthlyHourly + materialHourly + laborHourly),
-    }
-  }, [monthlyCost, monthlyHourly, materialCost, materialHourly, laborHourly])
+    };
+  }, [monthlyCost, monthlyHourly, materialCost, materialHourly, laborHourly]);
 
   return (
-    <section className="w-full">
-      <h3 className="mb-8 text-4xl font-semibold">Breakdown</h3>
-
-      <table className="w-full table-auto text-xl">
+    <div className="w-full">
+      <table className="w-full">
         <thead>
-          <tr>
-            <td>Cost</td>
-            <td>Hourly Rate</td>
+          <tr className="border-b text-sm text-muted-foreground">
+            <th className="pb-2 text-left font-medium">Cost Type</th>
+            <th className="pb-2 text-right font-medium">Monthly</th>
+            <th className="pb-2 text-right font-medium">Hourly</th>
           </tr>
         </thead>
-        <tbody>
-          <tr className="">
-            <td className="  before:px-1 before:text-[#E38627] before:content-['⬤'] ">
-              {' '}
-              Fixed{' '}
+        <tbody className="divide-y">
+          <tr className="text-sm">
+            <td className="py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-[#E38627]" />
+                Fixed Costs
+              </div>
             </td>
-            <td className="flex justify-between">
-              {calculatedPrices.fixed_monthly}{' '}
-              <span className="ml-4 rounded-md bg-slate-200 px-1 text-base">
-                {calculatedPrices.fixed_hourly} Total
-              </span>
+            <td className="py-3 text-right">
+              {calculatedPrices.fixed_monthly}
+            </td>
+            <td className="py-3 text-right">{calculatedPrices.fixed_hourly}</td>
+          </tr>
+          <tr className="text-sm">
+            <td className="py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-[#C13C37]" />
+                Materials
+              </div>
+            </td>
+            <td className="py-3 text-right">
+              {calculatedPrices.material_monthly}
+            </td>
+            <td className="py-3 text-right">
+              {calculatedPrices.material_hourly}
             </td>
           </tr>
-          <tr className="">
-            <td className="  before:px-1 before:text-[#C13C37] before:content-['⬤']">
-              {' '}
-              Material{' '}
+          <tr className="text-sm">
+            <td className="py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-[#6A2135]" />
+                Labor
+              </div>
             </td>
-            <td className="flex justify-between ">
-              {calculatedPrices.material_monthly}{' '}
-              <span className="ml-4 rounded-md bg-slate-200 px-1 text-base ">
-                {calculatedPrices.material_hourly} Total
-              </span>{' '}
-            </td>
+            <td className="py-3 text-right">-</td>
+            <td className="py-3 text-right">{calculatedPrices.labor_hourly}</td>
           </tr>
-          <tr className="">
-            <td className="  before:px-1 before:text-[#6A2135] before:content-['⬤']">
-              {' '}
-              Labor{' '}
+          <tr className="font-medium">
+            <td className="py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-green-500" />
+                Subtotal
+              </div>
             </td>
-            <td>{calculatedPrices.labor_hourly} </td>
-          </tr>
-          <tr className="">
-            <td className="  before:px-1 before:text-green-500 before:content-['⬤']">
-              {' '}
-              Subtotal{' '}
-            </td>
-            <td>{calculatedPrices.subtotal} </td>
+            <td className="py-3 text-right">-</td>
+            <td className="py-3 text-right">{calculatedPrices.subtotal}</td>
           </tr>
         </tbody>
       </table>
-    </section>
-  )
-}
+    </div>
+  );
+};
 
-export default Breakdown
+export default Breakdown;

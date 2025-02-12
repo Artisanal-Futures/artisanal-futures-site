@@ -1,12 +1,13 @@
-'use client'
+"use client";
 
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import type { LaborCosts } from '../../_hooks/use-shop-calculator'
-import { Button } from '~/components/ui/button'
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import type { LaborCosts } from "../../_hooks/use-shop-calculator";
+import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,38 +16,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { useShopCalculator } from '../../_hooks/use-shop-calculator'
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
+
+import { useShopCalculator } from "../../_hooks/use-shop-calculator";
 
 const laborFormSchema = z.object({
   hours: z.number(),
   rate: z.number(),
-})
-const AVG_WEEK_PER_MONTH = 4.33
-type LaborFormValues = z.infer<typeof laborFormSchema>
+});
+const AVG_WEEK_PER_MONTH = 4.33;
+type LaborFormValues = z.infer<typeof laborFormSchema>;
 
 export function LaborCostForm() {
   const { laborExpenses, setLabor, setLaborExpenses } = useShopCalculator(
     (state) => state,
-  )
+  );
 
   const form = useForm<LaborFormValues>({
     resolver: zodResolver(laborFormSchema),
     defaultValues: laborExpenses,
-  })
+  });
 
   function onSubmit(data: LaborFormValues) {
-    const { hours, rate } = data
-
-    // const materialCosts = materials?.reduce((total, item) => {
-    //   return total + (item.amountUsed / item.amount) * item?.cost;
-    // }, 0);
-    setLabor(AVG_WEEK_PER_MONTH * hours * rate)
-    setLaborExpenses(data as LaborCosts)
-    toastService.feedback({
-      object: data,
-    })
+    const { hours, rate } = data;
+    // Calculate monthly labor cost (hours per week * 4.33 weeks * hourly rate)
+    const monthlyLaborCost = hours * 4.33 * rate;
+    setLabor(monthlyLaborCost);
+    setLaborExpenses(data as LaborCosts);
+    toastService.inform("Labor updated");
   }
 
   return (
@@ -56,7 +54,7 @@ export function LaborCostForm() {
         className="w-full space-y-8"
       >
         <div className="py-4">
-          <FormLabel className="text-2xl">Labor</FormLabel>{' '}
+          <FormLabel className="text-2xl">Labor</FormLabel>{" "}
           <FormDescription className="text-lg">
             These costs are for you, the artisan, for a typical month.
           </FormDescription>
@@ -67,7 +65,7 @@ export function LaborCostForm() {
             name="hours"
             render={({ field }) => (
               <FormItem className="sm:col-span-full">
-                <FormLabel>Hours</FormLabel>{' '}
+                <FormLabel>Hours</FormLabel>{" "}
                 <FormDescription>
                   How many hours do you work per week?
                 </FormDescription>
@@ -76,7 +74,7 @@ export function LaborCostForm() {
                     placeholder="e.g. 40"
                     {...field}
                     onChange={(e) => {
-                      form.setValue(`hours`, parseInt(e.target.value))
+                      form.setValue(`hours`, parseInt(e.target.value));
                     }}
                     type="number"
                   />
@@ -90,7 +88,7 @@ export function LaborCostForm() {
             name="rate"
             render={({ field }) => (
               <FormItem className="sm:col-span-full">
-                <FormLabel>Rate</FormLabel>{' '}
+                <FormLabel>Rate</FormLabel>{" "}
                 <FormDescription>
                   How much would you consider your time to be worth? (per hour)
                 </FormDescription>
@@ -99,7 +97,7 @@ export function LaborCostForm() {
                     placeholder="e.g. 25.75"
                     {...field}
                     onChange={(e) => {
-                      form.setValue(`rate`, parseInt(e.target.value))
+                      form.setValue(`rate`, parseInt(e.target.value));
                     }}
                     type="number"
                   />
@@ -109,9 +107,10 @@ export function LaborCostForm() {
             )}
           />
         </div>
-
-        <Button type="submit">Update account</Button>
+        <div className="flex items-center justify-end gap-4">
+          <Button type="submit">Update totals</Button>
+        </div>
       </form>
     </Form>
-  )
+  );
 }

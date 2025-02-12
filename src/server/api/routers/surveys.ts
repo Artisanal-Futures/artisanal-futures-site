@@ -155,6 +155,9 @@ export const surveysRouter = createTRPCRouter({
 
         ownerPhotoUrl: z.string().optional().nullable(),
         logoPhotoUrl: z.string().optional().nullable(),
+
+        attributeTags: z.array(z.string()),
+        ownerName: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -164,36 +167,39 @@ export const surveysRouter = createTRPCRouter({
           where: { id: input?.shopId ?? undefined },
           create: {
             name: input.storeName,
-            ownerName: `${input.firstName} ${input.lastName}`,
             ownerId: ctx.session.user.id,
             bio: input.bio ?? "",
             description: input.description ?? "",
             logoPhoto: input.logoPhoto,
             ownerPhoto: input.ownerPhoto,
             website: input.website ?? "",
+            attributeTags: input.attributeTags,
+            ownerName: input.ownerName ?? "",
           },
           update: {
             name: input.storeName,
-            ownerName: `${input.firstName} ${input.lastName}`,
+            ownerName: input.ownerName ?? "",
             ownerId: ctx.session.user.id,
             bio: input.bio ?? "",
             description: input.description ?? "",
             logoPhoto: input.logoPhoto,
             ownerPhoto: input.ownerPhoto,
             website: input.website ?? "",
+            attributeTags: input.attributeTags,
           },
         });
       } else {
         shop = await ctx.db.shop.create({
           data: {
             name: input.storeName,
-            ownerName: `${input.firstName} ${input.lastName}`,
+            ownerName: input.ownerName ?? "",
             ownerId: ctx.session.user.id,
             bio: input.bio ?? "",
             description: input.description ?? "",
             logoPhoto: input.logoPhoto,
             ownerPhoto: input.ownerPhoto,
             website: input.website ?? "",
+            attributeTags: input.attributeTags,
           },
         });
       }
@@ -260,6 +266,9 @@ export const surveysRouter = createTRPCRouter({
 
         ownerPhotoUrl: z.string().optional().nullable(),
         logoPhotoUrl: z.string().optional().nullable(),
+
+        attributeTags: z.array(z.string()),
+        ownerName: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -296,12 +305,13 @@ export const surveysRouter = createTRPCRouter({
         where: { id: shop.id },
         data: {
           name: input.storeName,
-          ownerName: `${input.firstName} ${input.lastName}`,
+          ownerName: input?.ownerName,
           bio: input.bio ?? "",
           description: input.description ?? "",
           logoPhoto: input.logoPhoto,
           ownerPhoto: input.ownerPhoto,
           website: input.website ?? "",
+          attributeTags: input.attributeTags,
         },
       });
 

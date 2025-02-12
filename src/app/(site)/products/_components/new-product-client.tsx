@@ -151,8 +151,8 @@ export function NewProductClient() {
     (searchParams.get("sort") as "asc" | "desc") ?? "asc",
   );
 
-  const { data: products, isLoading } = api.product.getAll.useQuery();
-  const { data: stores } = api.shop.getAll.useQuery();
+  const { data: products, isLoading } = api.product.getAllValid.useQuery();
+  const { data: stores } = api.shop.getAllValid.useQuery();
 
   // Debounce search term updates
   const debouncedSetSearchTerm = useMemo(

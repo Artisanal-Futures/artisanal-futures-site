@@ -118,15 +118,24 @@ export const UserNav = () => {
                 </DropdownMenuItem>
               </>
             )}
-
+            {/* 
             {(sessionData?.user?.role === "GUEST" ||
               sessionData?.user?.role === "ADMIN") && (
               <DropdownMenuItem>
-                <Link href="/welcome" className="w-full">
+                <Link href="/guest-welcome" className="w-full">
                   Guest Survey
                 </Link>
               </DropdownMenuItem>
-            )}
+            )} */}
+
+            {/* {(sessionData?.user?.role === "ARTISAN" ||
+              sessionData?.user?.role === "ADMIN") && (
+              <DropdownMenuItem>
+                <Link href="/artisan-welcome" className="w-full">
+                  Artisan Survey
+                </Link>
+              </DropdownMenuItem>
+            )}*/}
 
             {sessionData?.user?.role === "ADMIN" && (
               <DropdownMenuItem>

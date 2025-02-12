@@ -6,7 +6,7 @@ import GuestArtisanRegistrationForm from "./_components/guest-form";
 export default async function WelcomePage() {
   const sessionData = await getServerAuthSession();
 
-  if (!sessionData) redirect(`/auth/sign-in?callbackUrl=/welcome`);
+  if (!sessionData) redirect(`/auth/sign-in?callbackUrl=/guest-welcome`);
   // if (
   //   sessionData?.user?.role !== 'GUEST' &&
   //   sessionData?.user?.role !== 'ADMIN'
