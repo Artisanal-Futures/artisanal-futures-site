@@ -77,27 +77,27 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
 
-    {
-      groupLabel: "Tools",
-      menus: [
-        {
-          href: `/admin/upcycling`,
-          label: "Upcycling",
-          active: pathname.includes(`/admin/upcycling`),
-          icon: ImageIcon,
-          submenus: [],
-          restrictedAccess: ["ARTISAN"],
-        },
-        {
-          href: `/admin/guest-surveys`,
-          label: "Guest Surveys",
-          active: pathname.includes(`/admin/guest-surveys`),
-          icon: SquarePen,
-          submenus: [],
-          restrictedAccess: ["ARTISAN"],
-        },
-      ],
-    },
+    // {
+    //   groupLabel: "Tools",
+    //   menus: [
+    //     {
+    //       href: `/admin/upcycling`,
+    //       label: "Upcycling",
+    //       active: pathname.includes(`/admin/upcycling`),
+    //       icon: ImageIcon,
+    //       submenus: [],
+    //       restrictedAccess: ["ARTISAN"],
+    //     },
+    //     {
+    //       href: `/admin/guest-surveys`,
+    //       label: "Guest Surveys",
+    //       active: pathname.includes(`/admin/guest-surveys`),
+    //       icon: SquarePen,
+    //       submenus: [],
+    //       restrictedAccess: ["ARTISAN"],
+    //     },
+    //   ],
+    // },
 
     {
       groupLabel: "Account",

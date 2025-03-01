@@ -18,7 +18,7 @@ import { TagProductsButton } from "./tag-products-button";
 type Props = { products: Product[]; shops: Shop[] };
 
 export function ProductClient({ products, shops }: Props) {
-  const { isElevated } = usePermissions();
+  const { isElevated, userRole } = usePermissions();
 
   const productFilters = createProductFilter(products ?? [], shops ?? []);
 
@@ -54,7 +54,7 @@ export function ProductClient({ products, shops }: Props) {
         }}
         addButton={
           <>
-            {process.env.NODE_ENV === "development" && (
+            {userRole === "ADMIN" && (
               <Link
                 href="/admin/products/migrate"
                 className={cn(
@@ -65,13 +65,13 @@ export function ProductClient({ products, shops }: Props) {
                 Migrate Products
               </Link>
             )}
-            <Button
+            {/* <Button
               variant="outline"
               className="h-8 text-xs"
               onClick={handlePrintProducts}
             >
               Print Products
-            </Button>
+            </Button> */}
             <ItemDialog
               title={`Create project`}
               subtitle="Create a new project"
@@ -79,7 +79,7 @@ export function ProductClient({ products, shops }: Props) {
               type="project"
               mode="create"
             />
-            <TagProductsButton />
+            {/* <TagProductsButton /> */}
           </>
         }
       />
