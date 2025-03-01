@@ -1,13 +1,15 @@
-import { TRPCError } from "@trpc/server";
-import axios from "axios";
-import { z } from "zod";
-import { type Product } from "~/apps/product/types";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import axios from "axios";
+import { z } from "zod";
+
+import { TRPCError } from "@trpc/server";
+
 import type { Artisan, Attribute } from "~/types";
+import { type FastAPIProduct } from "~/app/(site)/products/_validators/types";
 
 const PRODUCT_ENDPOINT =
   "https://data.artisanalfutures.org/api/v1/products/search/";
@@ -22,7 +24,7 @@ export const productsRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+    return ctx.db.example.findMany();
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
@@ -57,18 +59,18 @@ export const productsRouter = createTRPCRouter({
       });
     }
 
-    const data = (await response.data) as Product[];
+    const data = (await response.data) as FastAPIProduct[];
 
     const filteredProducts = [
       ...new Map(
         data
           .filter((product) => product.principles !== "")
-          .map((item) => [item.craftID, item])
+          .map((item) => [item.craftID, item]),
       ).values(),
     ];
 
-    const formattedProducts: Product[] = filteredProducts
-      .map((product: Product, key: number) => {
+    const formattedProducts: FastAPIProduct[] = filteredProducts
+      .map((product: FastAPIProduct, key: number) => {
         return {
           ...product,
           the_artisan: product.the_artisan.toLowerCase(),
@@ -78,16 +80,20 @@ export const productsRouter = createTRPCRouter({
       })
       .sort((a, b) => (a.craftID > b.craftID ? 1 : -1));
     const formattedArtisans: Artisan[] = Array.from(
-      new Set(data.map((product: Product) => product.the_artisan.toLowerCase()))
+      new Set(
+        data.map((product: FastAPIProduct) =>
+          product.the_artisan.toLowerCase(),
+        ),
+      ),
     );
     const formattedAttributes: Attribute[] = Array.from(
       new Set(
         data
-          .flatMap((product: Product) =>
-            product.principles.toLowerCase().split(",")
+          .flatMap((product: FastAPIProduct) =>
+            product.principles.toLowerCase().split(","),
           )
-          .filter((attribute: string) => attribute.trim() !== "")
-      )
+          .filter((attribute: string) => attribute.trim() !== ""),
+      ),
     );
     return {
       products: formattedProducts,

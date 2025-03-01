@@ -1,22 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client'
 
-import { CldUploadWidget } from "next-cloudinary";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { ImagePlus, Trash } from 'lucide-react'
+import { CldUploadWidget } from 'next-cloudinary'
 
-import { ImagePlus, Trash } from "lucide-react";
-import Image from "next/image";
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button'
 
 interface ImageUploadProps {
-  disabled?: boolean;
-  onChange: (value: string) => void;
-  onRemove: (value: string) => void;
-  value: string;
+  disabled?: boolean
+  onChange: (value: string) => void
+  onRemove: (value: string) => void
+  value: string
 }
 
 interface Results {
-  secure_url: string;
+  secure_url: string
 }
 
 const LogoUpload: React.FC<ImageUploadProps> = ({
@@ -25,18 +26,18 @@ const LogoUpload: React.FC<ImageUploadProps> = ({
   onRemove,
   value,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   const onUpload = (result: { event: string; info: Partial<Results> }) => {
-    onChange(result?.info?.secure_url ?? "");
-  };
+    onChange(result?.info?.secure_url ?? '')
+  }
 
   if (!isMounted) {
-    return null;
+    return null
   }
 
   return (
@@ -61,8 +62,8 @@ const LogoUpload: React.FC<ImageUploadProps> = ({
       <CldUploadWidget onUpload={onUpload as any} uploadPreset="wo25zskm">
         {({ open }) => {
           const onClick = () => {
-            open();
-          };
+            open()
+          }
 
           return (
             <Button
@@ -74,11 +75,11 @@ const LogoUpload: React.FC<ImageUploadProps> = ({
               <ImagePlus className="mr-2 h-4 w-4" />
               Upload an Image
             </Button>
-          );
+          )
         }}
       </CldUploadWidget>
     </div>
-  );
-};
+  )
+}
 
-export default LogoUpload;
+export default LogoUpload

@@ -1,35 +1,37 @@
-import DOMPurify from "isomorphic-dompurify";
-import { marked } from "marked";
-import toast from "react-hot-toast";
-import { Cursor } from "textarea-markdown-editor";
-import { uploadImage } from "~/utils/forum/cloudinary";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import DOMPurify from 'isomorphic-dompurify'
+import { marked } from 'marked'
+import toast from 'react-hot-toast'
+import { Cursor } from 'textarea-markdown-editor'
+
+import { uploadImage } from '~/utils/forum/cloudinary'
 
 export function markdownToHtml(markdown: string) {
-  return DOMPurify.sanitize(marked.parse(markdown, { breaks: true }));
+  return DOMPurify.sanitize(marked.parse(markdown, { breaks: true }))
 }
 
 function replacePlaceholder(
   cursor: Cursor,
   placeholder: string,
-  replaceWith: string
+  replaceWith: string,
 ) {
-  cursor.setValue(cursor.value.replace(placeholder, replaceWith));
+  cursor.setValue(cursor.value.replace(placeholder, replaceWith))
 }
 
 export function uploadImageCommandHandler(
   textareaEl: HTMLTextAreaElement,
-  files: File[]
+  files: File[],
 ) {
-  const cursor = new Cursor(textareaEl);
-  const currentLineNumber = cursor.position.line;
+  const cursor = new Cursor(textareaEl)
+  const currentLineNumber = cursor.position.line
 
   const handleFile = async (file: File) => {
-    const placeholder = `![Uploading ${file.name}...]()`;
+    const placeholder = `![Uploading ${file.name}...]()`
 
-    cursor.replaceLine(currentLineNumber.lineNumber, placeholder);
+    cursor.replaceLine(currentLineNumber.lineNumber, placeholder)
 
     try {
-      const uploadedImage = await uploadImage(file);
+      const uploadedImage = await uploadImage(file)
 
       replacePlaceholder(
         cursor,
@@ -38,47 +40,47 @@ export function uploadImageCommandHandler(
           uploadedImage.dpi >= 144
             ? Math.round(uploadedImage.width / 2)
             : uploadedImage.width
-        }" alt="${uploadedImage.originalFilename}" src="${uploadedImage.url}">`
-      );
+        }" alt="${uploadedImage.originalFilename}" src="${uploadedImage.url}">`,
+      )
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log(error);
-      replacePlaceholder(cursor, placeholder, "");
-      toast.error(`Error uploading image: ${error.message}`);
+      console.log(error)
+      replacePlaceholder(cursor, placeholder, '')
+      toast.error(`Error uploading image: ${error.message}`)
     }
-  };
-  files.forEach((file: File) => void handleFile(file));
+  }
+  files.forEach((file: File) => void handleFile(file))
 }
 
 export function getSuggestionData(textareaEl: HTMLTextAreaElement): {
-  keystrokeTriggered: boolean;
-  triggerIdx: number;
-  type: "mention" | "emoji";
-  query: string;
+  keystrokeTriggered: boolean
+  triggerIdx: number
+  type: 'mention' | 'emoji'
+  query: string
 } {
-  const positionIndex = textareaEl.selectionStart;
-  const textBeforeCaret = textareaEl.value.slice(0, positionIndex);
+  const positionIndex = textareaEl.selectionStart
+  const textBeforeCaret = textareaEl.value.slice(0, positionIndex)
 
-  const tokens = textBeforeCaret.split(/\s/);
-  const lastToken = tokens[tokens.length - 1];
+  const tokens = textBeforeCaret.split(/\s/)
+  const lastToken = tokens[tokens.length - 1]
 
   const triggerIdx = textBeforeCaret.endsWith(lastToken!)
     ? textBeforeCaret.length - lastToken!.length
-    : -1;
+    : -1
 
-  const maybeTrigger = textBeforeCaret[triggerIdx];
-  const mentionKeystrokeTriggered = maybeTrigger === "@";
-  const emojiKeystrokeTriggered = maybeTrigger === ":";
+  const maybeTrigger = textBeforeCaret[triggerIdx]
+  const mentionKeystrokeTriggered = maybeTrigger === '@'
+  const emojiKeystrokeTriggered = maybeTrigger === ':'
   const keystrokeTriggered =
-    mentionKeystrokeTriggered || emojiKeystrokeTriggered;
-  const type = mentionKeystrokeTriggered ? "mention" : "emoji";
+    mentionKeystrokeTriggered || emojiKeystrokeTriggered
+  const type = mentionKeystrokeTriggered ? 'mention' : 'emoji'
 
-  const query = textBeforeCaret.slice(triggerIdx + 1);
+  const query = textBeforeCaret.slice(triggerIdx + 1)
 
   return {
     keystrokeTriggered,
     triggerIdx,
     type,
     query,
-  };
+  }
 }

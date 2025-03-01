@@ -1,10 +1,12 @@
-import { hasCookie, setCookie } from "cookies-next";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 
-import { CookieIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { cn } from "~/utils/styles";
+import { CookieIcon } from "lucide-react";
+
+import { Button } from "./ui/button";
 
 // const CookieConsent = () => {
 //   const [showConsent, setShowConsent] = useState(true);
@@ -48,7 +50,7 @@ import { cn } from "~/utils/styles";
 export default function CookieConsent({
   demo = false,
   onAcceptCallback = () => void 0,
-  onDeclineCallback = () => void 0,
+  // onDeclineCallback = () => void 0,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [hide, setHide] = useState(false);
@@ -63,13 +65,13 @@ export default function CookieConsent({
     onAcceptCallback();
   };
 
-  const decline = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      setHide(true);
-    }, 700);
-    onDeclineCallback();
-  };
+  // const decline = () => {
+  //   setIsOpen(false);
+  //   setTimeout(() => {
+  //     setHide(true);
+  //   }, 700);
+  //   onDeclineCallback();
+  // };
 
   useEffect(() => {
     try {
@@ -94,7 +96,7 @@ export default function CookieConsent({
         !isOpen
           ? "translate-y-8 opacity-0 transition-[opacity,transform]"
           : "translate-y-0 opacity-100 transition-[opacity,transform]",
-        hide && "hidden"
+        hide && "hidden",
       )}
     >
       <div className="m-2 rounded-md border bg-secondary shadow">
