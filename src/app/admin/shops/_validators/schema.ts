@@ -21,6 +21,8 @@ export const shopFormSchema = z.object({
   ownerPhotoUrl: z.string().optional().nullable(),
   logoPhotoUrl: z.string().optional().nullable(),
   coverPhotoUrl: z.string().optional().nullable(),
+
+  ownerId: z.string().optional(),
 });
 
 export type ShopFormSchema = z.infer<typeof shopFormSchema>;
