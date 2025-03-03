@@ -150,8 +150,17 @@ export function NewProductClient() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (searchParams.get("sort") as "asc" | "desc") ?? "asc",
   );
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(searchParams.get("page") ?? "1", 10),
+  );
+  const [itemsPerPage, setItemsPerPage] = useState(
+    parseInt(searchParams.get("limit") ?? "20", 10),
+  );
 
-  const { data: products, isLoading } = api.product.getAllValid.useQuery();
+  const { data: productData, isLoading } = api.product.getAllValid.useQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+  });
   const { data: stores } = api.shop.getAllValid.useQuery();
 
   // Debounce search term updates
@@ -186,6 +195,8 @@ export function NewProductClient() {
     if (selectedAttributes.length > 0)
       params.set("attributes", selectedAttributes.join(","));
     if (sortOrder) params.set("sort", sortOrder);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    if (itemsPerPage !== 20) params.set("limit", itemsPerPage.toString());
 
     debouncedUpdateSearchParams(params);
     return () => debouncedUpdateSearchParams.cancel();
@@ -194,6 +205,8 @@ export function NewProductClient() {
     selectedStore,
     selectedAttributes,
     sortOrder,
+    currentPage,
+    itemsPerPage,
     debouncedUpdateSearchParams,
   ]);
 
@@ -202,6 +215,8 @@ export function NewProductClient() {
     setSelectedStore("");
     setSelectedAttributes([]);
     setSortOrder("asc");
+    setCurrentPage(1);
+    setItemsPerPage(20);
     router.push("", { scroll: false });
   }, [router]);
 
@@ -210,9 +225,9 @@ export function NewProductClient() {
   };
 
   const filteredProducts = useMemo(() => {
-    if (!products) return [];
+    if (!productData?.products) return [];
 
-    return products
+    return productData.products
       .filter((product) => {
         const searchTermLower = debouncedSearchTerm.toLowerCase();
         const matchesSearch =
@@ -254,7 +269,7 @@ export function NewProductClient() {
           : b.name.localeCompare(a.name),
       );
   }, [
-    products,
+    productData?.products,
     debouncedSearchTerm,
     selectedStore,
     selectedAttributes,
@@ -282,6 +297,39 @@ export function NewProductClient() {
         />
       </aside>
       <div className="flex-1 space-y-6 px-4 md:px-8">
+        {/* Products info and per page selector */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          {productData?.totalCount !== undefined && (
+            <p className="text-sm text-muted-foreground">
+              Showing{" "}
+              {filteredProducts.length > 0
+                ? (currentPage - 1) * itemsPerPage + 1
+                : 0}{" "}
+              to {Math.min(currentPage * itemsPerPage, productData.totalCount)}{" "}
+              of {productData.totalCount} products
+            </p>
+          )}
+          <div className="flex items-center gap-2">
+            <label htmlFor="itemsPerPage" className="text-sm font-medium">
+              Items per page:
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(parseInt(e.target.value, 10));
+                setCurrentPage(1); // Reset to first page when changing items per page
+              }}
+              className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {filteredProducts.map((product) => (
             <NewProductCard
@@ -295,6 +343,48 @@ export function NewProductClient() {
         </div>
         {filteredProducts.length === 0 && (
           <p className="text-center text-muted-foreground">No products found</p>
+        )}
+
+        {/* Pagination Controls */}
+        {productData?.totalPages && productData.totalPages > 1 && (
+          <div className="flex justify-center gap-2 py-6">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage <= 1}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from(
+                { length: productData?.totalPages ?? 0 },
+                (_, i) => i + 1,
+              ).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    currentPage === pageNum
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(prev + 1, productData?.totalPages ?? 1),
+                )
+              }
+              disabled={currentPage >= (productData?.totalPages ?? 1)}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -314,6 +404,40 @@ export function NewProductClient() {
           resetFilters={resetFilters}
         />
       </div>
+
+      {/* Products info and per page selector */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        {productData?.totalCount !== undefined && (
+          <p className="text-sm text-muted-foreground">
+            Showing{" "}
+            {filteredProducts.length > 0
+              ? (currentPage - 1) * itemsPerPage + 1
+              : 0}{" "}
+            to {Math.min(currentPage * itemsPerPage, productData.totalCount)} of{" "}
+            {productData.totalCount} products
+          </p>
+        )}
+        <div className="flex items-center gap-2">
+          <label htmlFor="itemsPerPage" className="text-sm font-medium">
+            Items per page:
+          </label>
+          <select
+            id="itemsPerPage"
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(parseInt(e.target.value, 10));
+              setCurrentPage(1); // Reset to first page when changing items per page
+            }}
+            className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredProducts.map((product) => (
           <NewProductCard
@@ -327,6 +451,48 @@ export function NewProductClient() {
       </div>
       {filteredProducts.length === 0 && (
         <p className="text-center text-muted-foreground">No products found</p>
+      )}
+
+      {/* Pagination Controls */}
+      {productData?.totalPages && productData.totalPages > 1 && (
+        <div className="flex justify-center gap-2 py-6">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage <= 1}
+            className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <div className="flex items-center gap-1">
+            {Array.from(
+              { length: productData?.totalPages ?? 0 },
+              (_, i) => i + 1,
+            ).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  currentPage === pageNum
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(prev + 1, productData?.totalPages ?? 1),
+              )
+            }
+            disabled={currentPage >= (productData?.totalPages ?? 1)}
+            className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       )}
     </div>
   );

@@ -70,24 +70,47 @@ export const productRouter = createTRPCRouter({
     return productsWithFullUrls;
   }),
 
-  getAllValid: publicProcedure.query(async ({ ctx }) => {
-    const products = await ctx.db.product.findMany({
-      include: { shop: true },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  getAllValid: publicProcedure
+    .input(
+      z
+        .object({
+          page: z.number().default(1),
+          limit: z.number().default(20),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const page = input?.page ?? 1;
+      const limit = input?.limit ?? 20;
+      const skip = (page - 1) * limit;
 
-    const productsWithFullUrls = products.map((product) => ({
-      ...product,
-      imageUrl:
-        product.imageUrl && !product.imageUrl.startsWith("http")
-          ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
-          : product.imageUrl,
-    }));
+      const [products, totalCount] = await Promise.all([
+        ctx.db.product.findMany({
+          include: { shop: true },
+          orderBy: {
+            createdAt: "desc",
+          },
+          skip,
+          take: limit,
+        }),
+        ctx.db.product.count(),
+      ]);
 
-    return productsWithFullUrls;
-  }),
+      const productsWithFullUrls = products.map((product) => ({
+        ...product,
+        imageUrl:
+          product.imageUrl && !product.imageUrl.startsWith("http")
+            ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
+            : product.imageUrl,
+      }));
+
+      return {
+        products: productsWithFullUrls,
+        totalCount,
+        page,
+        totalPages: Math.ceil(totalCount / limit),
+      };
+    }),
 
   getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const product = await ctx.db.product.findUnique({
@@ -98,13 +121,46 @@ export const productRouter = createTRPCRouter({
   }),
 
   getByShopId: publicProcedure
-    .input(z.string())
+    .input(
+      z.object({
+        shopId: z.string(),
+        page: z.number().default(1),
+        limit: z.number().default(20),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const products = await ctx.db.product.findMany({
-        where: { shopId: input },
-        include: { shop: true },
-      });
-      return products;
+      const { shopId, page, limit } = input;
+      const skip = (page - 1) * limit;
+
+      const [products, totalCount] = await Promise.all([
+        ctx.db.product.findMany({
+          where: { shopId },
+          include: { shop: true },
+          skip,
+          take: limit,
+          orderBy: {
+            createdAt: "desc",
+          },
+        }),
+        ctx.db.product.count({
+          where: { shopId },
+        }),
+      ]);
+
+      const productsWithFullUrls = products.map((product) => ({
+        ...product,
+        imageUrl:
+          product.imageUrl && !product.imageUrl.startsWith("http")
+            ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
+            : product.imageUrl,
+      }));
+
+      return {
+        products: productsWithFullUrls,
+        totalCount,
+        page,
+        totalPages: Math.ceil(totalCount / limit),
+      };
     }),
 
   create: elevatedProcedure
