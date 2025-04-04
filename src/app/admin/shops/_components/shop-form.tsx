@@ -11,12 +11,14 @@ import { env } from "~/env";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
+import { usePermissions } from "~/hooks/use-permissions";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Form } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { LoadButton } from "~/components/common/load-button";
+import { SelectFormField } from "~/components/inputs";
 import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
@@ -39,6 +41,10 @@ const STORE_ATTRIBUTES = [
 ] as const;
 
 export function ShopForm({ initialData, onSuccessCallback }: Props) {
+  const shopOwners = api.shop.getShopOwners.useQuery();
+
+  const { userRole } = usePermissions();
+
   const { uploadFile, isUploading } = useFileUpload({
     route: "shops",
     api: "/api/upload-shop",
@@ -69,6 +75,8 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
       zip: initialData?.address?.zip ?? "",
       country: initialData?.address?.country ?? "",
       attributeTags: initialData?.attributeTags ?? [],
+
+      ownerId: initialData?.ownerId ?? "",
     },
   });
 
@@ -152,6 +160,31 @@ export function ShopForm({ initialData, onSuccessCallback }: Props) {
             <div className="col-span-6 flex flex-col gap-4">
               {/* Basic Info Section */}
               <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                {userRole === "ADMIN" && (
+                  <>
+                    <h3 className="mb-3 text-lg font-medium text-primary">
+                      Owner
+                    </h3>
+                    {shopOwners.data?.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        No shop owners found.
+                      </p>
+                    )}
+
+                    {shopOwners.data && (
+                      <SelectFormField
+                        form={form}
+                        name="ownerId"
+                        label="Owner"
+                        values={shopOwners.data?.map((owner) => ({
+                          key: owner.name,
+                          value: owner.id,
+                          label: owner.name,
+                        }))}
+                      />
+                    )}
+                  </>
+                )}
                 <h3 className="mb-3 text-lg font-medium text-primary">
                   Basic Information
                 </h3>

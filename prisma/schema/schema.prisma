@@ -97,6 +97,10 @@ model User {
 
     shops             Shop[]
 
+    // Upcycle
+    upcycleResults UpcycleResult[]
+    notifications Notification[]
+
 
 
 }

@@ -270,7 +270,7 @@ export const OnboardingForm = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your business type"
+                            placeholder="e.g. handmade clothing, jewelry, digital art"
                             className="max-w-lg"
                             {...field}
                           />
@@ -290,7 +290,7 @@ export const OnboardingForm = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your years of experience"
+                            placeholder="e.g. 10 years"
                             className="max-w-lg"
                             {...field}
                           />
@@ -377,8 +377,8 @@ export const OnboardingForm = ({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base">
-                            What are some principles when running your business?
-                            (optional)
+                            What are some principles you hold when running your
+                            business? (optional)
                           </FormLabel>
                           <FormControl>
                             <Input

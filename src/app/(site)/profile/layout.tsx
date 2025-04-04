@@ -21,22 +21,53 @@ export default async function ProfileLayout({ children }: Props) {
     );
   }
 
-  const shop = await api.shop.getCurrentUserShop();
+  // const shop = await api.shop.getCurrentUserShop();
+
+  const data = await api.survey.getCurrent();
+
+  const isArtisanSurveyCompleted = !!data?.survey && !!data?.shop;
+
+  const isGuestSurveyCompleted = await api.guest.isCompleted();
+
+  const surveyItems = [
+    env.NEXT_PUBLIC_IS_GUEST_ONBOARDING && !isGuestSurveyCompleted
+      ? {
+          title: "Complete Onboarding",
+          href: "/guest-welcome",
+        }
+      : undefined,
+
+    !env.NEXT_PUBLIC_IS_GUEST_ONBOARDING && !isArtisanSurveyCompleted
+      ? {
+          title: "Complete Onboarding",
+          href: "/artisan-welcome",
+        }
+      : undefined,
+    !env.NEXT_PUBLIC_IS_GUEST_ONBOARDING && isArtisanSurveyCompleted
+      ? {
+          title: "My Shop",
+          href: data?.shop
+            ? `/profile/shop/${data?.shop?.id}`
+            : "/profile/shop",
+        }
+      : undefined,
+
+    !env.NEXT_PUBLIC_IS_GUEST_ONBOARDING && isArtisanSurveyCompleted
+      ? {
+          title: "My Survey",
+          href: "/profile/survey",
+        }
+      : undefined,
+  ];
 
   const navItems = [
     {
       title: "Profile",
       href: "/profile",
     },
-    {
-      title: "My Shop",
-      href: shop ? `/profile/shop/${shop?.id}` : "/profile/shop",
-    },
-    {
-      title: "Survey",
-      href: "/profile/survey",
-    },
-  ];
+
+    ...surveyItems,
+  ] as { title: string; href: string }[];
 
   return (
     <>
