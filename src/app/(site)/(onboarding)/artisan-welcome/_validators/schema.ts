@@ -15,7 +15,7 @@ export const artisanOnboardingFormSchema = z.object({
   lastName: z.string().optional(),
   bio: z.string().optional(),
   shopDescription: z.string().optional(),
-  website: z.string().url().optional(),
+  website: z.string().url().optional().or(z.literal("")), // Allow empty string
   logo: z.string().optional(),
   profilePic: z.string().optional(),
 
@@ -28,6 +28,7 @@ export const artisanOnboardingFormSchema = z.object({
 
   attributeTags: z.array(z.string()),
 });
+
 export type ArtisanOnboardingFormSchemaType = z.infer<
   typeof artisanOnboardingFormSchema
 >;

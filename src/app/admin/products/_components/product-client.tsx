@@ -65,13 +65,13 @@ export function ProductClient({ products, shops }: Props) {
                 Migrate Products
               </Link>
             )}
-            <Button
+            {/* <Button
               variant="outline"
               className="h-8 text-xs"
               onClick={handlePrintProducts}
             >
               Print Products
-            </Button>
+            </Button> */}
             <ItemDialog
               title={`Create project`}
               subtitle="Create a new project"
@@ -79,7 +79,7 @@ export function ProductClient({ products, shops }: Props) {
               type="project"
               mode="create"
             />
-            <TagProductsButton />
+            {/* <TagProductsButton /> */}
           </>
         }
       />

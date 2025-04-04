@@ -146,7 +146,7 @@ export const surveysRouter = createTRPCRouter({
         lastName: z.string().optional(),
         bio: z.string().optional(),
         shopDescription: z.string().optional(),
-        website: z.string().url().optional(),
+        website: z.string().url().optional().or(z.literal("")),
         logo: z.string().optional(),
         profilePic: z.string().optional(),
 

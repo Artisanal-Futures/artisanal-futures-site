@@ -10,8 +10,6 @@ export const metadata = {
 };
 
 export default async function AdminUpcyclingPage() {
-  const upcycling = await api.upcycling.getAll();
-
   const session = await getServerAuthSession();
   const isAdmin = session?.user.role === "ADMIN";
 
@@ -36,7 +34,7 @@ export default async function AdminUpcyclingPage() {
       </div>
     );
   }
-
+  const upcycling = await api.upcycling.getAll();
   return (
     <AdminClientLayout
       title={`Upcycling Generations (${upcycling?.length ?? 0})`}

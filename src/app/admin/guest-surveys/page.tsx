@@ -10,8 +10,6 @@ export const metadata = {
 };
 
 export default async function AdminGuestSurveysPage() {
-  const guests = await api.guest.getAll();
-
   const session = await getServerAuthSession();
   const isAdmin = session?.user.role === "ADMIN";
 
@@ -30,7 +28,7 @@ export default async function AdminGuestSurveysPage() {
       </div>
     );
   }
-
+  const guests = await api.guest.getAll();
   return (
     <AdminClientLayout
       title={`Guest Surveys (${guests?.length ?? 0})`}
