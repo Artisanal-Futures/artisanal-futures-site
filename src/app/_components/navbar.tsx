@@ -24,6 +24,10 @@ const Navbar = () => {
       name: "Products",
     },
     {
+      id: "services",
+      name: "Services"
+    },
+    {
       id: "forums",
       name: "Forums",
     },

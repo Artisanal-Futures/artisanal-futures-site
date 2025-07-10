@@ -28,6 +28,10 @@ const NavbarActions = () => {
       name: 'Products',
     },
     {
+      id: 'services',
+      name: 'Services'
+    },
+    {
       id: 'forum',
       name: 'Forum',
     },
