@@ -221,7 +221,6 @@ export function NewServiceClient() {
     return html.replace(/<[^>]*>/g, "");
   };
 
-  // CHANGED: Logic adapted for services
   const filteredServices = useMemo(() => {
     if (!serviceData?.services) return [];
 

@@ -233,4 +233,31 @@ export const productRouter = createTRPCRouter({
         message: "Products imported successfully",
       };
     }),
+
+    getAllByCategory: publicProcedure
+    .input(z.object({ 
+        categoryId: z.string().optional() 
+    }))
+    .query(async ({ ctx, input }) => {
+      if (!input.categoryId) {
+        return [];
+      }
+      
+      const products = await ctx.db.product.findMany({
+        where: {
+          categories: {
+            some: {
+              id: input.categoryId,
+            },
+          },
+          isPublic: true,
+        },
+        include: {
+          shop: true,
+          categories: true, 
+        },
+      });
+
+      return products;
+    }),
 });

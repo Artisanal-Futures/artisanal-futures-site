@@ -82,6 +82,10 @@ model Category {
   name     String    @unique
   products Product[] @relation("CategoryToProduct")
   services Service[] @relation("CategoryToService")
+  
+  parentId  String?
+  parent    Category? @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
+  children  Category[] @relation("Subcategories")
 }
 
 enum ProductScrapeMethod {
