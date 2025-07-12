@@ -1,27 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
-    previewFeatures = ["prismaSchemaFolder"]
-}
-
-enum Role {
-  USER
-  ADMIN
-  ARTISAN
-  DRIVER
-  GUEST
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
-  provider     = "postgresql"
-  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  url          = env("DATABASE_URL")
-
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Example {
@@ -30,21 +14,18 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
-
-
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -63,46 +44,33 @@ model Session {
 }
 
 model User {
-  id                  String       @id @default(cuid())
-  name                String?
-  username            String?
-  email               String?      @unique
-  emailVerified       DateTime?
-  image               String?
-  title               String?
-  accounts            Account[]
-  sessions            Session[]
-
-
-  role                Role         @default(GUEST)
-  depots              Depot[]
-  messagingProfile    Profile?
-
-  createdAt           DateTime              @default(now())
-  generatedImages     GeneratedImages[]
-  generationSurveys   GenerationSurvey[]
-  variations          Variation[]
-  modifications       Modification[]
-  guestSurveys        GuestSurvey[]
-
-
-
-      // Forum
-    createdSubreddits Subreddit[]    @relation("CreatedBy")
-    subscriptions     Subscription[]
-    posts             Post[]
-    forumComments     ForumComment[]
-    commentVotes      CommentVote[]
-    votes             Vote[]
-
-    shops             Shop[]
-
-    // Upcycle
-    upcycleResults UpcycleResult[]
-    notifications Notification[]
-
-
-
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  title             String?
+  role              Role               @default(GUEST)
+  createdAt         DateTime           @default(now())
+  username          String?
+  accounts          Account[]
+  commentVotes      CommentVote[]
+  forumComments     ForumComment[]
+  generatedImages   GeneratedImages[]
+  generationSurveys GenerationSurvey[]
+  guestSurveys      GuestSurvey[]
+  modifications     Modification[]
+  notifications     Notification[]
+  posts             Post[]
+  messagingProfile  Profile?
+  sessions          Session[]
+  shops             Shop[]
+  createdSubreddits Subreddit[]        @relation("CreatedBy")
+  subscriptions     Subscription[]
+  upcycleResults    UpcycleResult[]
+  variations        Variation[]
+  votes             Vote[]
+  depots            Depot[]            @relation("DepotToUser")
 }
 
 model VerificationToken {
@@ -125,39 +93,39 @@ model Survey {
   privateForm     Boolean  @default(false)
   supplyChain     Boolean  @default(false)
   messagingOptIn  Boolean  @default(false)
-
+  ownerId         String?
   shopId          String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
   businessType    String?
+  country         String?
+  email           String?
   experience      String?
   practice        String?
-  country         String?
   state           String?
-  email           String?
-
-  ownerId         String?
 
   @@index([ownerId])
 }
 
-
-
-
-
-
 model GuestSurvey {
-  id                String    @id @default(cuid())
+  id                String   @id @default(cuid())
   name              String?
   country           String?
   state             String?
   artisanalPractice String?
   otherPractice     String?
   email             String
-  createdAt         DateTime  @default(now())
+  createdAt         DateTime @default(now())
   userId            String?
-  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user              User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+enum Role {
+  USER
+  ADMIN
+  ARTISAN
+  DRIVER
+  GUEST
 }

@@ -1,0 +1,51 @@
+model Category {
+  id             String     @id
+  name           String     @unique
+  parentId       String?
+  Category       Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: NoAction)
+  other_Category Category[] @relation("CategoryToCategory")
+  Product        Product[]
+  Service        Service[]
+}
+
+model GenerationJob {
+  id          String   @id
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model Service {
+  id                String     @id
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  durationInMinutes Int?
+  locationType      String?
+  tags              String[]
+  attributeTags     String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime
+  isPublic          Boolean    @default(false)
+  shopId            String?
+  Shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  Category          Category[]
+}
+
+enum status {
+  QUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  TIMEOUT
+}

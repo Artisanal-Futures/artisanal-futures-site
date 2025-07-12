@@ -1,49 +1,39 @@
-enum ProductScrapeMethod {
-    MANUAL
-    WORDPRESS
-    SHOPIFY
-    SQUARESPACE
-}
-
-
 model Shop {
-  id                String      @id @default(cuid())
-  name              String
-  ownerName         String
-  bio               String?     @db.Text
-  description       String?     @db.Text
-  ownerPhoto        String?
-  logoPhoto         String?
-  coverPhoto        String?
-  address           ShopAddress?
-  phone             String?
-  email             String?
-  website           String?
-
-  attributeTags     String[]
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  ownerId           String
-  owner             User    @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-  products          Product[]
+  id            String       @id @default(cuid())
+  ownerName     String
+  bio           String?
+  description   String?
+  ownerPhoto    String?
+  logoPhoto     String?
+  coverPhoto    String?
+  phone         String?
+  email         String?
+  website       String?
+  ownerId       String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  attributeTags String[]
+  name          String
+  products      Product[]
+  Service       Service[]
+  owner         User         @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  address       ShopAddress?
 }
 
 model ShopAddress {
-  id                String      @id @default(cuid())
-  address           String?
-  additional        String?
-  city              String?
-  state             String?
-  zip               String?
-  country           String?
-  shopId            String?     @unique
-  shop              Shop?       @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  id         String  @id @default(cuid())
+  address    String?
+  additional String?
+  city       String?
+  state      String?
+  zip        String?
+  country    String?
+  shopId     String? @unique
+  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 }
 
-
 model Product {
-  id                String   @id @default(cuid())
+  id                String              @id @default(cuid())
   shopProductId     String?
   name              String
   description       String
@@ -51,16 +41,25 @@ model Product {
   currency          String?
   imageUrl          String?
   productUrl        String?
-  tags              String[]
   attributeTags     String[]
   materialTags      String[]
   environmentalTags String[]
   aiGeneratedTags   String[]
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   scrapeMethod      ProductScrapeMethod @default(MANUAL)
   shopId            String?
-  shop              Shop? @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  
+  tags              String[]
+  isPublic          Boolean             @default(false)
+  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  Category          Category[]
+
   @@unique([shopId, shopProductId])
+}
+
+enum ProductScrapeMethod {
+  MANUAL
+  WORDPRESS
+  SHOPIFY
+  SQUARESPACE
 }
