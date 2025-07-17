@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { type RowSelectionState } from "@tanstack/react-table";
+import { PencilIcon } from "lucide-react";
 
-import type { Product } from "~/types/product";
+import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
@@ -13,12 +16,14 @@ import { ItemDialog } from "../../_components/item-dialog";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
 import { ProjectForm } from "./product-form";
-import { TagProductsButton } from "./tag-products-button";
+import { BulkProductForm } from "./bulk-product-form";
 
-type Props = { products: Product[]; shops: Shop[] };
+type Props = { products: ProductWithRelations[]; shops: Shop[] };
 
 export function ProductClient({ products, shops }: Props) {
   const { isElevated } = usePermissions();
+  
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const productFilters = createProductFilter(products ?? [], shops ?? []);
 
@@ -28,18 +33,9 @@ export function ProductClient({ products, shops }: Props) {
       `${product.name} ${product.description} ${product.id}`.toLowerCase(),
   }));
 
-  const handlePrintProducts = () => {
-    const formattedProducts = products.reduce(
-      (acc, product) => {
-        acc[product.id] =
-          `${product.name} - ${product.description} - ${product.tags.join(", ")}`;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
-
-    console.log(formattedProducts);
-  };
+  const selectedProductIds = Object.keys(rowSelection).filter(
+    (key) => rowSelection[key]
+  );
 
   return (
     <div className="py-4">
@@ -52,8 +48,33 @@ export function ProductClient({ products, shops }: Props) {
         defaultColumnVisibility={{
           user_id: isElevated,
         }}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
         addButton={
           <>
+            {selectedProductIds.length > 0 && (
+              <ItemDialog
+                title={`Bulk Edit ${selectedProductIds.length} Products`}
+                subtitle="Apply changes to all selected products."
+                FormComponent={({ onSuccessCallback }) => (
+                  <BulkProductForm
+                    productIds={selectedProductIds}
+                    onSuccessCallback={() => {
+                      setRowSelection({}); 
+                      onSuccessCallback();
+                    }}
+                  />
+                )}
+                buttonText={
+                  <>
+                    <PencilIcon className="mr-2 h-4 w-4" />
+                    Bulk Edit ({selectedProductIds.length})
+                  </>
+                }
+                buttonClassName="h-8 text-xs"
+              />
+            )}
+
             {process.env.NODE_ENV === "development" && (
               <Link
                 href="/admin/products/migrate"
@@ -65,13 +86,6 @@ export function ProductClient({ products, shops }: Props) {
                 Migrate Products
               </Link>
             )}
-            {/* <Button
-              variant="outline"
-              className="h-8 text-xs"
-              onClick={handlePrintProducts}
-            >
-              Print Products
-            </Button> */}
             <ItemDialog
               title={`Create project`}
               subtitle="Create a new project"
@@ -79,7 +93,6 @@ export function ProductClient({ products, shops }: Props) {
               type="project"
               mode="create"
             />
-            {/* <TagProductsButton /> */}
           </>
         }
       />

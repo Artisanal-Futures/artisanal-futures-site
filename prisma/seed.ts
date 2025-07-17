@@ -1,77 +1,50 @@
+// prisma/seed.ts
 import { PrismaClient } from '@prisma/client'
+import { categoriesWithKeywords } from './category-data'
+
 const prisma = new PrismaClient()
 
-const categoriesData = [
-  {
-    name: 'Clothing',
-    children: [
-      { name: 'Tops' },
-      { name: 'Bottoms' },
-      { name: 'Dresses & Skirts' },
-      { name: 'Jackets' },
-    ],
-  },
-  {
-    name: 'Jewelry',
-    children: [
-      { name: 'Necklaces & Pendants' },
-      { name: 'Earrings' },
-      { name: 'Bracelets & Anklets' },
-      { name: 'Rings' },
-    ],
-  },
-  {
-    name: 'Bags & Accessories',
-    children: [
-      { name: 'Bags & Wallets' },
-      { name: 'Masks (Sleeping/Eye)' },
-      { name: 'Apparel Solutions' },
-    ],
-  },
-  {
-    name: 'Bath & Beauty',
-    children: [
-      { name: 'Skincare' },
-      { name: 'Bath & Body' },
-      { name: 'Tools & Brushes' },
-    ],
-  },
-  {
-    name: 'Home & Kitchen',
-    children: [
-      { name: 'Decor' },
-      { name: 'Bar & Drinkware' },
-    ],
-  },
-  {
-    name: 'Gift Cards',
-    children: [],
-  },
-]
-
 async function main() {
-  console.log(`Start seeding ...`)
-  for (const cat of categoriesData) {
-    const parent = await prisma.category.create({
-      data: {
-        name: cat.name,
-      },
-    })
-    console.log(`Created category with id: ${parent.id}`)
+  console.log(`Clearing existing categories...`);
 
-    if (cat.children.length > 0) {
-      for (const subCat of cat.children) {
-        const child = await prisma.category.create({
-          data: {
-            name: subCat.name,
-            parentId: parent.id, 
-          },
-        })
-        console.log(`  - Created subcategory with id: ${child.id}`)
-      }
+  const allProducts = await prisma.product.findMany({
+    select: { id: true }
+  });
+
+  console.log(`- Disconnecting categories from ${allProducts.length} products...`);
+  for (const product of allProducts) {
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        categories: {
+          set: [],
+        },
+      },
+    });
+  }
+  console.log(`- All products disconnected.`);
+
+  await prisma.category.deleteMany();
+  console.log(`- All old categories deleted.`);
+  
+  console.log(`\nStart seeding new categories...`)
+  for (const cat of categoriesWithKeywords) {
+    const parent = await prisma.category.create({
+      data: { name: cat.name },
+    })
+    console.log(`Created category: ${parent.name}`)
+
+    for (const subCat of cat.children) {
+      await prisma.category.create({
+        data: {
+          name: subCat.name,
+          parentId: parent.id,
+        },
+      })
+      console.log(`  - Created subcategory: ${subCat.name}`)
     }
   }
-  console.log(`Seeding finished.`)
+  console.log(`\nSeeding finished.`)
 }
 
 main()

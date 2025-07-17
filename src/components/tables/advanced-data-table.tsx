@@ -6,6 +6,7 @@ import * as React from "react";
 import type {
   ColumnDef,
   ColumnFiltersState,
+  RowSelectionState,
   SortingState,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -62,6 +63,8 @@ interface DataTableProps<TData, TValue> {
   searchPlaceholder?: string;
   defaultColumnVisibility?: VisibilityState;
   showViewOptions?: boolean;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: (updater: React.SetStateAction<RowSelectionState>) => void;
 }
 
 export function AdvancedDataTable<TData, TValue>({
@@ -77,14 +80,17 @@ export function AdvancedDataTable<TData, TValue>({
   searchPlaceholder,
   defaultColumnVisibility,
   showViewOptions = false,
+  rowSelection,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(defaultColumnVisibility ?? {});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  
+  const lastSelectedRowIndex = React.useRef<number | null>(null);
 
   const table = useReactTable({
     data,
@@ -96,7 +102,7 @@ export function AdvancedDataTable<TData, TValue>({
       columnFilters,
     },
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: onRowSelectionChange,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -169,6 +175,22 @@ export function AdvancedDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    if (e.shiftKey && lastSelectedRowIndex.current !== null) {
+                      const start = Math.min(lastSelectedRowIndex.current, row.index);
+                      const end = Math.max(lastSelectedRowIndex.current, row.index);
+                      
+                      const newSelection: RowSelectionState = { ...rowSelection };
+                      for (let i = start; i <= end; i++) {
+                        newSelection[i] = true;
+                      }
+                      onRowSelectionChange?.(newSelection);
+                    } else {
+                      row.toggleSelected();
+                    }
+                    lastSelectedRowIndex.current = row.index;
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

@@ -1,7 +1,71 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
+
+const categorySchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, "Name must be at least 2 characters long."),
+  parentId: z.string().nullable().optional(),
+});
 
 export const categoryRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(({ ctx }) => {
+    if (ctx.session.user.role !== "ADMIN") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return ctx.db.category.findMany({
+      orderBy: { name: "asc" },
+      include: { parent: true },
+    });
+  }),
+
+  create: protectedProcedure
+    .input(categorySchema)
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.role !== "ADMIN") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return ctx.db.category.create({
+        data: {
+          name: input.name,
+          parentId: input.parentId,
+        },
+      });
+    }),
+
+  update: protectedProcedure
+    .input(categorySchema)
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.role !== "ADMIN") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      if (!input.id) {
+        throw new Error("Category ID is required for an update.");
+      }
+      return ctx.db.category.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          parentId: input.parentId,
+        },
+      });
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.role !== "ADMIN") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return ctx.db.category.delete({
+        where: { id: input.id },
+      });
+    }),
+  
   getNavigationTree: publicProcedure.query(({ ctx }) => {
     return ctx.db.category.findMany({
       where: { parentId: null }, 

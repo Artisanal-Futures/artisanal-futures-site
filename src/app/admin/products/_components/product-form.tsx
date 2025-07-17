@@ -1,17 +1,16 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-import type { ProductForm } from "../_validators/schema";
-import type { Product } from "~/types/product";
+import type { ProductWithRelations } from "~/types/product";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
-import { Form } from "~/components/ui/form";
+import { Form, FormField, FormItem, FormLabel } from "~/components/ui/form";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import {
   Select,
@@ -25,11 +24,32 @@ import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
+import { MultiSelectFormField, type OptionType } from "~/components/inputs/multi-select-form-field";
 
-import { productFormSchema } from "../_validators/schema";
+// Updated schema to include categoryIds
+const productFormSchema = z.object({
+  name: z.string().min(1, "Name is required."),
+  description: z.string().min(1, "Description is required."),
+  priceInCents: z.coerce.number().optional().nullable(),
+  currency: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  productUrl: z.string().optional().nullable(),
+  tags: z.array(z.object({ id: z.string(), text: z.string() })),
+  attributeTags: z.array(z.string()),
+  materialTags: z.array(z.string()),
+  environmentalTags: z.array(z.string()),
+  aiGeneratedTags: z.array(z.string()),
+  shopId: z.string().min(1, "Shop selection is required."),
+  shopProductId: z.string().optional().nullable(),
+  scrapeMethod: z.enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"]).default("MANUAL"),
+  image: z.any().optional(),
+  categoryIds: z.array(z.string()).optional(),
+});
+
+type ProductForm = z.infer<typeof productFormSchema>;
 
 type Props = {
-  initialData: Product | null;
+  initialData: ProductWithRelations | null;
   onSuccessCallback?: () => void;
 };
 
@@ -41,11 +61,10 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
   });
 
   const { defaultSuccess, defaultError, defaultSettled } =
-    useDefaultMutationActions({
-      entity: "product",
-    });
+    useDefaultMutationActions({ entity: "product" });
 
   const { data: shops } = api.shop.getAll.useQuery();
+  const { data: categories } = api.category.getAll.useQuery();
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(productFormSchema),
@@ -64,6 +83,7 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
       shopProductId: initialData?.shopProductId ?? "",
       scrapeMethod: initialData?.scrapeMethod ?? "MANUAL",
       imageUrl: initialData?.imageUrl ?? "",
+      categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
     },
   });
 
@@ -95,142 +115,136 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
 
     if (data.image) {
       imageUrl = await uploadFile(data.image as File);
-
       if (!imageUrl) {
         toastService.error("Error uploading image");
         return;
       }
     }
 
-    if (!initialData && imageUrl) {
-      createProduct.mutate({
-        ...data,
-        imageUrl,
-        tags: data.tags.map((tag) => tag.text),
-      });
+    const submissionData = {
+      ...data,
+      tags: data.tags.map((tag) => tag.text),
+      categoryIds: data.categoryIds,
+    };
+
+    if (!initialData) {
+      createProduct.mutate({ ...submissionData, imageUrl: imageUrl! });
     } else {
       updateProduct.mutate({
-        ...data,
-        id: initialData!.id,
+        ...submissionData,
+        id: initialData.id,
         imageUrl: imageUrl ?? undefined,
-        tags: data.tags.map((tag) => tag.text),
       });
     }
   }
 
-  const isLoading =
-    createProduct.isPending || updateProduct.isPending || isUploading;
+  const categoryOptions: OptionType[] =
+    categories?.map((cat) => ({
+      value: cat.id,
+      label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+    })) ?? [];
+
+  const isLoading = createProduct.isPending || updateProduct.isPending || isUploading;
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-            }
-            console.log(form.formState.errors);
-          }}
-          className="h-full space-y-8"
-        >
-          <ScrollArea className="h-[50svh]" type="always">
-            <div className="flex flex-col gap-4 p-1 md:grid md:grid-cols-6">
-              <div className="col-span-2 flex flex-col gap-4">
-                <InputFormField
-                  form={form}
-                  name="name"
-                  label="Product name"
-                  placeholder="e.g My product"
-                  className="col-span-full"
-                />
-
-                <ImageFormField
-                  form={form}
-                  name="image"
-                  label="Product image"
-                  currentImageUrl={initialData?.imageUrl ?? ""}
-                />
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Select Shop</label>
-                  <Select
-                    onValueChange={(value) => form.setValue("shopId", value)}
-                    defaultValue={initialData?.shopId ?? undefined}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a shop" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {shops?.map((shop) => (
-                        <SelectItem key={shop.id} value={shop.id}>
-                          {shop.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="col-span-4 flex flex-col gap-4">
-                <InputFormField
-                  form={form}
-                  name="productUrl"
-                  label="Product URL"
-                  className="col-span-full"
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <InputFormField
-                    form={form}
-                    name="priceInCents"
-                    label="Price (in cents)"
-                    type="number"
-                  />
-                  <InputFormField
-                    form={form}
-                    name="currency"
-                    label="Currency"
-                  />
-                </div>
-
-                <TextareaFormField
-                  form={form}
-                  name="description"
-                  label="Description"
-                  className="col-span-full"
-                />
-
-                <TagFormField
-                  form={form}
-                  defaultValue={
-                    initialData?.tags.map((tag) => ({
-                      id: tag,
-                      text: tag,
-                    })) ?? []
-                  }
-                  name="tags"
-                  label="Tags"
-                  className="col-span-full"
-                />
+    <Form {...form}>
+      <form
+        onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
+        onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}
+        className="h-full space-y-8"
+      >
+        <ScrollArea className="h-[50svh]" type="always">
+          <div className="flex flex-col gap-4 p-1 md:grid md:grid-cols-6">
+            <div className="col-span-2 flex flex-col gap-4">
+              <InputFormField
+                form={form}
+                name="name"
+                label="Product name"
+                placeholder="e.g My product"
+              />
+              <ImageFormField
+                form={form}
+                name="image"
+                label="Product image"
+                currentImageUrl={initialData?.imageUrl ?? ""}
+              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Select Shop</label>
+                <Select
+                  onValueChange={(value) => form.setValue("shopId", value)}
+                  defaultValue={initialData?.shopId ?? undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a shop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shops?.map((shop) => (
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </ScrollArea>
 
-          <div className="flex h-auto justify-end">
-            <Button variant="outline" onClick={onSuccessCallback} type="button">
-              Cancel
-            </Button>
-            <LoadButton
-              isLoading={isLoading}
-              loadingText="Creating product..."
-              type="submit"
-            >
-              {initialData ? "Update product" : "Create product"}
-            </LoadButton>
+            <div className="col-span-4 flex flex-col gap-4">
+              <FormField
+                control={form.control}
+                name="categoryIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Categories</FormLabel>
+                    <MultiSelectFormField
+                      options={categoryOptions}
+                      selected={field.value ?? []}
+                      onChange={field.onChange}
+                      placeholder="Select categories..."
+                    />
+                  </FormItem>
+                )}
+              />
+              <InputFormField
+                form={form}
+                name="productUrl"
+                label="Product URL"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <InputFormField
+                  form={form}
+                  name="priceInCents"
+                  label="Price (in cents)"
+                  type="number"
+                />
+                <InputFormField form={form} name="currency" label="Currency" />
+              </div>
+              <TextareaFormField
+                form={form}
+                name="description"
+                label="Description"
+              />
+              <TagFormField
+                form={form}
+                defaultValue={initialData?.tags.map((tag) => ({ id: tag, text: tag })) ?? []}
+                name="tags"
+                label="Tags"
+              />
+            </div>
           </div>
-        </form>
-      </Form>
-    </>
+        </ScrollArea>
+        <div className="flex h-auto justify-end gap-2">
+          <Button variant="outline" onClick={onSuccessCallback} type="button">
+            Cancel
+          </Button>
+          <LoadButton
+            isLoading={isLoading}
+            loadingText={initialData ? "Updating..." : "Creating..."}
+            type="submit"
+          >
+            {initialData ? "Update product" : "Create product"}
+          </LoadButton>
+        </div>
+      </form>
+    </Form>
   );
 }

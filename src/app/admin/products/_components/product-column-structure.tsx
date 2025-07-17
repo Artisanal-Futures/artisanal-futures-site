@@ -1,17 +1,41 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "~/components/ui/checkbox";
 
-import { type Product } from "~/types/product";
+import { type ProductWithRelations } from "~/types/product";
 import { RowImageLink } from "~/components/admin/row-image-link";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { ProjectForm } from "./product-form";
+import { Badge } from "~/components/ui/badge";
 
-export type ProductColumnEntry = Product & {
+export type ProductColumnEntry = ProductWithRelations & {
   searchableString: string;
 };
 
 export const productColumns: ColumnDef<ProductColumnEntry>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "searchableString",
     header: "Title",
@@ -42,9 +66,21 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     ),
   },
   {
-    accessorKey: "scrapeMethod",
-    header: "Source",
-    cell: ({ row }) => <span>{row.original.scrapeMethod}</span>,
+    accessorKey: "categories",
+    header: "Categories",
+    cell: ({ row }) => (
+      <div className="flex flex-wrap gap-1">
+        {row.original.categories.length > 0 ? (
+          row.original.categories.map((category) => (
+            <Badge key={category.id} variant="secondary" className="text-xs font-normal">
+              {category.name}
+            </Badge>
+          ))
+        ) : (
+          <span className="text-xs text-muted-foreground">Uncategorized</span>
+        )}
+      </div>
+    ),
   },
   {
     accessorKey: "priceInCents",
@@ -52,7 +88,9 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     cell: ({ row }) => (
       <span>
         {row.original.priceInCents
-          ? `${row.original.currency ?? "USD"} ${(row.original.priceInCents / 100).toFixed(2)}`
+          ? `${row.original.currency ?? "USD"} ${(
+              row.original.priceInCents / 100
+            ).toFixed(2)}`
           : "N/A"}
       </span>
     ),

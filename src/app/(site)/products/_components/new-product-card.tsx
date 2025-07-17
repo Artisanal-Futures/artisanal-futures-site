@@ -3,8 +3,6 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
-import type { Shop } from "@prisma/client";
-
 import type { ProductWithRelations } from "~/types/product"; 
 
 import { Badge } from "~/components/ui/badge";

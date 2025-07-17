@@ -9,7 +9,23 @@ import {
 } from "~/server/api/trpc";
 import { z } from "zod";
 
-import { productSchema } from "~/lib/validators/products";
+const productSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  priceInCents: z.number().optional().nullable(),
+  currency: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  productUrl: z.string().optional().nullable(),
+  tags: z.array(z.string()),
+  attributeTags: z.array(z.string()),
+  materialTags: z.array(z.string()),
+  environmentalTags: z.array(z.string()),
+  aiGeneratedTags: z.array(z.string()),
+  scrapeMethod: z.enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"]).default("MANUAL"),
+  shopId: z.string(),
+  shopProductId: z.string().optional().nullable(),
+  categoryIds: z.array(z.string()).optional(),
+});
 
 export const productRouter = createTRPCRouter({
   updateTags: elevatedProcedure
@@ -27,18 +43,14 @@ export const productRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { productIds, tagType, tags } = input;
-
       const updatedProducts = await Promise.all(
         productIds.map(async (id) => {
           return ctx.db.product.update({
             where: { id },
-            data: {
-              [tagType]: tags,
-            },
+            data: { [tagType]: tags },
           });
         }),
       );
-
       return {
         data: updatedProducts,
         message: `${updatedProducts.length} products updated successfully`,
@@ -47,10 +59,8 @@ export const productRouter = createTRPCRouter({
 
   getAll: elevatedProcedure.query(async ({ ctx }) => {
     const products = await ctx.db.product.findMany({
-      include: { shop: true },
-      orderBy: {
-        createdAt: "desc",
-      },
+      include: { shop: true, categories: true },
+      orderBy: { createdAt: "desc" },
     });
 
     const productsWithFullUrls = products.map((product) => ({
@@ -72,24 +82,19 @@ export const productRouter = createTRPCRouter({
 
   getAllValid: publicProcedure
     .input(
-      z
-        .object({
-          page: z.number().default(1),
-          limit: z.number().default(20),
-        })
-        .optional(),
+      z.object({
+        page: z.number().default(1),
+        limit: z.number().default(20),
+      }).optional(),
     )
     .query(async ({ ctx, input }) => {
       const page = input?.page ?? 1;
       const limit = input?.limit ?? 20;
       const skip = (page - 1) * limit;
-
       const [products, totalCount] = await Promise.all([
         ctx.db.product.findMany({
-          include: { shop: true },
-          orderBy: {
-            createdAt: "desc",
-          },
+          include: { shop: true, categories: true },
+          orderBy: { createdAt: "desc" },
           skip,
           take: limit,
         }),
@@ -104,20 +109,14 @@ export const productRouter = createTRPCRouter({
             : product.imageUrl,
       }));
 
-      return {
-        products: productsWithFullUrls,
-        totalCount,
-        page,
-        totalPages: Math.ceil(totalCount / limit),
-      };
+      return { products: productsWithFullUrls, totalCount, page, totalPages: Math.ceil(totalCount / limit) };
     }),
 
   getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const product = await ctx.db.product.findUnique({
+    return ctx.db.product.findUnique({
       where: { id: input },
-      include: { shop: true },
+      include: { shop: true, categories: true },
     });
-    return product;
   }),
 
   getByShopId: publicProcedure
@@ -135,16 +134,12 @@ export const productRouter = createTRPCRouter({
       const [products, totalCount] = await Promise.all([
         ctx.db.product.findMany({
           where: { shopId },
-          include: { shop: true },
+          include: { shop: true, categories: true },
           skip,
           take: limit,
-          orderBy: {
-            createdAt: "desc",
-          },
+          orderBy: { createdAt: "desc" },
         }),
-        ctx.db.product.count({
-          where: { shopId },
-        }),
+        ctx.db.product.count({ where: { shopId } }),
       ]);
 
       const productsWithFullUrls = products.map((product) => ({
@@ -155,52 +150,46 @@ export const productRouter = createTRPCRouter({
             : product.imageUrl,
       }));
 
-      return {
-        products: productsWithFullUrls,
-        totalCount,
-        page,
-        totalPages: Math.ceil(totalCount / limit),
-      };
+      return { products: productsWithFullUrls, totalCount, page, totalPages: Math.ceil(totalCount / limit) };
     }),
 
   create: elevatedProcedure
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
+      const { categoryIds, ...productData } = input;
       const product = await ctx.db.product.create({
         data: {
-          ...input,
+          ...productData,
+          categories: {
+            connect: categoryIds?.map((id) => ({ id })),
+          },
         },
       });
-      return {
-        data: product,
-        message: "Product created successfully",
-      };
+      return { data: product, message: "Product created successfully" };
     }),
 
   update: elevatedProcedure
     .input(productSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { id, ...data } = input;
+      const { id, categoryIds, ...productData } = input;
       const product = await ctx.db.product.update({
         where: { id },
-        data,
+        data: {
+          ...productData,
+          categories: {
+            set: categoryIds?.map((id) => ({ id })),
+          },
+        },
       });
-      return {
-        data: product,
-        message: "Product updated successfully",
-      };
+      return { data: product, message: "Product updated successfully" };
     }),
 
   delete: elevatedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      const product = await ctx.db.product.delete({
+      return ctx.db.product.delete({
         where: { id: input },
       });
-      return {
-        data: product,
-        message: "Product deleted successfully",
-      };
     }),
 
   importProducts: publicProcedure
@@ -234,30 +223,64 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-    getAllByCategory: publicProcedure
-    .input(z.object({ 
-        categoryId: z.string().optional() 
-    }))
+   getAllByCategory: publicProcedure
+    .input(z.object({ categoryIds: z.array(z.string()).optional() }))
     .query(async ({ ctx, input }) => {
-      if (!input.categoryId) {
-        return [];
-      }
-      
-      const products = await ctx.db.product.findMany({
+      if (!input.categoryIds || input.categoryIds.length === 0) return [];
+      return ctx.db.product.findMany({
         where: {
-          categories: {
-            some: {
-              id: input.categoryId,
-            },
-          },
+          categories: { some: { id: { in: input.categoryIds } } },
           isPublic: true,
         },
-        include: {
-          shop: true,
-          categories: true, 
-        },
+        include: { shop: true, categories: true },
       });
+    }),
 
-      return products;
+    bulkUpdate: elevatedProcedure
+    .input(
+      z.object({
+        productIds: z.array(z.string()).min(1, "Please select at least one product."),
+        // All fields are optional, so you can update just one thing at a time.
+        categoryIds: z.array(z.string()).optional(),
+        tags: z.array(z.string()).optional(),
+        isPublic: z.boolean().optional(),
+        shopId: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { productIds, categoryIds, tags, isPublic, shopId } = input;
+
+      // Prepare the data object with only the fields that were provided.
+      const dataToUpdate: {
+        shopId?: string;
+        isPublic?: boolean;
+        tags?: { set: string[] };
+        categories?: { set: { id: string }[] };
+      } = {};
+
+      if (shopId !== undefined) {
+        dataToUpdate.shopId = shopId;
+      }
+      if (isPublic !== undefined) {
+        dataToUpdate.isPublic = isPublic;
+      }
+      if (tags !== undefined) {
+        dataToUpdate.tags = { set: tags };
+      }
+      if (categoryIds !== undefined) {
+        dataToUpdate.categories = { set: categoryIds.map((id) => ({ id })) };
+      }
+
+      const updatedProducts = await Promise.all(
+        productIds.map(id => ctx.db.product.update({
+          where: { id },
+          data: dataToUpdate
+        }))
+      );
+
+      return {
+        message: `Successfully updated ${updatedProducts.length} products.`,
+        data: updatedProducts,
+      };
     }),
 });
