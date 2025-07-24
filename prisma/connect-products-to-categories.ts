@@ -4,7 +4,7 @@ import { categoriesWithKeywords } from './category-data'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Fetching all products and categories...')
+  console.log('Fetching all products and product categories...')
   const allProducts = await prisma.product.findMany();
   const allCategories = await prisma.category.findMany();
   const categoryMap = new Map(allCategories.map(c => [c.name.toLowerCase(), c.id]));

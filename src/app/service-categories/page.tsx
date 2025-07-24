@@ -1,24 +1,28 @@
 import Link from 'next/link';
 import { api } from '~/trpc/server';
-import SiteLayout from '~/app/(site)/layout'; 
+import SiteLayout from '~/app/(site)/layout';
+import { CategoryType } from '@prisma/client';
 
 export const metadata = {
-  title: "All Categories",
-  description: "Browse all product categories.",
+  title: "All Service Categories",
+  description: "Browse all service categories.",
 };
 
-export default async function CategoriesPage() {
-  const categories = await api.category.getNavigationTree();
+export default async function ServiceCategoriesPage() {
+  // Fetch only the categories with the type 'SERVICE'
+  const categories = await api.category.getNavigationTree({
+    type: CategoryType.SERVICE,
+  });
 
   return (
     <SiteLayout>
       <div className="container mx-auto px-4 py-12">
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-5xl font-bold tracking-tight">
-            All Categories
+            All Service Categories
           </h1>
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-            Explore our products by browsing through all available categories and subcategories.
+            Explore our services by browsing through all available categories and subcategories.
           </p>
         </div>
 
@@ -26,7 +30,8 @@ export default async function CategoriesPage() {
           {categories.map((category) => (
             <div key={category.id}>
               <h2 className="mb-4 text-3xl font-bold tracking-tight">
-                <Link href={`/category/${category.name.toLowerCase()}`} className="hover:underline">
+                {/* Link to the dynamic service category page */}
+                <Link href={`/service-category/${category.name.toLowerCase()}`} className="hover:underline">
                   {category.name}
                 </Link>
               </h2>
@@ -35,7 +40,8 @@ export default async function CategoriesPage() {
                   {category.children.map((sub) => (
                     <Link
                       key={sub.id}
-                      href={`/category/${category.name.toLowerCase()}?subcategory=${sub.name.toLowerCase()}`}
+                      // Link to the dynamic service category page with the subcategory filter
+                      href={`/service-category/${category.name.toLowerCase()}?subcategory=${sub.name.toLowerCase()}`}
                       className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent"
                     >
                       <h3 className="font-semibold">{sub.name}</h3>

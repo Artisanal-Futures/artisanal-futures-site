@@ -1,6 +1,10 @@
+"use client";
+
+// Key Change: Added onInteractOutside to <DialogContent> to prevent it from
+// interfering with clicks/scrolls on nested popovers.
+
 import { useEffect, useState } from "react";
 import { CirclePlusIcon, PencilIcon } from "lucide-react";
-
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
@@ -31,12 +35,13 @@ type Props<T> = {
   buttonText?: string | React.ReactNode;
   mode?: "create" | "update";
   FormComponent: React.FC<FormComponentProps<T>>;
+  onOpenChange?: (isOpen: boolean) => void;
 };
 
 export const handleUrlParam = (
   id: number | string | undefined,
   isOpen: boolean,
-  param: string,
+  param: string
 ) => {
   if (!id) return;
 
@@ -67,7 +72,6 @@ export function ItemDialog<T>({
 
   useEffect(() => {
     if (!id) return;
-
     const url = new URL(window.location.href);
     const editParam = url.searchParams.get(param ?? "edit");
     if (editParam === `${id}`) {
@@ -105,19 +109,22 @@ export function ItemDialog<T>({
       ? "h-8 text-xs"
       : "bg-blue-500 text-xs hover:bg-blue-600 h-8";
 
-  // Only show dialog if user has appropriate permissions
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           className={cn(defaultButtonClassName, buttonClassName)}
-          size={"sm"}
+          size="sm"
         >
           {buttonText ?? defaultButtonContent}
         </Button>
       </DialogTrigger>
-      <DialogContent className={cn("h-auto sm:max-w-6xl", contentClassName)}>
+      <DialogContent
+        className={cn("h-auto sm:max-w-6xl", contentClassName)}
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{subtitle}</DialogDescription>

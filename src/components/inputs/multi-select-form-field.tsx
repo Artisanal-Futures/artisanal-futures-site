@@ -1,29 +1,26 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronsUpDown, X } from "lucide-react"
+import * as React from "react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 
-import { cn } from "~/lib/utils"
-import { Button } from "~/components/ui/button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "~/components/ui/command"
+import { cn } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover"
-import { Badge } from "~/components/ui/badge"
+  PopoverContent,
+} from "~/components/ui/popover";
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+} from "~/components/ui/command";
+import { Badge } from "~/components/ui/badge";
 
-export type OptionType = {
-  label: string;
-  value: string;
-};
+export type OptionType = { label: string; value: string };
 
 interface MultiSelectFormFieldProps {
   options: OptionType[];
@@ -33,17 +30,26 @@ interface MultiSelectFormFieldProps {
   className?: string;
 }
 
-function MultiSelectFormField({
+export function MultiSelectFormField({
   options,
   selected,
   onChange,
   className,
-  placeholder = "Select options...",
+  placeholder = "Select...",
 }: MultiSelectFormFieldProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
-  const handleUnselect = (item: string) => {
-    onChange(selected.filter((i) => i !== item));
+  const handleSelect = (value: string) => {
+    if (selected.includes(value)) {
+      onChange(selected.filter((v) => v !== value));
+    } else {
+      onChange([...selected, value]);
+    }
+    setOpen(true);
+  };
+
+  const handleUnselect = (value: string) => {
+    onChange(selected.filter((v) => v !== value));
   };
 
   return (
@@ -54,26 +60,26 @@ function MultiSelectFormField({
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
-          onClick={() => setOpen(!open)}
         >
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 text-left">
             {selected.length > 0 ? (
-              options
-                .filter((option) => selected.includes(option.value))
-                .map((option) => (
+              selected.map((value) => {
+                const item = options.find((o) => o.value === value);
+                return (
                   <Badge
+                    key={value}
                     variant="secondary"
-                    key={option.value}
-                    className="mr-1"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleUnselect(option.value);
+                      handleUnselect(value);
                     }}
+                    className="cursor-pointer"
                   >
-                    {option.label}
+                    {item?.label ?? value}
                     <X className="ml-1 h-3 w-3" />
                   </Badge>
-                ))
+                );
+              })
             ) : (
               <span className="text-muted-foreground">{placeholder}</span>
             )}
@@ -81,23 +87,20 @@ function MultiSelectFormField({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
+
+      <PopoverContent
+        side="bottom"
+        align="start"
+        className="w-[--radix-popover-trigger-width] p-0 z-[9999]"
+      >
         <Command className={className}>
           <CommandInput placeholder="Search..." />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
+          <CommandList className="max-h-64 overflow-y-auto">
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  onSelect={() => {
-                    onChange(
-                      selected.includes(option.value)
-                        ? selected.filter((item) => item !== option.value)
-                        : [...selected, option.value]
-                    )
-                    setOpen(true)
-                  }}
+                  onSelect={() => handleSelect(option.value)}
                 >
                   <Check
                     className={cn(
@@ -111,11 +114,10 @@ function MultiSelectFormField({
                 </CommandItem>
               ))}
             </CommandGroup>
+            <CommandEmpty>No options found.</CommandEmpty>
           </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
-
-export { MultiSelectFormField }

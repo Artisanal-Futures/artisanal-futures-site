@@ -8,7 +8,10 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
+import { type PrismaClient } from "@prisma/client";
 
+// --- START: THIS IS THE FIX ---
+// The schema is now defined directly in this file to prevent circular dependencies.
 const productSchema = z.object({
   name: z.string(),
   description: z.string(),
@@ -21,11 +24,44 @@ const productSchema = z.object({
   materialTags: z.array(z.string()),
   environmentalTags: z.array(z.string()),
   aiGeneratedTags: z.array(z.string()),
-  scrapeMethod: z.enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"]).default("MANUAL"),
+  scrapeMethod: z
+    .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
+    .default("MANUAL"),
   shopId: z.string(),
   shopProductId: z.string().optional().nullable(),
   categoryIds: z.array(z.string()).optional(),
 });
+// --- END: THIS IS THE FIX ---
+
+
+const addFullImageUrl = (product: any) => {
+  if (!product) return null;
+  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
+  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
+    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
+  }
+  return product;
+};
+
+const getCategoriesWithParents = async (
+  db: PrismaClient,
+  categoryIds: string[] | undefined,
+): Promise<string[]> => {
+  if (!categoryIds || categoryIds.length === 0) {
+    return [];
+  }
+
+  const selectedCategories = await db.category.findMany({
+    where: { id: { in: categoryIds } },
+    select: { parentId: true },
+  });
+
+  const parentIds = selectedCategories
+    .map((cat) => cat.parentId)
+    .filter((id): id is string => id !== null);
+
+  return [...new Set([...categoryIds, ...parentIds])];
+};
 
 export const productRouter = createTRPCRouter({
   updateTags: elevatedProcedure
@@ -52,7 +88,7 @@ export const productRouter = createTRPCRouter({
         }),
       );
       return {
-        data: updatedProducts,
+        data: updatedProducts.map(addFullImageUrl),
         message: `${updatedProducts.length} products updated successfully`,
       };
     }),
@@ -63,13 +99,7 @@ export const productRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
 
-    const productsWithFullUrls = products.map((product) => ({
-      ...product,
-      imageUrl:
-        product.imageUrl && !product.imageUrl.startsWith("http")
-          ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
-          : product.imageUrl,
-    }));
+    const productsWithFullUrls = products.map(addFullImageUrl);
 
     if (ctx.session.user.role !== "ADMIN") {
       return productsWithFullUrls.filter(
@@ -101,22 +131,20 @@ export const productRouter = createTRPCRouter({
         ctx.db.product.count(),
       ]);
 
-      const productsWithFullUrls = products.map((product) => ({
-        ...product,
-        imageUrl:
-          product.imageUrl && !product.imageUrl.startsWith("http")
-            ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
-            : product.imageUrl,
-      }));
-
-      return { products: productsWithFullUrls, totalCount, page, totalPages: Math.ceil(totalCount / limit) };
+      return {
+        products: products.map(addFullImageUrl),
+        totalCount,
+        page,
+        totalPages: Math.ceil(totalCount / limit),
+      };
     }),
 
   getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    return ctx.db.product.findUnique({
+    const product = await ctx.db.product.findUnique({
       where: { id: input },
       include: { shop: true, categories: true },
     });
+    return addFullImageUrl(product);
   }),
 
   getByShopId: publicProcedure
@@ -142,54 +170,58 @@ export const productRouter = createTRPCRouter({
         ctx.db.product.count({ where: { shopId } }),
       ]);
 
-      const productsWithFullUrls = products.map((product) => ({
-        ...product,
-        imageUrl:
-          product.imageUrl && !product.imageUrl.startsWith("http")
-            ? `https://storage.artisanalfutures.org/products/${product.imageUrl}`
-            : product.imageUrl,
-      }));
-
-      return { products: productsWithFullUrls, totalCount, page, totalPages: Math.ceil(totalCount / limit) };
+      return {
+        products: products.map(addFullImageUrl),
+        totalCount,
+        page,
+        totalPages: Math.ceil(totalCount / limit),
+      };
     }),
 
   create: elevatedProcedure
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
       const { categoryIds, ...productData } = input;
+      
+      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+
       const product = await ctx.db.product.create({
         data: {
           ...productData,
           categories: {
-            connect: categoryIds?.map((id) => ({ id })),
+            connect: allCategoryIds.map((id) => ({ id })),
           },
         },
       });
-      return { data: product, message: "Product created successfully" };
+      return { data: addFullImageUrl(product), message: "Product created successfully" };
     }),
 
   update: elevatedProcedure
     .input(productSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id, categoryIds, ...productData } = input;
+      
+      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+
       const product = await ctx.db.product.update({
         where: { id },
         data: {
           ...productData,
           categories: {
-            set: categoryIds?.map((id) => ({ id })),
+            set: allCategoryIds.map((id) => ({ id })),
           },
         },
       });
-      return { data: product, message: "Product updated successfully" };
+      return { data: addFullImageUrl(product), message: "Product updated successfully" };
     }),
 
   delete: elevatedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.product.delete({
+      const product = await ctx.db.product.delete({
         where: { id: input },
       });
+      return { data: addFullImageUrl(product), message: "Product deleted successfully" };
     }),
 
   importProducts: publicProcedure
@@ -218,69 +250,79 @@ export const productRouter = createTRPCRouter({
       );
 
       return {
-        data: products,
+        data: products.map(addFullImageUrl),
         message: "Products imported successfully",
       };
     }),
 
-   getAllByCategory: publicProcedure
+  getAllByCategory: publicProcedure
     .input(z.object({ categoryIds: z.array(z.string()).optional() }))
     .query(async ({ ctx, input }) => {
       if (!input.categoryIds || input.categoryIds.length === 0) return [];
-      return ctx.db.product.findMany({
+      const products = await ctx.db.product.findMany({
         where: {
           categories: { some: { id: { in: input.categoryIds } } },
           isPublic: true,
         },
         include: { shop: true, categories: true },
       });
+      return products.map(addFullImageUrl);
     }),
 
-    bulkUpdate: elevatedProcedure
-    .input(
-      z.object({
-        productIds: z.array(z.string()).min(1, "Please select at least one product."),
-        // All fields are optional, so you can update just one thing at a time.
-        categoryIds: z.array(z.string()).optional(),
-        tags: z.array(z.string()).optional(),
-        isPublic: z.boolean().optional(),
-        shopId: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { productIds, categoryIds, tags, isPublic, shopId } = input;
+  bulkUpdate: elevatedProcedure
+  .input(
+    z.object({
+      productIds: z.array(z.string()).min(1, "Please select at least one product."),
+      categoryIds: z.array(z.string()).optional(),
+      tags: z.array(z.string()).optional(),
+      isPublic: z.boolean().optional(),
+      shopId: z.string().optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { productIds, categoryIds, tags, isPublic, shopId } = input;
 
-      // Prepare the data object with only the fields that were provided.
-      const dataToUpdate: {
-        shopId?: string;
-        isPublic?: boolean;
-        tags?: { set: string[] };
-        categories?: { set: { id: string }[] };
-      } = {};
+    // Filter only existing product IDs
+    const existingProducts = await ctx.db.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true },
+    });
 
-      if (shopId !== undefined) {
-        dataToUpdate.shopId = shopId;
-      }
-      if (isPublic !== undefined) {
-        dataToUpdate.isPublic = isPublic;
-      }
-      if (tags !== undefined) {
-        dataToUpdate.tags = { set: tags };
-      }
-      if (categoryIds !== undefined) {
-        dataToUpdate.categories = { set: categoryIds.map((id) => ({ id })) };
-      }
+    const validIds = existingProducts.map((p) => p.id);
 
-      const updatedProducts = await Promise.all(
-        productIds.map(id => ctx.db.product.update({
+    if (validIds.length === 0) {
+      throw new Error("No valid product IDs were found.");
+    }
+
+    // Compute all category + parent category IDs (if applicable)
+    const allCategoryIds = categoryIds
+      ? await getCategoriesWithParents(ctx.db, categoryIds)
+      : [];
+
+    const updatedProducts = await ctx.db.$transaction(
+      validIds.map((id) =>
+        ctx.db.product.update({
           where: { id },
-          data: dataToUpdate
-        }))
-      );
+          data: {
+            ...(typeof isPublic === "boolean" && { isPublic }),
+            ...(shopId && { shopId }),
+            ...(tags && { tags: { set: tags } }),
 
-      return {
-        message: `Successfully updated ${updatedProducts.length} products.`,
-        data: updatedProducts,
-      };
-    }),
+            ...(categoryIds !== undefined
+              ? {
+                  categories: {
+                    set: allCategoryIds.map((id) => ({ id })),
+                  },
+                }
+              : {}),
+          },
+        })
+      )
+    );
+
+    return {
+      message: `Successfully updated ${updatedProducts.length} product(s).`,
+      data: updatedProducts.map(addFullImageUrl),
+    };
+  }),
 });

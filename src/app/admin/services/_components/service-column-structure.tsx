@@ -5,21 +5,21 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Badge } from "~/components/ui/badge";
 import { RowImageLink } from "~/components/admin/row-image-link";
 import { ItemDialog } from "../../_components/item-dialog";
-import { DeleteProductDialog } from "./delete-product-dialog";
-import { ProjectForm } from "./product-form";
-import { BulkProductForm } from "./bulk-product-form";
+import { DeleteServiceDialog } from "./delete-service-dialog"; 
+import { ServiceForm } from "./service-form"; 
+import { BulkServiceForm } from "./bulk-service-form";
 import { useRouter } from "next/navigation";
 
 import { PencilIcon } from "lucide-react";
 
-import type { ProductWithRelations } from "~/types/product";
-import { api } from "~/trpc/react"; // Import tRPC api hook
+import type { ServiceWithShop } from "~/types/service";
+import { api } from "~/trpc/react";
 
-export type ProductColumnEntry = ProductWithRelations & {
+export type ServiceColumnEntry = ServiceWithShop & {
   searchableString: string;
 };
 
-export const productColumns: ColumnDef<ProductColumnEntry>[] = [
+export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -37,14 +37,11 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(checked) => row.toggleSelected(!!checked)}
         aria-label="Select row"
-        // REMOVED: The stopPropagation was preventing the shift-click on the row from working.
-        // onClick={(e) => e.stopPropagation()} 
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
-
   {
     accessorKey: "searchableString",
     header: "Title",
@@ -58,7 +55,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       />
     ),
   },
-
   {
     accessorKey: "shopId",
     header: "Shop",
@@ -71,7 +67,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </div>
     ),
   },
-
   {
     accessorKey: "categories",
     header: "Categories",
@@ -93,7 +88,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </div>
     ),
   },
-
   {
     accessorKey: "priceInCents",
     header: "Price",
@@ -107,7 +101,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </span>
     ),
   },
-
   {
     accessorKey: "isPublic",
     header: "Status",
@@ -117,7 +110,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </Badge>
     ),
   },
-
   {
     id: "options",
     header: "Options",
@@ -126,41 +118,37 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
         <ItemDialog
           id={row.original.id}
           title={`Update ${row.original.name}`}
-          subtitle="Make changes to the product"
+          subtitle="Make changes to the service"
           initialData={row.original}
-          FormComponent={ProjectForm}
+          FormComponent={ServiceForm}
           mode="update"
         />
-        <DeleteProductDialog productId={row.original.id} />
+        <DeleteServiceDialog serviceId={row.original.id} />
       </div>
     ),
   },
-
   {
     id: "bulk-edit",
     header: ({ table }) => {
       const selectedRows = table.getSelectedRowModel().rows;
       const selectedIds = selectedRows.map((row) => row.original.id);
-      const utils = api.useUtils(); // Get tRPC utils for cache invalidation
+      const utils = api.useUtils();
       const router = useRouter();
 
       return (
         <div className="flex justify-end pr-2" style={{ width: 90 }}>
           {selectedIds.length > 0 && (
             <ItemDialog
-              title={`Bulk Edit ${selectedIds.length} Products`}
-              subtitle="Apply changes to all selected products."
+              title={`Bulk Edit ${selectedIds.length} Services`}
+              subtitle="Apply changes to all selected services."
               FormComponent={({ onSuccessCallback }) => (
-                <BulkProductForm
-                  productIds={selectedIds}
+                <BulkServiceForm
+                  serviceIds={selectedIds}
                   onSuccessCallback={() => {
-                    // --- START: THIS IS THE FIX ---
-                    // This ensures the table data is refetched after a successful update.
-                    void utils.product.getAll.invalidate();
+                    void utils.service.getAll.invalidate();
                     table.setRowSelection({});
                     onSuccessCallback();
                     router.refresh();
-                    // --- END: THIS IS THE FIX ---
                   }}
                 />
               )}

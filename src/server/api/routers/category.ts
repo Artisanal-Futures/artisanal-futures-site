@@ -5,6 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { CategoryType } from "@prisma/client"; 
 
 const categorySchema = z.object({
   id: z.string().optional(),
@@ -33,6 +34,7 @@ export const categoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           parentId: input.parentId,
+          type: (input as any).type ?? CategoryType.PRODUCT, 
         },
       });
     }),
@@ -66,13 +68,32 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
   
-  getNavigationTree: publicProcedure.query(({ ctx }) => {
-    return ctx.db.category.findMany({
-      where: { parentId: null }, 
-      include: { children: true }, 
-    });
-  }),
+  // --- PUBLIC PROCEDURES ---
 
+  /**
+   * @description Fetches the category tree for the main site navigation.
+   * It can now be filtered by type (PRODUCT or SERVICE).
+   */
+  getNavigationTree: publicProcedure
+    .input(
+      z.object({
+        type: z.nativeEnum(CategoryType).optional(),
+      })
+      .optional() 
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.category.findMany({
+        where: { 
+          parentId: null,
+          type: input?.type,
+        }, 
+        include: { children: true }, 
+      });
+    }),
+
+  /**
+   * @description Fetches a single category by its slug for the public category pages.
+   */
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ ctx, input }) => {

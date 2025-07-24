@@ -32,6 +32,11 @@ model ShopAddress {
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 }
 
+enum CategoryType{
+  PRODUCT 
+  SERVICE
+}
+
 model Service {
   id                String     @id @default(cuid())
   name              String
@@ -80,6 +85,7 @@ model Product {
 model Category {
   id       String     @id @default(cuid())
   name     String     @unique
+  type     CategoryType @default(PRODUCT)
   parentId String?
   parent   Category?  @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
   children Category[] @relation("Subcategories")

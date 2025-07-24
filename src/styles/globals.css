@@ -166,3 +166,18 @@ html {
   height: stretch;
   height: -webkit-fill-available;
 } */
+
+[cmdk-list-sizer] {
+  pointer-events: none;
+}
+
+/* ...while this ensures the actual list items are still clickable. */
+[cmdk-group], [cmdk-item] {
+  pointer-events: auto;
+}
+
+[id^="radix-"][cmdk-list] {
+  pointer-events: auto !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}

@@ -22,10 +22,11 @@ import NavbarActions from "~/app/_components/navbar-actions";
 import { type Category } from "@prisma/client";
 
 interface NavbarProps {
-  categories: (Category & { children: Category[] })[];
+  productCategories: (Category & { children: Category[] })[];
+  serviceCategories: (Category & { children: Category[] })[];
 }
 
-const Navbar = ({ categories }: NavbarProps) => {
+const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const pathname = usePathname();
@@ -58,54 +59,116 @@ const Navbar = ({ categories }: NavbarProps) => {
           </Link>
 
           <nav className="mx-6 hidden items-center space-x-4 lg:flex lg:space-x-6">
-            {routes.map((route) =>
-              route.label === "Products" ? (
-                <NavigationMenu key={route.href}>
-                  <NavigationMenuList>
-                    <NavigationMenuItem>
-                      <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">Products</NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <div className="flex w-[600px] p-4">
-                          <div className="w-1/3 pr-4">
-                            <NavigationMenuLink asChild>
-                              <a
-                                className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
-                                href="/categories"
-                              >
-                                <div className="mb-2 mt-4 text-lg font-medium">
-                                  All Categories
-                                </div>
-                                <p className="text-sm leading-tight text-muted-foreground">
-                                  Browse all our products by category and subcategory.
-                                </p>
-                              </a>
-                            </NavigationMenuLink>
+            {routes.map((route) => {
+              if (route.label === "Products") {
+                return (
+                  <NavigationMenu key={route.href}>
+                    <NavigationMenuList>
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">Products</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <div className="flex w-[600px] p-4">
+                            <div className="w-1/3 pr-4">
+                              <NavigationMenuLink asChild>
+                                <a
+                                  className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
+                                  href="/product-categories"
+                                >
+                                  <div className="mb-2 text-lg font-medium">
+                                    All Product Categories
+                                  </div>
+                                  <p className="text-sm leading-tight text-muted-foreground">
+                                    Browse all our products by category and subcategory.
+                                  </p>
+                                </a>
+                              </NavigationMenuLink>
+                            </div>
+                            <ul className="grid w-2/3 grid-cols-2 gap-3">
+                              {productCategories?.map((category, index) => (
+                                <li 
+                                  key={category.id}
+                                  className={cn(
+                                    (productCategories.length % 2 !== 0 && index === productCategories.length - 1) && "col-span-2"
+                                  )}
+                                >
+                                  <NavigationMenuLink asChild>
+                                    <a
+                                      href={`/product-category/${category.name.toLowerCase()}`}
+                                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                    >
+                                      <div className="text-sm font-medium leading-none">
+                                        {category.name}
+                                      </div>
+                                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                        {category.children.map((c) => c.name).join(", ")}
+                                      </p>
+                                    </a>
+                                  </NavigationMenuLink>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                          <ul className="grid w-2/3 grid-cols-2 gap-3">
-                            {categories?.map((category) => (
-                              <li key={category.id}>
-                                <NavigationMenuLink asChild>
-                                  <a
-                                    href={`/category/${category.name.toLowerCase()}`}
-                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                  >
-                                    <div className="text-sm font-medium leading-none">
-                                      {category.name}
-                                    </div>
-                                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                      {category.children.map((c) => c.name).join(", ")}
-                                    </p>
-                                  </a>
-                                </NavigationMenuLink>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  </NavigationMenuList>
-                </NavigationMenu>
-              ) : (
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                );
+              }
+              if (route.label === "Services") {
+                return (
+                  <NavigationMenu key={route.href}>
+                    <NavigationMenuList>
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">Services</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <div className="flex w-[600px] p-4">
+                            <div className="w-1/3 pr-4">
+                              <NavigationMenuLink asChild>
+                                <a
+                                  className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
+                                  href="/service-categories"
+                                >
+                                  <div className="mb-2 text-lg font-medium">
+                                    All Service Categories
+                                  </div>
+                                  <p className="text-sm leading-tight text-muted-foreground">
+                                    Browse all our services by category and subcategory.
+                                  </p>
+                                </a>
+                              </NavigationMenuLink>
+                            </div>
+                            <ul className="grid w-2/3 grid-cols-2 gap-3">
+                              {serviceCategories?.map((category, index) => (
+                                <li 
+                                  key={category.id}
+                                  className={cn(
+                                    (serviceCategories.length % 2 !== 0 && index === serviceCategories.length - 1) && "col-span-2"
+                                  )}
+                                >
+                                  <NavigationMenuLink asChild>
+                                    <a
+                                      href={`/service-category/${category.name.toLowerCase()}`}
+                                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                    >
+                                      <div className="text-sm font-medium leading-none">
+                                        {category.name}
+                                      </div>
+                                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                        {category.children.map((c) => c.name).join(", ")}
+                                      </p>
+                                    </a>
+                                  </NavigationMenuLink>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                );
+              }
+              return (
                 <Link
                   key={route.href}
                   href={route.href}
@@ -116,8 +179,8 @@ const Navbar = ({ categories }: NavbarProps) => {
                 >
                   {route.label}
                 </Link>
-              )
-            )}
+              );
+            })}
           </nav>
 
           <div className="ml-auto flex items-center space-x-6">

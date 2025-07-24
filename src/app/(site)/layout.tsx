@@ -1,4 +1,7 @@
-import { api } from '~/trpc/server'; // Import the server-side tRPC client
+// This is your main layout file, likely at src/app/(site)/layout.tsx
+
+import { CategoryType } from '@prisma/client';
+import { api } from '~/trpc/server';
 import Container from '~/app/_components/container'
 import Footer from '~/app/_components/footer'
 import Navbar from '~/app/_components/navbar'
@@ -7,12 +10,16 @@ import CookieConsent from '~/components/cookie-banner'
 type Props = { children: React.ReactNode }
 
 export default async function SiteLayout({ children }: Props) {
-  const categories = await api.category.getNavigationTree();
+  const productCategories = await api.category.getNavigationTree({ type: CategoryType.PRODUCT });
+  const serviceCategories = await api.category.getNavigationTree({ type: CategoryType.SERVICE });
 
   return (
     <>
       <main className="flex min-h-screen flex-col">
-        <Navbar categories={categories} />
+        <Navbar 
+          productCategories={productCategories} 
+          serviceCategories={serviceCategories} 
+        />
         <Container className=" flex h-full flex-grow flex-col items-stretch p-8">
           {children}
         </Container>

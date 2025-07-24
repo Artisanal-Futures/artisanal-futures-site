@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient } from '@prisma/client'
 import { categoriesWithKeywords } from './category-data'
 
@@ -30,7 +29,10 @@ async function main() {
   console.log(`\nStart seeding new categories...`)
   for (const cat of categoriesWithKeywords) {
     const parent = await prisma.category.create({
-      data: { name: cat.name },
+      data: { 
+        name: cat.name,
+        type: cat.type,
+        },
     })
     console.log(`Created category: ${parent.name}`)
 
@@ -39,6 +41,7 @@ async function main() {
         data: {
           name: subCat.name,
           parentId: parent.id,
+          type: cat.type,
         },
       })
       console.log(`  - Created subcategory: ${subCat.name}`)

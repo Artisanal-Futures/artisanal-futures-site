@@ -8,22 +8,22 @@ import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions"
 
 import { SingleActionDialog } from "../../_components/single-action-dialog";
 
-type Props = { productId: string };
+type Props = { serviceId: string };
 
-export function DeleteProductDialog(props: Props) {
+export function DeleteServiceDialog(props: Props) {
   const { defaultError, defaultSettled } = useDefaultMutationActions({
-    entity: "product",
+    entity: "service",
   });
 
-  const deleteProduct = api.product.delete.useMutation({
+  const deleteService = api.service.delete.useMutation({
     onSuccess: () => {
-      toast.success("Product deleted successfully.");
+      toast.success("Service deleted successfully.");
       defaultSettled();
     },
     onError: defaultError, 
   });
 
-  const onSubmit = () => deleteProduct.mutate(props.productId);
+  const onSubmit = () => deleteService.mutate(props.serviceId);
 
   return (
     <SingleActionDialog
@@ -31,11 +31,11 @@ export function DeleteProductDialog(props: Props) {
       color="red"
       actionText="Delete"
       description={`This action cannot be undone. This will permanently delete this
-            product and remove the
+            service and remove the
             data from our servers.`}
-      title="Delete product?"
+      title="Delete service?"
       icon={TrashIcon}
-      isLoading={deleteProduct.isPending}
+      isLoading={deleteService.isPending}
     />
   );
 }

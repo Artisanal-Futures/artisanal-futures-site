@@ -13,4 +13,5 @@ export const serviceSchema = z.object({
   
   durationInMinutes: z.number().optional().nullable(),
   locationType: z.string().optional().nullable(),
+  isPublic: z.boolean().default(false),
 });

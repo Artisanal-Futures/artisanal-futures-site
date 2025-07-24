@@ -7,7 +7,7 @@ import { type RowSelectionState, type PaginationState } from "@tanstack/react-ta
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { cn } from "~/lib/utils";
-import type { ProductWithRelations } from "~/types/product";
+import type { ServiceWithShop } from "~/types/service";
 import type { Shop } from "~/types/shop";
 
 import { usePermissions } from "~/hooks/use-permissions";
@@ -15,76 +15,72 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
-import { BulkProductForm } from "./bulk-product-form";
-import { ProjectForm } from "./product-form";
-import { productColumns } from "./product-column-structure";
-import { createProductFilter } from "./product-filters";
+import { BulkServiceForm } from "./bulk-service-form";
+import { ServiceForm } from "./service-form"; // Assumes this is the correct path
+import { serviceColumns } from "./service-column-structure";
+import { createServiceFilter } from "./service-filters";
 
 type Props = {
-  products: ProductWithRelations[];
+  services: ServiceWithShop[];
   shops: Shop[];
 };
 
-export function ProductClient({ products, shops }: Props) {
+export function ServiceClient({ services, shops }: Props) {
   const { isElevated } = usePermissions();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  // --- START: THIS IS THE FIX ---
-  // Re-introducing the state management for pagination.
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: searchParams.get("page") ? Number(searchParams.get("page")) - 1 : 0,
     pageSize: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
-  // --- END: THIS IS THE FIX ---
 
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
 
   useEffect(() => {
     const ids = Object.keys(rowSelection)
       .filter((key) => rowSelection[key])
-      .map((index) => products[parseInt(index, 10)]?.id)
+      .map((index) => services[parseInt(index, 10)]?.id)
       .filter((id): id is string => !!id);
-    setSelectedProductIds(ids);
-  }, [rowSelection, products]);
+    setSelectedServiceIds(ids);
+  }, [rowSelection, services]);
 
-  const productFilters = useMemo(() => createProductFilter(products ?? [], shops ?? []), [
-    products,
+  const serviceFilters = useMemo(() => createServiceFilter(services ?? [], shops ?? []), [
+    services,
     shops,
   ]);
 
-  const enhancedProducts = useMemo(() => {
-    return (products ?? []).map((product) => ({
-      ...product,
-      searchableString: `${product.name} ${product.description} ${product.id}`.toLowerCase(),
+  const enhancedServices = useMemo(() => {
+    return (services ?? []).map((service) => ({
+      ...service,
+      searchableString: `${service.name} ${service.description} ${service.id}`.toLowerCase(),
     }));
-  }, [products]);
+  }, [services]);
 
   const addButtonNode = useMemo(
     () => (
       <>
-
         {process.env.NODE_ENV === "development" && (
           <Link
-            href="/admin/products/migrate"
+            href="/admin/services/migrate"
             className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
           >
-            Migrate Products
+            Migrate Services
           </Link>
         )}
 
         <ItemDialog
-          title="Create project"
-          subtitle="Create a new project"
-          FormComponent={ProjectForm}
-          type="project"
+          title="Create service"
+          subtitle="Create a new service"
+          FormComponent={ServiceForm}
+          type="service"
           mode="create"
         />
       </>
     ),
-    [selectedProductIds, products, router]
+    [selectedServiceIds, services, router]
   );
 
   const columnVisibility = useMemo(
@@ -94,7 +90,7 @@ export function ProductClient({ products, shops }: Props) {
     [isElevated]
   );
 
-  const columns = useMemo(() => productColumns, []);
+  const columns = useMemo(() => serviceColumns, []);
 
   return (
     <div className="py-4">
@@ -102,17 +98,14 @@ export function ProductClient({ products, shops }: Props) {
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
         columns={columns}
-        data={enhancedProducts}
-        filters={productFilters}
+        data={enhancedServices}
+        filters={serviceFilters}
         defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         addButton={addButtonNode}
-        // --- START: THIS IS THE FIX ---
-        // Passing the pagination state and its setter to the data table.
         pagination={pagination}
         onPaginationChange={setPagination}
-        // --- END: THIS IS THE FIX ---
       />
     </div>
   );
