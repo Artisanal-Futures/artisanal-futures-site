@@ -3,7 +3,7 @@ import { ServiceCategoryClient } from "./_components/service-category-client";
 
 type Props = {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 };
 
 export default async function ServiceCategoryPage({ params, searchParams }: Props) {
@@ -19,7 +19,7 @@ export default async function ServiceCategoryPage({ params, searchParams }: Prop
   const categoryName = decodeURIComponent(params.slug);
   const subcategoryName = searchParams.subcategory ? decodeURIComponent(searchParams.subcategory as string) : undefined;
 
-  const { services, totalCount, totalPages, subcategories } = await api.service.getAllByCategory({
+  const { services: rawServices, totalCount, totalPages, subcategories } = await api.service.getAllByCategory({
     categoryName: categoryName,
     subcategoryName: subcategoryName,
     page,
@@ -29,6 +29,8 @@ export default async function ServiceCategoryPage({ params, searchParams }: Prop
     search,
     attributes,
   });
+
+  const services = rawServices.filter((service): service is NonNullable<typeof service> => service !== null);
 
   const category = await api.category.getBySlug({ slug: categoryName });
 

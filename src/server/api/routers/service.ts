@@ -27,7 +27,12 @@ const serviceSchema = z.object({
   categoryIds: z.array(z.string()).optional(),
 });
 
-const addFullImageUrl = (service: any) => {
+type ServiceWithImageUrl<T> = T & {
+  imageUrl?: string | null;
+};
+
+// Generic addFullImageUrl that preserves the original type structure
+const addFullImageUrl = <T extends { imageUrl?: string | null }>(service: T | null): T | null => {
   if (!service) return null;
   const storageBaseUrl = "https://storage.artisanalfutures.org/services";
   if (service.imageUrl && !service.imageUrl.startsWith("http")) {
@@ -156,7 +161,9 @@ export const serviceRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { serviceIds, categoryIds, tags, isPublic, shopId } = input;
-      const dataToUpdate: { [key: string]: unknown } = {};
+      
+      const dataToUpdate: Record<string, unknown> = {};
+      
       if (shopId !== undefined) dataToUpdate.shopId = shopId;
       if (isPublic !== undefined) dataToUpdate.isPublic = isPublic;
       if (tags !== undefined) dataToUpdate.tags = { set: tags };

@@ -3,7 +3,7 @@ import { CategoryClient } from "./_components/product-category-client";
 
 type Props = {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 };
 
 export default async function CategoryPage({ params, searchParams }: Props) {

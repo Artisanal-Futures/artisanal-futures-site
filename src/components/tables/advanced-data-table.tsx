@@ -67,6 +67,10 @@ export interface DataTableProps<TData, TValue> {
   onTableInit?: (table: ReactTableInstance<TData>) => void;
 }
 
+const noop = () => {
+  // Intentionally empty
+};
+
 export function AdvancedDataTable<TData, TValue>({
   columns,
   data,
@@ -81,7 +85,7 @@ export function AdvancedDataTable<TData, TValue>({
   searchPlaceholder,
   defaultColumnVisibility,
   showViewOptions = false,
-  rowSelection = {}, // <-- THIS IS THE FIX: Provide a default empty object
+  rowSelection = {},
   onRowSelectionChange,
   pagination,
   onPaginationChange,
@@ -115,7 +119,7 @@ export function AdvancedDataTable<TData, TValue>({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: onPaginationChange ?? (() => {}),
+    onPaginationChange: onPaginationChange ?? noop,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

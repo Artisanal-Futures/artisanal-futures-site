@@ -69,7 +69,7 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
   });
 
   const onSubmit = (data: BulkUpdateFormValues) => {
-    const dataToSubmit: { [key: string]: unknown } = {};
+    const dataToSubmit: Record<string, unknown> = {};
     if (form.formState.dirtyFields.categoryIds) dataToSubmit.categoryIds = data.categoryIds;
     if (form.formState.dirtyFields.tags) dataToSubmit.tags = data.tags?.map(t => t.text);
     if (form.formState.dirtyFields.isPublic) dataToSubmit.isPublic = data.isPublic;

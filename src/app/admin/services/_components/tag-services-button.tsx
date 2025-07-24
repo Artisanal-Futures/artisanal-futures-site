@@ -39,18 +39,77 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+import { RouterOutputs } from "~/trpc/react";
+
+type Service = RouterOutputs["service"]["getAll"][number];
+type Store = RouterOutputs["shop"]["getAllValid"][number];
+
+// Define explicit interfaces to ensure type safety
+interface ServiceData {
+  id: string;
+  name: string;
+  shopId: string;
+}
+
+interface StoreData {
+  id: string;
+  name: string;
+}
+
 export function TagServicesButton() {
   const [open, setOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedStore, setSelectedStore] = useState<string>("");
-  const [tagType, setTagType] = useState<"attributeTags" | "tags">(
-    "attributeTags"
-  );
+  const [tagType, setTagType] = useState<"attributeTags" | "tags">("attributeTags");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
 
-  const { data: services } = api.service.getAll.useQuery();
-  const { data: stores } = api.shop.getAllValid.useQuery();
+  const { data: servicesData = [] } = api.service.getAll.useQuery();
+  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
+  
+  // Type guard functions - fix the type predicate issue
+  const isValidService = (item: Service): item is Service & ServiceData => {
+    if (typeof item !== 'object' || item === null) return false;
+    
+    const obj = item as Record<string, unknown>;
+    return (
+      'id' in obj &&
+      'name' in obj &&
+      'shopId' in obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.name === 'string' &&
+      typeof obj.shopId === 'string'
+    );
+  };
+
+  const isValidStore = (item: Store): item is Store & StoreData => {
+    if (typeof item !== 'object' || item === null) return false;
+    
+    const obj = item as Record<string, unknown>;
+    return (
+      'id' in obj &&
+      'name' in obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.name === 'string'
+    );
+  };
+
+  // Filter and validate the data - handle null values and extract needed properties
+  const services: ServiceData[] = servicesData
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .filter(isValidService)
+    .map(service => ({
+      id: service.id,
+      name: service.name,
+      shopId: service.shopId
+    }));
+  
+  const stores: StoreData[] = storesData
+    .filter(isValidStore)
+    .map(store => ({
+      id: store.id,
+      name: store.name
+    }));
   
   const updateTagsMutation = api.service.updateTags.useMutation({
     onSuccess: (result) => {
@@ -73,18 +132,16 @@ export function TagServicesButton() {
     tags: ["Workshop", "Class", "Consulting", "Design"],
   };
 
-  const filteredServices = selectedStore
-    ? services?.filter((s) => s.shopId === selectedStore)
+  const filteredServices: ServiceData[] = selectedStore
+    ? services.filter((s) => s.shopId === selectedStore)
     : services;
 
   const handleSelectAll = () => {
-    if (filteredServices) {
-      setSelectedServices(
-        selectedServices.length === filteredServices.length
-          ? []
-          : filteredServices.map((s) => s.id),
-      );
-    }
+    setSelectedServices(
+      selectedServices.length === filteredServices.length
+        ? []
+        : filteredServices.map((s) => s.id),
+    );
   };
 
   const handleAddNewTag = () => {
@@ -124,7 +181,7 @@ export function TagServicesButton() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">All Stores</SelectItem>
-                {stores?.map((store) => (
+                {stores.map((store) => (
                   <SelectItem key={store.id} value={store.id}>
                     {store.name}
                   </SelectItem>
@@ -133,14 +190,14 @@ export function TagServicesButton() {
             </Select>
 
             <Button variant="outline" size="sm" onClick={handleSelectAll}>
-              {selectedServices.length === (filteredServices?.length ?? 0)
+              {selectedServices.length === filteredServices.length
                 ? "Deselect All"
                 : "Select All"}
             </Button>
           </div>
 
           <ScrollArea className="h-[200px] rounded-md border p-4">
-            {filteredServices?.map((service) => (
+            {filteredServices.map((service) => (
               <div
                 key={service.id}
                 className="flex items-center space-x-2 py-2"

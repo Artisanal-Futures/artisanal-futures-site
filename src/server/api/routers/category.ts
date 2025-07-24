@@ -11,6 +11,7 @@ const categorySchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2, "Name must be at least 2 characters long."),
   parentId: z.string().nullable().optional(),
+  type: z.nativeEnum(CategoryType).optional(),
 });
 
 export const categoryRouter = createTRPCRouter({
@@ -34,7 +35,7 @@ export const categoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           parentId: input.parentId,
-          type: (input as any).type ?? CategoryType.PRODUCT, 
+          type: input.type ?? CategoryType.PRODUCT, 
         },
       });
     }),

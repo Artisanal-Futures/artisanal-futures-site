@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   createTRPCRouter,
   elevatedProcedure,
@@ -30,9 +26,14 @@ const productSchema = z.object({
   categoryIds: z.array(z.string()).optional(),
 });
 
+// Type for products with potential imageUrl field
+type ProductWithImage = {
+  imageUrl?: string | null;
+  [key: string]: unknown;
+} | null;
 
-const addFullImageUrl = (product: any) => {
-  if (!product) return null;
+const addFullImageUrl = <T extends ProductWithImage>(product: T): T => {
+  if (!product) return product;
   const storageBaseUrl = "https://storage.artisanalfutures.org/products";
   if (product.imageUrl && !product.imageUrl.startsWith("http")) {
     return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };

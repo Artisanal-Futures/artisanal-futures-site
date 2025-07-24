@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import type { Shop } from "@prisma/client";
 
-import type { Product } from "~/types/product";
+import type { ProductWithRelations } from "~/types/product";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -26,7 +26,7 @@ import {
 import { ScrollArea } from "~/components/ui/scroll-area";
 
 type Props = {
-  product: Product & { shop?: Shop };
+  product: ProductWithRelations & { shop?: Shop };
 };
 
 export const NewProductCard: FC<Props> = ({ product }) => {

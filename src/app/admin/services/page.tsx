@@ -8,8 +8,12 @@ export const metadata = {
 };
 
 export default async function ServicesAdminPage() {
-  const services = await api.service.getAll();
+  const rawServices = await api.service.getAll();
   const shops = await api.shop.getAll();
+
+  const services = rawServices.filter(
+    (s): s is NonNullable<typeof s> => s?.shop !== null
+  );
 
   return (
     <AdminClientLayout currentPage="Services" title="Services">

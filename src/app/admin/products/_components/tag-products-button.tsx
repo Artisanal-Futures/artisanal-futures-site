@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
+import { type RouterOutputs } from "~/trpc/react";
+
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -39,6 +41,20 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+type Product = RouterOutputs["product"]["getAll"][number];
+type Shop = RouterOutputs["shop"]["getAllValid"][number];
+
+interface ProductData {
+  id: string;
+  name: string;
+  shopId: string | null;
+}
+
+interface ShopData {
+  id: string;
+  name: string;
+}
+
 export function TagProductsButton() {
   const [open, setOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -49,8 +65,40 @@ export function TagProductsButton() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
 
-  const { data: products } = api.product.getAll.useQuery();
-  const { data: stores } = api.shop.getAllValid.useQuery();
+  const { data: productsData = [] } = api.product.getAll.useQuery();
+  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
+  
+  // Type guard functions
+  const isValidProduct = (item: unknown): item is ProductData => {
+    if (typeof item !== 'object' || item === null) return false;
+    
+    const obj = item as Record<string, unknown>;
+    return (
+      'id' in obj &&
+      'name' in obj &&
+      'shopId' in obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.name === 'string' &&
+      (typeof obj.shopId === 'string' || obj.shopId === null)
+    );
+  };
+
+  const isValidShop = (item: unknown): item is ShopData => {
+    if (typeof item !== 'object' || item === null) return false;
+    
+    const obj = item as Record<string, unknown>;
+    return (
+      'id' in obj &&
+      'name' in obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.name === 'string'
+    );
+  };
+
+  // Filter and validate the data
+  const products: ProductData[] = productsData.filter(isValidProduct);
+  const stores: ShopData[] = storesData.filter(isValidShop);
+
   const updateTagsMutation = api.product.updateTags.useMutation({
     onSuccess: (result) => {
       toast.success(result.message);
@@ -61,7 +109,7 @@ export function TagProductsButton() {
     },
   });
 
-  const tagOptions = {
+  const tagOptions: Record<typeof tagType, string[]> = {
     attributeTags: [
       "African American Culture",
       "African Culture",
@@ -81,18 +129,16 @@ export function TagProductsButton() {
     ],
   };
 
-  const filteredProducts = selectedStore
-    ? products?.filter((p) => p.shopId === selectedStore)
+  const filteredProducts: ProductData[] = selectedStore
+    ? products.filter((p) => p.shopId === selectedStore)
     : products;
 
   const handleSelectAll = () => {
-    if (filteredProducts) {
-      setSelectedProducts(
-        selectedProducts.length === filteredProducts.length
-          ? []
-          : filteredProducts.map((p) => p.id),
-      );
-    }
+    setSelectedProducts(
+      selectedProducts.length === filteredProducts.length
+        ? []
+        : filteredProducts.map((p) => p.id),
+    );
   };
 
   const handleAddNewTag = () => {
@@ -102,10 +148,10 @@ export function TagProductsButton() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     updateTagsMutation.mutate({
       productIds: selectedProducts,
-      tagType: tagType,
+      tagType,
       tags: selectedTags,
     });
   };
@@ -132,7 +178,7 @@ export function TagProductsButton() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">All Stores</SelectItem>
-                {stores?.map((store) => (
+                {stores.map((store) => (
                   <SelectItem key={store.id} value={store.id}>
                     {store.name}
                   </SelectItem>
@@ -141,14 +187,14 @@ export function TagProductsButton() {
             </Select>
 
             <Button variant="outline" size="sm" onClick={handleSelectAll}>
-              {selectedProducts.length === (filteredProducts?.length ?? 0)
+              {selectedProducts.length === filteredProducts.length
                 ? "Deselect All"
                 : "Select All"}
             </Button>
           </div>
 
           <ScrollArea className="h-[200px] rounded-md border p-4">
-            {filteredProducts?.map((product) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 className="flex items-center space-x-2 py-2"
@@ -253,7 +299,8 @@ export function TagProductsButton() {
           <Button
             onClick={handleSubmit}
             disabled={
-              (selectedProducts.length === 0 || selectedTags.length === 0) ??
+              selectedProducts.length === 0 ||
+              selectedTags.length === 0 ||
               updateTagsMutation.isPending
             }
           >
