@@ -1,5 +1,3 @@
-// This is your main layout file, likely at src/app/(site)/layout.tsx
-
 import { CategoryType } from '@prisma/client';
 import { api } from '~/trpc/server';
 import Container from '~/app/_components/container'

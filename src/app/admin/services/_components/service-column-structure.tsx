@@ -5,15 +5,9 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Badge } from "~/components/ui/badge";
 import { RowImageLink } from "~/components/admin/row-image-link";
 import { ItemDialog } from "../../_components/item-dialog";
-import { DeleteServiceDialog } from "./delete-service-dialog"; 
-import { ServiceForm } from "./service-form"; 
-import { BulkServiceForm } from "./bulk-service-form";
-import { useRouter } from "next/navigation";
-
-import { PencilIcon } from "lucide-react";
-
+import { DeleteServiceDialog } from "./delete-service-dialog";
+import { ServiceForm } from "./service-form";
 import type { ServiceWithShop } from "~/types/service";
-import { api } from "~/trpc/react";
 
 export type ServiceColumnEntry = ServiceWithShop & {
   searchableString: string;
@@ -126,46 +120,5 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
         <DeleteServiceDialog serviceId={row.original.id} />
       </div>
     ),
-  },
-  {
-    id: "bulk-edit",
-    header: ({ table }) => {
-      const selectedRows = table.getSelectedRowModel().rows;
-      const selectedIds = selectedRows.map((row) => row.original.id);
-      const utils = api.useUtils();
-      const router = useRouter();
-
-      return (
-        <div className="flex justify-end pr-2" style={{ width: 90 }}>
-          {selectedIds.length > 0 && (
-            <ItemDialog
-              title={`Bulk Edit ${selectedIds.length} Services`}
-              subtitle="Apply changes to all selected services."
-              FormComponent={({ onSuccessCallback }) => (
-                <BulkServiceForm
-                  serviceIds={selectedIds}
-                  onSuccessCallback={() => {
-                    void utils.service.getAll.invalidate();
-                    table.setRowSelection({});
-                    onSuccessCallback();
-                    router.refresh();
-                  }}
-                />
-              )}
-              buttonText={
-                <>
-                  <PencilIcon className="mr-1 h-4 w-4" />
-                  Bulk Edit
-                </>
-              }
-              buttonClassName="inline-flex h-7 text-xs items-center gap-1"
-            />
-          )}
-        </div>
-      );
-    },
-    cell: () => null,
-    enableSorting: false,
-    enableHiding: false,
   },
 ];

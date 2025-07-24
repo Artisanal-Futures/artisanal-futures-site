@@ -431,6 +431,9 @@ importers:
       react-query:
         specifier: ^3.39.3
         version: 3.39.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-select:
+        specifier: ^5.10.2
+        version: 5.10.2(@types/react@18.3.18)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.14.1
         version: 0.14.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -10861,8 +10864,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-select@5.10.0:
-    resolution: {integrity: sha512-k96gw+i6N3ExgDwPIg0lUPmexl1ygPe6u5BdQFNBhkpbwroIgCNXdubtIzHfThYXYYTubwOBafoMnn7ruEP1xA==}
+  react-select@5.10.2:
+    resolution: {integrity: sha512-Z33nHdEFWq9tfnfVXaiM12rbJmk+QjFEztWLtmXqQhz6Al4UZZ9xc0wiatmGtUOCCnHN0WizL3tCMYRENX4rVQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -24929,7 +24932,7 @@ snapshots:
       '@types/google.maps': 3.58.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      react-select: 5.10.0(@types/react@18.3.18)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-select: 5.10.2(@types/react@18.3.18)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       use-debounce: 3.4.3(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
@@ -25080,7 +25083,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.18
 
-  react-select@5.10.0(@types/react@18.3.18)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-select@5.10.2(@types/react@18.3.18)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@babel/runtime': 7.26.7
       '@emotion/cache': 11.14.0

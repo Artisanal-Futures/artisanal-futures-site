@@ -1,21 +1,20 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { PencilIcon } from "lucide-react";
 import { type RowSelectionState, type PaginationState } from "@tanstack/react-table";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { cn } from "~/lib/utils";
 import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
 
 import { usePermissions } from "~/hooks/use-permissions";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
-import { BulkProductForm } from "./bulk-product-form";
+import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
 import { ProjectForm } from "./product-form";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
@@ -27,27 +26,19 @@ type Props = {
 
 export function ProductClient({ products, shops }: Props) {
   const { isElevated } = usePermissions();
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
-  // --- START: THIS IS THE FIX ---
-  // Re-introducing the state management for pagination.
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: searchParams.get("page") ? Number(searchParams.get("page")) - 1 : 0,
     pageSize: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
-  // --- END: THIS IS THE FIX ---
 
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    const ids = Object.keys(rowSelection)
+  const selectedProductIds = useMemo(() => {
+    return Object.keys(rowSelection)
       .filter((key) => rowSelection[key])
       .map((index) => products[parseInt(index, 10)]?.id)
       .filter((id): id is string => !!id);
-    setSelectedProductIds(ids);
   }, [rowSelection, products]);
 
   const productFilters = useMemo(() => createProductFilter(products ?? [], shops ?? []), [
@@ -62,10 +53,28 @@ export function ProductClient({ products, shops }: Props) {
     }));
   }, [products]);
 
+  const toolbarActionsNode = useMemo(() => {
+    if (selectedProductIds.length === 0) return null;
+
+    return (
+      <ItemDialog
+        title={`Bulk Edit ${selectedProductIds.length} Products`}
+        subtitle="Apply changes to all selected products."
+        FormComponent={BulkProductFormWrapper}
+        initialData={{
+          selectedProductIds: selectedProductIds,
+          clearRowSelection: () => setRowSelection({}),
+        }}
+        buttonText={`Bulk Edit (${selectedProductIds.length})`}
+        buttonClassName="h-8 text-xs"
+        preventCloseOnOutsideClick={true}
+      />
+    );
+  }, [selectedProductIds]);
+
   const addButtonNode = useMemo(
     () => (
       <>
-
         {process.env.NODE_ENV === "development" && (
           <Link
             href="/admin/products/migrate"
@@ -74,7 +83,6 @@ export function ProductClient({ products, shops }: Props) {
             Migrate Products
           </Link>
         )}
-
         <ItemDialog
           title="Create project"
           subtitle="Create a new project"
@@ -84,35 +92,29 @@ export function ProductClient({ products, shops }: Props) {
         />
       </>
     ),
-    [selectedProductIds, products, router]
+    []
   );
 
   const columnVisibility = useMemo(
-    () => ({
-      user_id: isElevated,
-    }),
+    () => ({ user_id: isElevated }),
     [isElevated]
   );
-
-  const columns = useMemo(() => productColumns, []);
 
   return (
     <div className="py-4">
       <AdvancedDataTable
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
-        columns={columns}
+        columns={productColumns}
         data={enhancedProducts}
         filters={productFilters}
+        toolbarActions={toolbarActionsNode}
         defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         addButton={addButtonNode}
-        // --- START: THIS IS THE FIX ---
-        // Passing the pagination state and its setter to the data table.
         pagination={pagination}
         onPaginationChange={setPagination}
-        // --- END: THIS IS THE FIX ---
       />
     </div>
   );

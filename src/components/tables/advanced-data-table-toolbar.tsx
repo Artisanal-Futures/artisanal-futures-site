@@ -2,15 +2,13 @@
 
 import { Fragment } from "react";
 import { PlusCircleIcon, XCircleIcon } from "lucide-react";
-
 import type { Table } from "@tanstack/react-table";
-
 import type { FilterOption } from "./advanced-data-table";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-
 import { DataTableFacetedFilter } from "./advanced-data-table-faceted-filter";
 import { DataTableViewOptions } from "./advanced-data-table-view-options";
+import * as React from "react";
 
 type Props<TData> = {
   table: Table<TData>;
@@ -20,6 +18,7 @@ type Props<TData> = {
   handleAdd?: () => void;
   addButtonLabel?: string;
   addButton?: React.ReactNode;
+  toolbarActions?: React.ReactNode;
   moreOptions?: React.ReactNode;
   showViewOptions?: boolean;
 };
@@ -32,6 +31,7 @@ export function DataTableToolbar<TData>({
   handleAdd,
   addButtonLabel = "Add",
   addButton,
+  toolbarActions,
   moreOptions,
   showViewOptions = true,
 }: Props<TData>) {
@@ -63,9 +63,7 @@ export function DataTableToolbar<TData>({
           )}
 
           {!!addButton && addButton}
-
           {!!moreOptions && moreOptions}
-
           {showViewOptions && <DataTableViewOptions table={table} />}
         </div>
       </div>
@@ -82,6 +80,8 @@ export function DataTableToolbar<TData>({
               )}
             </Fragment>
           ))}
+
+          {toolbarActions}
 
           {isFiltered && (
             <Button

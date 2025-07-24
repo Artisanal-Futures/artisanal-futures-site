@@ -29,7 +29,7 @@ type Props = {
 export default async function RootLayout({ children }: Props) {
   const session = await getServerSession(authOptions)
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
       <body>
         <SessionProviderClientComponent session={session}>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

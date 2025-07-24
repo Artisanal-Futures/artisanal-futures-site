@@ -7,13 +7,7 @@ import { RowImageLink } from "~/components/admin/row-image-link";
 import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { ProjectForm } from "./product-form";
-import { BulkProductForm } from "./bulk-product-form";
-import { useRouter } from "next/navigation";
-
-import { PencilIcon } from "lucide-react";
-
 import type { ProductWithRelations } from "~/types/product";
-import { api } from "~/trpc/react"; // Import tRPC api hook
 
 export type ProductColumnEntry = ProductWithRelations & {
   searchableString: string;
@@ -37,14 +31,11 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(checked) => row.toggleSelected(!!checked)}
         aria-label="Select row"
-        // REMOVED: The stopPropagation was preventing the shift-click on the row from working.
-        // onClick={(e) => e.stopPropagation()} 
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
-
   {
     accessorKey: "searchableString",
     header: "Title",
@@ -58,7 +49,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       />
     ),
   },
-
   {
     accessorKey: "shopId",
     header: "Shop",
@@ -71,7 +61,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </div>
     ),
   },
-
   {
     accessorKey: "categories",
     header: "Categories",
@@ -93,7 +82,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </div>
     ),
   },
-
   {
     accessorKey: "priceInCents",
     header: "Price",
@@ -107,7 +95,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </span>
     ),
   },
-
   {
     accessorKey: "isPublic",
     header: "Status",
@@ -117,7 +104,6 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </Badge>
     ),
   },
-
   {
     id: "options",
     header: "Options",
@@ -134,50 +120,5 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
         <DeleteProductDialog productId={row.original.id} />
       </div>
     ),
-  },
-
-  {
-    id: "bulk-edit",
-    header: ({ table }) => {
-      const selectedRows = table.getSelectedRowModel().rows;
-      const selectedIds = selectedRows.map((row) => row.original.id);
-      const utils = api.useUtils(); // Get tRPC utils for cache invalidation
-      const router = useRouter();
-
-      return (
-        <div className="flex justify-end pr-2" style={{ width: 90 }}>
-          {selectedIds.length > 0 && (
-            <ItemDialog
-              title={`Bulk Edit ${selectedIds.length} Products`}
-              subtitle="Apply changes to all selected products."
-              FormComponent={({ onSuccessCallback }) => (
-                <BulkProductForm
-                  productIds={selectedIds}
-                  onSuccessCallback={() => {
-                    // --- START: THIS IS THE FIX ---
-                    // This ensures the table data is refetched after a successful update.
-                    void utils.product.getAll.invalidate();
-                    table.setRowSelection({});
-                    onSuccessCallback();
-                    router.refresh();
-                    // --- END: THIS IS THE FIX ---
-                  }}
-                />
-              )}
-              buttonText={
-                <>
-                  <PencilIcon className="mr-1 h-4 w-4" />
-                  Bulk Edit
-                </>
-              }
-              buttonClassName="inline-flex h-7 text-xs items-center gap-1"
-            />
-          )}
-        </div>
-      );
-    },
-    cell: () => null,
-    enableSorting: false,
-    enableHiding: false,
   },
 ];

@@ -33,7 +33,6 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-import { cn } from "~/lib/utils";
 import { DataTableToolbar } from "./advanced-data-table-toolbar";
 import { DataTablePagination } from "./advanced-data-table-pagination";
 
@@ -43,7 +42,7 @@ export type FilterOption = {
   filters: {
     value: string;
     label: string;
-    icon?: React.ElementType;
+    icon?: React.ComponentType<{ className?: string }>;
   }[];
 };
 
@@ -56,6 +55,7 @@ export interface DataTableProps<TData, TValue> {
   handleAdd?: () => void;
   addButtonLabel?: string;
   addButton?: React.ReactNode;
+  toolbarActions?: React.ReactNode;
   moreOptions?: React.ReactNode;
   searchPlaceholder?: string;
   defaultColumnVisibility?: VisibilityState;
@@ -64,8 +64,6 @@ export interface DataTableProps<TData, TValue> {
   onRowSelectionChange?: (updater: React.SetStateAction<RowSelectionState>) => void;
   pagination?: PaginationState;
   onPaginationChange?: OnChangeFn<PaginationState>;
-
-  // Expose internal table instance (used in ProductClient)
   onTableInit?: (table: ReactTableInstance<TData>) => void;
 }
 
@@ -78,11 +76,12 @@ export function AdvancedDataTable<TData, TValue>({
   handleAdd,
   addButtonLabel = "Add",
   addButton,
+  toolbarActions,
   moreOptions,
   searchPlaceholder,
   defaultColumnVisibility,
   showViewOptions = false,
-  rowSelection,
+  rowSelection = {}, // <-- THIS IS THE FIX: Provide a default empty object
   onRowSelectionChange,
   pagination,
   onPaginationChange,
@@ -94,15 +93,12 @@ export function AdvancedDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const lastSelectedRowIndex = React.useRef<number | null>(null);
-  const tableWrapperRef = React.useRef<HTMLDivElement>(null);
 
-  // Default pagination
   const paginationState = pagination ?? {
     pageSize: 10,
     pageIndex: 0,
   };
 
-  // Initialize TanStack Table instance
   const table = useReactTable({
     data,
     columns,
@@ -128,26 +124,9 @@ export function AdvancedDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  // Send table instance to parent via prop
   React.useEffect(() => {
     onTableInit?.(table);
   }, [table, onTableInit]);
-
-  // Deselect when user clicks outside table
-  React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement;
-      const isInsideTable = tableWrapperRef.current?.contains(target);
-      const isInsideDialog = !!target.closest("[role='dialog'], .dialog, .popover-content");
-
-      if (!isInsideTable && !isInsideDialog) {
-        if (onRowSelectionChange) onRowSelectionChange({});
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onRowSelectionChange]);
 
   const renderToolbar = !handleMassDelete || table.getSelectedRowModel().rows.length === 0;
 
@@ -162,6 +141,7 @@ export function AdvancedDataTable<TData, TValue>({
           handleAdd={handleAdd}
           addButtonLabel={addButtonLabel}
           addButton={addButton}
+          toolbarActions={toolbarActions}
           moreOptions={moreOptions}
           showViewOptions={showViewOptions}
         />
@@ -173,7 +153,7 @@ export function AdvancedDataTable<TData, TValue>({
         </div>
       )}
 
-      <div ref={tableWrapperRef} className="rounded-md border bg-background">
+      <div className="rounded-md border bg-background">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -36,13 +36,14 @@ const bulkUpdateFormSchema = z.object({
 type BulkUpdateFormValues = z.infer<typeof bulkUpdateFormSchema>;
 
 type Props = {
-  productIds: string[]; 
+  productIds: string[];
   onSuccessCallback: () => void;
+  dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
+export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Props) {
   const utils = api.useUtils();
-  
+
   const { data: categories } = api.category.getAll.useQuery();
   const { data: shops } = api.shop.getAll.useQuery();
 
@@ -85,12 +86,14 @@ export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
       ...dataToSubmit,
     });
   };
-  
+
   const categoryOptions: OptionType[] =
-    categories?.map((cat) => ({
-      value: cat.id,
-      label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
-    })) ?? [];
+    categories
+      ?.filter((cat) => cat.type === "PRODUCT")
+      .map((cat) => ({
+        value: cat.id,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+      })) ?? [];
 
   return (
     <Form {...form}>

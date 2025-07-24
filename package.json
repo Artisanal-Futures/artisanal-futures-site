@@ -157,6 +157,7 @@
     "react-number-format": "^5.4.0",
     "react-phone-number-input": "^3.3.6",
     "react-query": "^3.39.3",
+    "react-select": "^5.10.2",
     "react-spinners": "^0.14.1",
     "react-stately": "^3.27.1",
     "react-textarea-autosize": "^8.5.6",

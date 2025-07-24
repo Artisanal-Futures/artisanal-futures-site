@@ -53,7 +53,7 @@ export function MultiSelectFormField({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -87,15 +87,13 @@ export function MultiSelectFormField({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-
       <PopoverContent
-        side="bottom"
+        className="w-[--radix-popover-trigger-width] p-0"
         align="start"
-        className="w-[--radix-popover-trigger-width] p-0 z-[9999]"
       >
         <Command className={className}>
           <CommandInput placeholder="Search..." />
-          <CommandList className="max-h-64 overflow-y-auto">
+          <CommandList className="max-h-48">
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem

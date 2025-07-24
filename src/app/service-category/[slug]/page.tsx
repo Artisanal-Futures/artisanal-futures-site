@@ -1,44 +1,52 @@
 import { api } from "~/trpc/server";
 import { ServiceCategoryClient } from "./_components/service-category-client";
 
-type ServiceCategoryPageProps = {
-  params: {
-    slug: string;
-  };
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export default async function ServiceCategoryPage({ params }: ServiceCategoryPageProps) {
-  const slug = decodeURIComponent(params.slug);
-  const category = await api.category.getBySlug({ slug });
+export default async function ServiceCategoryPage({ params, searchParams }: Props) {
+  const page = Number(searchParams.page ?? 1);
+  const limit = Number(searchParams.limit ?? 20);
+  const sort = (searchParams.sort as "asc" | "desc") ?? "asc";
+  const storeId = searchParams.store as string | undefined;
+  const search = searchParams.search as string | undefined;
+  const attributes = searchParams.attributes
+    ? (searchParams.attributes as string).split(",")
+    : undefined;
+    
+  const categoryName = decodeURIComponent(params.slug);
+  const subcategoryName = searchParams.subcategory ? decodeURIComponent(searchParams.subcategory as string) : undefined;
+
+  const { services, totalCount, totalPages, subcategories } = await api.service.getAllByCategory({
+    categoryName: categoryName,
+    subcategoryName: subcategoryName,
+    page,
+    limit,
+    sort,
+    storeId,
+    search,
+    attributes,
+  });
+
+  const category = await api.category.getBySlug({ slug: categoryName });
 
   if (!category) {
     return <div>Category not found.</div>;
   }
 
-  // Create a list of all relevant category IDs (the parent and all its children)
-  const idsToFetch = [category.id, ...category.children.map(child => child.id)];
-
-  // Fetch all services belonging to these categories
-  const services = await api.service.getAllByCategory({ categoryIds: idsToFetch });
-
   return (
-    // The <SiteLayout> wrapper has been removed. The layout is now correctly
-    // handled by the layout.tsx file in this same directory.
-    <div className="container mx-auto px-4 py-12">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-5xl font-bold tracking-tight">
-          {category.name}
-        </h1>
-        <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-          Browse all services in the {category.name} category.
-        </p>
+    <div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold tracking-tight">{category.name}</h1>
       </div>
-      <div className="rounded-lg bg-background shadow-sm">
-        <ServiceCategoryClient 
-          initialServices={services} 
-          subcategories={category.children} 
-        />
-      </div>
+      <ServiceCategoryClient
+        initialServices={services}
+        subcategories={subcategories}
+        totalCount={totalCount}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

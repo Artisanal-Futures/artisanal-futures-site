@@ -1,8 +1,5 @@
 "use client";
 
-// Key Change: Removed the <ScrollArea> component and its import.
-// Replaced it with a standard <div className="h-[50svh] overflow-y-auto p-1">.
-
 import { useForm } from "react-hook-form";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,9 +49,10 @@ type ProductForm = z.infer<typeof productFormSchema>;
 type Props = {
   initialData: ProductWithRelations | null;
   onSuccessCallback?: () => void;
+  dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function ProjectForm({ initialData, onSuccessCallback }: Props) {
+export function ProjectForm({ initialData, onSuccessCallback, dialogRef }: Props) {
   const { uploadFile, isUploading } = useFileUpload({
     route: "products",
     api: "/api/upload-product",
@@ -108,12 +106,10 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
 
   async function onSubmit(data: ProductForm) {
     let imageUrl: string | null = initialData?.imageUrl ?? null;
-
     if (!data.image && !initialData?.imageUrl) {
       toastService.error("Please upload an image");
       return;
     }
-
     if (data.image) {
       imageUrl = await uploadFile(data.image as File);
       if (!imageUrl) {
@@ -121,13 +117,11 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
         return;
       }
     }
-
     const submissionData = {
       ...data,
       tags: data.tags.map((tag) => tag.text),
       categoryIds: data.categoryIds,
     };
-
     if (!initialData) {
       createProduct.mutate({ ...submissionData, imageUrl: imageUrl! });
     } else {
@@ -140,7 +134,9 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
   }
 
   const categoryOptions: OptionType[] =
-    categories?.map((cat) => ({
+  categories
+    ?.filter((cat) => cat.type === "PRODUCT") 
+    .map((cat) => ({
       value: cat.id,
       label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
     })) ?? [];
@@ -157,38 +153,22 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
         <div className="h-[50svh] overflow-y-auto p-1">
           <div className="flex flex-col gap-4 md:grid md:grid-cols-6">
             <div className="col-span-2 flex flex-col gap-4">
-              <InputFormField
-                form={form}
-                name="name"
-                label="Product name"
-                placeholder="e.g My product"
-              />
-              <ImageFormField
-                form={form}
-                name="image"
-                label="Product image"
-                currentImageUrl={initialData?.imageUrl ?? ""}
-              />
+              <InputFormField form={form} name="name" label="Product name" placeholder="e.g My product" />
+              <ImageFormField form={form} name="image" label="Product image" currentImageUrl={initialData?.imageUrl ?? ""} />
               <div className="space-y-2">
                 <label className="text-sm font-medium">Select Shop</label>
-                <Select
-                  onValueChange={(value) => form.setValue("shopId", value)}
-                  defaultValue={initialData?.shopId ?? undefined}
-                >
+                <Select onValueChange={(value) => form.setValue("shopId", value)} defaultValue={initialData?.shopId ?? undefined}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a shop" />
                   </SelectTrigger>
                   <SelectContent>
                     {shops?.map((shop) => (
-                      <SelectItem key={shop.id} value={shop.id}>
-                        {shop.name}
-                      </SelectItem>
+                      <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
             <div className="col-span-4 flex flex-col gap-4">
               <FormField
                 control={form.control}
@@ -205,42 +185,19 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
                   </FormItem>
                 )}
               />
-              <InputFormField
-                form={form}
-                name="productUrl"
-                label="Product URL"
-              />
+              <InputFormField form={form} name="productUrl" label="Product URL" />
               <div className="grid grid-cols-2 gap-4">
-                <InputFormField
-                  form={form}
-                  name="priceInCents"
-                  label="Price (in cents)"
-                  type="number"
-                />
+                <InputFormField form={form} name="priceInCents" label="Price (in cents)" type="number" />
                 <InputFormField form={form} name="currency" label="Currency" />
               </div>
-              <TextareaFormField
-                form={form}
-                name="description"
-                label="Description"
-              />
-              <TagFormField
-                form={form}
-                name="tags"
-                label="Tags"
-              />
+              <TextareaFormField form={form} name="description" label="Description" />
+              <TagFormField form={form} name="tags" label="Tags" />
             </div>
           </div>
         </div>
         <div className="flex h-auto justify-end gap-2">
-          <Button variant="outline" onClick={onSuccessCallback} type="button">
-            Cancel
-          </Button>
-          <LoadButton
-            isLoading={isLoading}
-            loadingText={initialData ? "Updating..." : "Creating..."}
-            type="submit"
-          >
+          <Button variant="outline" onClick={onSuccessCallback} type="button">Cancel</Button>
+          <LoadButton isLoading={isLoading} loadingText={initialData ? "Updating..." : "Creating..."} type="submit">
             {initialData ? "Update product" : "Create product"}
           </LoadButton>
         </div>

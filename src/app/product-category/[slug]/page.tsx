@@ -1,40 +1,53 @@
 import { api } from "~/trpc/server";
 import { CategoryClient } from "./_components/product-category-client";
 
-type CategoryPageProps = {
-  params: {
-    slug: string;
-  };
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const slug = decodeURIComponent(params.slug);
-  const category = await api.category.getBySlug({ slug });
+export default async function CategoryPage({ params, searchParams }: Props) {
+  const page = Number(searchParams.page ?? 1);
+  const limit = Number(searchParams.limit ?? 20);
+  const sort = (searchParams.sort as "asc" | "desc") ?? "asc";
+  const storeId = searchParams.store as string | undefined;
+  const search = searchParams.search as string | undefined;
+  const attributes = searchParams.attributes
+    ? (searchParams.attributes as string).split(",")
+    : undefined;
+    
+  // Decode URL params to get the real names
+  const categoryName = decodeURIComponent(params.slug);
+  const subcategoryName = searchParams.subcategory ? decodeURIComponent(searchParams.subcategory as string) : undefined;
+
+  const { products, totalCount, totalPages, subcategories } = await api.product.getAllByCategory({
+    categoryName: categoryName,
+    subcategoryName: subcategoryName,
+    page,
+    limit,
+    sort,
+    storeId,
+    search,
+    attributes,
+  });
+
+  const category = await api.category.getBySlug({ slug: categoryName });
 
   if (!category) {
     return <div>Category not found.</div>;
   }
 
-  const idsToFetch = [category.id, ...category.children.map(child => child.id)];
-  const products = await api.product.getAllByCategory({ categoryIds: idsToFetch });
-
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-5xl font-bold tracking-tight">
-          {category.name}
-        </h1>
-        <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-          Browse all products in the {category.name} category.
-        </p>
+    <div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold tracking-tight">{category.name}</h1>
       </div>
-      
-      <div className="rounded-lg bg-background shadow-sm">
-        <CategoryClient 
-          initialProducts={products} 
-          subcategories={category.children} 
-        />
-      </div>
+      <CategoryClient
+        initialProducts={products}
+        subcategories={subcategories}
+        totalCount={totalCount}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

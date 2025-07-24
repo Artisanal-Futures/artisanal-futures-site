@@ -1,9 +1,6 @@
 "use client";
 
-// Key Change: Added onInteractOutside to <DialogContent> to prevent it from
-// interfering with clicks/scrolls on nested popovers.
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { CirclePlusIcon, PencilIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
@@ -20,6 +17,7 @@ type FormComponentProps<T> = {
   initialData: T | null;
   defaultEmail?: string;
   onSuccessCallback: () => void;
+  dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
 type Props<T> = {
@@ -36,6 +34,7 @@ type Props<T> = {
   mode?: "create" | "update";
   FormComponent: React.FC<FormComponentProps<T>>;
   onOpenChange?: (isOpen: boolean) => void;
+  preventCloseOnOutsideClick?: boolean; 
 };
 
 export const handleUrlParam = (
@@ -44,7 +43,6 @@ export const handleUrlParam = (
   param: string
 ) => {
   if (!id) return;
-
   const url = new URL(window.location.href);
   if (isOpen) {
     url.searchParams.set(param, `${id}`);
@@ -67,8 +65,10 @@ export function ItemDialog<T>({
   contentClassName,
   buttonText,
   mode = "update",
+  preventCloseOnOutsideClick = false,
 }: Props<T>) {
   const [open, setOpen] = useState(false);
+  const dialogContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -120,9 +120,12 @@ export function ItemDialog<T>({
         </Button>
       </DialogTrigger>
       <DialogContent
+        ref={dialogContentRef}
         className={cn("h-auto sm:max-w-6xl", contentClassName)}
-        onInteractOutside={(e) => {
-          e.preventDefault();
+        onPointerDownOutside={(e) => {
+          if (preventCloseOnOutsideClick) {
+            e.preventDefault();
+          }
         }}
       >
         <DialogHeader>
@@ -135,6 +138,7 @@ export function ItemDialog<T>({
             initialData={initialData}
             defaultEmail={defaultEmail}
             onSuccessCallback={handleSuccess}
+            dialogRef={dialogContentRef} 
           />
         )}
       </DialogContent>

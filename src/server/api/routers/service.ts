@@ -9,7 +9,7 @@ import {
   adminProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
-import { type PrismaClient } from "@prisma/client";
+import { type PrismaClient, type Prisma } from "@prisma/client";
 
 const serviceSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -279,31 +279,82 @@ export const serviceRouter = createTRPCRouter({
     getAllByCategory: publicProcedure
     .input(
       z.object({
-        categoryIds: z.array(z.string()).optional(),
+        categoryName: z.string(),
+        subcategoryName: z.string().optional(),
+        storeId: z.string().optional(),
+        attributes: z.array(z.string()).optional(),
+        sort: z.enum(["asc", "desc"]).default("asc"),
+        search: z.string().optional(),
+        page: z.number().default(1),
+        limit: z.number().default(20),
       }),
     )
     .query(async ({ ctx, input }) => {
-      if (!input.categoryIds || input.categoryIds.length === 0) {
-        return [];
-      }
-      
-      const services = await ctx.db.service.findMany({
-        where: {
-          categories: {
-            some: {
-              id: {
-                in: input.categoryIds,
-              },
-            },
-          },
-          isPublic: true,
-        },
-        include: {
-          shop: true,
-          categories: true, 
-        },
+      const { 
+        categoryName, subcategoryName, storeId, attributes, 
+        sort, search, page, limit 
+      } = input;
+      const skip = (page - 1) * limit;
+
+      const parentCategory = await ctx.db.category.findFirst({
+        where: { name: { equals: categoryName, mode: "insensitive" } },
+        include: { children: true },
       });
 
-      return services.map(addFullImageUrl);;
+      if (!parentCategory) {
+        return { services: [], totalCount: 0, totalPages: 0, subcategories: [] };
+      }
+
+      let categoryIdsToFilter: string[] = [parentCategory.id];
+      if (subcategoryName) {
+        const subcategory = parentCategory.children.find(
+          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase()
+        );
+        if (subcategory) {
+          categoryIdsToFilter = [subcategory.id];
+        } else {
+          return { services: [], totalCount: 0, totalPages: 0, subcategories: parentCategory.children };
+        }
+      } else {
+        categoryIdsToFilter.push(...parentCategory.children.map(c => c.id));
+      }
+
+      const where: Prisma.ServiceWhereInput = {
+        categories: { some: { id: { in: categoryIdsToFilter } } },
+        isPublic: true,
+      };
+
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ];
+      }
+      if (storeId && storeId !== "all") {
+        where.shopId = storeId;
+      }
+      if (attributes && attributes.length > 0) {
+        where.shop = {
+          attributeTags: { hasEvery: attributes },
+        };
+      }
+
+      const [services, totalCount] = await ctx.db.$transaction([
+        ctx.db.service.findMany({
+          where,
+          include: { shop: true, categories: true },
+          orderBy: { name: sort },
+          skip,
+          take: limit,
+        }),
+        ctx.db.service.count({ where }),
+      ]);
+
+      return {
+        services: services.map(addFullImageUrl),
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        subcategories: parentCategory.children,
+      };
     }),
 });

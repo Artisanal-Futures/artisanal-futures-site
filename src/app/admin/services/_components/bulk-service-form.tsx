@@ -38,12 +38,13 @@ type BulkUpdateFormValues = z.infer<typeof bulkUpdateFormSchema>;
 type Props = {
   serviceIds: string[];
   onSuccessCallback: () => void;
+  dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function BulkServiceForm({ serviceIds, onSuccessCallback }: Props) {
+export function BulkServiceForm({ serviceIds, onSuccessCallback, dialogRef }: Props) {
   const utils = api.useUtils();
 
-  const { data: categories } = api.category.getAll.useQuery(); 
+  const { data: categories } = api.category.getAll.useQuery();
   const { data: shops } = api.shop.getAll.useQuery();
 
   const bulkUpdateMutation = api.service.bulkUpdate.useMutation({
@@ -87,10 +88,12 @@ export function BulkServiceForm({ serviceIds, onSuccessCallback }: Props) {
   };
 
   const categoryOptions: OptionType[] =
-    categories?.map((cat) => ({
-      value: cat.id,
-      label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
-    })) ?? [];
+    categories
+      ?.filter((cat) => cat.type === "SERVICE")
+      .map((cat) => ({
+        value: cat.id,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+      })) ?? [];
 
   return (
     <Form {...form}>
@@ -176,7 +179,6 @@ export function BulkServiceForm({ serviceIds, onSuccessCallback }: Props) {
           />
         </div>
 
-        {/* Buttons */}
         <div className="flex justify-end gap-2">
           <Button variant="outline" type="button" onClick={onSuccessCallback}>
             Cancel

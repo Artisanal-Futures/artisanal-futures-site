@@ -9,7 +9,6 @@ export const metadata = {
 };
 
 export default async function ServiceCategoriesPage() {
-  // Fetch only the categories with the type 'SERVICE'
   const categories = await api.category.getNavigationTree({
     type: CategoryType.SERVICE,
   });
@@ -30,8 +29,7 @@ export default async function ServiceCategoriesPage() {
           {categories.map((category) => (
             <div key={category.id}>
               <h2 className="mb-4 text-3xl font-bold tracking-tight">
-                {/* Link to the dynamic service category page */}
-                <Link href={`/service-category/${category.name.toLowerCase()}`} className="hover:underline">
+                <Link href={`/service-category/${encodeURIComponent(category.name)}`} className="hover:underline">
                   {category.name}
                 </Link>
               </h2>
@@ -40,8 +38,7 @@ export default async function ServiceCategoriesPage() {
                   {category.children.map((sub) => (
                     <Link
                       key={sub.id}
-                      // Link to the dynamic service category page with the subcategory filter
-                      href={`/service-category/${category.name.toLowerCase()}?subcategory=${sub.name.toLowerCase()}`}
+                      href={`/service-category/${encodeURIComponent(category.name)}?subcategory=${encodeURIComponent(sub.name)}`}
                       className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent"
                     >
                       <h3 className="font-semibold">{sub.name}</h3>
