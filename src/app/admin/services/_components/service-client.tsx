@@ -10,7 +10,7 @@ import type { ServiceWithShop } from "~/types/service";
 import type { Shop } from "~/types/shop";
 
 import { usePermissions } from "~/hooks/use-permissions";
-import { buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
@@ -18,6 +18,7 @@ import { BulkServiceFormWrapper } from "./bulk-service-form-wrapper";
 import { ServiceForm } from "./service-form";
 import { serviceColumns } from "./service-column-structure";
 import { createServiceFilter } from "./service-filters";
+import { PencilIcon, XCircleIcon } from "lucide-react";
 
 type Props = {
   services: ServiceWithShop[];
@@ -54,23 +55,38 @@ export function ServiceClient({ services, shops }: Props) {
   }, [services]);
   
   const toolbarActionsNode = useMemo(() => {
-    if (selectedServiceIds.length === 0) return null;
-    
-    return (
-      <ItemDialog
-        title={`Bulk Edit ${selectedServiceIds.length} Services`}
-        subtitle="Apply changes to all selected services."
-        FormComponent={BulkServiceFormWrapper}
-        initialData={{
-          selectedServiceIds: selectedServiceIds,
-          clearRowSelection: () => setRowSelection({}),
-        }}
-        buttonText={`Bulk Edit (${selectedServiceIds.length})`}
-        buttonClassName="h-8 text-xs"
-        preventCloseOnOutsideClick={true}
-      />
-    );
-  }, [selectedServiceIds]);
+      if (selectedServiceIds.length === 0) return null;
+  
+      return (
+        <div className="flex items-center gap-2">
+          <ItemDialog
+            title={`Bulk Edit ${selectedServiceIds.length} Products`}
+            subtitle="Apply changes to all selected products."
+            FormComponent={BulkServiceFormWrapper}
+            initialData={{
+              selectedServiceIds: selectedServiceIds,
+              clearRowSelection: () => setRowSelection({}),
+            }}
+            buttonText={
+              <>
+                <PencilIcon className="mr-1 h-4 w-4" />
+                Bulk Edit ({selectedServiceIds.length})
+              </>
+            }
+            buttonClassName="h-8 text-xs"
+            preventCloseOnOutsideClick={true}
+          />
+          <Button
+            variant="destructive"
+            onClick={() => setRowSelection({})}
+            className="h-8 px-2 text-xs lg:px-3 bg-red-500"
+          >
+            <XCircleIcon className="mr-2 h-4 w-4" />
+            Cancel
+          </Button>
+        </div>
+      );
+    }, [selectedServiceIds]);
 
   const addButtonNode = useMemo(
     () => (

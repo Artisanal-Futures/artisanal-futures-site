@@ -177,7 +177,7 @@ export function AdvancedDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer"
+                  className="cursor-pointer no-user-select"
                   onClick={(e) => {
                     if (e.shiftKey && lastSelectedRowIndex.current !== null) {
                       const start = Math.min(lastSelectedRowIndex.current, row.index);

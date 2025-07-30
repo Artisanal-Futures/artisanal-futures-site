@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { type Category } from "@prisma/client";
+import { type Category, CategoryType } from "@prisma/client";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -28,6 +28,7 @@ import {
 const categoryFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   parentId: z.string().nullable().optional(),
+  type: z.nativeEnum(CategoryType),
 });
 
 type CategoryFormValues = z.infer<typeof categoryFormSchema>;
@@ -68,6 +69,7 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
     defaultValues: {
       name: initialData?.name ?? "",
       parentId: initialData?.parentId,
+      type: initialData?.type ?? CategoryType.PRODUCT,
     },
   });
 
@@ -80,6 +82,8 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
   };
 
   const isLoading = createCategory.isPending || updateCategory.isPending;
+
+  const selectedType = form.watch("type");
 
   return (
     <Form {...form}>
@@ -116,12 +120,37 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
                   <SelectContent>
                     <SelectItem value="null">None (Top-Level Category)</SelectItem>
                     {categories
-                      ?.filter((cat) => !cat.parentId && cat.id !== initialData?.id) 
+                      ?.filter((cat) => !cat.parentId && cat.id !== initialData?.id && cat.type === selectedType) 
                       .map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
                         </SelectItem>
                       ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={!!initialData}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={CategoryType.PRODUCT}>Product</SelectItem>
+                    <SelectItem value={CategoryType.SERVICE}>Service</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

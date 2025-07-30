@@ -10,7 +10,7 @@ import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
 
 import { usePermissions } from "~/hooks/use-permissions";
-import { buttonVariants } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
@@ -18,6 +18,7 @@ import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
 import { ProjectForm } from "./product-form";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
+import { PencilIcon, XCircleIcon } from "lucide-react";
 
 type Props = {
   products: ProductWithRelations[];
@@ -57,18 +58,33 @@ export function ProductClient({ products, shops }: Props) {
     if (selectedProductIds.length === 0) return null;
 
     return (
-      <ItemDialog
-        title={`Bulk Edit ${selectedProductIds.length} Products`}
-        subtitle="Apply changes to all selected products."
-        FormComponent={BulkProductFormWrapper}
-        initialData={{
-          selectedProductIds: selectedProductIds,
-          clearRowSelection: () => setRowSelection({}),
-        }}
-        buttonText={`Bulk Edit (${selectedProductIds.length})`}
-        buttonClassName="h-8 text-xs"
-        preventCloseOnOutsideClick={true}
-      />
+      <div className="flex items-center gap-2">
+        <ItemDialog
+          title={`Bulk Edit ${selectedProductIds.length} Products`}
+          subtitle="Apply changes to all selected products."
+          FormComponent={BulkProductFormWrapper}
+          initialData={{
+            selectedProductIds: selectedProductIds,
+            clearRowSelection: () => setRowSelection({}),
+          }}
+          buttonText={
+            <>
+              <PencilIcon className="mr-1 h-4 w-4" />
+              Bulk Edit ({selectedProductIds.length})
+            </>
+          }
+          buttonClassName="h-8 text-xs"
+          preventCloseOnOutsideClick={true}
+        />
+        <Button
+          variant="destructive"
+          onClick={() => setRowSelection({})}
+          className="h-8 px-2 text-xs lg:px-3 bg-red-500"
+        >
+          <XCircleIcon className="mr-2 h-4 w-4" />
+          Cancel
+        </Button>
+      </div>
     );
   }, [selectedProductIds]);
 

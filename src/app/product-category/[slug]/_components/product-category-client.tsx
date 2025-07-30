@@ -373,7 +373,7 @@ export function CategoryClient({
           subcategories={subcategories}
           stores={stores}
         />
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <Button
             variant="outline"
             size="sm"
@@ -381,7 +381,7 @@ export function CategoryClient({
           >
             Switch to {useFlexLayout ? "Grid" : "Flex"} Layout
           </Button>
-        </div>
+        </div> */}
       </aside>
       <main className="flex-1 space-y-6 px-4 md:px-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
