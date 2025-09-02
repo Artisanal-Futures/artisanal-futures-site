@@ -1,0 +1,107 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { cn } from "~/utils/styles";
+import { Loader2, Trash } from "lucide-react";
+
+import { toastService } from "@dreamwalker-studios/toasts";
+
+import { api } from "~/trpc/react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
+import { Button, buttonVariants } from "~/components/ui/button";
+
+type Props = {
+  isLoading: boolean;
+
+  onDelete: () => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+};
+
+export function DeleteDialog({
+  isLoading,
+  isOpen,
+  setIsOpen,
+  onDelete,
+}: Props) {
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogContent className="ignore-default">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. There may be unintended side effects
+            depending on the item being deleted.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={isLoading}
+            onClick={onDelete}
+            className={cn(buttonVariants({ variant: "destructive" }))}
+          >
+            {isLoading ? (
+              <span>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...
+              </span>
+            ) : (
+              "Delete"
+            )}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+export function DeleteItemBtn({ id }: { id: number }) {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const apiUtils = api.useUtils();
+  const router = useRouter();
+
+  const { mutate: deleteUpcycling, isPending } =
+    api.upcycling.delete.useMutation({
+      onSuccess: ({ message }) => {
+        toastService.success({ message });
+        setIsDeleteOpen(false);
+      },
+      onError: ({ message }) => {
+        toastService.error({ message });
+      },
+      onSettled: () => {
+        void apiUtils.upcycling.invalidate();
+        void router.refresh();
+      },
+    });
+
+  return (
+    <>
+      <Button
+        variant="destructive"
+        size="sm"
+        className="h-8 gap-1"
+        onClick={() => setIsDeleteOpen(true)}
+      >
+        <Trash className="h-4 w-4" />
+        Delete
+      </Button>{" "}
+      <DeleteDialog
+        onDelete={() => deleteUpcycling({ id })}
+        isLoading={isPending}
+        isOpen={isDeleteOpen}
+        setIsOpen={setIsDeleteOpen}
+      />
+    </>
+  );
+}

@@ -1,21 +1,18 @@
-import { exampleRouter } from "~/server/api/routers/example";
-import { createTRPCRouter } from "~/server/api/trpc";
+import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+
 import { authRouter } from "./routers/auth";
-import { commentRouter } from "./routers/comment";
-
-import { solidarityPathwaysMessagingRouter } from "./routers/messaging/routing";
-import { postRouter } from "./routers/post";
+import { forumRouter } from "./routers/forum";
+import { forumSubredditRouter } from "./routers/forum-subreddit";
+import { guestRouter } from "./routers/guest";
+import { migrationRouter } from "./routers/migration";
+import { productRouter } from "./routers/product";
 import { productsRouter } from "./routers/products";
-
-import { depotRouter } from "./routers/routing/depot-router";
-import { driverRouter } from "./routers/routing/driver-router";
-
-import { jobRouter } from "./routers/routing/job-router";
-import { routePlanRouter } from "./routers/routing/route-plan";
-
 import { shopsRouter } from "./routers/shops";
 import { surveysRouter } from "./routers/surveys";
+import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
+import { serviceRouter } from "./routers/service";
+import { categoryRouter } from "./routers/category";
 
 /**
  * This is the primary router for your server.
@@ -23,23 +20,30 @@ import { userRouter } from "./routers/user";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
-  shops: shopsRouter,
-  surveys: surveysRouter,
+  shop: shopsRouter,
+  survey: surveysRouter,
 
   auth: authRouter,
   user: userRouter,
-  post: postRouter,
-  comment: commentRouter,
-
+  product: productRouter,
+  service: serviceRouter,
+  migration: migrationRouter,
+  category: categoryRouter,
   products: productsRouter,
-
-  drivers: driverRouter,
-  depots: depotRouter,
-  jobs: jobRouter,
-  routePlan: routePlanRouter,
-  routeMessaging: solidarityPathwaysMessagingRouter,
+  forum: forumRouter,
+  forumSubreddit: forumSubredditRouter,
+  guest: guestRouter,
+  upcycling: upcyclingRouter,
 });
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+
+/**
+ * Create a server-side caller for the tRPC API.
+ * @example
+ * const trpc = createCaller(createContext);
+ * const res = await trpc.post.all();
+ *       ^? Post[]
+ */
+export const createCaller = createCallerFactory(appRouter);

@@ -1,16 +1,15 @@
 version: "3.8"
 services:
-  mysql:
-    image: mysql:latest
+  postgres:
+    image: postgres:latest
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
     ports:
-      - "3308:3306"
+      - "3377:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
   # soketi:
   #   image: quay.io/soketi/soketi:1.4-16-debian
   #   container_name: soketi
@@ -31,4 +30,4 @@ services:
   #   - "6001:6001"
   #   - "9601:9601"
 volumes:
-  mysql-data:
+  postgres-data:

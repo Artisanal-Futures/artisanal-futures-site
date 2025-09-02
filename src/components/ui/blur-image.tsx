@@ -1,5 +1,9 @@
-import Image, { type ImageProps } from "next/image";
-import { useState, type FC } from "react";
+"use client";
+
+import type { ImageProps } from "next/image";
+import type { FC } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { cn } from "~/utils/styles";
 
 interface IProps extends ImageProps {
@@ -21,7 +25,8 @@ const BlurImage: FC<IProps> = ({ src, ...props }) => {
         "duration-700 ease-in-out",
         isLoading
           ? "scale-100 blur-xl grayscale"
-          : "scale-100 blur-0 grayscale-0"
+          : "scale-100 blur-0 grayscale-0",
+        props.className,
       )}
       onLoadingComplete={() => setLoading(false)}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

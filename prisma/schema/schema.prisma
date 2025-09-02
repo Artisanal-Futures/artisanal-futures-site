@@ -1,0 +1,131 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Example {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  title             String?
+  role              Role               @default(GUEST)
+  createdAt         DateTime           @default(now())
+  username          String?
+  accounts          Account[]
+  commentVotes      CommentVote[]
+  forumComments     ForumComment[]
+  generatedImages   GeneratedImages[]
+  generationSurveys GenerationSurvey[]
+  guestSurveys      GuestSurvey[]
+  modifications     Modification[]
+  notifications     Notification[]
+  posts             Post[]
+  messagingProfile  Profile?
+  sessions          Session[]
+  shops             Shop[]
+  createdSubreddits Subreddit[]        @relation("CreatedBy")
+  subscriptions     Subscription[]
+  upcycleResults    UpcycleResult[]
+  variations        Variation[]
+  votes             Vote[]
+  depots            Depot[]            @relation("DepotToUser")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Survey {
+  id              String   @id @default(cuid())
+  processes       String?
+  materials       String?
+  principles      String?
+  description     String?
+  unmoderatedForm Boolean  @default(false)
+  moderatedForm   Boolean  @default(false)
+  hiddenForm      Boolean  @default(false)
+  privateForm     Boolean  @default(false)
+  supplyChain     Boolean  @default(false)
+  messagingOptIn  Boolean  @default(false)
+  ownerId         String?
+  shopId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  businessType    String?
+  country         String?
+  email           String?
+  experience      String?
+  practice        String?
+  state           String?
+
+  @@index([ownerId])
+}
+
+model GuestSurvey {
+  id                String   @id @default(cuid())
+  name              String?
+  country           String?
+  state             String?
+  artisanalPractice String?
+  otherPractice     String?
+  email             String
+  createdAt         DateTime @default(now())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum Role {
+  USER
+  ADMIN
+  ARTISAN
+  DRIVER
+  GUEST
+}
