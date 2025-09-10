@@ -11,11 +11,3 @@ model GenerationJob {
   updatedAt   DateTime
 }
 
-enum status {
-  QUEUED
-  PROCESSING
-  SUCCEEDED
-  FAILED
-  CANCELED
-  TIMEOUT
-}

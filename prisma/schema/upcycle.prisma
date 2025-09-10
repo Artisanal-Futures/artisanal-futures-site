@@ -1,90 +1,119 @@
-model UpcycleResult {
-  id                        String            @id @default(cuid())
-  createdAt                 DateTime          @default(now())
-  updatedAt                 DateTime          @updatedAt
-  projectTitle              String?
-  prompt                    String
-  negativePrompt            String?
-  refinementObject          String
-  refinementType            RefinementType
-  styleImageUrl             String?
-  structureImageUrl         String?
-  zipFileUrl                String?
-  outputImageUrl            String?
-  improvePrompt             Boolean?
-  removeBackgroundScrap     Boolean?
-  removeBackgroundStructure Boolean?
-  removeBackgroundGenerated Boolean?
-  trackingId                String?           @unique
-  userId                    String
-  upcycleType               UpcycleType       @default(GENERATE)
-  generationModelName       String?
-  styleModelName            String?
-  structureSettings         Json?
-  styleSettings             Json?
-  trainingSettings          Json?
-  trainingModelName         String?
-  error                     String?
-  startedAt                 DateTime?
-  status                    status            @default(QUEUED)
-  questions                 UpcycleQuestion[]
-  rating                    UpcycleRating?
-  user                      User              @relation(fields: [userId], references: [id])
-}
-
-model UpcycleQuestion {
-  id              String        @id @default(cuid())
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  question        String
-  llmResponse     String
-  upcycleResultId String
-  upcycleResult   UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
-}
-
-model Notification {
-  id           String       @id @default(cuid())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  title        String
-  message      String
-  resourceId   String
-  resourceType ResourceType @default(GENERIC)
-  read         Boolean      @default(false)
-  userId       String
-  user         User         @relation(fields: [userId], references: [id])
-}
-
-model UpcycleRating {
-  id              String        @id @default(cuid())
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  rating          UpcycleThumb  @default(NEUTRAL)
-  upcycleResultId String        @unique
-  reasoning       String?
-  upcycleResult   UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
-}
-
 enum RefinementType {
-  ITEM
-  STYLE
+    ITEM
+    STYLE
 }
 
 enum ResourceType {
-  UPCYCLE_RESULT
-  GENERIC
+    UPCYCLE_RESULT
+    GENERIC
 }
+
 
 enum UpcycleType {
-  GENERATE
-  GENERATE_FROM_STRUCTURE
-  TRAIN_AND_GENERATE
-  GENERATE_ON_PRE_TRAINED
-  TRAIN_ONLY
+    GENERATE
+    GENERATE_FROM_STRUCTURE
+    TRAIN_AND_GENERATE
+    GENERATE_ON_PRE_TRAINED
+    TRAIN_ONLY
 }
 
+enum status {
+    QUEUED
+    PROCESSING
+    SUCCEEDED
+    FAILED
+    CANCELED
+    TIMEOUT
+}
+
+model UpcycleResult {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    startedAt DateTime?
+
+    projectTitle String?
+
+    prompt String
+    negativePrompt String?
+    isRetrain Boolean @default(false)
+    originalTrainingId String?
+
+    refinementObject        String
+    refinementType          RefinementType
+    upcycleType             UpcycleType @default(GENERATE)
+
+    styleImageUrl       String?
+    structureImageUrl   String?
+    zipFileUrl          String?
+    outputImageUrl      String?
+
+    improvePrompt               Boolean?
+    removeBackgroundScrap       Boolean?
+    removeBackgroundStructure   Boolean?
+    removeBackgroundGenerated   Boolean?
+
+    generationModelName         String?
+    styleModelName              String?
+    trainingModelName           String?
+
+    trackingId String? @unique
+
+    questions       UpcycleQuestion[]
+    rating          UpcycleRating?
+
+    user            User @relation(fields: [userId], references: [id])
+    userId          String
+
+
+    styleSettings       Json?
+    structureSettings   Json?
+    trainingSettings    Json?
+    trainingImageFilenames Json?
+    trainingImageUrls    String[] @default([])
+    trainingCaptions     Json?    @default("{}")
+
+    status status @default(QUEUED)
+
+    error String?
+}
+
+model UpcycleQuestion {
+    id String       @id @default(cuid())
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    question        String
+    llmResponse     String
+    upcycleResultId String
+    upcycleResult   UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    title String
+    message String
+    resourceId String
+    resourceType ResourceType @default(GENERIC)
+    read Boolean @default(false)
+    user User @relation(fields: [userId], references: [id])
+    userId String
+}
+
+
 enum UpcycleThumb {
-  UP
-  DOWN
-  NEUTRAL
+    UP
+    DOWN
+    NEUTRAL
+}
+model UpcycleRating {
+    id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    rating UpcycleThumb @default(NEUTRAL)
+    reasoning String? @db.Text
+    
+    upcycleResult UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
+    upcycleResultId String @unique
 }
