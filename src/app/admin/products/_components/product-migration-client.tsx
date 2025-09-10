@@ -133,17 +133,21 @@ export function DatabaseMigrationClient() {
 
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
-
         convertedProducts = shopifyData.products.map(
           (product) =>
-            convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
+            convertToProduct(
+              product,
+              selectedShopId,
+            ) as Partial<ProductWithRelations>,
         );
       } else if (selectedSource === "SQUARESPACE") {
         const squarespaceData = parsedJson as SquareSpaceData;
         convertedProducts = squarespaceData.items.map(
           (product) =>
-            convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
-
+            convertToProduct(
+              product,
+              selectedShopId,
+            ) as Partial<ProductWithRelations>,
         );
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressProduct[];

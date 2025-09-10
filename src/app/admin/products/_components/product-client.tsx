@@ -2,23 +2,26 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { type RowSelectionState, type PaginationState } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
+import { PencilIcon, XCircleIcon } from "lucide-react";
 
-import { cn } from "~/lib/utils";
+import {
+  type PaginationState,
+  type RowSelectionState,
+} from "@tanstack/react-table";
+
 import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
-
+import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
-import { ProjectForm } from "./product-form";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
-import { PencilIcon, XCircleIcon } from "lucide-react";
+import { ProjectForm } from "./product-form";
 
 type Props = {
   products: ProductWithRelations[];
@@ -26,16 +29,18 @@ type Props = {
 };
 
 export function ProductClient({ products, shops }: Props) {
-
   const { isElevated } = usePermissions();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: searchParams.get("page") ? Number(searchParams.get("page")) - 1 : 0,
-    pageSize: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
+    pageIndex: searchParams.get("page")
+      ? Number(searchParams.get("page")) - 1
+      : 0,
+    pageSize: searchParams.get("limit")
+      ? Number(searchParams.get("limit"))
+      : 10,
   });
-
 
   const selectedProductIds = useMemo(() => {
     return Object.keys(rowSelection)
@@ -44,15 +49,16 @@ export function ProductClient({ products, shops }: Props) {
       .filter((id): id is string => !!id);
   }, [rowSelection, products]);
 
-  const productFilters = useMemo(() => createProductFilter(products ?? [], shops ?? []), [
-    products,
-    shops,
-  ]);
+  const productFilters = useMemo(
+    () => createProductFilter(products ?? [], shops ?? []),
+    [products, shops],
+  );
 
   const enhancedProducts = useMemo(() => {
     return (products ?? []).map((product) => ({
       ...product,
-      searchableString: `${product.name} ${product.description} ${product.id}`.toLowerCase(),
+      searchableString:
+        `${product.name} ${product.description} ${product.id}`.toLowerCase(),
     }));
   }, [products]);
 
@@ -81,7 +87,7 @@ export function ProductClient({ products, shops }: Props) {
         <Button
           variant="destructive"
           onClick={() => setRowSelection({})}
-          className="h-8 px-2 text-xs lg:px-3 bg-red-500"
+          className="h-8 bg-red-500 px-2 text-xs lg:px-3"
         >
           <XCircleIcon className="mr-2 h-4 w-4" />
           Cancel
@@ -96,7 +102,10 @@ export function ProductClient({ products, shops }: Props) {
         {process.env.NODE_ENV === "development" && (
           <Link
             href="/admin/products/migrate"
-            className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-8 text-xs",
+            )}
           >
             Migrate Products
           </Link>
@@ -110,12 +119,12 @@ export function ProductClient({ products, shops }: Props) {
         />
       </>
     ),
-    []
+    [],
   );
 
   const columnVisibility = useMemo(
     () => ({ user_id: isElevated }),
-    [isElevated]
+    [isElevated],
   );
 
   return (
@@ -126,7 +135,6 @@ export function ProductClient({ products, shops }: Props) {
         columns={productColumns}
         data={enhancedProducts}
         filters={productFilters}
-
         toolbarActions={toolbarActionsNode}
         defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
@@ -134,8 +142,6 @@ export function ProductClient({ products, shops }: Props) {
         addButton={addButtonNode}
         pagination={pagination}
         onPaginationChange={setPagination}
-
-
       />
     </div>
   );

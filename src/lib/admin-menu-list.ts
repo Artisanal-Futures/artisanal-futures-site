@@ -1,14 +1,14 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BoxesIcon,
+  FolderTree,
+  HandshakeIcon,
   ImageIcon,
   LayoutGrid,
   NotebookTextIcon,
   SquarePen,
   StoreIcon,
   UserIcon,
-  FolderTree, 
-  HandshakeIcon,
 } from "lucide-react";
 
 import type { Role } from "@prisma/client";
@@ -80,9 +80,9 @@ export function getMenuList(pathname: string): Group[] {
           href: `/admin/categories`,
           label: "Categories",
           active: pathname.includes(`/admin/categories`),
-          icon: FolderTree, 
+          icon: FolderTree,
           submenus: [],
-          restrictedAccess: [], 
+          restrictedAccess: [],
         },
         {
           href: `/admin/surveys`,
@@ -94,7 +94,6 @@ export function getMenuList(pathname: string): Group[] {
         },
       ],
     },
-
     {
       groupLabel: "Tools",
       menus: [
@@ -116,7 +115,6 @@ export function getMenuList(pathname: string): Group[] {
         },
       ],
     },
-
 
     {
       groupLabel: "Account",
