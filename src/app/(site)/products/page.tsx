@@ -15,7 +15,7 @@ export default function ProductsPage() {
         </h1>
         <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
           Discover unique handcrafted goods from our talented artisans and
-          support small businesses
+          {/* support small businesses */}
         </p>
       </div>
 

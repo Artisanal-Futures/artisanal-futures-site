@@ -68,7 +68,7 @@ export default async function ProfilePage({ params }: Props) {
                   About {shop.name}
                 </h2>
                 <div className="prose max-w-none lg:prose-lg">
-                  <p className="text-muted-foreground">{shop.bio}</p>
+                  <p className="text-muted-foreground">{shop.description}</p>
                 </div>
               </div>
             </section>

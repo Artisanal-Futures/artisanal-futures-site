@@ -1,6 +1,6 @@
 import type { ShopAddress } from "@prisma/client";
 
-import type { Product } from "./product";
+import type { ProductWithRelations } from "./product";
 
 export type Shop = {
   id: string;
@@ -19,5 +19,5 @@ export type Shop = {
   attributeTags: string[];
   createdAt: Date;
   updatedAt: Date;
-  products?: Product[];
+  products?: ProductWithRelations[];
 };

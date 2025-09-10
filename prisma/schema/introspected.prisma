@@ -1,0 +1,13 @@
+model GenerationJob {
+  id          String   @id
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+

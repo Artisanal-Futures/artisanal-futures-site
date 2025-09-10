@@ -14,7 +14,7 @@ import type {
   SquareSpaceData,
   WordPressProduct,
 } from "../_validators/types";
-import type { Product } from "~/types/product";
+import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
@@ -60,7 +60,7 @@ export function DatabaseMigrationClient() {
   const [jsonInput, setJsonInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [parsedFields, setParsedFields] = useState<string[]>([]);
-  const [previewData, setPreviewData] = useState<Product[]>([]);
+  const [previewData, setPreviewData] = useState<ProductWithRelations[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSource, setSelectedSource] = useState<ProductSource | null>(
     null,
@@ -124,7 +124,7 @@ export function DatabaseMigrationClient() {
         throw new Error("Please select a shop");
       }
 
-      let convertedProducts: Partial<Product>[] = [];
+      let convertedProducts: Partial<ProductWithRelations>[] = [];
 
       // Parse JSON for sources
       const parsedJson = JSON.parse(jsonInput);
@@ -133,25 +133,17 @@ export function DatabaseMigrationClient() {
 
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
-        convertedProducts = await Promise.all(
-          shopifyData.products.map(
-            async (product) =>
-              (await convertToProduct(
-                product,
-                selectedShopId,
-              )) as Partial<Product>,
-          ),
+
+        convertedProducts = shopifyData.products.map(
+          (product) =>
+            convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
         );
       } else if (selectedSource === "SQUARESPACE") {
         const squarespaceData = parsedJson as SquareSpaceData;
-        convertedProducts = await Promise.all(
-          squarespaceData.items.map(
-            async (product) =>
-              (await convertToProduct(
-                product,
-                selectedShopId,
-              )) as Partial<Product>,
-          ),
+        convertedProducts = squarespaceData.items.map(
+          (product) =>
+            convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
+
         );
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressProduct[];
@@ -161,7 +153,7 @@ export function DatabaseMigrationClient() {
               (await convertToProduct(
                 product,
                 selectedShopId,
-              )) as Partial<Product>,
+              )) as Partial<ProductWithRelations>,
           ),
         );
       }
@@ -176,7 +168,7 @@ export function DatabaseMigrationClient() {
       }
       const fields = Object.keys(firstProduct);
       setParsedFields(fields);
-      setPreviewData(convertedProducts as unknown as Product[]);
+      setPreviewData(convertedProducts as unknown as ProductWithRelations[]);
 
       toastService.success("Products parsed successfully");
     } catch (error) {

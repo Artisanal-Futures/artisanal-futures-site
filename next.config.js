@@ -36,6 +36,10 @@ const config = {
         hostname: "res.cloudinary.com",
       },
       {
+        protocol: 'https',
+        hostname: 'cdn.shortpixel.ai',
+      },
+      {
         protocol: "https",
         hostname: "media.githubusercontent.com",
       },

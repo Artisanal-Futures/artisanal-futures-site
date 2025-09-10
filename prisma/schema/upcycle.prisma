@@ -14,17 +14,30 @@ enum UpcycleType {
     GENERATE_FROM_STRUCTURE
     TRAIN_AND_GENERATE
     GENERATE_ON_PRE_TRAINED
+    TRAIN_ONLY
+}
+
+enum status {
+    QUEUED
+    PROCESSING
+    SUCCEEDED
+    FAILED
+    CANCELED
+    TIMEOUT
 }
 
 model UpcycleResult {
     id String @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    startedAt DateTime?
 
     projectTitle String?
 
     prompt String
     negativePrompt String?
+    isRetrain Boolean @default(false)
+    originalTrainingId String?
 
     refinementObject        String
     refinementType          RefinementType
@@ -56,6 +69,13 @@ model UpcycleResult {
     styleSettings       Json?
     structureSettings   Json?
     trainingSettings    Json?
+    trainingImageFilenames Json?
+    trainingImageUrls    String[] @default([])
+    trainingCaptions     Json?    @default("{}")
+
+    status status @default(QUEUED)
+
+    error String?
 }
 
 model UpcycleQuestion {

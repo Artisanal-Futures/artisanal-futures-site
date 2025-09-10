@@ -9,7 +9,7 @@ export default function SiteLayout({ children }: Props) {
   return (
     <>
       <main className="flex min-h-screen flex-col">
-        <Navbar />
+        {/* <Navbar /> */}
         <Container className="flex h-full flex-grow flex-col items-stretch p-8">
           {children}
         </Container>

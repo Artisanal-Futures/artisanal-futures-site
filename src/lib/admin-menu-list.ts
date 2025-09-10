@@ -7,6 +7,8 @@ import {
   SquarePen,
   StoreIcon,
   UserIcon,
+  FolderTree, 
+  HandshakeIcon,
 } from "lucide-react";
 
 import type { Role } from "@prisma/client";
@@ -67,6 +69,22 @@ export function getMenuList(pathname: string): Group[] {
           restrictedAccess: [],
         },
         {
+          href: `/admin/services`,
+          label: "Services",
+          active: pathname.includes(`/admin/services`),
+          icon: HandshakeIcon,
+          submenus: [],
+          restrictedAccess: [],
+        },
+        {
+          href: `/admin/categories`,
+          label: "Categories",
+          active: pathname.includes(`/admin/categories`),
+          icon: FolderTree, 
+          submenus: [],
+          restrictedAccess: [], 
+        },
+        {
           href: `/admin/surveys`,
           label: "Surveys",
           active: pathname.includes(`/admin/surveys`),
@@ -77,27 +95,28 @@ export function getMenuList(pathname: string): Group[] {
       ],
     },
 
-    // {
-    //   groupLabel: "Tools",
-    //   menus: [
-    //     {
-    //       href: `/admin/upcycling`,
-    //       label: "Upcycling",
-    //       active: pathname.includes(`/admin/upcycling`),
-    //       icon: ImageIcon,
-    //       submenus: [],
-    //       restrictedAccess: ["ARTISAN"],
-    //     },
-    //     {
-    //       href: `/admin/guest-surveys`,
-    //       label: "Guest Surveys",
-    //       active: pathname.includes(`/admin/guest-surveys`),
-    //       icon: SquarePen,
-    //       submenus: [],
-    //       restrictedAccess: ["ARTISAN"],
-    //     },
-    //   ],
-    // },
+    {
+      groupLabel: "Tools",
+      menus: [
+        {
+          href: `/admin/upcycling`,
+          label: "Upcycling",
+          active: pathname.includes(`/admin/upcycling`),
+          icon: ImageIcon,
+          submenus: [],
+          restrictedAccess: ["ARTISAN"],
+        },
+        {
+          href: `/admin/guest-surveys`,
+          label: "Guest Surveys",
+          active: pathname.includes(`/admin/guest-surveys`),
+          icon: SquarePen,
+          submenus: [],
+          restrictedAccess: ["ARTISAN"],
+        },
+      ],
+    },
+
 
     {
       groupLabel: "Account",

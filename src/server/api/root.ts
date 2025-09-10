@@ -11,6 +11,8 @@ import { shopsRouter } from "./routers/shops";
 import { surveysRouter } from "./routers/surveys";
 import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
+import { serviceRouter } from "./routers/service";
+import { categoryRouter } from "./routers/category";
 
 /**
  * This is the primary router for your server.
@@ -24,8 +26,9 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   user: userRouter,
   product: productRouter,
+  service: serviceRouter,
   migration: migrationRouter,
-
+  category: categoryRouter,
   products: productsRouter,
   forum: forumRouter,
   forumSubreddit: forumSubredditRouter,

@@ -1,9 +1,9 @@
 "use client";
 
-import { type Product } from "~/types/product";
+import { type ProductWithRelations } from "~/types/product";
 import { type Shop } from "~/types/shop";
 
-export const createProductFilter = (products: Product[], shops: Shop[]) => {
+export const createProductFilter = (products: ProductWithRelations[], shops: Shop[]) => {
   return [
     {
       column: "shopId",

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { api } from "~/trpc/react";
 import PageLoader from "~/components/ui/page-loader";
 import Container from "~/app/_components/container";
+import type { Shop } from "@prisma/client";
+import type { ProductWithRelations } from "~/types/product";
 
 import { NewProductCard } from "./new-product-card";
 
@@ -27,7 +29,6 @@ export const ProductGrid = ({ id }: { id: string }) => {
   });
 
   useEffect(() => {
-    // Update URL with pagination parameters
     const params = new URLSearchParams(searchParams);
     if (currentPage > 1) params.set("page", currentPage.toString());
     else params.delete("page");
@@ -39,9 +40,18 @@ export const ProductGrid = ({ id }: { id: string }) => {
     router.push(newUrl, { scroll: false });
   }, [currentPage, itemsPerPage, router, searchParams]);
 
+  const productsWithShops = useMemo(() => {
+    return (
+      productData?.products?.filter(
+        (p: ProductWithRelations): p is ProductWithRelations & { shop: Shop } =>
+          p.shop !== null,
+      ) ?? []
+    );
+  }, [productData?.products]);
+
   if (isPending) return <PageLoader />;
 
-  if (!productData?.products || productData.products.length === 0)
+  if (!productData || productsWithShops.length === 0)
     return (
       <div className="my-auto">
         <p className="my-auto text-xl text-muted-foreground">
@@ -54,7 +64,6 @@ export const ProductGrid = ({ id }: { id: string }) => {
   return (
     <>
       <Container className="p-4 shadow-inner">
-        {/* Products info and per page selector */}
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
@@ -70,7 +79,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(parseInt(e.target.value, 10));
-                setCurrentPage(1); // Reset to first page when changing items per page
+                setCurrentPage(1);
               }}
               className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
@@ -83,23 +92,16 @@ export const ProductGrid = ({ id }: { id: string }) => {
         </div>
 
         <div className="flex flex-col md:flex-row md:flex-wrap">
-          {productData.products.map((product) => (
+          {productsWithShops.map((product) => (
             <div
               className="flex basis-full justify-center p-4 md:basis-1/3 lg:basis-1/4"
-              key={product.name}
+              key={product.id}
             >
-              <NewProductCard
-                product={{
-                  ...product,
-                  shop: product.shop ?? undefined,
-                }}
-                key={product.id}
-              />
+              <NewProductCard product={product} key={product.id} />
             </div>
           ))}
         </div>
 
-        {/* Pagination Controls */}
         {productData.totalPages > 1 && (
           <div className="mt-6 flex justify-center gap-2 py-4">
             <button

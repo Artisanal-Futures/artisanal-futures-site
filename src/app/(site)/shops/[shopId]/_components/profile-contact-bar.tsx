@@ -15,16 +15,19 @@ export const ProfileContactBar = ({ website, email, phone }: ArtisanLinks) => {
       icon: <Mail className="h-4 w-4" />,
       value: email,
       placeholder: "No email provided",
+      href: `mailto:${email}`,
     },
     {
       icon: <Globe className="h-4 w-4" />,
       value: website,
       placeholder: "No website provided",
+      href: website,
     },
     {
       icon: <Phone className="h-4 w-4" />,
       value: phone,
       placeholder: "No phone provided",
+      href: `tel:${phone}`,
     },
   ].filter((method) => method.value);
 
@@ -37,11 +40,21 @@ export const ProfileContactBar = ({ website, email, phone }: ArtisanLinks) => {
       <div className="flex w-full flex-col justify-around text-sm font-light max-lg:space-y-3 lg:flex-row">
         {contactMethods.map((method, index) => (
           <Fragment key={index}>
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-1">
               {method.icon}
               <span className="text-muted-foreground">
-                {method.value ?? method.placeholder}
+                <a
+                  href={method.href ?? "#!"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative w-auto"
+                >
+                  {method.value ?? method.placeholder}
+                </a>
               </span>
+              {/* <span className="text-muted-foreground">
+                {method.value ?? method.placeholder}
+              </span> */}
             </span>
             {index < contactMethods.length - 1 && (
               <span className="text-muted-foreground max-lg:hidden">•</span>

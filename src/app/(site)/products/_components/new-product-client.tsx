@@ -18,6 +18,7 @@ import {
 } from "~/components/ui/select";
 
 import { NewProductCard } from "./new-product-card";
+import type { ProductWithRelations } from "~/types/product";
 
 const STORE_ATTRIBUTES = [
   "African American Culture",
@@ -31,7 +32,6 @@ const STORE_ATTRIBUTES = [
 
 const USE_SIDEBAR = true;
 
-// Memoized FilterControls component
 const FilterControls = memo(function FilterControls({
   searchTerm,
   setSearchTerm,
@@ -163,7 +163,6 @@ export function NewProductClient() {
   });
   const { data: stores } = api.shop.getAllValid.useQuery();
 
-  // Debounce search term updates
   const debouncedSetSearchTerm = useMemo(
     () =>
       debounce((term: string) => {
@@ -177,7 +176,6 @@ export function NewProductClient() {
     return () => debouncedSetSearchTerm.cancel();
   }, [searchTerm, debouncedSetSearchTerm]);
 
-  // Debounce URL updates
   const debouncedUpdateSearchParams = useMemo(
     () =>
       debounce((params: URLSearchParams) => {
@@ -189,14 +187,25 @@ export function NewProductClient() {
   );
 
   useEffect(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams);
     if (debouncedSearchTerm) params.set("search", debouncedSearchTerm);
-    if (selectedStore) params.set("store", selectedStore);
-    if (selectedAttributes.length > 0)
-      params.set("attributes", selectedAttributes.join(","));
+    else params.delete("search");
+    
+    if (selectedStore && selectedStore !== "all") params.set("store", selectedStore);
+    else params.delete("store");
+
+    if (selectedAttributes.length > 0) params.set("attributes", selectedAttributes.join(","));
+    else params.delete("attributes");
+
     if (sortOrder) params.set("sort", sortOrder);
+    else params.delete("sort");
+
     if (currentPage > 1) params.set("page", currentPage.toString());
+    else params.delete("page");
+
     if (itemsPerPage !== 20) params.set("limit", itemsPerPage.toString());
+    else params.delete("limit");
+
 
     debouncedUpdateSearchParams(params);
     return () => debouncedUpdateSearchParams.cancel();
@@ -208,6 +217,7 @@ export function NewProductClient() {
     currentPage,
     itemsPerPage,
     debouncedUpdateSearchParams,
+    searchParams
   ]);
 
   const resetFilters = useCallback(() => {
@@ -227,27 +237,27 @@ export function NewProductClient() {
   const filteredProducts = useMemo(() => {
     if (!productData?.products) return [];
 
-    return productData.products
-      .filter((product) => {
+    return (productData.products as ProductWithRelations[])
+      .filter((product) => { 
         const searchTermLower = debouncedSearchTerm.toLowerCase();
         const matchesSearch =
           product.name.toLowerCase().includes(searchTermLower) ||
-          stripHtmlTags(product.description)
+          (product.description && stripHtmlTags(product.description)
             .toLowerCase()
-            .includes(searchTermLower) ||
-          product.tags.some((tag) =>
+            .includes(searchTermLower)) ||
+          product.tags.some((tag: string) =>
             tag.toLowerCase().includes(searchTermLower),
           ) ||
-          product.attributeTags.some((tag) =>
+          product.attributeTags.some((tag: string) =>
             tag.toLowerCase().includes(searchTermLower),
           ) ||
-          product.materialTags.some((tag) =>
+          product.materialTags.some((tag: string) =>
             tag.toLowerCase().includes(searchTermLower),
           ) ||
-          product.environmentalTags.some((tag) =>
+          product.environmentalTags.some((tag: string) =>
             tag.toLowerCase().includes(searchTermLower),
           ) ||
-          product.aiGeneratedTags.some((tag) =>
+          product.aiGeneratedTags.some((tag: string) =>
             tag.toLowerCase().includes(searchTermLower),
           );
 
@@ -297,7 +307,6 @@ export function NewProductClient() {
         />
       </aside>
       <div className="flex-1 space-y-6 px-4 md:px-8">
-        {/* Products info and per page selector */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           {productData?.totalCount !== undefined && (
             <p className="text-sm text-muted-foreground">
@@ -305,8 +314,8 @@ export function NewProductClient() {
               {filteredProducts.length > 0
                 ? (currentPage - 1) * itemsPerPage + 1
                 : 0}{" "}
-              to {Math.min(currentPage * itemsPerPage, productData.totalCount)}{" "}
-              of {productData.totalCount} products
+              to {Math.min(currentPage * itemsPerPage, filteredProducts.length)}{" "}
+              of {filteredProducts.length} products
             </p>
           )}
           <div className="flex items-center gap-2">
@@ -318,7 +327,7 @@ export function NewProductClient() {
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(parseInt(e.target.value, 10));
-                setCurrentPage(1); // Reset to first page when changing items per page
+                setCurrentPage(1); 
               }}
               className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
@@ -331,13 +340,10 @@ export function NewProductClient() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
+          {filteredProducts.map((product) => ( 
             <NewProductCard
               key={product.id}
-              product={{
-                ...product,
-                shop: product.shop ?? undefined,
-              }}
+              product={product}
             />
           ))}
         </div>
@@ -345,7 +351,6 @@ export function NewProductClient() {
           <p className="text-center text-muted-foreground">No products found</p>
         )}
 
-        {/* Pagination Controls */}
         {productData?.totalPages && productData.totalPages > 1 && (
           <div className="flex justify-center gap-2 py-6">
             <button
@@ -405,7 +410,6 @@ export function NewProductClient() {
         />
       </div>
 
-      {/* Products info and per page selector */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         {productData?.totalCount !== undefined && (
           <p className="text-sm text-muted-foreground">
@@ -413,8 +417,8 @@ export function NewProductClient() {
             {filteredProducts.length > 0
               ? (currentPage - 1) * itemsPerPage + 1
               : 0}{" "}
-            to {Math.min(currentPage * itemsPerPage, productData.totalCount)} of{" "}
-            {productData.totalCount} products
+            to {Math.min(currentPage * itemsPerPage, filteredProducts.length)}{" "}
+            of {filteredProducts.length} products
           </p>
         )}
         <div className="flex items-center gap-2">
@@ -426,7 +430,7 @@ export function NewProductClient() {
             value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(parseInt(e.target.value, 10));
-              setCurrentPage(1); // Reset to first page when changing items per page
+              setCurrentPage(1);
             }}
             className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
@@ -439,13 +443,10 @@ export function NewProductClient() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredProducts.map((product) => (
+        {filteredProducts.map((product) => ( 
           <NewProductCard
             key={product.id}
-            product={{
-              ...product,
-              shop: product.shop ?? undefined,
-            }}
+            product={product}
           />
         ))}
       </div>
@@ -453,7 +454,6 @@ export function NewProductClient() {
         <p className="text-center text-muted-foreground">No products found</p>
       )}
 
-      {/* Pagination Controls */}
       {productData?.totalPages && productData.totalPages > 1 && (
         <div className="flex justify-center gap-2 py-6">
           <button
