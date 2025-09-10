@@ -298,7 +298,7 @@ export const productRouter = createTRPCRouter({
       const skip = (page - 1) * limit;
 
       // If categoryName is "all", return all products (with filters)
-      if (categoryName.toLowerCase() === "all") {
+      if (categoryName.toLowerCase() === "all-products") {
         const where: Prisma.ProductWhereInput = {
           isPublic: true,
         };
