@@ -93,17 +93,23 @@ export const productRouter = createTRPCRouter({
     }),
 
   getAll: elevatedProcedure.query(async ({ ctx }) => {
+    // Always order by createdAt DESC in the DB query
     const products = await ctx.db.product.findMany({
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
 
-    const productsWithFullUrls = products.map(addFullImageUrl);
+    // Map to add full image URLs, but preserve the order from the DB
+    let productsWithFullUrls = products.map(addFullImageUrl);
 
+    // If not admin, filter by ownerId, then re-sort by createdAt DESC to ensure order
     if (ctx.session.user.role !== "ADMIN") {
-      return productsWithFullUrls.filter(
-        (product) => product.shop?.ownerId === ctx.session.user.id,
-      );
+      productsWithFullUrls = productsWithFullUrls
+        .filter((product) => product.shop?.ownerId === ctx.session.user.id)
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
     }
 
     return productsWithFullUrls;
