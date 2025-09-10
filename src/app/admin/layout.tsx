@@ -5,7 +5,6 @@ import { getServerAuthSession } from '~/server/auth'
 import SidebarWrapper from './_components/sidebar-wrapper'
 
 type Props = {
-  searchParams?: { token?: string }
   children: React.ReactNode
 }
 

@@ -15,7 +15,7 @@ model Shop {
   attributeTags String[]
   name          String
   products      Product[]
-  Service       Service[]
+  services      Service[]
   owner         User         @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address       ShopAddress?
 }
@@ -30,6 +30,31 @@ model ShopAddress {
   country    String?
   shopId     String? @unique
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+
+enum CategoryType{
+  PRODUCT 
+  SERVICE
+}
+
+model Service {
+  id                String     @id @default(cuid())
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  durationInMinutes Int?
+  locationType      String?
+  tags              String[]
+  attributeTags     String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  isPublic          Boolean    @default(false)
+  shopId            String?
+  shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[] @relation("CategoryToService")
 }
 
 model Product {
@@ -52,9 +77,20 @@ model Product {
   tags              String[]
   isPublic          Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  Category          Category[]
+  categories        Category[]          @relation("CategoryToProduct")
 
   @@unique([shopId, shopProductId])
+}
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String     @unique
+  type     CategoryType @default(PRODUCT)
+  parentId String?
+  parent   Category?  @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
+  children Category[] @relation("Subcategories")
+  products Product[]  @relation("CategoryToProduct")
+  services Service[]  @relation("CategoryToService")
 }
 
 enum ProductScrapeMethod {

@@ -8,7 +8,7 @@ import { type TRPCClientErrorLike } from "@trpc/client";
 
 import { api } from "../trpc/react";
 
-type Entity = "product" | "shop" | "survey" | "guest";
+type Entity = "product" | "service" | "shop" | "survey" | "guest";
 
 type Props = {
   entity: Entity;
@@ -61,7 +61,6 @@ export const useDefaultMutationActions = ({ entity, redirectPath }: Props) => {
     const path = `/admin/${redirectPath}${id ? `/${id}/edit` : ""}`;
     router.push(path);
 
-    // Use a setTimeout to allow the navigation to complete before invalidating and refreshing
     setTimeout(() => {
       void apiContext[entity].invalidate();
       router.refresh();

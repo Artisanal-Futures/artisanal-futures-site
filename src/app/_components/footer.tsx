@@ -29,6 +29,12 @@ const Footer = () => {
               >
                 Tools
               </Link>
+              <Link
+                href="/services"
+                className="text-muted-foreground/80 hover:text-foreground"
+              >
+                Services
+              </Link>
             </div>
             <div className="flex-start flex flex-col gap-2">
               <h5 className="pb-2 text-lg font-semibold">The Collective</h5>

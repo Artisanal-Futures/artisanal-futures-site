@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { Tag } from "emblor";
-import type {
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormReturn,
-} from "react-hook-form";
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import React from "react";
-import { TagInput } from "emblor";
+import { TagInput, type Tag } from "emblor";
 
 import { cn } from "~/lib/utils";
 import {
@@ -30,7 +24,6 @@ type Props<CurrentForm extends FieldValues> = {
   onChange?: (value: string) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   inputId?: string;
-  defaultValue?: Tag[];
 };
 
 export const TagFormField = <CurrentForm extends FieldValues>({
@@ -41,10 +34,8 @@ export const TagFormField = <CurrentForm extends FieldValues>({
   className,
   placeholder,
   disabled,
-  defaultValue,
 }: Props<CurrentForm>) => {
-  const [tags, setTags] = React.useState<Tag[]>(defaultValue ?? []);
-
+  
   return (
     <FormField
       control={form.control}
@@ -54,19 +45,15 @@ export const TagFormField = <CurrentForm extends FieldValues>({
           {label && <FormLabel className="text-left">{label}</FormLabel>}
           <FormControl>
             <TagInput
-              {...field}
+              {...field} 
               disabled={disabled}
               placeholder={placeholder ?? ""}
-              tags={tags}
+              tags={field.value ?? []}
               className={cn("sm:min-w-[450px]", className)}
               setTags={(newTags) => {
-                setTags(newTags);
-                form.setValue(
-                  name,
-                  newTags as PathValue<CurrentForm, Path<CurrentForm>>,
-                );
+                field.onChange(newTags);
               }}
-              activeTagIndex={0}
+              activeTagIndex={null}
               setActiveTagIndex={() => {}}
             />
           </FormControl>

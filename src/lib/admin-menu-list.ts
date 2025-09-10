@@ -7,6 +7,8 @@ import {
   SquarePen,
   StoreIcon,
   UserIcon,
+  FolderTree, 
+  HandshakeIcon,
 } from "lucide-react";
 
 import type { Role } from "@prisma/client";
@@ -67,6 +69,22 @@ export function getMenuList(pathname: string): Group[] {
           restrictedAccess: [],
         },
         {
+          href: `/admin/services`,
+          label: "Services",
+          active: pathname.includes(`/admin/services`),
+          icon: HandshakeIcon,
+          submenus: [],
+          restrictedAccess: [],
+        },
+        {
+          href: `/admin/categories`,
+          label: "Categories",
+          active: pathname.includes(`/admin/categories`),
+          icon: FolderTree, 
+          submenus: [],
+          restrictedAccess: [], 
+        },
+        {
           href: `/admin/surveys`,
           label: "Surveys",
           active: pathname.includes(`/admin/surveys`),
@@ -76,7 +94,6 @@ export function getMenuList(pathname: string): Group[] {
         },
       ],
     },
-
     {
       groupLabel: "Tools",
       menus: [
