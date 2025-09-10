@@ -4,7 +4,8 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
-import { type PrismaClient, type Prisma } from "@prisma/client";
+
+import { type Prisma, type PrismaClient } from "@prisma/client";
 
 const productSchema = z.object({
   name: z.string(),
@@ -110,10 +111,12 @@ export const productRouter = createTRPCRouter({
 
   getAllValid: publicProcedure
     .input(
-      z.object({
-        page: z.number().default(1),
-        limit: z.number().default(20),
-      }).optional(),
+      z
+        .object({
+          page: z.number().default(1),
+          limit: z.number().default(24),
+        })
+        .optional(),
     )
     .query(async ({ ctx, input }) => {
       const page = input?.page ?? 1;
@@ -180,8 +183,11 @@ export const productRouter = createTRPCRouter({
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
       const { categoryIds, ...productData } = input;
-      
-      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
 
       const product = await ctx.db.product.create({
         data: {
@@ -191,15 +197,21 @@ export const productRouter = createTRPCRouter({
           },
         },
       });
-      return { data: addFullImageUrl(product), message: "Product created successfully" };
+      return {
+        data: addFullImageUrl(product),
+        message: "Product created successfully",
+      };
     }),
 
   update: elevatedProcedure
     .input(productSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id, categoryIds, ...productData } = input;
-      
-      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
 
       const product = await ctx.db.product.update({
         where: { id },
@@ -210,7 +222,10 @@ export const productRouter = createTRPCRouter({
           },
         },
       });
-      return { data: addFullImageUrl(product), message: "Product updated successfully" };
+      return {
+        data: addFullImageUrl(product),
+        message: "Product updated successfully",
+      };
     }),
 
   delete: elevatedProcedure
@@ -219,7 +234,10 @@ export const productRouter = createTRPCRouter({
       const product = await ctx.db.product.delete({
         where: { id: input },
       });
-      return { data: addFullImageUrl(product), message: "Product deleted successfully" };
+      return {
+        data: addFullImageUrl(product),
+        message: "Product deleted successfully",
+      };
     }),
 
   importProducts: publicProcedure
@@ -256,8 +274,8 @@ export const productRouter = createTRPCRouter({
   getAllByCategory: publicProcedure
     .input(
       z.object({
-        categoryName: z.string(), 
-        subcategoryName: z.string().optional(), 
+        categoryName: z.string(),
+        subcategoryName: z.string().optional(),
         storeId: z.string().optional(),
         attributes: z.array(z.string()).optional(),
         sort: z.enum(["asc", "desc"]).default("asc"),
@@ -267,33 +285,91 @@ export const productRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { 
-        categoryName, subcategoryName, storeId, attributes, 
-        sort, search, page, limit 
+      const {
+        categoryName,
+        subcategoryName,
+        storeId,
+        attributes,
+        sort,
+        search,
+        page,
+        limit,
       } = input;
       const skip = (page - 1) * limit;
 
+      // If categoryName is "all", return all products (with filters)
+      if (categoryName.toLowerCase() === "all") {
+        const where: Prisma.ProductWhereInput = {
+          isPublic: true,
+        };
+
+        if (search) {
+          where.OR = [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ];
+        }
+        if (storeId && storeId !== "all") {
+          where.shopId = storeId;
+        }
+        if (attributes && attributes.length > 0) {
+          where.shop = {
+            attributeTags: { hasEvery: attributes },
+          };
+        }
+
+        const [products, totalCount] = await ctx.db.$transaction([
+          ctx.db.product.findMany({
+            where,
+            include: { shop: true, categories: true },
+            orderBy: { name: sort },
+            skip,
+            take: limit,
+          }),
+          ctx.db.product.count({ where }),
+        ]);
+
+        // For "all", subcategories is always empty
+        return {
+          products: products.map(addFullImageUrl),
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          subcategories: [],
+        };
+      }
+
+      // Otherwise, filter by category as before
       const parentCategory = await ctx.db.category.findFirst({
         where: { name: { equals: categoryName, mode: "insensitive" } },
         include: { children: true },
       });
 
       if (!parentCategory) {
-        return { products: [], totalCount: 0, totalPages: 0, subcategories: [] };
+        return {
+          products: [],
+          totalCount: 0,
+          totalPages: 0,
+          subcategories: [],
+        };
       }
 
       let categoryIdsToFilter: string[] = [parentCategory.id];
       if (subcategoryName) {
         const subcategory = parentCategory.children.find(
-          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase()
+          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase(),
         );
         if (subcategory) {
           categoryIdsToFilter = [subcategory.id];
         } else {
-          return { products: [], totalCount: 0, totalPages: 0, subcategories: parentCategory.children };
+          return {
+            products: [],
+            totalCount: 0,
+            totalPages: 0,
+            subcategories: parentCategory.children,
+          };
         }
       } else {
-        categoryIdsToFilter.push(...parentCategory.children.map(c => c.id));
+        categoryIdsToFilter.push(...parentCategory.children.map((c) => c.id));
       }
 
       const where: Prisma.ProductWhereInput = {
@@ -336,59 +412,61 @@ export const productRouter = createTRPCRouter({
     }),
 
   bulkUpdate: elevatedProcedure
-  .input(
-    z.object({
-      productIds: z.array(z.string()).min(1, "Please select at least one product."),
-      categoryIds: z.array(z.string()).optional(),
-      tags: z.array(z.string()).optional(),
-      isPublic: z.boolean().optional(),
-      shopId: z.string().optional(),
+    .input(
+      z.object({
+        productIds: z
+          .array(z.string())
+          .min(1, "Please select at least one product."),
+        categoryIds: z.array(z.string()).optional(),
+        tags: z.array(z.string()).optional(),
+        isPublic: z.boolean().optional(),
+        shopId: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { productIds, categoryIds, tags, isPublic, shopId } = input;
+
+      // Filter only existing product IDs
+      const existingProducts = await ctx.db.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true },
+      });
+
+      const validIds = existingProducts.map((p) => p.id);
+
+      if (validIds.length === 0) {
+        throw new Error("No valid product IDs were found.");
+      }
+
+      // Compute all category + parent category IDs (if applicable)
+      const allCategoryIds = categoryIds
+        ? await getCategoriesWithParents(ctx.db, categoryIds)
+        : [];
+
+      const updatedProducts = await ctx.db.$transaction(
+        validIds.map((id) =>
+          ctx.db.product.update({
+            where: { id },
+            data: {
+              ...(typeof isPublic === "boolean" && { isPublic }),
+              ...(shopId && { shopId }),
+              ...(tags && { tags: { set: tags } }),
+
+              ...(categoryIds !== undefined
+                ? {
+                    categories: {
+                      set: allCategoryIds.map((id) => ({ id })),
+                    },
+                  }
+                : {}),
+            },
+          }),
+        ),
+      );
+
+      return {
+        message: `Successfully updated ${updatedProducts.length} product(s).`,
+        data: updatedProducts.map(addFullImageUrl),
+      };
     }),
-  )
-  .mutation(async ({ ctx, input }) => {
-    const { productIds, categoryIds, tags, isPublic, shopId } = input;
-
-    // Filter only existing product IDs
-    const existingProducts = await ctx.db.product.findMany({
-      where: { id: { in: productIds } },
-      select: { id: true },
-    });
-
-    const validIds = existingProducts.map((p) => p.id);
-
-    if (validIds.length === 0) {
-      throw new Error("No valid product IDs were found.");
-    }
-
-    // Compute all category + parent category IDs (if applicable)
-    const allCategoryIds = categoryIds
-      ? await getCategoriesWithParents(ctx.db, categoryIds)
-      : [];
-
-    const updatedProducts = await ctx.db.$transaction(
-      validIds.map((id) =>
-        ctx.db.product.update({
-          where: { id },
-          data: {
-            ...(typeof isPublic === "boolean" && { isPublic }),
-            ...(shopId && { shopId }),
-            ...(tags && { tags: { set: tags } }),
-
-            ...(categoryIds !== undefined
-              ? {
-                  categories: {
-                    set: allCategoryIds.map((id) => ({ id })),
-                  },
-                }
-              : {}),
-          },
-        })
-      )
-    );
-
-    return {
-      message: `Successfully updated ${updatedProducts.length} product(s).`,
-      data: updatedProducts.map(addFullImageUrl),
-    };
-  }),
 });

@@ -3,9 +3,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from 'next/navigation'
-import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { cn } from "~/utils/styles";
+import { useTheme } from "next-themes";
+
+import { type Category } from "@prisma/client";
 
 import {
   NavigationMenu,
@@ -15,11 +17,9 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "~/components/ui/navigation-menu";
-
 import { ModeToggle } from "~/components/common/mode-toggle";
 import Container from "~/app/_components/container";
 import NavbarActions from "~/app/_components/navbar-actions";
-import { type Category } from "@prisma/client";
 
 interface NavbarProps {
   productCategories: (Category & { children: Category[] })[];
@@ -33,12 +33,12 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
 
   const routes = [
     { href: "/shops", label: "Shops" },
-    { href: "/products", label: "Products" }, 
+    { href: "/products", label: "Products" },
     { href: "/services", label: "Services" },
     { href: "/forums", label: "Forums" },
     { href: "/tools", label: "Tools" },
   ];
-  
+
   return (
     <div className="relative z-20 border-b bg-background">
       <Container>
@@ -65,30 +65,35 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">Products</NavigationMenuTrigger>
+                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">
+                          Products
+                        </NavigationMenuTrigger>
                         <NavigationMenuContent>
                           <div className="flex w-[600px] p-4">
                             <div className="w-1/3 pr-4">
                               <NavigationMenuLink asChild>
                                 <a
-                                  className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
+                                  className="flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                                   href="/product-categories"
                                 >
                                   <div className="mb-2 text-lg font-medium">
                                     All Product Categories
                                   </div>
                                   <p className="text-sm leading-tight text-muted-foreground">
-                                    Browse all our products by category and subcategory.
+                                    Browse all our products by category and
+                                    subcategory.
                                   </p>
                                 </a>
                               </NavigationMenuLink>
                             </div>
                             <ul className="grid w-2/3 grid-cols-2 gap-3">
                               {productCategories?.map((category, index) => (
-                                <li 
+                                <li
                                   key={category.id}
                                   className={cn(
-                                    (productCategories.length % 2 !== 0 && index === productCategories.length - 1) && "col-span-2"
+                                    productCategories.length % 2 !== 0 &&
+                                      index === productCategories.length - 1 &&
+                                      "col-span-1",
                                   )}
                                 >
                                   <NavigationMenuLink asChild>
@@ -100,12 +105,30 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                                         {category.name}
                                       </div>
                                       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                        {category.children.map((c) => c.name).join(", ")}
+                                        {category.children
+                                          .map((c) => c.name)
+                                          .join(", ")}
                                       </p>
                                     </a>
                                   </NavigationMenuLink>
                                 </li>
                               ))}
+
+                              <li className="col-span-2">
+                                <NavigationMenuLink asChild>
+                                  <a
+                                    href="/products"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">
+                                      All Products
+                                    </div>
+                                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                      Browse all available products.
+                                    </p>
+                                  </a>
+                                </NavigationMenuLink>
+                              </li>
                             </ul>
                           </div>
                         </NavigationMenuContent>
@@ -119,30 +142,35 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">Services</NavigationMenuTrigger>
+                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">
+                          Services
+                        </NavigationMenuTrigger>
                         <NavigationMenuContent>
                           <div className="flex w-[600px] p-4">
                             <div className="w-1/3 pr-4">
                               <NavigationMenuLink asChild>
                                 <a
-                                  className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
+                                  className="flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                                   href="/service-categories"
                                 >
                                   <div className="mb-2 text-lg font-medium">
                                     All Service Categories
                                   </div>
                                   <p className="text-sm leading-tight text-muted-foreground">
-                                    Browse all our services by category and subcategory.
+                                    Browse all our services by category and
+                                    subcategory.
                                   </p>
                                 </a>
                               </NavigationMenuLink>
                             </div>
                             <ul className="grid w-2/3 grid-cols-2 gap-3">
                               {serviceCategories?.map((category, index) => (
-                                <li 
+                                <li
                                   key={category.id}
                                   className={cn(
-                                    (serviceCategories.length % 2 !== 0 && index === serviceCategories.length - 1) && "col-span-2"
+                                    serviceCategories.length % 2 !== 0 &&
+                                      index === serviceCategories.length - 1 &&
+                                      "col-span-2",
                                   )}
                                 >
                                   <NavigationMenuLink asChild>
@@ -154,7 +182,9 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                                         {category.name}
                                       </div>
                                       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                        {category.children.map((c) => c.name).join(", ")}
+                                        {category.children
+                                          .map((c) => c.name)
+                                          .join(", ")}
                                       </p>
                                     </a>
                                   </NavigationMenuLink>
@@ -173,8 +203,8 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   key={route.href}
                   href={route.href}
                   className={cn(
-                    'text-lg font-medium transition-colors hover:text-black lg:text-sm',
-                    pathname === route.href ? 'text-black' : 'text-neutral-500'
+                    "text-lg font-medium transition-colors hover:text-black lg:text-sm",
+                    pathname === route.href ? "text-black" : "text-neutral-500",
                   )}
                 >
                   {route.label}

@@ -1,11 +1,12 @@
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { CategoryType } from "@prisma/client"; 
+import { z } from "zod";
+
+import { CategoryType } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 
 const categorySchema = z.object({
   id: z.string().optional(),
@@ -35,7 +36,7 @@ export const categoryRouter = createTRPCRouter({
         data: {
           name: input.name,
           parentId: input.parentId,
-          type: input.type ?? CategoryType.PRODUCT, 
+          type: input.type ?? CategoryType.PRODUCT,
         },
       });
     }),
@@ -68,7 +69,7 @@ export const categoryRouter = createTRPCRouter({
         where: { id: input.id },
       });
     }),
-  
+
   // --- PUBLIC PROCEDURES ---
 
   /**
@@ -77,18 +78,19 @@ export const categoryRouter = createTRPCRouter({
    */
   getNavigationTree: publicProcedure
     .input(
-      z.object({
-        type: z.nativeEnum(CategoryType).optional(),
-      })
-      .optional() 
+      z
+        .object({
+          type: z.nativeEnum(CategoryType).optional(),
+        })
+        .optional(),
     )
     .query(({ ctx, input }) => {
       return ctx.db.category.findMany({
-        where: { 
+        where: {
           parentId: null,
           type: input?.type,
-        }, 
-        include: { children: true }, 
+        },
+        include: { children: true },
       });
     }),
 
@@ -98,9 +100,19 @@ export const categoryRouter = createTRPCRouter({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ ctx, input }) => {
+      if (input.slug === "all") {
+        return {
+          name: "All",
+          id: "all",
+          children: [],
+          type: CategoryType.PRODUCT,
+          parentId: null,
+        };
+      }
+
       return ctx.db.category.findFirst({
         where: { name: { equals: input.slug, mode: "insensitive" } },
-        include: { children: true }, 
+        include: { children: true },
       });
     }),
 });
