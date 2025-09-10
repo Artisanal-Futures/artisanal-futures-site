@@ -29,10 +29,17 @@ export const TOOLS_DATA = [
     url: "/tools/sankofa-sizer",
   },
   {
-    title: "Upcycling AI",
-    subtitle: "Upcycle your old scraps into new designs",
-    type: "Design",
+    title: "Neural Style Transfer",
+    subtitle: "Recreate an image in the style of another",
+    type: "Logistics",
     image: "img/craft_composition.png",
-    url: "https://generate.dev.artisanalfutures.org/",
+    url: "https://artisanal-futures-style-transfer.netlify.app/",
   },
+  // {
+  //   title: "Upcycling AI",
+  //   subtitle: "Upcycle your old scraps into new designs",
+  //   type: "Design",
+  //   image: "img/craft_composition.png",
+  //   url: "https://generate.dev.artisanalfutures.org/",
+  // },
 ];
