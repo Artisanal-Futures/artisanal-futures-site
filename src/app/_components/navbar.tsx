@@ -65,7 +65,7 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <Link href="/product-category/all">
+                        <Link href="/product-category/all-products">
                           <NavigationMenuTrigger className="px-1 text-lg font-medium text-neutral-500 lg:text-sm">
                             Products
                           </NavigationMenuTrigger>
@@ -119,7 +119,7 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                               <li className="col-span-2">
                                 <NavigationMenuLink asChild>
                                   <a
-                                    href="/product-category/all"
+                                    href="/product-category/all-products"
                                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                   >
                                     <div className="text-sm font-medium leading-none">
@@ -195,6 +195,21 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                                   </NavigationMenuLink>
                                 </li>
                               ))}
+                              <li className="col-span-2">
+                                <NavigationMenuLink asChild>
+                                  <a
+                                    href="/service-category/all-services"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">
+                                      All Services
+                                    </div>
+                                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                      Browse all available services.
+                                    </p>
+                                  </a>
+                                </NavigationMenuLink>
+                              </li>
                             </ul>
                           </div>
                         </NavigationMenuContent>
