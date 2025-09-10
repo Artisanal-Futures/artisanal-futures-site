@@ -25,7 +25,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   const category = await api.category.getBySlug({ slug: categoryName });
 
-  if (!category && categoryName !== "all") {
+  if (!category && categoryName !== "all-products") {
     return <div>Category not found.</div>;
   }
 

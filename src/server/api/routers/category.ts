@@ -100,12 +100,21 @@ export const categoryRouter = createTRPCRouter({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ ctx, input }) => {
-      if (input.slug === "all") {
+      if (input.slug === "all-products") {
         return {
           name: "All",
-          id: "all",
+          id: "all-products",
           children: [],
           type: CategoryType.PRODUCT,
+          parentId: null,
+        };
+      }
+      if (input.slug === "all-services") {
+        return {
+          name: "All",
+          id: "all-services",
+          children: [],
+          type: CategoryType.SERVICE,
           parentId: null,
         };
       }

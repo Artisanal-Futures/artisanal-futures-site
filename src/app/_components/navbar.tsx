@@ -65,9 +65,11 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">
-                          Products
-                        </NavigationMenuTrigger>
+                        <Link href="/product-category/all">
+                          <NavigationMenuTrigger className="px-1 text-lg font-medium text-neutral-500 lg:text-sm">
+                            Products
+                          </NavigationMenuTrigger>
+                        </Link>
                         <NavigationMenuContent>
                           <div className="flex w-[600px] p-4">
                             <div className="w-1/3 pr-4">
@@ -117,7 +119,7 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                               <li className="col-span-2">
                                 <NavigationMenuLink asChild>
                                   <a
-                                    href="/products"
+                                    href="/product-category/all"
                                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                   >
                                     <div className="text-sm font-medium leading-none">
@@ -142,9 +144,12 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <NavigationMenuTrigger className="px-1 text-lg font-medium lg:text-sm">
-                          Services
-                        </NavigationMenuTrigger>
+                        <Link href="/service-category/all-services">
+                          <NavigationMenuTrigger className="px-1 text-lg font-medium text-neutral-500 lg:text-sm">
+                            Services
+                          </NavigationMenuTrigger>
+                        </Link>
+
                         <NavigationMenuContent>
                           <div className="flex w-[600px] p-4">
                             <div className="w-1/3 pr-4">

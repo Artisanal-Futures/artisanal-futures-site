@@ -3,13 +3,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
+  adminProcedure,
   createTRPCRouter,
   elevatedProcedure,
   publicProcedure,
-  adminProcedure,
 } from "~/server/api/trpc";
 import { z } from "zod";
-import { type PrismaClient, type Prisma } from "@prisma/client";
+
+import { type Prisma, type PrismaClient } from "@prisma/client";
 
 const serviceSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -32,7 +33,9 @@ type ServiceWithImageUrl<T> = T & {
 };
 
 // Generic addFullImageUrl that preserves the original type structure
-const addFullImageUrl = <T extends { imageUrl?: string | null }>(service: T | null): T | null => {
+const addFullImageUrl = <T extends { imageUrl?: string | null }>(
+  service: T | null,
+): T | null => {
   if (!service) return null;
   const storageBaseUrl = "https://storage.artisanalfutures.org/services";
   if (service.imageUrl && !service.imageUrl.startsWith("http")) {
@@ -99,7 +102,10 @@ export const serviceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, categoryIds, ...serviceData } = input;
 
-      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
 
       const service = await ctx.db.service.update({
         where: { id },
@@ -121,7 +127,10 @@ export const serviceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { categoryIds, ...serviceData } = input;
 
-      const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
 
       const service = await ctx.db.service.create({
         data: {
@@ -137,22 +146,22 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  delete: adminProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input }) => {
-      const service = await ctx.db.service.delete({
-        where: { id: input },
-      });
-      return {
-        data: addFullImageUrl(service),
-        message: "Service deleted successfully",
-      };
-    }),
+  delete: adminProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
+    const service = await ctx.db.service.delete({
+      where: { id: input },
+    });
+    return {
+      data: addFullImageUrl(service),
+      message: "Service deleted successfully",
+    };
+  }),
 
   bulkUpdate: adminProcedure
     .input(
       z.object({
-        serviceIds: z.array(z.string()).min(1, "Please select at least one service."),
+        serviceIds: z
+          .array(z.string())
+          .min(1, "Please select at least one service."),
         categoryIds: z.array(z.string()).optional(),
         tags: z.array(z.string()).optional(),
         isPublic: z.boolean().optional(),
@@ -161,15 +170,18 @@ export const serviceRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { serviceIds, categoryIds, tags, isPublic, shopId } = input;
-      
+
       const dataToUpdate: Record<string, unknown> = {};
-      
+
       if (shopId !== undefined) dataToUpdate.shopId = shopId;
       if (isPublic !== undefined) dataToUpdate.isPublic = isPublic;
       if (tags !== undefined) dataToUpdate.tags = { set: tags };
-      
+
       if (categoryIds !== undefined) {
-        const allCategoryIds = await getCategoriesWithParents(ctx.db, categoryIds);
+        const allCategoryIds = await getCategoriesWithParents(
+          ctx.db,
+          categoryIds,
+        );
         dataToUpdate.categories = { set: allCategoryIds.map((id) => ({ id })) };
       }
 
@@ -217,10 +229,12 @@ export const serviceRouter = createTRPCRouter({
 
   getAllValid: publicProcedure
     .input(
-      z.object({
-        page: z.number().default(1),
-        limit: z.number().default(20),
-      }).optional(),
+      z
+        .object({
+          page: z.number().default(1),
+          limit: z.number().default(20),
+        })
+        .optional(),
     )
     .query(async ({ ctx, input }) => {
       const page = input?.page ?? 1;
@@ -283,7 +297,7 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-    getAllByCategory: publicProcedure
+  getAllByCategory: publicProcedure
     .input(
       z.object({
         categoryName: z.string(),
@@ -297,11 +311,58 @@ export const serviceRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { 
-        categoryName, subcategoryName, storeId, attributes, 
-        sort, search, page, limit 
+      const {
+        categoryName,
+        subcategoryName,
+        storeId,
+        attributes,
+        sort,
+        search,
+        page,
+        limit,
       } = input;
       const skip = (page - 1) * limit;
+
+      // If categoryName is "all-services", return all services (with filters)
+      if (categoryName.toLowerCase() === "all-services") {
+        const where: Prisma.ServiceWhereInput = {
+          isPublic: true,
+        };
+
+        if (search) {
+          where.OR = [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ];
+        }
+        if (storeId && storeId !== "all") {
+          where.shopId = storeId;
+        }
+        if (attributes && attributes.length > 0) {
+          where.shop = {
+            attributeTags: { hasEvery: attributes },
+          };
+        }
+
+        const [services, totalCount] = await ctx.db.$transaction([
+          ctx.db.service.findMany({
+            where,
+            include: { shop: true, categories: true },
+            orderBy: { name: sort },
+            skip,
+            take: limit,
+          }),
+          ctx.db.service.count({ where }),
+        ]);
+
+        // For "all-services", subcategories is always empty
+        return {
+          services: services.map(addFullImageUrl),
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          subcategories: [],
+        };
+      }
 
       const parentCategory = await ctx.db.category.findFirst({
         where: { name: { equals: categoryName, mode: "insensitive" } },
@@ -309,21 +370,31 @@ export const serviceRouter = createTRPCRouter({
       });
 
       if (!parentCategory) {
-        return { services: [], totalCount: 0, totalPages: 0, subcategories: [] };
+        return {
+          services: [],
+          totalCount: 0,
+          totalPages: 0,
+          subcategories: [],
+        };
       }
 
       let categoryIdsToFilter: string[] = [parentCategory.id];
       if (subcategoryName) {
         const subcategory = parentCategory.children.find(
-          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase()
+          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase(),
         );
         if (subcategory) {
           categoryIdsToFilter = [subcategory.id];
         } else {
-          return { services: [], totalCount: 0, totalPages: 0, subcategories: parentCategory.children };
+          return {
+            services: [],
+            totalCount: 0,
+            totalPages: 0,
+            subcategories: parentCategory.children,
+          };
         }
       } else {
-        categoryIdsToFilter.push(...parentCategory.children.map(c => c.id));
+        categoryIdsToFilter.push(...parentCategory.children.map((c) => c.id));
       }
 
       const where: Prisma.ServiceWhereInput = {
