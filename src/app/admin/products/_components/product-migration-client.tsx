@@ -133,6 +133,7 @@ export function DatabaseMigrationClient() {
 
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
+
         convertedProducts = shopifyData.products.map(
           (product) =>
             convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
@@ -142,6 +143,7 @@ export function DatabaseMigrationClient() {
         convertedProducts = squarespaceData.items.map(
           (product) =>
             convertToProduct(product, selectedShopId) as Partial<ProductWithRelations>,
+
         );
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressProduct[];

@@ -26,6 +26,7 @@ type Props = {
 };
 
 export function ProductClient({ products, shops }: Props) {
+
   const { isElevated } = usePermissions();
   const searchParams = useSearchParams();
 
@@ -34,6 +35,7 @@ export function ProductClient({ products, shops }: Props) {
     pageIndex: searchParams.get("page") ? Number(searchParams.get("page")) - 1 : 0,
     pageSize: searchParams.get("limit") ? Number(searchParams.get("limit")) : 10,
   });
+
 
   const selectedProductIds = useMemo(() => {
     return Object.keys(rowSelection)
@@ -124,6 +126,7 @@ export function ProductClient({ products, shops }: Props) {
         columns={productColumns}
         data={enhancedProducts}
         filters={productFilters}
+
         toolbarActions={toolbarActionsNode}
         defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
@@ -131,6 +134,8 @@ export function ProductClient({ products, shops }: Props) {
         addButton={addButtonNode}
         pagination={pagination}
         onPaginationChange={setPagination}
+
+
       />
     </div>
   );
