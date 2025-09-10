@@ -30,7 +30,7 @@ model ShopAddress {
   country    String?
   shopId     String? @unique
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
-}
+
 
 enum CategoryType{
   PRODUCT 
