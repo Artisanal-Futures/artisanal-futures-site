@@ -66,7 +66,7 @@ export function DatabaseMigrationClient() {
     null,
   );
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
+  // const [selectedField, setSelectedField] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
   >([]);
@@ -297,7 +297,7 @@ export function DatabaseMigrationClient() {
               <h3 className="text-lg font-semibold">Check Duplicates</h3>
               <Select
                 onValueChange={(value) => {
-                  setSelectedField(value);
+                  // setSelectedField(value);
                   checkDuplicates(value);
                 }}
               >

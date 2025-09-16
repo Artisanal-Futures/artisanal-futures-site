@@ -1,10 +1,12 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { toast } from "sonner";
+import { z } from "zod";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import {
@@ -23,7 +25,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Switch } from "~/components/ui/switch";
-import { MultiSelectFormField, type OptionType } from "~/components/inputs/multi-select-form-field";
+import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 
 const bulkUpdateFormSchema = z.object({
@@ -41,7 +43,7 @@ type Props = {
   dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Props) {
+export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
   const utils = api.useUtils();
 
   const { data: categories } = api.category.getAll.useQuery();
@@ -70,9 +72,12 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
 
   const onSubmit = (data: BulkUpdateFormValues) => {
     const dataToSubmit: Record<string, unknown> = {};
-    if (form.formState.dirtyFields.categoryIds) dataToSubmit.categoryIds = data.categoryIds;
-    if (form.formState.dirtyFields.tags) dataToSubmit.tags = data.tags?.map(t => t.text);
-    if (form.formState.dirtyFields.isPublic) dataToSubmit.isPublic = data.isPublic;
+    if (form.formState.dirtyFields.categoryIds)
+      dataToSubmit.categoryIds = data.categoryIds;
+    if (form.formState.dirtyFields.tags)
+      dataToSubmit.tags = data.tags?.map((t) => t.text);
+    if (form.formState.dirtyFields.isPublic)
+      dataToSubmit.isPublic = data.isPublic;
     if (form.formState.dirtyFields.shopId) dataToSubmit.shopId = data.shopId;
 
     if (Object.keys(dataToSubmit).length === 0) {
@@ -92,14 +97,15 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
       ?.filter((cat) => cat.type === "PRODUCT")
       .map((cat) => ({
         value: cat.id,
-        label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ""}${cat.name}`,
       })) ?? [];
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <p className="text-sm text-muted-foreground">
-          You are editing {productIds.length} products. Only the fields you change will be updated.
+          You are editing {productIds.length} products. Only the fields you
+          change will be updated.
         </p>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <FormField
@@ -121,14 +127,10 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
           <FormField
             control={form.control}
             name="tags"
-            render={({ field }) => (
+            render={({}) => (
               <FormItem>
                 <FormLabel>Assign Tags</FormLabel>
-                <TagFormField
-                  form={form}
-                  name="tags"
-                  label=""
-                />
+                <TagFormField form={form} name="tags" label="" />
                 <FormMessage />
               </FormItem>
             )}
@@ -139,7 +141,10 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Assign to Shop</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a shop to assign" />
@@ -147,7 +152,9 @@ export function BulkProductForm({ productIds, onSuccessCallback, dialogRef }: Pr
                   </FormControl>
                   <SelectContent>
                     {shops?.map((shop) => (
-                      <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem>
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

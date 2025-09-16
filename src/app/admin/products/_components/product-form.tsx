@@ -58,11 +58,7 @@ type Props = {
   dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function ProjectForm({
-  initialData,
-  onSuccessCallback,
-  dialogRef,
-}: Props) {
+export function ProjectForm({ initialData, onSuccessCallback }: Props) {
   const { uploadFile, isUploading } = useFileUpload({
     route: "products",
     api: "/api/upload-product",

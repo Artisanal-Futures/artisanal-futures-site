@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   ShopifyProduct,
   SquareSpaceProduct,
@@ -33,7 +34,7 @@ export async function convertToProduct(
   // Handle WordPress product
   if ("class_list" in product) {
     let imageUrl = null;
-    let description = product.content.rendered.replace(/<[^>]*>/g, "");
+    const description = product.content.rendered.replace(/<[^>]*>/g, "");
 
     const mediaHref = product._links["wp:featuredmedia"]?.[0]?.href ?? "";
     let isJson = false;
