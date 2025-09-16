@@ -152,6 +152,7 @@ export const categoryRouter = createTRPCRouter({
               },
             },
           },
+          orderBy: { name: "asc" },
         });
 
         const formattedCategories = categories.map((category) => ({
@@ -178,6 +179,7 @@ export const categoryRouter = createTRPCRouter({
             },
           },
         },
+        orderBy: { name: "asc" },
       });
       const formattedCategories = categories.map((category) => ({
         ...category,
