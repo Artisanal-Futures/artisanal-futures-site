@@ -124,4 +124,65 @@ export const categoryRouter = createTRPCRouter({
         include: { children: true },
       });
     }),
+
+  getCategoriesWithFeaturedProducts: publicProcedure
+    .input(
+      z
+        .object({
+          type: z.nativeEnum(CategoryType).optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      if (input?.type === CategoryType.SERVICE) {
+        const categories = await ctx.db.category.findMany({
+          where: {
+            parentId: null,
+            type: input?.type,
+          },
+          include: {
+            children: true,
+            services: {
+              take: 4,
+              where: {
+                isFeatured: true,
+              },
+              include: {
+                shop: true,
+              },
+            },
+          },
+        });
+
+        const formattedCategories = categories.map((category) => ({
+          ...category,
+          items: category.services.map((service) => service),
+        }));
+        return formattedCategories;
+      }
+
+      const categories = await ctx.db.category.findMany({
+        where: {
+          parentId: null,
+          type: input?.type,
+        },
+        include: {
+          children: true,
+          products: {
+            take: 4,
+            where: {
+              isFeatured: true,
+            },
+            include: {
+              shop: true,
+            },
+          },
+        },
+      });
+      const formattedCategories = categories.map((category) => ({
+        ...category,
+        items: category.products.map((product) => product),
+      }));
+      return formattedCategories;
+    }),
 });

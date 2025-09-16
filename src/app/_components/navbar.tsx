@@ -16,6 +16,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import Container from "~/app/_components/container";
@@ -58,15 +59,15 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
             />
           </Link>
 
-          <nav className="mx-6 hidden items-center space-x-4 lg:flex lg:space-x-6">
+          <nav className="mx-6 hidden items-center space-x-2 lg:flex lg:space-x-2">
             {routes.map((route) => {
               if (route.label === "Products") {
                 return (
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <Link href="/product-category/all-products">
-                          <NavigationMenuTrigger className="px-1 text-lg font-medium text-neutral-500 lg:text-sm">
+                        <Link href="/product-categories">
+                          <NavigationMenuTrigger className="text-lg font-medium text-neutral-500 lg:text-sm">
                             Products
                           </NavigationMenuTrigger>
                         </Link>
@@ -144,8 +145,8 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   <NavigationMenu key={route.href}>
                     <NavigationMenuList>
                       <NavigationMenuItem>
-                        <Link href="/service-category/all-services">
-                          <NavigationMenuTrigger className="px-1 text-lg font-medium text-neutral-500 lg:text-sm">
+                        <Link href="/service-categories">
+                          <NavigationMenuTrigger className="text-lg font-medium text-neutral-500 lg:text-sm">
                             Services
                           </NavigationMenuTrigger>
                         </Link>
@@ -225,6 +226,7 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
                   className={cn(
                     "text-lg font-medium transition-colors hover:text-black lg:text-sm",
                     pathname === route.href ? "text-black" : "text-neutral-500",
+                    navigationMenuTriggerStyle(),
                   )}
                 >
                   {route.label}

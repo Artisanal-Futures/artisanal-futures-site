@@ -95,6 +95,11 @@ const config = {
         protocol: "https",
         hostname: "darkgoldenrod-cod-537275.hostingersite.com",
       },
+
+      {
+        protocol: "https",
+        hostname: "rescuenaturenow.org",
+      },
     ],
   },
 };

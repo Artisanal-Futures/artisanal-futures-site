@@ -25,6 +25,7 @@ const productSchema = z.object({
   shopId: z.string(),
   shopProductId: z.string().optional().nullable(),
   categoryIds: z.array(z.string()).optional(),
+  isFeatured: z.boolean(),
 });
 
 // Type for products with potential imageUrl field
@@ -475,4 +476,22 @@ export const productRouter = createTRPCRouter({
         data: updatedProducts.map(addFullImageUrl),
       };
     }),
+
+  getAllFeatured: publicProcedure.query(async ({ ctx }) => {
+    // Always order by createdAt DESC in the DB query
+    const products = await ctx.db.product.findMany({
+      where: {
+        tags: {
+          hasSome: ["Featured Fashion", "Featured Food"],
+        },
+      },
+      include: { shop: true, categories: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Map to add full image URLs, but preserve the order from the DB
+    const productsWithFullUrls = products.map(addFullImageUrl);
+
+    return productsWithFullUrls;
+  }),
 });

@@ -164,6 +164,7 @@ export function DatabaseMigrationClient() {
         );
       }
 
+      console.log(convertedProducts);
       if (!convertedProducts.length) {
         throw new Error("No products found in the data");
       }
@@ -191,6 +192,7 @@ export function DatabaseMigrationClient() {
       productMigration.mutate(
         previewData.map((product) => ({
           ...product,
+          isFeatured: false,
           shopId: product.shopId ?? "",
           shopProductId: product.shopProductId ?? "",
         })),

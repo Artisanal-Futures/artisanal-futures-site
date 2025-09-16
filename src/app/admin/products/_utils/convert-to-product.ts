@@ -32,16 +32,24 @@ export async function convertToProduct(
 
   // Handle WordPress product
   if ("class_list" in product) {
-    const getMedia = await fetch(
-      product._links["wp:featuredmedia"]?.[0]?.href ?? "",
-    );
-    const media = (await getMedia.json()) as {
-      guid: {
-        rendered: string;
-      };
-    };
-    const imageUrl = media.guid.rendered;
-    const description = product.content.rendered.replace(/<[^>]*>/g, "");
+    let imageUrl = null;
+    let description = product.content.rendered.replace(/<[^>]*>/g, "");
+
+    const mediaHref = product._links["wp:featuredmedia"]?.[0]?.href ?? "";
+    let isJson = false;
+    if (mediaHref) {
+      const getMedia = await fetch(mediaHref);
+      const contentType = getMedia.headers.get("content-type") ?? "";
+      if (getMedia.ok && contentType.includes("application/json")) {
+        isJson = true;
+        const media = (await getMedia.json()) as {
+          guid: {
+            rendered: string;
+          };
+        };
+        imageUrl = media.guid.rendered;
+      }
+    }
 
     return {
       shopProductId: product.id.toString(),
@@ -62,15 +70,17 @@ export async function convertToProduct(
   }
 
   // Handle SquareSpace product
+
+  const imageUrl = product.items?.[0]?.assetUrl ?? product.assetUrl ?? null;
   return {
     shopProductId: product.id,
     name: product.title,
     description: product.body ?? product.excerpt ?? "",
-    priceInCents: product.structuredContent?.variants[0]?.price ?? null,
+    priceInCents: product.structuredContent?.variants?.[0]?.price ?? null,
     currency: product.structuredContent?.priceMoney?.currency ?? null,
-    imageUrl: product.assetUrl ?? null,
+    imageUrl: imageUrl,
     productUrl: product.fullUrl ?? null,
-    attributeTags: product.categories ?? [],
+    attributeTags: [],
     tags: [],
     materialTags: [],
     environmentalTags: [],

@@ -3,8 +3,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
-import type { ProductWithRelations } from "~/types/product"; 
-
+import type { ProductWithRelations } from "~/types/product";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -57,9 +56,9 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </div>
 
           <CardHeader className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {/* <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
-            </p>
+            </p> */}
 
             <CardTitle className="line-clamp-1 text-xl capitalize">
               {product.name}
@@ -119,6 +118,9 @@ export const NewProductCard: FC<Props> = ({ product }) => {
               </ScrollArea>
             </div>
 
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
+            </p>
             {product.tags.length > 0 && (
               <div>
                 <h4 className="mb-1 font-semibold">Tags</h4>
