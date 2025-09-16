@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import type { Shop, Survey } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { surveyFormSchema, SurveyFormValues } from "../_validators/schema";
+import type { SurveyFormValues } from "../_validators/schema";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
@@ -15,6 +15,8 @@ import { Input } from "~/components/ui/input";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 import { Textarea } from "~/components/ui/textarea";
+
+import { surveyFormSchema } from "../_validators/schema";
 
 type Props = {
   initialData: Survey | null;
