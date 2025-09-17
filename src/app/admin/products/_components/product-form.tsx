@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
 
 import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import type { ProductWithRelations } from "~/types/product";
@@ -85,7 +86,7 @@ export function ProjectForm({ initialData, onSuccessCallback }: Props) {
       environmentalTags: initialData?.environmentalTags ?? [],
       aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
       shopId: initialData?.shopId ?? "",
-      shopProductId: initialData?.shopProductId ?? "",
+      shopProductId: initialData?.shopProductId ?? `af${createId()}`,
       scrapeMethod: initialData?.scrapeMethod ?? "MANUAL",
       imageUrl: initialData?.imageUrl ?? "",
       categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],

@@ -1,7 +1,12 @@
 import { EventBulletinCard } from "./event-bulletin-card";
+import { EventBulletinText } from "./event-bulletin-text";
 
 export type BulletinBoardEvent = {
   imageUrl: string;
+  shopName: string;
+  text: string;
+  ctaLabel?: string;
+  ctaHref?: string;
 };
 
 type Props = {
@@ -9,6 +14,13 @@ type Props = {
 };
 
 export const EventBulletinBoard = ({ upcomingEvents }: Props) => {
+  // Determine grid layout based on number of events
+  const getGridCols = (eventCount: number) => {
+    if (eventCount === 1) return "grid-cols-1 max-w-7xl mx-auto";
+    if (eventCount === 2) return "grid-cols-1 md:grid-cols-2";
+    return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+  };
+
   return (
     <>
       <h1 className="mt-12 px-4 pt-4 text-2xl font-semibold">
@@ -24,9 +36,19 @@ export const EventBulletinBoard = ({ upcomingEvents }: Props) => {
             Nothing new yet, but check back later!
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-5 p-4 md:grid-cols-3 md:gap-10">
+          <div
+            className={`grid gap-5 p-4 md:gap-10 ${getGridCols(upcomingEvents.length)}`}
+          >
             {upcomingEvents.map((item, idx) => (
-              <EventBulletinCard imageUrl={item.imageUrl} key={idx} />
+              <EventBulletinText
+                imageUrl={item.imageUrl}
+                key={idx}
+                shopName={item.shopName}
+                text={item.text}
+                ctaLabel={item.ctaLabel}
+                ctaHref={item.ctaHref}
+                featured={upcomingEvents.length === 1}
+              />
             ))}
           </div>
         )}

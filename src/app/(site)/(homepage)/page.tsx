@@ -36,7 +36,31 @@ export default function HomePage() {
         ))}
       </div>
 
-      <EventBulletinBoard upcomingEvents={[]} />
+      <EventBulletinBoard
+        upcomingEvents={[
+          {
+            shopName: "Indigo Culinary",
+            text: `Family, Friends, and Community,
+
+﻿
+
+We’re excited to share that Indigo Culinary Co. will be at D-Town Farm’s Harvest Festival this weekend!
+
+Come celebrate the season with us. Good food, live music, vendors, and community all gathered on the land. We’ll be there with our full line of spice blends, teas, and storytelling, ready to season your table with flavors rooted in the African diaspora.
+
+📍 D-Town Farm (14027 W. Outer Drive, Detroit)
+📅 Saturday & Sunday, Sept 20th & 21st
+⏰ 12 PM – 6 PM
+
+This festival is a celebration of harvest, resilience, and joy. Bring your family, bring a friend, and come connect with us in the field.
+
+We can’t wait to see you there!`,
+            imageUrl: "/img/indigo-news-sept.jpg",
+            ctaLabel: "Learn More",
+            ctaHref: "https://www.dbcfsn.org/harvest2025",
+          },
+        ]}
+      />
 
       <div className="text-center">
         <h2 className="mt-12 text-3xl font-bold">
