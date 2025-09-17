@@ -156,7 +156,7 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
 
         <div className="mt-4 flex gap-4">
           <Button asChild className="flex-1">
-            <Link href={serviceUrl ?? "#"} target="_blank">
+            <Link href={service?.serviceUrl ?? "#"} target="_blank">
               View Service
             </Link>
           </Button>
