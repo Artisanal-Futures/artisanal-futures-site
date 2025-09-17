@@ -1,10 +1,12 @@
 "use client";
 
 import { memo, useCallback, useMemo, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { type Category } from "@prisma/client";
 
+import { type ServiceWithShop } from "~/types/service";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -17,9 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
 import { NewServiceCard } from "~/app/(site)/services/_components/new-service-card";
-import { type ServiceWithShop } from "~/types/service";
 
 const STORE_ATTRIBUTES = [
   "African American Culture",
@@ -62,7 +62,7 @@ const usePagination = ({
     const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
     const rightSiblingIndex = Math.min(
       currentPage + siblingCount,
-      totalPageCount
+      totalPageCount,
     );
 
     const shouldShowLeftDots = leftSiblingIndex > 2;
@@ -81,7 +81,7 @@ const usePagination = ({
       const rightItemCount = 3 + 2 * siblingCount;
       const rightRange = range(
         totalPageCount - rightItemCount + 1,
-        totalPageCount
+        totalPageCount,
       );
       return [firstPageIndex, DOTS, ...rightRange];
     }
@@ -116,7 +116,7 @@ function Pagination({
     siblingCount,
     pageSize,
   });
-  
+
   const totalPageCount = Math.ceil(totalCount / pageSize);
 
   if (currentPage === 0 || totalPageCount < 2) {
@@ -159,7 +159,11 @@ function Pagination({
           );
         })}
       </div>
-      <Button onClick={onNext} disabled={currentPage >= totalPageCount} size="sm">
+      <Button
+        onClick={onNext}
+        disabled={currentPage >= totalPageCount}
+        size="sm"
+      >
         Next
       </Button>
     </div>
@@ -179,18 +183,23 @@ const FilterControls = memo(function FilterControls({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   const searchTerm = searchParams.get("search") ?? "";
   const selectedStore = searchParams.get("store") ?? "all";
   const sortOrder = (searchParams.get("sort") as "asc" | "desc") ?? "asc";
-  const selectedAttributes = useMemo(() => searchParams.get("attributes")?.split(",").filter(Boolean) ?? [], [searchParams]);
+  const selectedAttributes = useMemo(
+    () => searchParams.get("attributes")?.split(",").filter(Boolean) ?? [],
+    [searchParams],
+  );
   const selectedSubcategorySlug = searchParams.get("subcategory");
 
   const handleAttributeChange = (checked: boolean, attribute: string) => {
     const newAttributes = checked
       ? [...selectedAttributes, attribute]
       : selectedAttributes.filter((attr) => attr !== attribute);
-    updateSearchParams({ attributes: newAttributes.length > 0 ? newAttributes.join(',') : null });
+    updateSearchParams({
+      attributes: newAttributes.length > 0 ? newAttributes.join(",") : null,
+    });
   };
 
   return (
@@ -204,39 +213,61 @@ const FilterControls = memo(function FilterControls({
                 <Link
                   href={`${pathname}?subcategory=${encodeURIComponent(sub.name)}`}
                   scroll={false}
-                  className={`block rounded-md p-2 text-sm ${selectedSubcategorySlug === encodeURIComponent(sub.name) ? 'bg-accent font-bold' : 'hover:bg-accent/50'}`}
+                  className={`block rounded-md p-2 text-sm ${selectedSubcategorySlug === encodeURIComponent(sub.name) ? "bg-accent font-bold" : "hover:bg-accent/50"}`}
                 >
                   {sub.name}
                 </Link>
               </li>
             ))}
             {selectedSubcategorySlug && (
-              <Link href={pathname} scroll={false} className="mt-2 block text-sm text-muted-foreground hover:underline">
+              <Link
+                href={pathname}
+                scroll={false}
+                className="mt-2 block text-sm text-muted-foreground hover:underline"
+              >
                 Clear filter
               </Link>
             )}
           </ul>
         </div>
       )}
-      
+
       <div className="space-y-4 pt-6">
         <h3 className="font-medium text-slate-900">Search</h3>
-        <Input placeholder="Search services..." defaultValue={searchTerm} onChange={(e) => updateSearchParams({ search: e.target.value })} />
+        <Input
+          placeholder="Search services..."
+          defaultValue={searchTerm}
+          onChange={(e) => updateSearchParams({ search: e.target.value })}
+        />
       </div>
       <div className="space-y-4">
         <h3 className="font-medium text-slate-900">Store</h3>
-        <Select value={selectedStore} onValueChange={(value) => updateSearchParams({ store: value })}>
-          <SelectTrigger><SelectValue placeholder="Filter by store" /></SelectTrigger>
+        <Select
+          value={selectedStore}
+          onValueChange={(value) => updateSearchParams({ store: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by store" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Stores</SelectItem>
-            {stores?.map((store) => (<SelectItem key={store.id} value={store.id}>{store.name}</SelectItem>))}
+            {stores?.map((store) => (
+              <SelectItem key={store.id} value={store.id}>
+                {store.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
       <div className="space-y-4">
         <h3 className="font-medium text-slate-900">Sort</h3>
-        <Select value={sortOrder} onValueChange={(value) => updateSearchParams({ sort: value })}>
-          <SelectTrigger><SelectValue placeholder="Sort by name" /></SelectTrigger>
+        <Select
+          value={sortOrder}
+          onValueChange={(value) => updateSearchParams({ sort: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Sort by name" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="asc">Name (A-Z)</SelectItem>
             <SelectItem value="desc">Name (Z-A)</SelectItem>
@@ -246,7 +277,9 @@ const FilterControls = memo(function FilterControls({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="font-medium text-slate-900">Store Attributes</h3>
-          <Button variant="ghost" size="sm" onClick={resetFilters}>Reset all</Button>
+          <Button variant="ghost" size="sm" onClick={resetFilters}>
+            Reset all
+          </Button>
         </div>
         <div className="space-y-3">
           {STORE_ATTRIBUTES.map((attribute) => (
@@ -254,9 +287,13 @@ const FilterControls = memo(function FilterControls({
               <Checkbox
                 id={attribute}
                 checked={selectedAttributes.includes(attribute)}
-                onCheckedChange={(checked) => handleAttributeChange(!!checked, attribute)}
+                onCheckedChange={(checked) =>
+                  handleAttributeChange(!!checked, attribute)
+                }
               />
-              <Label htmlFor={attribute} className="text-sm text-slate-600">{attribute}</Label>
+              <Label htmlFor={attribute} className="text-sm text-slate-600">
+                {attribute}
+              </Label>
             </div>
           ))}
         </div>
@@ -266,17 +303,19 @@ const FilterControls = memo(function FilterControls({
 });
 FilterControls.displayName = "FilterControls";
 
-export function ServiceCategoryClient({ 
-  initialServices, 
+export function ServiceCategoryClient({
+  initialServices,
   subcategories,
   totalCount,
   totalPages,
-}: { 
-  initialServices: ServiceWithShop[]; 
+}: {
+  initialServices: ServiceWithShop[];
   subcategories?: Category[];
   totalCount: number;
   totalPages: number;
 }) {
+  console.log("initialServices", initialServices);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -287,30 +326,42 @@ export function ServiceCategoryClient({
   const itemsPerPage = parseInt(searchParams.get("limit") ?? "20", 10);
   const currentPage = Math.max(1, Math.min(totalPages, rawPage));
 
-  const updateSearchParams = useCallback((newParams: Record<string, string | number | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value === null || value === '' || (key === 'store' && value === 'all')) {
-        params.delete(key);
-      } else {
-        params.set(key, String(value));
+  const updateSearchParams = useCallback(
+    (newParams: Record<string, string | number | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (
+          value === null ||
+          value === "" ||
+          (key === "store" && value === "all")
+        ) {
+          params.delete(key);
+        } else {
+          params.set(key, String(value));
+        }
+      });
+
+      const isFilterChange = Object.keys(newParams).some(
+        (key) => key !== "page" && key !== "limit",
+      );
+      if (isFilterChange) {
+        params.delete("page");
       }
-    });
 
-    const isFilterChange = Object.keys(newParams).some(key => key !== 'page' && key !== 'limit');
-    if (isFilterChange) {
-        params.delete('page');
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [pathname, router, searchParams]);
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   const { data: stores } = api.shop.getAllValid.useQuery();
-  const resetFilters = useCallback(() => router.push(pathname, { scroll: false }), [router, pathname]);
+  const resetFilters = useCallback(
+    () => router.push(pathname, { scroll: false }),
+    [router, pathname],
+  );
 
   return (
     <div className="mt-5 flex flex-col gap-6 md:flex-row md:items-start">
-      <aside className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:w-72 md:shrink-0 md:sticky md:top-4 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
+      <aside className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:sticky md:top-4 md:max-h-[calc(100vh-8rem)] md:w-72 md:shrink-0 md:overflow-y-auto">
         <FilterControls
           updateSearchParams={updateSearchParams}
           resetFilters={resetFilters}
@@ -330,17 +381,20 @@ export function ServiceCategoryClient({
       <main className="flex-1 space-y-6 px-4 md:px-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing{" "}
-            {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
+            Showing {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
             {(currentPage - 1) * itemsPerPage + initialServices.length} of{" "}
             {totalCount} services
           </p>
           <div className="flex items-center gap-2">
-            <label htmlFor="itemsPerPage" className="text-sm font-medium">Items per page:</label>
+            <label htmlFor="itemsPerPage" className="text-sm font-medium">
+              Items per page:
+            </label>
             <select
               id="itemsPerPage"
               value={itemsPerPage}
-              onChange={(e) => updateSearchParams({ limit: Number(e.target.value) })}
+              onChange={(e) =>
+                updateSearchParams({ limit: Number(e.target.value) })
+              }
               className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm"
             >
               <option value="10">10</option>
@@ -371,7 +425,9 @@ export function ServiceCategoryClient({
         )}
 
         {initialServices.length === 0 && (
-          <p className="text-center text-muted-foreground">No services found for the selected filters.</p>
+          <p className="text-center text-muted-foreground">
+            No services found for the selected filters.
+          </p>
         )}
 
         {totalPages > 1 && (
