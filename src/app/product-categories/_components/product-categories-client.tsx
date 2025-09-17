@@ -7,7 +7,7 @@ import { Category, Product, Service } from "@prisma/client";
 import { ProductWithRelations } from "~/types/product";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { NewProductCard } from "~/app/(site)/products/_components/new-product-card";
 
 export function ProductCategoriesClient({
@@ -67,6 +67,11 @@ export function ProductCategoriesClient({
                 // </Link>
               ))}
             </div>
+          )}
+          {category?.items?.length === 0 && (
+            <p className="text-left text-muted-foreground">
+              No products found for the selected filters.
+            </p>
           )}
         </div>
       ))}

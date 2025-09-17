@@ -33,7 +33,7 @@ model ShopAddress {
 
 }
 
-enum CategoryType{
+enum CategoryType {
   PRODUCT 
   SERVICE
 }
@@ -45,6 +45,7 @@ model Service {
   priceInCents      Int?
   currency          String?
   imageUrl          String?
+  serviceUrl        String?
   durationInMinutes Int?
   locationType      String?
   tags              String[]
