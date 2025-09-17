@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Suspense } from "react";
 
 import { CategoryType } from "@prisma/client";
 
@@ -6,6 +6,7 @@ import { api } from "~/trpc/server";
 import SiteLayout from "~/app/(site)/layout";
 
 import { ServiceCategoriesClient } from "./_components/service-categories-client";
+import { ServiceSearch } from "./_components/service-search";
 
 export const metadata = {
   title: "All Service Categories",
@@ -28,6 +29,9 @@ export default async function ServiceCategoriesPage() {
             Explore our services by browsing through all available categories
             and subcategories.
           </p>
+          <Suspense fallback={null}>
+            <ServiceSearch />
+          </Suspense>
         </div>
 
         <ServiceCategoriesClient categories={categories} />
