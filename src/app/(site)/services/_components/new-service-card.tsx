@@ -3,8 +3,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
-import type { ServiceWithShop } from "~/types/service"; 
-
+import type { ServiceWithShop } from "~/types/service";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -54,10 +53,6 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
           </div>
 
           <CardHeader className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {service.shop?.attributeTags?.map((tag) => tag).join(" • ")}
-            </p>
-
             <CardTitle className="line-clamp-1 text-xl capitalize">
               {service.name}
             </CardTitle>
@@ -115,7 +110,9 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
                 </p>
               </ScrollArea>
             </div>
-
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {service.shop?.attributeTags?.map((tag) => tag).join(" • ")}
+            </p>
             {service.tags.length > 0 && (
               <div>
                 <h4 className="mb-1 font-semibold">Tags</h4>
