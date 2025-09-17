@@ -14,6 +14,20 @@ const categorySchema = z.object({
   parentId: z.string().nullable().optional(),
   type: z.nativeEnum(CategoryType).optional(),
 });
+// Type for products with potential imageUrl field
+type ProductWithImage = {
+  imageUrl?: string | null;
+  [key: string]: unknown;
+} | null;
+
+const addFullImageUrl = <T extends ProductWithImage>(product: T): T => {
+  if (!product) return product;
+  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
+  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
+    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
+  }
+  return product;
+};
 
 export const categoryRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -157,7 +171,7 @@ export const categoryRouter = createTRPCRouter({
 
         const formattedCategories = categories.map((category) => ({
           ...category,
-          items: category.services.map((service) => service),
+          items: category.services.map((service) => addFullImageUrl(service)),
         }));
         return formattedCategories;
       }
@@ -181,9 +195,10 @@ export const categoryRouter = createTRPCRouter({
         },
         orderBy: { name: "asc" },
       });
+
       const formattedCategories = categories.map((category) => ({
         ...category,
-        items: category.products.map((product) => product),
+        items: category.products.map((product) => addFullImageUrl(product)),
       }));
       return formattedCategories;
     }),
