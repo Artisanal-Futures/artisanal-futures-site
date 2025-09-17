@@ -34,7 +34,7 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
 
   const routes = [
     { href: "/shops", label: "Shops" },
-    { href: "/products", label: "Products" },
+    { href: "/product-categories", label: "Products" },
     { href: "/services", label: "Services" },
     { href: "/forums", label: "Forums" },
     { href: "/tools", label: "Tools" },
@@ -61,85 +61,85 @@ const Navbar = ({ productCategories, serviceCategories }: NavbarProps) => {
 
           <nav className="mx-6 hidden items-center space-x-2 lg:flex lg:space-x-2">
             {routes.map((route) => {
-              if (route.label === "Products") {
-                return (
-                  <NavigationMenu key={route.href}>
-                    <NavigationMenuList>
-                      <NavigationMenuItem>
-                        <Link href="/product-categories">
-                          <NavigationMenuTrigger className="text-lg font-medium text-neutral-500 lg:text-sm">
-                            Products
-                          </NavigationMenuTrigger>
-                        </Link>
-                        <NavigationMenuContent>
-                          <div className="flex w-[600px] p-4">
-                            <div className="w-1/3 pr-4">
-                              <NavigationMenuLink asChild>
-                                <a
-                                  className="flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                                  href="/product-categories"
-                                >
-                                  <div className="mb-2 text-lg font-medium">
-                                    All Product Categories
-                                  </div>
-                                  <p className="text-sm leading-tight text-muted-foreground">
-                                    Browse all our products by category and
-                                    subcategory.
-                                  </p>
-                                </a>
-                              </NavigationMenuLink>
-                            </div>
-                            <ul className="grid w-2/3 grid-cols-2 gap-3">
-                              {productCategories?.map((category, index) => (
-                                <li
-                                  key={category.id}
-                                  className={cn(
-                                    productCategories.length % 2 !== 0 &&
-                                      index === productCategories.length - 1 &&
-                                      "col-span-1",
-                                  )}
-                                >
-                                  <NavigationMenuLink asChild>
-                                    <a
-                                      href={`/product-category/${category.name.toLowerCase()}`}
-                                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                    >
-                                      <div className="text-sm font-medium leading-none">
-                                        {category.name}
-                                      </div>
-                                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                        {category.children
-                                          .map((c) => c.name)
-                                          .join(", ")}
-                                      </p>
-                                    </a>
-                                  </NavigationMenuLink>
-                                </li>
-                              ))}
+              // if (route.label === "Products") {
+              //   return (
+              //     <NavigationMenu key={route.href}>
+              //       <NavigationMenuList>
+              //         <NavigationMenuItem>
+              //           <Link href="/product-categories">
+              //             <NavigationMenuTrigger className="text-lg font-medium text-neutral-500 lg:text-sm">
+              //               Products
+              //             </NavigationMenuTrigger>
+              //           </Link>
+              //           <NavigationMenuContent>
+              //             <div className="flex w-[600px] p-4">
+              //               <div className="w-1/3 pr-4">
+              //                 <NavigationMenuLink asChild>
+              //                   <a
+              //                     className="flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+              //                     href="/product-categories"
+              //                   >
+              //                     <div className="mb-2 text-lg font-medium">
+              //                       All Product Categories
+              //                     </div>
+              //                     <p className="text-sm leading-tight text-muted-foreground">
+              //                       Browse all our products by category and
+              //                       subcategory.
+              //                     </p>
+              //                   </a>
+              //                 </NavigationMenuLink>
+              //               </div>
+              //               <ul className="grid w-2/3 grid-cols-2 gap-3">
+              //                 {productCategories?.map((category, index) => (
+              //                   <li
+              //                     key={category.id}
+              //                     className={cn(
+              //                       productCategories.length % 2 !== 0 &&
+              //                         index === productCategories.length - 1 &&
+              //                         "col-span-1",
+              //                     )}
+              //                   >
+              //                     <NavigationMenuLink asChild>
+              //                       <a
+              //                         href={`/product-category/${category.name.toLowerCase()}`}
+              //                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              //                       >
+              //                         <div className="text-sm font-medium leading-none">
+              //                           {category.name}
+              //                         </div>
+              //                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              //                           {category.children
+              //                             .map((c) => c.name)
+              //                             .join(", ")}
+              //                         </p>
+              //                       </a>
+              //                     </NavigationMenuLink>
+              //                   </li>
+              //                 ))}
 
-                              <li className="col-span-2">
-                                <NavigationMenuLink asChild>
-                                  <a
-                                    href="/product-category/all-products"
-                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                  >
-                                    <div className="text-sm font-medium leading-none">
-                                      All Products
-                                    </div>
-                                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                      Browse all available products.
-                                    </p>
-                                  </a>
-                                </NavigationMenuLink>
-                              </li>
-                            </ul>
-                          </div>
-                        </NavigationMenuContent>
-                      </NavigationMenuItem>
-                    </NavigationMenuList>
-                  </NavigationMenu>
-                );
-              }
+              //                 <li className="col-span-2">
+              //                   <NavigationMenuLink asChild>
+              //                     <a
+              //                       href="/product-category/all-products"
+              //                       className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              //                     >
+              //                       <div className="text-sm font-medium leading-none">
+              //                         All Products
+              //                       </div>
+              //                       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              //                         Browse all available products.
+              //                       </p>
+              //                     </a>
+              //                   </NavigationMenuLink>
+              //                 </li>
+              //               </ul>
+              //             </div>
+              //           </NavigationMenuContent>
+              //         </NavigationMenuItem>
+              //       </NavigationMenuList>
+              //     </NavigationMenu>
+              //   );
+              // }
               if (route.label === "Services") {
                 return (
                   <NavigationMenu key={route.href}>
