@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Cog, GraduationCap, Store } from "lucide-react";
 
 import { EventBulletinBoard } from "./_components/event-bulletin-board";
@@ -62,12 +63,23 @@ We can’t wait to see you there!`,
         ]}
       />
 
-      <div className="text-center">
+      <div className="mt-4 space-y-4 text-center">
         <h2 className="mt-12 text-3xl font-bold">
           Artisanal Technologies for Generative Justice
         </h2>
 
-        <Image
+        <p className="text-xl text-muted-foreground">
+          Learn more about Artisanal Futures at the{" "}
+          <Link
+            href="https://generativejustice.org/af"
+            className="text-primary underline underline-offset-4"
+            target="_blank"
+          >
+            Center for Generative Justice
+          </Link>
+        </p>
+
+        {/* <Image
           width={200}
           height={160}
           src="/img/flowchart.png"
@@ -75,7 +87,7 @@ We can’t wait to see you there!`,
           className="aspect-auto w-full"
           loading="lazy"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        /> */}
       </div>
     </>
   );
