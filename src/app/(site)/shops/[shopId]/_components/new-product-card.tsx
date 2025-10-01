@@ -3,8 +3,6 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
-import type { Shop } from "@prisma/client";
-
 import type { ProductWithRelations } from "~/types/product";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -26,7 +24,7 @@ import {
 import { ScrollArea } from "~/components/ui/scroll-area";
 
 type Props = {
-  product: ProductWithRelations & { shop?: Shop };
+  product: ProductWithRelations;
 };
 
 export const NewProductCard: FC<Props> = ({ product }) => {
@@ -37,9 +35,7 @@ export const NewProductCard: FC<Props> = ({ product }) => {
   };
 
   const productUrl =
-    product.scrapeMethod === "SHOPIFY" ||
-    product.scrapeMethod === "SQUARESPACE" ||
-    product.scrapeMethod === "WORDPRESS"
+    product.scrapeMethod === "SHOPIFY" || product.scrapeMethod === "SQUARESPACE"
       ? `${product.shop?.website}${product.productUrl}`
       : product.productUrl;
 
@@ -60,9 +56,9 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </div>
 
           <CardHeader className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {/* <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
-            </p>
+            </p> */}
 
             <CardTitle className="line-clamp-1 text-xl capitalize">
               {product.name}
@@ -89,7 +85,7 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </CardFooter>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-svh max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {product.name}
@@ -112,7 +108,11 @@ export const NewProductCard: FC<Props> = ({ product }) => {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="flex h-full flex-col space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
+            </p>
+
             <div>
               <h4 className="font-semibold">Description</h4>
               <ScrollArea className="h-48">
@@ -190,16 +190,27 @@ export const NewProductCard: FC<Props> = ({ product }) => {
                 </div>
               </div>
             )}
+
+            <div className="mt-4 flex flex-1 flex-col justify-end gap-4">
+              <Button asChild className="">
+                <Link href={productUrl ?? "#"} target="_blank">
+                  Purchase from their website
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-4 flex gap-4">
+        {/* <div className="mt-4 flex gap-4">
           <Button asChild className="flex-1">
             <Link href={productUrl ?? "#"} target="_blank">
               View Product
             </Link>
           </Button>
-        </div>
+          <Button asChild variant="outline" className="flex-1">
+            <Link href={`/shops/${product.shopId}`}>View Shop</Link>
+          </Button>
+        </div> */}
       </DialogContent>
     </Dialog>
   );

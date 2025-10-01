@@ -1,10 +1,13 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { toastService } from "@dreamwalker-studios/toasts";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
+
+import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import type { ProductWithRelations } from "~/types/product";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
@@ -19,11 +22,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { LoadButton } from "~/components/common/load-button";
+import { FancySwitchFormField } from "~/components/inputs";
 import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
-import { MultiSelectFormField, type OptionType } from "~/components/inputs/multi-select-form-field";
 
 const productFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -39,9 +43,12 @@ const productFormSchema = z.object({
   aiGeneratedTags: z.array(z.string()),
   shopId: z.string().min(1, "Shop selection is required."),
   shopProductId: z.string().optional().nullable(),
-  scrapeMethod: z.enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"]).default("MANUAL"),
+  scrapeMethod: z
+    .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
+    .default("MANUAL"),
   image: z.any().optional(),
   categoryIds: z.array(z.string()).optional(),
+  isFeatured: z.boolean(),
 });
 
 type ProductForm = z.infer<typeof productFormSchema>;
@@ -52,7 +59,7 @@ type Props = {
   dialogRef?: React.RefObject<HTMLDivElement>;
 };
 
-export function ProjectForm({ initialData, onSuccessCallback, dialogRef }: Props) {
+export function ProjectForm({ initialData, onSuccessCallback }: Props) {
   const { uploadFile, isUploading } = useFileUpload({
     route: "products",
     api: "/api/upload-product",
@@ -79,10 +86,11 @@ export function ProjectForm({ initialData, onSuccessCallback, dialogRef }: Props
       environmentalTags: initialData?.environmentalTags ?? [],
       aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
       shopId: initialData?.shopId ?? "",
-      shopProductId: initialData?.shopProductId ?? "",
+      shopProductId: initialData?.shopProductId ?? `af${createId()}`,
       scrapeMethod: initialData?.scrapeMethod ?? "MANUAL",
       imageUrl: initialData?.imageUrl ?? "",
       categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
+      isFeatured: initialData?.isFeatured ?? false,
     },
   });
 
@@ -134,42 +142,66 @@ export function ProjectForm({ initialData, onSuccessCallback, dialogRef }: Props
   }
 
   const categoryOptions: OptionType[] =
-  categories
-    ?.filter((cat) => cat.type === "PRODUCT") 
-    .map((cat) => ({
-      value: cat.id,
-      label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
-    })) ?? [];
+    categories
+      ?.filter((cat) => cat.type === "PRODUCT")
+      .map((cat) => ({
+        value: cat.id,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ""}${cat.name}`,
+      })) ?? [];
 
-  const isLoading = createProduct.isPending || updateProduct.isPending || isUploading;
+  const isLoading =
+    createProduct.isPending || updateProduct.isPending || isUploading;
 
   return (
     <Form {...form}>
       <form
         onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
-        onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
         className="h-full space-y-8"
       >
         <div className="h-[50svh] overflow-y-auto p-1">
           <div className="flex flex-col gap-4 md:grid md:grid-cols-6">
             <div className="col-span-2 flex flex-col gap-4">
-              <InputFormField form={form} name="name" label="Product name" placeholder="e.g My product" />
-              <ImageFormField form={form} name="image" label="Product image" currentImageUrl={initialData?.imageUrl ?? ""} />
+              <InputFormField
+                form={form}
+                name="name"
+                label="Product name"
+                placeholder="e.g My product"
+              />
+              <ImageFormField
+                form={form}
+                name="image"
+                label="Product image"
+                currentImageUrl={initialData?.imageUrl ?? ""}
+              />
               <div className="space-y-2">
                 <label className="text-sm font-medium">Select Shop</label>
-                <Select onValueChange={(value) => form.setValue("shopId", value)} defaultValue={initialData?.shopId ?? undefined}>
+                <Select
+                  onValueChange={(value) => form.setValue("shopId", value)}
+                  defaultValue={initialData?.shopId ?? undefined}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a shop" />
                   </SelectTrigger>
                   <SelectContent>
                     {shops?.map((shop) => (
-                      <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem>
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="col-span-4 flex flex-col gap-4">
+              <FancySwitchFormField
+                form={form}
+                name="isFeatured"
+                label="Featured"
+                description="Make this be a featured product on the products page."
+              />
               <FormField
                 control={form.control}
                 name="categoryIds"
@@ -185,19 +217,38 @@ export function ProjectForm({ initialData, onSuccessCallback, dialogRef }: Props
                   </FormItem>
                 )}
               />
-              <InputFormField form={form} name="productUrl" label="Product URL" />
+              <InputFormField
+                form={form}
+                name="productUrl"
+                label="Product URL"
+              />
               <div className="grid grid-cols-2 gap-4">
-                <InputFormField form={form} name="priceInCents" label="Price (in cents)" type="number" />
+                <InputFormField
+                  form={form}
+                  name="priceInCents"
+                  label="Price (in cents)"
+                  type="number"
+                />
                 <InputFormField form={form} name="currency" label="Currency" />
               </div>
-              <TextareaFormField form={form} name="description" label="Description" />
+              <TextareaFormField
+                form={form}
+                name="description"
+                label="Description"
+              />
               <TagFormField form={form} name="tags" label="Tags" />
             </div>
           </div>
         </div>
         <div className="flex h-auto justify-end gap-2">
-          <Button variant="outline" onClick={onSuccessCallback} type="button">Cancel</Button>
-          <LoadButton isLoading={isLoading} loadingText={initialData ? "Updating..." : "Creating..."} type="submit">
+          <Button variant="outline" onClick={onSuccessCallback} type="button">
+            Cancel
+          </Button>
+          <LoadButton
+            isLoading={isLoading}
+            loadingText={initialData ? "Updating..." : "Creating..."}
+            type="submit"
+          >
             {initialData ? "Update product" : "Create product"}
           </LoadButton>
         </div>

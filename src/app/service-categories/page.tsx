@@ -1,7 +1,12 @@
-import Link from 'next/link';
-import { api } from '~/trpc/server';
-import SiteLayout from '~/app/(site)/layout';
-import { CategoryType } from '@prisma/client';
+import { Suspense } from "react";
+
+import { CategoryType } from "@prisma/client";
+
+import { api } from "~/trpc/server";
+import SiteLayout from "~/app/(site)/layout";
+
+import { ServiceCategoriesClient } from "./_components/service-categories-client";
+import { ServiceSearch } from "./_components/service-search";
 
 export const metadata = {
   title: "All Service Categories",
@@ -9,7 +14,7 @@ export const metadata = {
 };
 
 export default async function ServiceCategoriesPage() {
-  const categories = await api.category.getNavigationTree({
+  const categories = await api.category.getCategoriesWithFeaturedProducts({
     type: CategoryType.SERVICE,
   });
 
@@ -21,34 +26,15 @@ export default async function ServiceCategoriesPage() {
             All Service Categories
           </h1>
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-            Explore our services by browsing through all available categories and subcategories.
+            Explore our services by browsing through all available categories
+            and subcategories.
           </p>
+          <Suspense fallback={null}>
+            <ServiceSearch />
+          </Suspense>
         </div>
 
-        <div className="space-y-12">
-          {categories.map((category) => (
-            <div key={category.id}>
-              <h2 className="mb-4 text-3xl font-bold tracking-tight">
-                <Link href={`/service-category/${encodeURIComponent(category.name)}`} className="hover:underline">
-                  {category.name}
-                </Link>
-              </h2>
-              {category.children.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                  {category.children.map((sub) => (
-                    <Link
-                      key={sub.id}
-                      href={`/service-category/${encodeURIComponent(category.name)}?subcategory=${encodeURIComponent(sub.name)}`}
-                      className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent"
-                    >
-                      <h3 className="font-semibold">{sub.name}</h3>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <ServiceCategoriesClient categories={categories} />
       </div>
     </SiteLayout>
   );

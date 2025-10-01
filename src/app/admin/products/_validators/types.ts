@@ -61,6 +61,129 @@ export type ShopifyData = {
   products: ShopifyProduct[];
 };
 
+// export type SquareSpaceProduct = {
+//   id: string;
+//   collectionId: string;
+//   recordType: number;
+//   addedOn: number;
+//   updatedOn: number;
+//   displayIndex: number;
+//   starred: boolean;
+//   passthrough: boolean;
+//   categories: string[];
+//   workflowState: number;
+//   publishOn: number;
+//   authorId: string;
+//   urlId: string;
+//   title: string;
+//   body: string | null;
+//   excerpt: string | null;
+//   likeCount: number;
+//   commentCount: number;
+//   publicCommentCount: number;
+//   commentState: number;
+//   author: {
+//     id: string;
+//     displayName: string;
+//     firstName: string;
+//     lastName: string;
+//     bio: string;
+//   };
+//   fullUrl: string;
+//   assetUrl: string;
+//   contentType: string;
+//   structuredContent: {
+//     _type: string;
+//     priceCents: number;
+//     salePriceCents: number;
+//     priceMoney: {
+//       currency: string;
+//       value: string;
+//     };
+//     salePriceMoney: {
+//       currency: string;
+//       value: string;
+//     };
+//     onSale: boolean;
+//     productType: number;
+//     customAddButtonText: string;
+//     useCustomAddButtonText: boolean;
+//     variants: {
+//       attributes: Record<string, unknown>;
+//       optionValues: unknown[];
+//       id: string;
+//       sku: string;
+//       price: number;
+//       salePrice: number;
+//       priceMoney: {
+//         currency: string;
+//         value: string;
+//       };
+//       salePriceMoney: {
+//         currency: string;
+//         value: string;
+//       };
+//       onSale: boolean;
+//       unlimited: boolean;
+//       qtyInStock: number;
+//       width: number;
+//       fullUrl: string;
+//       assetUrl: string;
+//       height: number;
+//       weight: number;
+//       imageIds: string[];
+//       images: unknown[];
+//       items: {
+//         id: string;
+//         assetUrl: string;
+//       }[];
+//       len: number;
+//     }[];
+//     variantOptionOrdering: unknown[];
+//     isSubscribable: boolean;
+//     fulfilledExternally: boolean;
+//   };
+//   items: {
+//     id: string;
+//     collectionId: string;
+//     recordType: number;
+//     addedOn: number;
+//     updatedOn: number;
+//     displayIndex: number;
+//     workflowState: number;
+//     authorId: string;
+//     parentId: string;
+//     systemDataId: string;
+//     systemDataVariants: string;
+//     systemDataSourceType: string;
+//     filename: string;
+//     mediaFocalPoint: {
+//       x: number;
+//       y: number;
+//       source: number;
+//     };
+//     colorData: {
+//       topLeftAverage: string;
+//       topRightAverage: string;
+//       bottomLeftAverage: string;
+//       bottomRightAverage: string;
+//       centerAverage: string;
+//       suggestedBgColor: string;
+//     };
+//     title: string;
+//     body: string | null;
+//     assetUrl: string;
+//     contentType: string;
+//     originalSize: string;
+//     recordTypeLabel: string;
+//   }[];
+//   seoData?: {
+//     seoTitle: string;
+//     seoDescription: string;
+//     seoHidden: boolean;
+//   };
+// };
+
 export type SquareSpaceProduct = {
   id: string;
   collectionId: string;
@@ -68,47 +191,47 @@ export type SquareSpaceProduct = {
   addedOn: number;
   updatedOn: number;
   displayIndex: number;
-  starred: boolean;
-  passthrough: boolean;
-  categories: string[];
+  starred?: boolean;
+  passthrough?: boolean;
   workflowState: number;
-  publishOn: number;
+  publishOn?: number;
   authorId: string;
-  urlId: string;
+  urlId?: string;
   title: string;
   body: string | null;
-  excerpt: string | null;
-  likeCount: number;
-  commentCount: number;
-  publicCommentCount: number;
-  commentState: number;
-  author: {
+  excerpt?: string;
+  likeCount?: number;
+  commentCount?: number;
+  publicCommentCount?: number;
+  commentState?: number;
+  unsaved?: boolean;
+  author?: {
     id: string;
     displayName: string;
     firstName: string;
     lastName: string;
     bio: string;
   };
-  fullUrl: string;
-  assetUrl: string;
-  contentType: string;
-  structuredContent: {
+  fullUrl?: string;
+  assetUrl?: string;
+  contentType?: string;
+  structuredContent?: {
     _type: string;
-    priceCents: number;
-    salePriceCents: number;
-    priceMoney: {
+    priceCents?: number;
+    salePriceCents?: number;
+    priceMoney?: {
       currency: string;
       value: string;
     };
-    salePriceMoney: {
+    salePriceMoney?: {
       currency: string;
       value: string;
     };
-    onSale: boolean;
-    productType: number;
-    customAddButtonText: string;
-    useCustomAddButtonText: boolean;
-    variants: {
+    onSale?: boolean;
+    productType?: number;
+    customAddButtonText?: string;
+    useCustomAddButtonText?: boolean;
+    variants?: Array<{
       attributes: Record<string, unknown>;
       optionValues: unknown[];
       id: string;
@@ -130,14 +253,62 @@ export type SquareSpaceProduct = {
       height: number;
       weight: number;
       imageIds: string[];
-      images: unknown[];
+      images: string[];
       len: number;
-    }[];
-    variantOptionOrdering: unknown[];
-    isSubscribable: boolean;
-    fulfilledExternally: boolean;
+    }>;
+    variantOptionOrdering?: unknown[];
+    isSubscribable?: boolean;
+    fulfilledExternally?: boolean;
+    productAddOnsConfiguration?: {
+      productAddOns: unknown[];
+    };
   };
-  items: {
+  priceCents?: number;
+  salePriceCents?: number;
+  priceMoney?: {
+    currency: string;
+    value: string;
+  };
+  salePriceMoney?: {
+    currency: string;
+    value: string;
+  };
+  onSale?: boolean;
+  productType?: number;
+  customAddButtonText?: string;
+  useCustomAddButtonText?: boolean;
+  variants?: Array<{
+    attributes: Record<string, unknown>;
+    optionValues: unknown[];
+    id: string;
+    sku: string;
+    price: number;
+    salePrice: number;
+    priceMoney: {
+      currency: string;
+      value: string;
+    };
+    salePriceMoney: {
+      currency: string;
+      value: string;
+    };
+    onSale: boolean;
+    unlimited: boolean;
+    qtyInStock: number;
+    width: number;
+    height: number;
+    weight: number;
+    imageIds: string[];
+    images: string[];
+    len: number;
+  }>;
+  variantOptionOrdering?: unknown[];
+  isSubscribable?: boolean;
+  fulfilledExternally?: boolean;
+  productAddOnsConfiguration?: {
+    productAddOns: unknown[];
+  };
+  items?: Array<{
     id: string;
     collectionId: string;
     recordType: number;
@@ -147,16 +318,16 @@ export type SquareSpaceProduct = {
     workflowState: number;
     authorId: string;
     parentId: string;
-    systemDataId: string;
-    systemDataVariants: string;
-    systemDataSourceType: string;
-    filename: string;
-    mediaFocalPoint: {
+    systemDataId?: string;
+    systemDataVariants?: string;
+    systemDataSourceType?: string;
+    filename?: string;
+    mediaFocalPoint?: {
       x: number;
       y: number;
       source: number;
     };
-    colorData: {
+    colorData?: {
       topLeftAverage: string;
       topRightAverage: string;
       bottomLeftAverage: string;
@@ -166,16 +337,28 @@ export type SquareSpaceProduct = {
     };
     title: string;
     body: string | null;
-    assetUrl: string;
-    contentType: string;
-    originalSize: string;
-    recordTypeLabel: string;
-  }[];
-  seoData?: {
-    seoTitle: string;
-    seoDescription: string;
-    seoHidden: boolean;
-  };
+    likeCount?: number;
+    commentCount?: number;
+    publicCommentCount?: number;
+    commentState?: number;
+    author?: {
+      id: string;
+      displayName: string;
+      firstName: string;
+      lastName: string;
+      bio: string;
+    };
+    fullUrl?: string;
+    assetUrl?: string;
+    contentType?: string;
+    pushedServices?: Record<string, unknown>;
+    pendingPushedServices?: Record<string, unknown>;
+    originalSize?: string;
+    recordTypeLabel?: string;
+  }>;
+  pushedServices?: Record<string, unknown>;
+  pendingPushedServices?: Record<string, unknown>;
+  recordTypeLabel?: string;
 };
 
 export type SquareSpaceData = {

@@ -3,8 +3,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import Link from "next/link";
 
-import type { ServiceWithShop } from "~/types/service"; 
-
+import type { ServiceWithShop } from "~/types/service";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -54,10 +53,6 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
           </div>
 
           <CardHeader className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {service.shop?.attributeTags?.map((tag) => tag).join(" • ")}
-            </p>
-
             <CardTitle className="line-clamp-1 text-xl capitalize">
               {service.name}
             </CardTitle>
@@ -83,7 +78,7 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
           </CardFooter>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-svh max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {service.name}
@@ -106,7 +101,10 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="flex h-full flex-col space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {service.shop?.attributeTags?.map((tag) => tag).join(" • ")}
+            </p>
             <div>
               <h4 className="font-semibold">Description</h4>
               <ScrollArea className="h-48">
@@ -154,18 +152,20 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
 
-        <div className="mt-4 flex gap-4">
-          <Button asChild className="flex-1">
-            <Link href={serviceUrl ?? "#"} target="_blank">
-              View Service
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="flex-1">
-            <Link href={`/shops/${service.shopId}`}>View Shop</Link>
-          </Button>
+            <div className="mt-4 flex flex-1 flex-col justify-end gap-4">
+              <Button asChild className="">
+                <Link href={service?.serviceUrl ?? "#"} target="_blank">
+                  Purchase from their website
+                </Link>
+              </Button>
+              <Button asChild className="">
+                <Link href={`/shops/${service.shopId}`}>
+                  View more of their products / services
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

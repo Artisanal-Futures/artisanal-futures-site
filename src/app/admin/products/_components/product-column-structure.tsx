@@ -1,13 +1,15 @@
 "use client";
 
 import { type ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "~/components/ui/checkbox";
+
+import type { ProductWithRelations } from "~/types/product";
 import { Badge } from "~/components/ui/badge";
+import { Checkbox } from "~/components/ui/checkbox";
 import { RowImageLink } from "~/components/admin/row-image-link";
+
 import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { ProjectForm } from "./product-form";
-import type { ProductWithRelations } from "~/types/product";
 
 export type ProductColumnEntry = ProductWithRelations & {
   searchableString: string;
@@ -22,7 +24,9 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(!!checked)}
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
         aria-label="Select all"
       />
     ),
@@ -40,13 +44,18 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     accessorKey: "searchableString",
     header: "Title",
     cell: ({ row }) => (
-      <RowImageLink
-        id={row.original.id}
-        name={`${row.original.name} • #${row.original.id}`}
-        image={row.original.imageUrl ?? ""}
-        hasLink={false}
-        subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
-      />
+      <>
+        <RowImageLink
+          id={row.original.id}
+          name={`${row.original.name} • #${row.original.id}`}
+          image={row.original.imageUrl ?? ""}
+          hasLink={false}
+          subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
+        />
+        <span className="sr-only text-xs text-muted-foreground">
+          {row.original.searchableString}
+        </span>
+      </>
     ),
   },
   {

@@ -33,7 +33,7 @@ model ShopAddress {
 
 }
 
-enum CategoryType{
+enum CategoryType {
   PRODUCT 
   SERVICE
 }
@@ -45,6 +45,7 @@ model Service {
   priceInCents      Int?
   currency          String?
   imageUrl          String?
+  serviceUrl        String?
   durationInMinutes Int?
   locationType      String?
   tags              String[]
@@ -56,6 +57,7 @@ model Service {
   shopId            String?
   shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[] @relation("CategoryToService")
+  isFeatured        Boolean    @default(false)
 }
 
 model Product {
@@ -79,6 +81,7 @@ model Product {
   isPublic          Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[]          @relation("CategoryToProduct")
+  isFeatured        Boolean             @default(false)
 
   @@unique([shopId, shopProductId])
 }

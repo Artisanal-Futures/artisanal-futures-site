@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import type { Shop } from "@prisma/client";
+
+import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
 import PageLoader from "~/components/ui/page-loader";
 import Container from "~/app/_components/container";
-import type { Shop } from "@prisma/client";
-import type { ProductWithRelations } from "~/types/product";
 
 import { NewProductCard } from "./new-product-card";
 

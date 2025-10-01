@@ -62,6 +62,8 @@ export function ProductClient({ products, shops }: Props) {
     }));
   }, [products]);
 
+  console.log(enhancedProducts);
+
   const toolbarActionsNode = useMemo(() => {
     if (selectedProductIds.length === 0) return null;
 

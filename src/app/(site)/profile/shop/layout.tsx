@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
 
-import type { Role } from "@prisma/client";
-
 import { api } from "~/trpc/server";
 
 export default async function ShopLayout({

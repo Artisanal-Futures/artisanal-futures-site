@@ -14,6 +14,20 @@ const categorySchema = z.object({
   parentId: z.string().nullable().optional(),
   type: z.nativeEnum(CategoryType).optional(),
 });
+// Type for products with potential imageUrl field
+type ProductWithImage = {
+  imageUrl?: string | null;
+  [key: string]: unknown;
+} | null;
+
+const addFullImageUrl = <T extends ProductWithImage>(product: T): T => {
+  if (!product) return product;
+  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
+  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
+    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
+  }
+  return product;
+};
 
 export const categoryRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -123,5 +137,69 @@ export const categoryRouter = createTRPCRouter({
         where: { name: { equals: input.slug, mode: "insensitive" } },
         include: { children: true },
       });
+    }),
+
+  getCategoriesWithFeaturedProducts: publicProcedure
+    .input(
+      z
+        .object({
+          type: z.nativeEnum(CategoryType).optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      if (input?.type === CategoryType.SERVICE) {
+        const categories = await ctx.db.category.findMany({
+          where: {
+            parentId: null,
+            type: input?.type,
+          },
+          include: {
+            children: true,
+            services: {
+              take: 4,
+              where: {
+                isFeatured: true,
+              },
+              include: {
+                shop: true,
+              },
+            },
+          },
+          orderBy: { name: "asc" },
+        });
+
+        const formattedCategories = categories.map((category) => ({
+          ...category,
+          items: category.services.map((service) => addFullImageUrl(service)),
+        }));
+        return formattedCategories;
+      }
+
+      const categories = await ctx.db.category.findMany({
+        where: {
+          parentId: null,
+          type: input?.type,
+        },
+        include: {
+          children: true,
+          products: {
+            take: 4,
+            where: {
+              isFeatured: true,
+            },
+            include: {
+              shop: true,
+            },
+          },
+        },
+        orderBy: { name: "asc" },
+      });
+
+      const formattedCategories = categories.map((category) => ({
+        ...category,
+        items: category.products.map((product) => addFullImageUrl(product)),
+      }));
+      return formattedCategories;
     }),
 });

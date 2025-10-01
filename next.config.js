@@ -36,8 +36,8 @@ const config = {
         hostname: "res.cloudinary.com",
       },
       {
-        protocol: 'https',
-        hostname: 'cdn.shortpixel.ai',
+        protocol: "https",
+        hostname: "cdn.shortpixel.ai",
       },
       {
         protocol: "https",
@@ -90,6 +90,15 @@ const config = {
       {
         protocol: "https",
         hostname: "detroitpollinatorcompany.com",
+      },
+      {
+        protocol: "https",
+        hostname: "darkgoldenrod-cod-537275.hostingersite.com",
+      },
+
+      {
+        protocol: "https",
+        hostname: "rescuenaturenow.org",
       },
     ],
   },

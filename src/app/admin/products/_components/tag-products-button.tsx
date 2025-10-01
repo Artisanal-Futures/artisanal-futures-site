@@ -4,10 +4,9 @@ import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
 
+import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import { type RouterOutputs } from "~/trpc/react";
-
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -41,8 +40,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-type Product = RouterOutputs["product"]["getAll"][number];
-type Shop = RouterOutputs["shop"]["getAllValid"][number];
+// type Product = RouterOutputs["product"]["getAll"][number];
+// type Shop = RouterOutputs["shop"]["getAllValid"][number];
 
 interface ProductData {
   id: string;
@@ -67,31 +66,31 @@ export function TagProductsButton() {
 
   const { data: productsData = [] } = api.product.getAll.useQuery();
   const { data: storesData = [] } = api.shop.getAllValid.useQuery();
-  
+
   // Type guard functions
   const isValidProduct = (item: unknown): item is ProductData => {
-    if (typeof item !== 'object' || item === null) return false;
-    
+    if (typeof item !== "object" || item === null) return false;
+
     const obj = item as Record<string, unknown>;
     return (
-      'id' in obj &&
-      'name' in obj &&
-      'shopId' in obj &&
-      typeof obj.id === 'string' &&
-      typeof obj.name === 'string' &&
-      (typeof obj.shopId === 'string' || obj.shopId === null)
+      "id" in obj &&
+      "name" in obj &&
+      "shopId" in obj &&
+      typeof obj.id === "string" &&
+      typeof obj.name === "string" &&
+      (typeof obj.shopId === "string" || obj.shopId === null)
     );
   };
 
   const isValidShop = (item: unknown): item is ShopData => {
-    if (typeof item !== 'object' || item === null) return false;
-    
+    if (typeof item !== "object" || item === null) return false;
+
     const obj = item as Record<string, unknown>;
     return (
-      'id' in obj &&
-      'name' in obj &&
-      typeof obj.id === 'string' &&
-      typeof obj.name === 'string'
+      "id" in obj &&
+      "name" in obj &&
+      typeof obj.id === "string" &&
+      typeof obj.name === "string"
     );
   };
 

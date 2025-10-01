@@ -66,7 +66,7 @@ export function DatabaseMigrationClient() {
     null,
   );
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
+  // const [selectedField, setSelectedField] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
   >([]);
@@ -129,25 +129,27 @@ export function DatabaseMigrationClient() {
       // Parse JSON for sources
       const parsedJson = JSON.parse(jsonInput);
 
-      console.log(parsedJson);
-
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
-        convertedProducts = shopifyData.products.map(
-          (product) =>
-            convertToProduct(
-              product,
-              selectedShopId,
-            ) as Partial<ProductWithRelations>,
+        convertedProducts = await Promise.all(
+          shopifyData.products.map(
+            async (product) =>
+              (await convertToProduct(
+                product,
+                selectedShopId,
+              )) as Partial<ProductWithRelations>,
+          ),
         );
       } else if (selectedSource === "SQUARESPACE") {
         const squarespaceData = parsedJson as SquareSpaceData;
-        convertedProducts = squarespaceData.items.map(
-          (product) =>
-            convertToProduct(
-              product,
-              selectedShopId,
-            ) as Partial<ProductWithRelations>,
+        convertedProducts = await Promise.all(
+          squarespaceData.items.map(
+            async (product) =>
+              (await convertToProduct(
+                product,
+                selectedShopId,
+              )) as Partial<ProductWithRelations>,
+          ),
         );
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressProduct[];
@@ -162,6 +164,7 @@ export function DatabaseMigrationClient() {
         );
       }
 
+      console.log(convertedProducts);
       if (!convertedProducts.length) {
         throw new Error("No products found in the data");
       }
@@ -189,6 +192,7 @@ export function DatabaseMigrationClient() {
       productMigration.mutate(
         previewData.map((product) => ({
           ...product,
+          isFeatured: false,
           shopId: product.shopId ?? "",
           shopProductId: product.shopProductId ?? "",
         })),
@@ -293,7 +297,7 @@ export function DatabaseMigrationClient() {
               <h3 className="text-lg font-semibold">Check Duplicates</h3>
               <Select
                 onValueChange={(value) => {
-                  setSelectedField(value);
+                  // setSelectedField(value);
                   checkDuplicates(value);
                 }}
               >
