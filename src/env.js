@@ -47,6 +47,10 @@ export const env = createEnv({
     MINIO_ACCESS_KEY: z.string(),
     MINIO_SECRET_KEY: z.string(),
     MINIO_ENDPOINT: z.string(),
+    COOLIFY_ADMIN_SAFE_API_TOKEN: z.string().min(1),
+    COOLIFY_API: z.string().url(),
+    COOLIFY_UUID: z.string().min(1),
+    WORDPRESS_DOCKER_REGISTRY: z.string().min(1)
   },
 
   /**
@@ -99,6 +103,9 @@ export const env = createEnv({
     MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,
     MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
     MINIO_ENDPOINT: process.env.MINIO_ENDPOINT,
+    COOLIFY_API: process.env.COOLIFY_API,
+    COOLIFY_ADMIN_SAFE_API_TOKEN: process.env.COOLIFY_ADMIN_SAFE_API_TOKEN,
+    COOLIFY_UUID: process.env.COOLIFY_UUID,
 
     NEXT_PUBLIC_VOTE_DISABLED: process.env.NEXT_PUBLIC_VOTE_DISABLED,
     NEXT_PUBLIC_HEART_VOTE_DISABLED:
@@ -130,6 +137,7 @@ export const env = createEnv({
     HOSTNAME: process.env.HOSTNAME,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     AI_AGENT_BACKEND_URL: process.env.AI_AGENT_BACKEND_URL,
+    WORDPRESS_DOCKER_REGISTRY: process.env.WORDPRESS_DOCKER_REGISTRY
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

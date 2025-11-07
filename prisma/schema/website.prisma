@@ -1,0 +1,71 @@
+model WebsiteProvision {
+  id                 String          @id @default(cuid())
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  userId             String
+  framework          Framework
+  siteType           SiteType
+  status             ProvisionStatus @default(PENDING)
+  hasCustomDomain    Boolean         @default(false)
+  customDomain       String?         @unique
+  subdomain          String          @unique
+  businessName       String
+  businessTagline    String?
+  contactEmail       String
+  contactPhone       String?
+  businessAddress    Json?
+  socialLinks        Json?
+  coolifyProjectUuid String?         @unique
+  coolifyAppUuid     String?         @unique
+  coolifyServerUuid  String?
+  deploymentUrl      String?
+  lastDeploymentAt   DateTime?
+  lastHealthCheck    DateTime?
+  healthCheckStatus  String?
+  config             Json
+  cpuLimit           String?
+  memoryLimit        String?
+  errorMessage       String?
+  deploymentLogs     String?
+  notes              String?
+  isTest             Boolean         @default(false)
+  deletedAt          DateTime?
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopId    String   @unique
+  shop      Shop     @relation("ShopWebsiteProvision", fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([framework])
+  @@index([subdomain])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+enum Framework {
+  WORDPRESS
+  NEXTJS
+  GHOST
+  STRAPI
+}
+
+enum SiteType {
+  ECOMMERCE
+  BLOG
+  PORTFOLIO
+  LANDING_PAGE
+  BUSINESS
+  CUSTOM
+}
+
+enum ProvisionStatus {
+  PENDING
+  PROVISIONING
+  BUILDING
+  DEPLOYING
+  ACTIVE
+  FAILED
+  SUSPENDED
+  DELETING
+  DELETED
+}

@@ -70,6 +70,7 @@ model User {
   upcycleResults    UpcycleResult[]
   variations        Variation[]
   votes             Vote[]
+  websiteProvisions WebsiteProvision[]
   depots            Depot[]            @relation("DepotToUser")
 }
 

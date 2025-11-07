@@ -27,6 +27,11 @@ model UpcycleResult {
   error                     String?
   startedAt                 DateTime?
   status                    status            @default(QUEUED)
+  isRetrain                 Boolean           @default(false)
+  originalTrainingId        String?
+  trainingCaptions          Json?             @default("{}")
+  trainingImageFilenames    Json?
+  trainingImageUrls         String[]          @default([])
   questions                 UpcycleQuestion[]
   rating                    UpcycleRating?
   user                      User              @relation(fields: [userId], references: [id])

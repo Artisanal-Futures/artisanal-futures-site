@@ -7,7 +7,7 @@ model Shop {
   logoPhoto     String?
   coverPhoto    String?
   phone         String?
-  email         String?
+  email         String
   website       String?
   ownerId       String
   createdAt     DateTime     @default(now())
@@ -18,6 +18,7 @@ model Shop {
   services      Service[]
   owner         User         @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address       ShopAddress?
+  websiteProvision WebsiteProvision? @relation("ShopWebsiteProvision") 
 }
 
 model ShopAddress {
@@ -30,11 +31,7 @@ model ShopAddress {
   country    String?
   shopId     String? @unique
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
-}
-
-enum CategoryType{
-  PRODUCT 
-  SERVICE
+  street     String?
 }
 
 model Service {
@@ -53,6 +50,8 @@ model Service {
   updatedAt         DateTime   @updatedAt
   isPublic          Boolean    @default(false)
   shopId            String?
+  isFeatured        Boolean    @default(false)
+  serviceUrl        String?
   shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[] @relation("CategoryToService")
 }
@@ -76,6 +75,7 @@ model Product {
   shopId            String?
   tags              String[]
   isPublic          Boolean             @default(false)
+  isFeatured        Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[]          @relation("CategoryToProduct")
 
@@ -83,14 +83,19 @@ model Product {
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  type     CategoryType @default(PRODUCT)
+  id       String       @id @default(cuid())
+  name     String       @unique
   parentId String?
-  parent   Category?  @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
-  children Category[] @relation("Subcategories")
-  products Product[]  @relation("CategoryToProduct")
-  services Service[]  @relation("CategoryToService")
+  type     CategoryType @default(PRODUCT)
+  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
+  children Category[]   @relation("Subcategories")
+  products Product[]    @relation("CategoryToProduct")
+  services Service[]    @relation("CategoryToService")
+}
+
+enum CategoryType {
+  PRODUCT
+  SERVICE
 }
 
 enum ProductScrapeMethod {

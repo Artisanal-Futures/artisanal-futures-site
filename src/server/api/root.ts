@@ -13,6 +13,7 @@ import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
 import { serviceRouter } from "./routers/service";
 import { categoryRouter } from "./routers/category";
+import { websiteProvisonRouter } from "./routers/websiteProvision";
 
 /**
  * This is the primary router for your server.
@@ -34,6 +35,7 @@ export const appRouter = createTRPCRouter({
   forumSubreddit: forumSubredditRouter,
   guest: guestRouter,
   upcycling: upcyclingRouter,
+  websiteProvision: websiteProvisonRouter,
 });
 
 // export type definition of API
