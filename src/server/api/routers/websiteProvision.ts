@@ -145,7 +145,7 @@ export const websiteProvisonRouter = createTRPCRouter({
                     data: {
                         status: "PROVISIONING",
                         coolifyProjectUuid: coolifyResult.projectUuid,
-                        coolifyAppUuid: coolifyResult.serviceUuid,
+                        coolifyAppUuid: coolifyResult.appUuid,
                         coolifyServerUuid: coolifyResult.serverUuid,
                     },
                     include: { user: true },
@@ -191,7 +191,7 @@ export const websiteProvisonRouter = createTRPCRouter({
                 });
             }
             
-            if(provision.coolifyAppUuid){
+            if(provision.coolifyAppUuid && provision.coolifyProjectUuid){
                 try {
                     await cancelCoolifyDeployment(provision.coolifyAppUuid);
                 } catch (coolifyError) {
