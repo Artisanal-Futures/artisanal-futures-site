@@ -36,6 +36,8 @@ model TrainingModel {
   trainingDetails  Json?
   error            String?
   referenceId      String?
+  versionId        String?
+  loraType         LoraType        @default(SUBJECT)
   TrainingImage    TrainingImage[]
 }
 
@@ -46,4 +48,9 @@ enum status {
   FAILED
   CANCELED
   TIMEOUT
+}
+
+enum LoraType {
+  SUBJECT
+  STYLE
 }

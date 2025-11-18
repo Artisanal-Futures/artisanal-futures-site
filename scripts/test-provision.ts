@@ -1,4 +1,3 @@
-// scripts/test-provision.ts
 import { db } from "~/server/db";
 import { createCoolifyDeployment } from "~/server/api/services/coolify";
 
@@ -6,7 +5,7 @@ async function testCreateProvision() {
   console.log("Testing provision creation...");
 
   try {
-    // 1. Find a real user and shop from your database
+    // 1. Find a real user and shop from database
     const user = await db.user.findFirst({
       where: { role: "ADMIN" },
     });
@@ -37,7 +36,7 @@ async function testCreateProvision() {
         subdomain: "test-shop-" + Date.now(),
         hasCustomDomain: false,
         
-        businessName: shop.name,
+        businessName: shop.name + " (TEST)",
         contactEmail: shop.email,
         
         config: {
@@ -50,26 +49,26 @@ async function testCreateProvision() {
       },
     });
 
-    console.log("✅ Provision created:", provision.id);
+    console.log("Provision created:", provision.id);
 
-    // 3. Test Coolify deployment (optional - comment out if not ready)
+    // 3. Test Coolify deployment
     console.log("Testing Coolify deployment...");
     const coolifyResult = await createCoolifyDeployment(provision);
-    console.log("✅ Coolify deployment:", coolifyResult);
+    console.log("Coolify deployment:", coolifyResult);
 
     return provision;
   } catch (error) {
-    console.error("❌ Test failed:", error);
+    console.error("Test failed:", error);
     throw error;
   }
 }
 
 testCreateProvision()
   .then(() => {
-    console.log("✅ All tests passed!");
+    console.log("All tests passed!");
     process.exit(0);
   })
   .catch((error) => {
-    console.error("❌ Tests failed:", error);
+    console.error("Tests failed:", error);
     process.exit(1);
   });

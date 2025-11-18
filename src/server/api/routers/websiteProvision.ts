@@ -6,7 +6,7 @@ import {
     cancelProvisionSchema,
     notifyArtisanSchema,
 } from "./schemas/websiteProvision";
-import crypto from "node:crypto"
+import crypto from "node:crypto";
 import { cancelCoolifyDeployment, createCoolifyDeployment } from "../services/coolify";
 
 const requireAdmin = (userRole: string | undefined) => {
@@ -273,8 +273,11 @@ export const websiteProvisonRouter = createTRPCRouter({
         }),
     });
 
-function generateSecurePassword(){
-    const password = crypto.getRandomValues( new BigUint64Array(1))[0]?.toString(36)
-    return password;
+function generateSecurePassword(length = 32): string {
+  return crypto
+    .randomBytes(length)
+    .toString("base64")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .slice(0, length);
 }
 

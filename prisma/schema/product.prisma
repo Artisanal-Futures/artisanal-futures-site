@@ -1,24 +1,24 @@
 model Shop {
-  id            String       @id @default(cuid())
-  ownerName     String
-  bio           String?
-  description   String?
-  ownerPhoto    String?
-  logoPhoto     String?
-  coverPhoto    String?
-  phone         String?
-  email         String
-  website       String?
-  ownerId       String
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  attributeTags String[]
-  name          String
-  products      Product[]
-  services      Service[]
-  owner         User         @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-  address       ShopAddress?
-  websiteProvision WebsiteProvision? @relation("ShopWebsiteProvision") 
+  id               String            @id @default(cuid())
+  ownerName        String
+  bio              String?
+  description      String?
+  ownerPhoto       String?
+  logoPhoto        String?
+  coverPhoto       String?
+  phone            String?
+  email            String
+  website          String?
+  ownerId          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  attributeTags    String[]
+  name             String
+  products         Product[]
+  services         Service[]
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  address          ShopAddress?
+  websiteProvision WebsiteProvision? @relation("ShopWebsiteProvision")
 }
 
 model ShopAddress {
@@ -30,8 +30,8 @@ model ShopAddress {
   zip        String?
   country    String?
   shopId     String? @unique
-  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
   street     String?
+  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 }
 
 model Service {

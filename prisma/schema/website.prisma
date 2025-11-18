@@ -17,6 +17,7 @@ model WebsiteProvision {
   socialLinks        Json?
   coolifyProjectUuid String?         @unique
   coolifyAppUuid     String?         @unique
+  coolifyDatabaseUuid String?
   coolifyServerUuid  String?
   deploymentUrl      String?
   lastDeploymentAt   DateTime?
@@ -30,9 +31,9 @@ model WebsiteProvision {
   notes              String?
   isTest             Boolean         @default(false)
   deletedAt          DateTime?
+  shopId             String          @unique
+  shop               Shop            @relation("ShopWebsiteProvision", fields: [shopId], references: [id], onDelete: Cascade)
   user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shopId    String   @unique
-  shop      Shop     @relation("ShopWebsiteProvision", fields: [shopId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
