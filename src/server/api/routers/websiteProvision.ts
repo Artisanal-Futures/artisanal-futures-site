@@ -145,7 +145,7 @@ export const websiteProvisonRouter = createTRPCRouter({
                     data: {
                         status: "PROVISIONING",
                         coolifyProjectUuid: coolifyResult.projectUuid,
-                        coolifyAppUuid: coolifyResult.appUuid,
+                        coolifyAppUuid: coolifyResult.serviceUuid,
                         coolifyServerUuid: coolifyResult.serverUuid,
                     },
                     include: { user: true },
