@@ -107,12 +107,12 @@ class CoolifyClient {
   //   return this.request<CoolifyService>(`/applications/${serviceUuid}`);
   // }
 
-  async updateService(serviceUuid: string, domains: string): Promise<void> {
-    await this.request(`/applications/${serviceUuid}`, {
-      method: "PATCH",
-      body: JSON.stringify({ domains })
-    })
-  }
+  // async updateService(serviceUuid: string, domains: string): Promise<void> {
+  //   await this.request(`/applications/${serviceUuid}`, {
+  //     method: "PATCH",
+  //     body: JSON.stringify({ domains })
+  //   })
+  // }
 
   async deleteService(serviceUuid: string): Promise<void> {
     await this.request(`/applications/${serviceUuid}`, {
@@ -249,7 +249,7 @@ export async function createCoolifyDeployment(
     // Explicit deploy step (since we set instant_deploy: false above)
     await coolifyClient.deployService(service.uuid);
 
-    await coolifyClient.updateService(service.uuid, domain);
+    // await coolifyClient.updateService(service.uuid, domain);
 
     return {
       projectUuid: project.uuid,
