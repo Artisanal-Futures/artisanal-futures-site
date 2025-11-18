@@ -146,7 +146,7 @@ export function generateWordPressCompose(
   const domain =
     provision.hasCustomDomain && provision.customDomain
       ? provision.customDomain
-      : `${provision.subdomain}.mydomain`;
+      : `${provision.subdomain}.artisanalfutures.shop`;
 
   const wordpressImage = env.WORDPRESS_DOCKER_REGISTRY;
 
@@ -228,7 +228,7 @@ export async function createCoolifyDeployment(
     const domain =
       provision.hasCustomDomain && provision.customDomain
         ? provision.customDomain
-        : `${provision.subdomain}.mydomain`;
+        : `${provision.subdomain}.artisanalfutures.shop`;
 
     const app = await coolifyClient.createDockerComposeApplication({
       projectUuid: project.uuid,
