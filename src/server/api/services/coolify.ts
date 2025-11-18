@@ -279,7 +279,7 @@ export async function cancelCoolifyDeployment(
   }
 }
 
-export { coolifyClient, generateWordPressCompose };
+export { coolifyClient };
 
 
 // interface CoolifyProject {
