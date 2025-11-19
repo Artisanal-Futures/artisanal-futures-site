@@ -145,7 +145,7 @@ export const websiteProvisonRouter = createTRPCRouter({
                     data: {
                         status: "PROVISIONING",
                         coolifyProjectUuid: coolifyResult.projectUuid,
-                        coolifyAppUuid: coolifyResult.appUuid,
+                        coolifyServiceUuid: coolifyResult.serviceUuid,
                         coolifyServerUuid: coolifyResult.serverUuid,
                     },
                     include: { user: true },
@@ -191,9 +191,9 @@ export const websiteProvisonRouter = createTRPCRouter({
                 });
             }
             
-            if(provision.coolifyAppUuid && provision.coolifyProjectUuid){
+            if(provision.coolifyServiceUuid && provision.coolifyProjectUuid){
                 try {
-                    await cancelCoolifyDeployment(provision.coolifyAppUuid);
+                    await cancelCoolifyDeployment(provision.coolifyServiceUuid, provision.coolifyProjectUuid);
                 } catch (coolifyError) {
                     console.error("Failed to delete from Coolify:", coolifyError);
                 }

@@ -16,7 +16,7 @@ model WebsiteProvision {
   businessAddress     Json?
   socialLinks         Json?
   coolifyProjectUuid  String?         @unique
-  coolifyAppUuid      String?         @unique
+  coolifyServiceUuid  String?         @unique
   coolifyServerUuid   String?
   deploymentUrl       String?
   lastDeploymentAt    DateTime?

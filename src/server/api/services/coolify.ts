@@ -1,275 +1,3 @@
-import { env } from "~/env";
-import type { WebsiteProvision } from "@prisma/client";
-import yaml from "js-yaml";
-import crypto from "node:crypto";
-
-interface CoolifyProject {
-  uuid: string;
-  name: string;
-  description?: string;
-}
-
-interface CoolifyApplication {
-  uuid: string;
-  name: string;
-  fqdn?: string;
-  status?: string;
-}
-
-interface CoolifyDeployment {
-  uuid: string;
-  status: string;
-  deployment_url?: string;
-}
-
-function generatePassword(length = 32): string {
-  return crypto
-    .randomBytes(length)
-    .toString("base64")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .slice(0, length);
-}
-
-class CoolifyClient {
-  private baseUrl: string;
-  private token: string;
-
-  constructor() {
-    this.baseUrl = env.COOLIFY_API;
-    this.token = env.COOLIFY_ADMIN_SAFE_API_TOKEN;
-  }
-
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseUrl}/api/v1${endpoint}`;
-
-    console.log("Calling Coolify:", url);
-    console.log("Method:", options.method || "GET");
-
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...options.headers,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Coolify API Error: ${response.status} - ${error}`);
-    }
-
-    return response.json() as Promise<T>;
-  }
-
-  async createProject(
-    name: string,
-    description?: string
-  ): Promise<CoolifyProject> {
-    return this.request<CoolifyProject>("/projects", {
-      method: "POST",
-      body: JSON.stringify({ name, description }),
-    });
-  }
-
-  async createDockerComposeApplication(params: {
-    projectUuid: string;
-    serverUuid: string;
-    environmentName: string;
-    name: string;
-    dockerComposeRawBase64: string;
-  }): Promise<CoolifyApplication> {
-    return this.request<CoolifyApplication>("/applications/dockercompose", {
-      method: "POST",
-      body: JSON.stringify({
-        project_uuid: params.projectUuid,
-        server_uuid: params.serverUuid,
-        environment_name: params.environmentName,
-        name: params.name,
-        docker_compose_raw: params.dockerComposeRawBase64,
-        instant_deploy: false,
-      }),
-    });
-  }
-
-  async updateApplicationDomains(appUuid: string, domains: string): Promise<void> {
-    await this.request(`/applications/${appUuid}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        domains,               
-        force_domain_override: true,
-      }),
-    });
-  }
-
-  async deployApplication(appUuid: string): Promise<CoolifyDeployment> {
-    return this.request<CoolifyDeployment>("/deploy", {
-      method: "POST",
-      body: JSON.stringify({ uuid: appUuid }),
-    });
-  }
-
-  async deleteApplication(appUuid: string): Promise<void> {
-    await this.request(`/applications/${appUuid}`, {
-      method: "DELETE",
-    });
-  }
-}
-
-export const coolifyClient = new CoolifyClient();
-
-/**
- * Generate a Docker Compose stack with:
- *  - mysql service
- *  - wordpress service (using your custom image from env.WORDPRESS_DOCKER_REGISTRY)
- */
-export function generateWordPressCompose(
-  provision: WebsiteProvision,
-  dbCreds: {
-    database: string;
-    user: string;
-    password: string;
-    rootPassword: string;
-  }
-): string {
-  const { database, user, password, rootPassword } = dbCreds;
-  const config = provision.config as {
-    adminUser: string;
-    adminPassword: string;
-    adminEmail: string;
-  };
-
-  const domain =
-    provision.hasCustomDomain && provision.customDomain
-      ? provision.customDomain
-      : `${provision.subdomain}.artisanalfutures.shop`;
-
-  const wordpressImage = env.WORDPRESS_DOCKER_REGISTRY;
-
-  const composeObj = {
-    version: "3.8",
-    services: {
-      mysql: {
-        image: "mysql:8",
-        restart: "always",
-        environment: {
-          MYSQL_ROOT_PASSWORD: rootPassword,
-          MYSQL_DATABASE: database,
-          MYSQL_USER: user,
-          MYSQL_PASSWORD: password,
-        },
-        volumes: ["mysql-data:/var/lib/mysql"],
-        exclude_from_hc: true,
-      },
-      wordpress: {
-        image: wordpressImage,
-        restart: "always",
-        depends_on: ["mysql"],
-        environment: {
-          // DB connection
-          WORDPRESS_DB_HOST: "mysql:3306",
-          WORDPRESS_DB_USER: user,
-          WORDPRESS_DB_PASSWORD: password,
-          WORDPRESS_DB_NAME: database,
-
-          // Custom setup vars for your custom WP image
-          WP_URL: `https://${domain}`,
-          WP_TITLE: provision.businessName,
-          WP_ADMIN_USER: config.adminUser,
-          WP_ADMIN_PASSWORD: config.adminPassword,
-          WP_ADMIN_EMAIL: config.adminEmail,
-        },
-        exclude_from_hc: true,
-        labels: [
-          "traefik.enable=true",
-          `traefik.http.routers.wordpress-${provision.id}.rule=Host(\`${domain}\`) && PathPrefix(\`/\`)`,
-          `traefik.http.routers.wordpress-${provision.id}.entrypoints=websecure`,
-          `traefik.http.routers.wordpress-${provision.id}.tls.certresolver=letsencrypt`,
-          `traefik.http.routers.wordpress-${provision.id}.tls=true`,
-        ],
-      },
-    },
-    volumes: {
-      "mysql-data": {},
-    },
-  };
-
-  return yaml.dump(composeObj);
-}
-
-export async function createCoolifyDeployment(
-  provision: WebsiteProvision
-): Promise<{
-  projectUuid: string;
-  appUuid: string;
-  serverUuid: string;
-  fqdn: string;
-}> {
-  try {
-    const project = await coolifyClient.createProject(
-      `${provision.businessName} - ${provision.subdomain}`,
-      `WordPress site for ${provision.businessName}`
-    );
-
-    const dbCreds = {
-      database: "wordpress",
-      user: "wp_" + provision.subdomain.slice(0, 8),
-      password: generatePassword(32),
-      rootPassword: generatePassword(32),
-    };
-
-    const dockerCompose = generateWordPressCompose(provision, dbCreds);
-    const dockerComposeBase64 = Buffer.from(dockerCompose).toString("base64");
-
-    const domain =
-      provision.hasCustomDomain && provision.customDomain
-        ? provision.customDomain
-        : `${provision.subdomain}.artisanalfutures.shop`;
-
-    const app = await coolifyClient.createDockerComposeApplication({
-      projectUuid: project.uuid,
-      serverUuid: env.COOLIFY_UUID,
-      environmentName: "production",
-      name: provision.subdomain,
-      dockerComposeRawBase64: dockerComposeBase64,
-    });
-
-    // await coolifyClient.updateApplicationDomains(app.uuid, `https://${domain}`);
-
-    await coolifyClient.deployApplication(app.uuid);
-
-    return {
-      projectUuid: project.uuid,
-      appUuid: app.uuid,
-      serverUuid: env.COOLIFY_UUID,
-      fqdn: `https://${domain}`,
-    };
-  } catch (error) {
-    console.error("Coolify deployment error:", error);
-    throw new Error(
-      `Failed to deploy to Coolify: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
-  }
-}
-
-export async function cancelCoolifyDeployment(
-  appUuid: string
-): Promise<void> {
-  try {
-    await coolifyClient.deleteApplication(appUuid);
-  } catch (error) {
-    console.error("Failed to cancel deployment:", error);
-    throw error;
-  }
-}
-
-
 // import { env } from "~/env";
 // import type { WebsiteProvision } from "@prisma/client";
 // import yaml from "js-yaml";
@@ -281,7 +9,7 @@ export async function cancelCoolifyDeployment(
 //   description?: string;
 // }
 
-// interface CoolifyService {
+// interface CoolifyApplication {
 //   uuid: string;
 //   name: string;
 //   fqdn?: string;
@@ -348,74 +76,58 @@ export async function cancelCoolifyDeployment(
 //     });
 //   }
 
-//   async createDockerComposeService(params: {
+//   async createDockerComposeApplication(params: {
 //     projectUuid: string;
 //     serverUuid: string;
 //     environmentName: string;
 //     name: string;
-//     dockerComposeRaw: string; 
-//   }): Promise<CoolifyService> {
-//     return this.request<CoolifyService>("/applications/dockercompose", {
+//     dockerComposeRawBase64: string;
+//   }): Promise<CoolifyApplication> {
+//     return this.request<CoolifyApplication>("/applications/dockercompose", {
 //       method: "POST",
 //       body: JSON.stringify({
 //         project_uuid: params.projectUuid,
 //         server_uuid: params.serverUuid,
 //         environment_name: params.environmentName,
 //         name: params.name,
-//         docker_compose_raw: params.dockerComposeRaw,
+//         docker_compose_raw: params.dockerComposeRawBase64,
 //         instant_deploy: false,
 //       }),
 //     });
 //   }
 
-//   async deployService(serviceUuid: string): Promise<CoolifyDeployment> {
+//   async updateApplicationDomains(appUuid: string, domains: string): Promise<void> {
+//     await this.request(`/applications/${appUuid}`, {
+//       method: "PATCH",
+//       body: JSON.stringify({
+//         domains,               
+//         force_domain_override: true,
+//       }),
+//     });
+//   }
+
+//   async deployApplication(appUuid: string): Promise<CoolifyDeployment> {
 //     return this.request<CoolifyDeployment>("/deploy", {
 //       method: "POST",
-//       body: JSON.stringify({ uuid: serviceUuid }),
+//       body: JSON.stringify({ uuid: appUuid }),
 //     });
 //   }
 
-//   // async getService(serviceUuid: string): Promise<CoolifyService> {
-//   //   return this.request<CoolifyService>(`/applications/${serviceUuid}`);
-//   // }
-
-//   async updateService(serviceUuid: string, domains: string[]): Promise<void> {
-//     await this.request(`/applications/${serviceUuid}`, {
-//       method: "PATCH",
-//       body: JSON.stringify({ domains })
-//     })
-//   }
-
-//   async deleteService(serviceUuid: string): Promise<void> {
-//     await this.request(`/services/${serviceUuid}`, {
-//       method: "DELETE",
-//     });
-//   }
-
-//   async deleteEnvironment(environmentName: string, projectUuid: string): Promise<void> {
-//     await this.request(`/projects/${projectUuid}/environments/${environmentName}`, {
-//       method: "DELETE",
-//     });
-//   }
-
-//   async deleteProject(projectUuid: string): Promise<void> {
-//     await this.request(`/projects/${projectUuid}`, {
+//   async deleteApplication(appUuid: string): Promise<void> {
+//     await this.request(`/applications/${appUuid}`, {
 //       method: "DELETE",
 //     });
 //   }
 // }
 
-// const coolifyClient = new CoolifyClient();
+// export const coolifyClient = new CoolifyClient();
 
 // /**
-//  * Generate a single Docker Compose stack that contains:
+//  * Generate a Docker Compose stack with:
 //  *  - mysql service
-//  *  - wordpress service (custom image)
-//  *
-//  * WordPress connects to MySQL via WORDPRESS_DB_HOST=mysql:3306
-//  * which matches the service name and works on the same network.
+//  *  - wordpress service (using custom image from env.WORDPRESS_DOCKER_REGISTRY)
 //  */
-// function generateWordPressCompose(
+// export function generateWordPressCompose(
 //   provision: WebsiteProvision,
 //   dbCreds: {
 //     database: string;
@@ -453,7 +165,6 @@ export async function cancelCoolifyDeployment(
 //         volumes: ["mysql-data:/var/lib/mysql"],
 //         exclude_from_hc: true,
 //       },
-
 //       wordpress: {
 //         image: wordpressImage,
 //         restart: "always",
@@ -465,19 +176,17 @@ export async function cancelCoolifyDeployment(
 //           WORDPRESS_DB_PASSWORD: password,
 //           WORDPRESS_DB_NAME: database,
 
-//           // Custom setup vars
+//           // Custom setup vars for custom WP image
 //           WP_URL: `https://${domain}`,
 //           WP_TITLE: provision.businessName,
 //           WP_ADMIN_USER: config.adminUser,
 //           WP_ADMIN_PASSWORD: config.adminPassword,
 //           WP_ADMIN_EMAIL: config.adminEmail,
 //         },
-
 //         exclude_from_hc: true,
-
 //         labels: [
 //           "traefik.enable=true",
-//           `traefik.http.routers.wordpress-${provision.id}.rule=Host(\`${domain}\`) && PathPrefix(\`/\`)`,
+//           `traefik.http.routers.wordpress-${provision.id}.rule=Host(\`*.artisanalfutures.org\`) && PathPrefix(\`/\`)`,
 //           `traefik.http.routers.wordpress-${provision.id}.entrypoints=websecure`,
 //           `traefik.http.routers.wordpress-${provision.id}.tls.certresolver=letsencrypt`,
 //           `traefik.http.routers.wordpress-${provision.id}.tls=true`,
@@ -496,10 +205,9 @@ export async function cancelCoolifyDeployment(
 //   provision: WebsiteProvision
 // ): Promise<{
 //   projectUuid: string;
-//   serviceUuid: string;
+//   appUuid: string;
 //   serverUuid: string;
-//   fqdn?: string;
-//   domain: string;
+//   fqdn: string;
 // }> {
 //   try {
 //     const project = await coolifyClient.createProject(
@@ -522,25 +230,25 @@ export async function cancelCoolifyDeployment(
 //         ? provision.customDomain
 //         : `${provision.subdomain}.artisanalfutures.shop`;
 
-//     const service = await coolifyClient.createDockerComposeService({
+//     const app = await coolifyClient.createDockerComposeApplication({
 //       projectUuid: project.uuid,
 //       serverUuid: env.COOLIFY_UUID,
 //       environmentName: "production",
 //       name: provision.subdomain,
-//       dockerComposeRaw: dockerComposeBase64,
+//       dockerComposeRawBase64: dockerComposeBase64,
 //     });
 
-//     await coolifyClient.updateService(service.uuid,[`https://${domain}`]);
-//     // Explicit deploy step (since we set instant_deploy: false above)
-//     await coolifyClient.deployService(service.uuid);
+//     // console.log("APP UUID:", app.uuid);
 
+//     // await coolifyClient.updateApplicationDomains(app.uuid, `https://${domain}`);
+
+//     await coolifyClient.deployApplication(app.uuid);
 
 //     return {
 //       projectUuid: project.uuid,
-//       serviceUuid: service.uuid,
+//       appUuid: app.uuid,
 //       serverUuid: env.COOLIFY_UUID,
-//       fqdn: service.fqdn,
-//       domain,
+//       fqdn: `https://${domain}`,
 //     };
 //   } catch (error) {
 //     console.error("Coolify deployment error:", error);
@@ -553,13 +261,10 @@ export async function cancelCoolifyDeployment(
 // }
 
 // export async function cancelCoolifyDeployment(
-//   serviceUuid: string,
-//   projectUuid: string
+//   appUuid: string
 // ): Promise<void> {
 //   try {
-//     await coolifyClient.deleteService(serviceUuid);
-//     await coolifyClient.deleteEnvironment("production", projectUuid);
-//     await coolifyClient.deleteProject(projectUuid);
+//     await coolifyClient.deleteApplication(appUuid);
 //   } catch (error) {
 //     console.error("Failed to cancel deployment:", error);
 //     throw error;
@@ -567,6 +272,296 @@ export async function cancelCoolifyDeployment(
 // }
 
 // export { coolifyClient };
+
+
+import { env } from "~/env";
+import type { WebsiteProvision } from "@prisma/client";
+import yaml from "js-yaml";
+import crypto from "node:crypto";
+
+interface CoolifyProject {
+  uuid: string;
+  name: string;
+  description?: string;
+}
+
+interface CoolifyService {
+  uuid: string;
+  name: string;
+  fqdn?: string;
+  status?: string;
+}
+
+interface CoolifyDeployment {
+  uuid: string;
+  status: string;
+  deployment_url?: string;
+}
+
+function generatePassword(length = 32): string {
+  return crypto
+    .randomBytes(length)
+    .toString("base64")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .slice(0, length);
+}
+
+class CoolifyClient {
+  private baseUrl: string;
+  private token: string;
+
+  constructor() {
+    this.baseUrl = env.COOLIFY_API;
+    this.token = env.COOLIFY_ADMIN_SAFE_API_TOKEN;
+  }
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${this.baseUrl}/api/v1${endpoint}`;
+
+    console.log("Calling Coolify:", url);
+    console.log("Method:", options.method || "GET");
+
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Coolify API Error: ${response.status} - ${error}`);
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  async createProject(
+    name: string,
+    description?: string
+  ): Promise<CoolifyProject> {
+    return this.request<CoolifyProject>("/projects", {
+      method: "POST",
+      body: JSON.stringify({ name, description }),
+    });
+  }
+
+  async createDockerComposeService(params: {
+    projectUuid: string;
+    serverUuid: string;
+    environmentName: string;
+    name: string;
+    dockerComposeRaw: string; 
+  }): Promise<CoolifyService> {
+    return this.request<CoolifyService>("/applications/dockercompose", {
+      method: "POST",
+      body: JSON.stringify({
+        project_uuid: params.projectUuid,
+        server_uuid: params.serverUuid,
+        environment_name: params.environmentName,
+        name: params.name,
+        docker_compose_raw: params.dockerComposeRaw,
+        instant_deploy: false,
+      }),
+    });
+  }
+
+  async deployService(serviceUuid: string): Promise<CoolifyDeployment> {
+    return this.request<CoolifyDeployment>("/deploy", {
+      method: "POST",
+      body: JSON.stringify({ uuid: serviceUuid }),
+    });
+  }
+
+  // async getService(serviceUuid: string): Promise<CoolifyService> {
+  //   return this.request<CoolifyService>(`/applications/${serviceUuid}`);
+  // }
+
+  // async updateService(serviceUuid: string, domains: string[]): Promise<void> {
+  //   await this.request(`/services/${serviceUuid}/envs`, {
+  //     method: "PATCH",
+  //     body: JSON.stringify({ domains })
+  //   }) 
+  // }
+
+
+  async deleteService(serviceUuid: string): Promise<void> {
+    await this.request(`/services/${serviceUuid}`, {
+      method: "DELETE",
+    });
+  }
+
+  async deleteEnvironment(environmentName: string, projectUuid: string): Promise<void> {
+    await this.request(`/projects/${projectUuid}/environments/${environmentName}`, {
+      method: "DELETE",
+    });
+  }
+
+  async deleteProject(projectUuid: string): Promise<void> {
+    await this.request(`/projects/${projectUuid}`, {
+      method: "DELETE",
+    });
+  }
+}
+
+const coolifyClient = new CoolifyClient();
+
+/**
+ * Generate a single Docker Compose stack that contains:
+ *  - mysql service
+ *  - wordpress service (custom image)
+ *
+ * WordPress connects to MySQL via WORDPRESS_DB_HOST=mysql:3306
+ * which matches the service name and works on the same network.
+ */
+function generateWordPressCompose(
+  provision: WebsiteProvision,
+  dbCreds: {
+    database: string;
+    user: string;
+    password: string;
+    rootPassword: string;
+  }
+): string {
+  const { database, user, password, rootPassword } = dbCreds;
+  const config = provision.config as {
+    adminUser: string;
+    adminPassword: string;
+    adminEmail: string;
+  };
+
+  const wordpressImage = env.WORDPRESS_DOCKER_REGISTRY;
+
+  const composeObj = {
+    version: "3.8",
+    services: {
+      mysql: {
+        image: "mysql:8",
+        restart: "always",
+        environment: {
+          MYSQL_ROOT_PASSWORD: rootPassword,
+          MYSQL_DATABASE: database,
+          MYSQL_USER: user,
+          MYSQL_PASSWORD: password,
+        },
+        volumes: ["mysql-data:/var/lib/mysql"],
+        healthcheck:{
+          test: ["CMD", "true"]
+        },
+      },
+
+      wordpress: {
+        image: wordpressImage,
+        restart: "always",
+        depends_on: ["mysql"],
+        environment: {
+          // DB connection
+          WORDPRESS_DB_HOST: "mysql:3306",
+          WORDPRESS_DB_USER: user,
+          WORDPRESS_DB_PASSWORD: password,
+          WORDPRESS_DB_NAME: database,
+
+          // Custom setup vars
+          WP_URL: '${SERVICE_FQDN_WORDPRESS}',
+          WP_TITLE: provision.businessName,
+          WP_ADMIN_USER: config.adminUser,
+          WP_ADMIN_PASSWORD: config.adminPassword,
+          WP_ADMIN_EMAIL: config.adminEmail,
+        },
+
+        healthcheck:{
+          test: ["CMD", "true"]
+        },
+
+        expose: ["80"],
+      },
+    },
+    volumes: {
+      "mysql-data": {},
+    },
+  };
+
+  return yaml.dump(composeObj);
+}
+
+export async function createCoolifyDeployment(
+  provision: WebsiteProvision
+): Promise<{
+  projectUuid: string;
+  serviceUuid: string;
+  serverUuid: string;
+  fqdn?: string;
+  domain: string;
+}> {
+  try {
+    const project = await coolifyClient.createProject(
+      `${provision.businessName} - ${provision.subdomain}`,
+      `WordPress site for ${provision.businessName}`
+    );
+
+    const dbCreds = {
+      database: "wordpress",
+      user: "wp_" + provision.subdomain.slice(0, 8),
+      password: generatePassword(32),
+      rootPassword: generatePassword(32),
+    };
+
+    const dockerCompose = generateWordPressCompose(provision, dbCreds);
+    const dockerComposeBase64 = Buffer.from(dockerCompose).toString("base64");
+
+    const service = await coolifyClient.createDockerComposeService({
+      projectUuid: project.uuid,
+      serverUuid: env.COOLIFY_UUID,
+      environmentName: "production",
+      name: provision.subdomain,
+      dockerComposeRaw: dockerComposeBase64,
+    });
+
+    const domain = `wordpress-${service.uuid}.artisanalfutures.shop`;
+
+    // await coolifyClient.updateService(service.uuid,[`https://${domain}`]);
+    // Explicit deploy step (since we set instant_deploy: false above)
+    await coolifyClient.deployService(service.uuid);
+
+
+    return {
+      projectUuid: project.uuid,
+      serviceUuid: service.uuid,
+      serverUuid: env.COOLIFY_UUID,
+      fqdn: service.fqdn,
+      domain,
+    };
+  } catch (error) {
+    console.error("Coolify deployment error:", error);
+    throw new Error(
+      `Failed to deploy to Coolify: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+}
+
+export async function cancelCoolifyDeployment(
+  serviceUuid: string,
+  projectUuid: string
+): Promise<void> {
+  try {
+    await coolifyClient.deleteService(serviceUuid);
+    await coolifyClient.deleteEnvironment("production", projectUuid);
+    await coolifyClient.deleteProject(projectUuid);
+  } catch (error) {
+    console.error("Failed to cancel deployment:", error);
+    throw error;
+  }
+}
+
+export { coolifyClient };
 
 
 // interface CoolifyProject {
