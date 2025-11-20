@@ -11,6 +11,17 @@ import { TRPCError } from "@trpc/server";
 import { shopSchema } from "~/lib/validators/shop";
 
 export const shopsRouter = createTRPCRouter({
+  getAllWithWebsites: protectedProcedure.query(async ({ctx}) =>{
+      const shops = ctx.db.shop.findMany({
+          include: {
+            websiteProvision: true,
+          },
+          orderBy: {
+              name: "asc",
+          },
+      });
+      return shops;
+  }),
   getShopOwners: publicProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({
       where: {

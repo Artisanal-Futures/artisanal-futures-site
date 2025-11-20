@@ -9,6 +9,7 @@ import {
   UserIcon,
   FolderTree, 
   HandshakeIcon,
+  Globe,
 } from "lucide-react";
 
 import type { Role } from "@prisma/client";
@@ -73,6 +74,14 @@ export function getMenuList(pathname: string): Group[] {
           label: "Services",
           active: pathname.includes(`/admin/services`),
           icon: HandshakeIcon,
+          submenus: [],
+          restrictedAccess: [],
+        },
+        {
+          href: `/admin/websites`,
+          label: "Websites",
+          active: pathname.includes(`/admin/websites`),
+          icon: Globe,
           submenus: [],
           restrictedAccess: [],
         },

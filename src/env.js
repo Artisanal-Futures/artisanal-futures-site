@@ -50,7 +50,8 @@ export const env = createEnv({
     COOLIFY_ADMIN_SAFE_API_TOKEN: z.string().min(1),
     COOLIFY_API: z.string().url(),
     COOLIFY_UUID: z.string().min(1),
-    WORDPRESS_DOCKER_REGISTRY: z.string().min(1)
+    WORDPRESS_DOCKER_REGISTRY: z.string().min(1),
+    ENCRYPTION_KEY: z.string().min(1) 
   },
 
   /**
@@ -137,7 +138,8 @@ export const env = createEnv({
     HOSTNAME: process.env.HOSTNAME,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     AI_AGENT_BACKEND_URL: process.env.AI_AGENT_BACKEND_URL,
-    WORDPRESS_DOCKER_REGISTRY: process.env.WORDPRESS_DOCKER_REGISTRY
+    WORDPRESS_DOCKER_REGISTRY: process.env.WORDPRESS_DOCKER_REGISTRY,
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

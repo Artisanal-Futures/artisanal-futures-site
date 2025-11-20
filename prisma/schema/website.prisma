@@ -8,7 +8,7 @@ model WebsiteProvision {
   status              ProvisionStatus @default(PENDING)
   hasCustomDomain     Boolean         @default(false)
   customDomain        String?         @unique
-  subdomain           String          @unique
+  subdomain           String?          @unique
   businessName        String
   businessTagline     String?
   contactEmail        String
@@ -16,7 +16,6 @@ model WebsiteProvision {
   businessAddress     Json?
   socialLinks         Json?
   coolifyProjectUuid  String?         @unique
-  coolifyServiceUuid  String?         @unique
   coolifyServerUuid   String?
   deploymentUrl       String?
   lastDeploymentAt    DateTime?
@@ -32,8 +31,11 @@ model WebsiteProvision {
   deletedAt           DateTime?
   shopId              String          @unique
   coolifyDatabaseUuid String?
+  coolifyServiceUuid  String?         @unique
   shop                Shop            @relation("ShopWebsiteProvision", fields: [shopId], references: [id], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminUser           String?
+  adminPasswordEncrypted  String?
 
   @@index([userId])
   @@index([status])

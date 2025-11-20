@@ -8,7 +8,7 @@ export const createProvisionSchema = z.object({
 
     hasCustomDomain: z.boolean().default(false),
     customDomain: z.string().optional(),
-    subdomain: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/, "Subdomain can only contain lowercase letters, numbers, and hyphens"),
+    subdomain: z.string().optional(),
 
     businessName: z.string().min(1),
     contactEmail: z.string().email(),
