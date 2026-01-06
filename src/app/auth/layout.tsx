@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 
-import Link from 'next/link'
+import Link from "next/link";
 
-import DynamicImage from './_components/dynamic-image'
+import DynamicImage from "./_components/dynamic-image";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear();
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -14,12 +14,12 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           <Link href="/" className="ml-4 flex gap-x-2 lg:ml-0">
             <img
               className="block h-6 w-auto lg:hidden"
-              src="/logo_mobile.png"
+              src="/logos/logo-mobile.png"
               alt="Ubuntu AI logo"
             />
             <img
               className="hidden h-6 w-auto lg:block"
-              src="/logo.png"
+              src="/logos/logo.png"
               alt="Ubuntu AI logo"
             />
           </Link>
@@ -44,9 +44,9 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
               &copy; {year} Artisanal Futures. All rights reserved.
             </p>
           </div>
-        </footer>{' '}
+        </footer>{" "}
       </div>
     </main>
-  )
-}
-export default AuthLayout
+  );
+};
+export default AuthLayout;

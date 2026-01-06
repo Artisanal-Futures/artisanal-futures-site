@@ -1,13 +1,13 @@
 export const metadata = {
-  title: 'Cookie Policy',
-  description: 'The cookie policy for Artisanal Futures',
-}
+  title: "Cookie Policy",
+  description: "The cookie policy for Artisanal Futures",
+};
 
 export default function CookiePolicyPage() {
   return (
     <article className="prose lg:prose-lg">
       <h1>Cookie Policy</h1>
-      <p>Last updated: February 20th, 2024</p>
+      <p>Last updated: January 6th, 2026</p>
       <h2>Introduction</h2>
       <p>
         Welcome to Artisanal Futures&apos; Cookie Policy. By using our website
@@ -23,19 +23,33 @@ export default function CookiePolicyPage() {
       </p>
       <h2>How We Use Cookies</h2>
       <p>
-        At Artisanal Futures, we use cookies primarily for authentication
-        purposes within our application, &quot;Solidarity Pathways&quot;. These
-        cookies are essential for ensuring the security of our users&apos;
-        accounts and for enabling access to the features and functionalities of
-        our app.
+        At Artisanal Futures, we only use cookies that are strictly necessary
+        for the functionality and security of our website and application,
+        &quot;Solidarity Pathways&quot;. Specifically, we use cookies for
+        authentication purposes. These cookies are essential for ensuring the
+        security of our users&apos; accounts and for enabling access to the
+        features and functionalities of our app.
+      </p>
+      <p>
+        <span className="font-bold">
+          We do <u>not</u> use cookies for personal tracking, advertising,
+          analytics, or any other non-essential purposes.
+        </span>{" "}
+        Your experience is never subject to marketing, retargeting, or
+        behavioral profiling by means of cookies on this site.
       </p>
       <h2>Types of Cookies We Use</h2>
       <ul>
         <li>
-          <span className="font-bold">Authentication Cookies</span>:These
-          cookies are used to authenticate new users and drivers accessing our
-          app, &quot;Solidarity Pathways&quot;. They enable users to securely
-          log in to their accounts and access our services.
+          <span className="font-bold">Authentication Cookies</span>: These
+          cookies are used to authenticate users and drivers accessing our app,
+          &quot;Solidarity Pathways&quot;. They enable users to securely log in
+          to their accounts and access our services.
+        </li>
+        <li>
+          <span className="font-bold">Strictly Necessary Cookies</span>: Without
+          these, parts of our website and app may not function properly. We do
+          not set any optional or non-essential cookies.
         </li>
       </ul>
       <h2>Changes to This Policy</h2>
@@ -56,5 +70,5 @@ export default function CookiePolicyPage() {
         .
       </p>
     </article>
-  )
+  );
 }
