@@ -1,15 +1,23 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { ShieldCheck, Store, User } from 'lucide-react'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "~/utils/styles";
+import { ShieldCheck, Store, User } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
-import { api } from '~/trpc/react'
-import { cn } from '~/utils/styles'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Button } from '~/components/ui/button'
-import { Separator } from '~/components/ui/separator'
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+
+import { api } from "~/trpc/react";
+// Import the Accordion components
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -17,22 +25,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '~/components/ui/sheet'
-// Import the Accordion components
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '~/components/ui/accordion'
+} from "~/components/ui/sheet";
 
 export const MobileNav = ({
   links,
 }: {
-  links: { id: string; name: string }[]
+  links: { id: string; name: string }[];
 }) => {
-  const { data: sessionData } = useSession()
-  const pathname = usePathname()
+  const { data: sessionData } = useSession();
+  const pathname = usePathname();
 
   // Fetch the category data needed for the dropdown
   const { data: categoryTree } = api.category.getNavigationTree.useQuery();
@@ -44,14 +45,14 @@ export const MobileNav = ({
           <HamburgerMenuIcon className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side={'top'}>
+      <SheetContent side={"top"}>
         <SheetHeader>
           <SheetTitle>
             <Link href="/" className="flex w-fit items-center gap-x-2">
               <span className="flex items-center gap-1">
                 <Image
                   className="block h-5"
-                  src="/img/logo_mobile.png"
+                  src="/logos/logo-mobile.png"
                   alt="Artisanal Futures logo"
                   width={20}
                   height={20}
@@ -67,7 +68,7 @@ export const MobileNav = ({
         <nav className="mt-8 flex flex-col space-y-2">
           {links.map((route) => {
             // If the link is "Products", render an Accordion
-            if (route.name === 'Products') {
+            if (route.name === "Products") {
               return (
                 <Accordion key={route.id} type="single" collapsible>
                   <AccordionItem value="products" className="border-b-0">
@@ -103,8 +104,10 @@ export const MobileNav = ({
                 key={route.id}
                 href={`/${route.id}`}
                 className={cn(
-                  'py-4 text-lg font-medium transition-colors',
-                  pathname === `/${route.id}` ? 'text-black' : 'text-neutral-500',
+                  "py-4 text-lg font-medium transition-colors",
+                  pathname === `/${route.id}`
+                    ? "text-black"
+                    : "text-neutral-500",
                 )}
               >
                 {route.name}
@@ -133,7 +136,7 @@ export const MobileNav = ({
           {sessionData?.user && (
             <>
               <div className="flex w-full flex-row items-center justify-between pt-4">
-                <Link href="/profile" className=" flex items-center gap-2 ">
+                <Link href="/profile" className="flex items-center gap-2">
                   <Avatar>
                     <AvatarImage
                       src={sessionData.user.image!}
@@ -141,21 +144,21 @@ export const MobileNav = ({
                     />
                     <AvatarFallback>{sessionData.user.name}</AvatarFallback>
                   </Avatar>
-                  <p className="flex flex-col ">
+                  <p className="flex flex-col">
                     <span className="flex gap-1">
                       {sessionData?.user?.name}
                       <>
-                        {sessionData?.user?.role == 'USER' && (
+                        {sessionData?.user?.role == "USER" && (
                           <User className="w-[0.875rem] text-sm font-medium" />
                         )}
                       </>
                       <>
-                        {sessionData?.user?.role == 'ADMIN' && (
+                        {sessionData?.user?.role == "ADMIN" && (
                           <ShieldCheck className="w-[0.875rem] text-sm font-medium" />
                         )}
                       </>
                       <>
-                        {sessionData?.user?.role == 'ARTISAN' && (
+                        {sessionData?.user?.role == "ARTISAN" && (
                           <Store className="w-[0.875rem] text-sm font-medium" />
                         )}
                       </>
@@ -164,7 +167,7 @@ export const MobileNav = ({
                   </p>
                 </Link>
 
-                <Button onClick={() => void signOut()} variant={'outline'}>
+                <Button onClick={() => void signOut()} variant={"outline"}>
                   Not you? Sign out
                 </Button>
               </div>
@@ -173,5 +176,5 @@ export const MobileNav = ({
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};
