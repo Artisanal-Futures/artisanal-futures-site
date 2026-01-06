@@ -40,25 +40,29 @@ export default function HomePage() {
       <EventBulletinBoard
         upcomingEvents={[
           {
-            shopName: "Indigo Culinary",
-            text: `Family, Friends, and Community,
+            shopName: "Home Ec Detroit",
+            text: `
+              A Hoophouse Warming 
 
-﻿
+              Neighbors in Bloom
 
-We’re excited to share that Indigo Culinary Co. will be at D-Town Farm’s Harvest Festival this weekend!
+              A cozy space where community and connection take root
 
-Come celebrate the season with us. Good food, live music, vendors, and community all gathered on the land. We’ll be there with our full line of spice blends, teas, and storytelling, ready to season your table with flavors rooted in the African diaspora.
+              📍 15100 Mendota St, Detroit, MI 48238
+              📅 November 8th, 2025
+              ⏰ 2 PM - 5 PM
 
-📍 D-Town Farm (14027 W. Outer Drive, Detroit)
-📅 Saturday & Sunday, Sept 20th & 21st
-⏰ 12 PM – 6 PM
-
-This festival is a celebration of harvest, resilience, and joy. Bring your family, bring a friend, and come connect with us in the field.
-
-We can’t wait to see you there!`,
-            imageUrl: "/img/indigo-news-sept.jpg",
-            ctaLabel: "Learn More",
-            ctaHref: "https://www.dbcfsn.org/harvest2025",
+              Bulb Planting Activity
+              Bonfire & S'mores
+              Herbal Tea Bar
+              Community Yoga
+              Collage Table Vendors
+              Music
+              Moxie the Foxie
+            `,
+            imageUrl: "/img/homeec-nov.png",
+            // ctaLabel: "Learn More",
+            // ctaHref: "https://www.dbcfsn.org/harvest2025",
           },
         ]}
       />

@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Image
-              src="/logo.png"
+              src="/logos/logo.png"
               alt="Artisanal Futures Logo"
               width={158}
               height={8}

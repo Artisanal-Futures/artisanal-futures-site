@@ -47,6 +47,8 @@ export const env = createEnv({
     MINIO_ACCESS_KEY: z.string(),
     MINIO_SECRET_KEY: z.string(),
     MINIO_ENDPOINT: z.string(),
+
+    STRIPE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -130,6 +132,7 @@ export const env = createEnv({
     HOSTNAME: process.env.HOSTNAME,
     GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
     AI_AGENT_BACKEND_URL: process.env.AI_AGENT_BACKEND_URL,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

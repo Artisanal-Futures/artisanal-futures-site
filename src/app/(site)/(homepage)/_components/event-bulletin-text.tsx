@@ -47,22 +47,28 @@ export const EventBulletinText = ({
           <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             {shopName}
           </span>
-          <div className="prose prose-sm max-w-none text-slate-700">
-            {text.split("\n").map(
-              (paragraph, idx) =>
-                paragraph.trim() && (
-                  <p key={idx} className="mb-3 last:mb-0">
-                    {paragraph}
+          <div className="prose prose-sm max-w-none gap-0 text-slate-700">
+            {text.split("\n").map((paragraph, idx) => {
+              const trimmed = paragraph.trim();
+              if (trimmed) {
+                return (
+                  <p key={idx} className="mb-1 mt-0 py-0 last:mb-0">
+                    {trimmed}
                   </p>
-                ),
-            )}
+                );
+              }
+              return <br key={idx} />;
+            })}
           </div>
-          <Link
-            href={ctaHref}
-            className="mt-auto inline-flex w-fit items-center rounded-lg border border-primary bg-primary px-6 py-2 text-sm font-medium text-white transition hover:bg-primary/90"
-          >
-            {ctaLabel}
-          </Link>
+
+          {ctaHref && ctaHref !== "#" && (
+            <Link
+              href={ctaHref}
+              className="mt-auto inline-flex w-fit items-center rounded-lg border border-primary bg-primary px-6 py-2 text-sm font-medium text-white transition hover:bg-primary/90"
+            >
+              {ctaLabel || "Learn More"}
+            </Link>
+          )}
         </div>
       </section>
     );
@@ -88,12 +94,14 @@ export const EventBulletinText = ({
           />
         </div>
       )}
-      <Link
-        href={ctaHref}
-        className="mt-2 inline-block rounded border border-primary bg-primary px-4 py-1 text-sm font-medium text-white transition hover:bg-primary/90"
-      >
-        {ctaLabel}
-      </Link>
+      {ctaHref && ctaHref !== "#" && (
+        <Link
+          href={ctaHref}
+          className="mt-2 inline-block rounded border border-primary bg-primary px-4 py-1 text-sm font-medium text-white transition hover:bg-primary/90"
+        >
+          {ctaLabel || "Learn More"}
+        </Link>
+      )}
     </section>
   );
 };
