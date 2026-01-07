@@ -13,14 +13,14 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="relative flex h-16 items-center px-4 sm:px-6 lg:px-8">
           <Link href="/" className="ml-4 flex gap-x-2 lg:ml-0">
             <img
-              className="block h-6 w-auto lg:hidden"
+              className="block h-7 w-auto lg:hidden"
               src="/logos/logo-mobile.png"
-              alt="Ubuntu AI logo"
+              alt="Artisanal Futures logo"
             />
             <img
-              className="hidden h-6 w-auto lg:block"
+              className="hidden h-7 w-auto lg:block"
               src="/logos/logo.png"
-              alt="Ubuntu AI logo"
+              alt="Artisanal Futures logo"
             />
           </Link>
         </div>

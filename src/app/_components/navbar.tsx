@@ -31,7 +31,7 @@ const Navbar = () => {
         <div className="relative flex h-16 items-center px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-x-2 lg:ml-0">
             <Image
-              className="block h-5 lg:hidden"
+              className="block h-7 w-auto lg:hidden"
               src={"/logos/logo-mobile.png"}
               alt="Artisanal Futures logo"
               width={20}
@@ -67,11 +67,14 @@ const Navbar = () => {
             <Link
               href="/donate"
               className={cn(
-                "hidden text-sm font-medium transition-colors hover:text-black lg:block",
+                "flex items-center space-x-1 text-sm font-medium transition-colors hover:text-black lg:block",
                 pathname === "/donate" ? "text-black" : "text-neutral-500",
               )}
             >
-              Donate
+              <span className="block lg:hidden" role="img" aria-label="heart">
+                ❤️
+              </span>
+              <span>Donate</span>
             </Link>
             <NavbarActions />
           </div>

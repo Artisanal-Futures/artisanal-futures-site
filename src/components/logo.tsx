@@ -6,7 +6,7 @@ const Logo = ({ className }: { className: string }) => {
     // <Link href="/" className="  flex items-center gap-x-2 ">
     <>
       <Image
-        className="block h-5 lg:hidden"
+        className="block h-7 w-auto lg:hidden"
         src="/logos/logo-mobile.png"
         alt="Artisanal Futures logo"
         width={20}

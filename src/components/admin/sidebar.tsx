@@ -36,11 +36,11 @@ export function Sidebar() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src={"/logos/logo-mobile.png"}
-              alt="Artisanal Futures Logo"
+              alt="Artisanal Futures logo"
               width={76}
               height={76}
               className={cn(
-                sidebar?.isOpen === false ? "mr-1 h-6 w-6" : "hidden",
+                sidebar?.isOpen === false ? "mr-1 h-7 w-7" : "hidden",
               )}
             />
 
