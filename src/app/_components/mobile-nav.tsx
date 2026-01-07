@@ -51,7 +51,7 @@ export const MobileNav = ({
             <Link href="/" className="flex w-fit items-center gap-x-2">
               <span className="flex items-center gap-1">
                 <Image
-                  className="block h-5"
+                  className="block h-7 w-auto"
                   src="/logos/logo-mobile.png"
                   alt="Artisanal Futures logo"
                   width={20}
