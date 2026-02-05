@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   BoxesIcon,
   FolderTree,
+  Globe,
   HandshakeIcon,
   ImageIcon,
   LayoutGrid,
@@ -81,6 +82,14 @@ export function getMenuList(pathname: string): Group[] {
           label: "Categories",
           active: pathname.includes(`/admin/categories`),
           icon: FolderTree,
+          submenus: [],
+          restrictedAccess: [],
+        },
+        {
+          href: `/admin/websites`,
+          label: "Websites",
+          active: pathname.includes(`/admin/websites`),
+          icon: Globe,
           submenus: [],
           restrictedAccess: [],
         },

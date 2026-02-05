@@ -1,18 +1,19 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 import { authRouter } from "./routers/auth";
+import { categoryRouter } from "./routers/category";
 import { forumRouter } from "./routers/forum";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
 import { guestRouter } from "./routers/guest";
 import { migrationRouter } from "./routers/migration";
 import { productRouter } from "./routers/product";
 import { productsRouter } from "./routers/products";
+import { serviceRouter } from "./routers/service";
 import { shopsRouter } from "./routers/shops";
 import { surveysRouter } from "./routers/surveys";
 import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
-import { serviceRouter } from "./routers/service";
-import { categoryRouter } from "./routers/category";
+import { websiteProvisionRouter } from "./routers/website-provision";
 
 /**
  * This is the primary router for your server.
@@ -34,6 +35,7 @@ export const appRouter = createTRPCRouter({
   forumSubreddit: forumSubredditRouter,
   guest: guestRouter,
   upcycling: upcyclingRouter,
+  websiteProvision: websiteProvisionRouter,
 });
 
 // export type definition of API

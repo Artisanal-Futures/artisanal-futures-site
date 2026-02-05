@@ -67,10 +67,12 @@ model User {
   shops             Shop[]
   createdSubreddits Subreddit[]        @relation("CreatedBy")
   subscriptions     Subscription[]
+  trainingDataSet   TrainingDataSet[]
   upcycleResults    UpcycleResult[]
   variations        Variation[]
   votes             Vote[]
-  depots            Depot[]            @relation("DepotToUser")
+  websiteProvision  WebsiteProvision[]
+  depotToUser       DepotToUser[]
 }
 
 model VerificationToken {
