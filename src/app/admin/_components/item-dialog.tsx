@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CirclePlusIcon, PencilIcon } from "lucide-react";
+
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
@@ -17,7 +18,7 @@ type FormComponentProps<T> = {
   initialData: T | null;
   defaultEmail?: string;
   onSuccessCallback: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 type Props<T> = {
@@ -34,13 +35,13 @@ type Props<T> = {
   mode?: "create" | "update";
   FormComponent: React.FC<FormComponentProps<T>>;
   onOpenChange?: (isOpen: boolean) => void;
-  preventCloseOnOutsideClick?: boolean; 
+  preventCloseOnOutsideClick?: boolean;
 };
 
 export const handleUrlParam = (
   id: number | string | undefined,
   isOpen: boolean,
-  param: string
+  param: string,
 ) => {
   if (!id) return;
   const url = new URL(window.location.href);
@@ -138,7 +139,7 @@ export function ItemDialog<T>({
             initialData={initialData}
             defaultEmail={defaultEmail}
             onSuccessCallback={handleSuccess}
-            dialogRef={dialogContentRef} 
+            dialogRef={dialogContentRef}
           />
         )}
       </DialogContent>

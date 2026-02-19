@@ -1,51 +1,26 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { CategoryType } from "generated/prisma";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { CategoryType } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-
-const categorySchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(2, "Name must be at least 2 characters long."),
-  parentId: z.string().nullable().optional(),
-  type: z.nativeEnum(CategoryType).optional(),
-});
-// Type for products with potential imageUrl field
-type ProductWithImage = {
-  imageUrl?: string | null;
-  [key: string]: unknown;
-} | null;
-
-const addFullImageUrl = <T extends ProductWithImage>(product: T): T => {
-  if (!product) return product;
-  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
-  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
-    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
-  }
-  return product;
-};
+import { addFullProductImageUrl } from "~/lib/add-full-image-url";
+import { categorySchema } from "~/lib/validators/category";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const categoryRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
-    if (ctx.session.user.role !== "ADMIN") {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
+  getAll: adminProcedure.query(({ ctx }) => {
     return ctx.db.category.findMany({
       orderBy: { name: "asc" },
       include: { parent: true },
     });
   }),
 
-  create: protectedProcedure
+  create: adminProcedure
     .input(categorySchema)
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== "ADMIN") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
       return ctx.db.category.create({
         data: {
           name: input.name,
@@ -55,14 +30,14 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  update: protectedProcedure
+  update: adminProcedure
     .input(categorySchema)
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== "ADMIN") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
       if (!input.id) {
-        throw new Error("Category ID is required for an update.");
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Category ID is required for an update.",
+        });
       }
       return ctx.db.category.update({
         where: { id: input.id },
@@ -73,31 +48,16 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.role !== "ADMIN") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
       return ctx.db.category.delete({
         where: { id: input.id },
       });
     }),
 
-  // --- PUBLIC PROCEDURES ---
-
-  /**
-   * @description Fetches the category tree for the main site navigation.
-   * It can now be filtered by type (PRODUCT or SERVICE).
-   */
   getNavigationTree: publicProcedure
-    .input(
-      z
-        .object({
-          type: z.nativeEnum(CategoryType).optional(),
-        })
-        .optional(),
-    )
+    .input(z.object({ type: z.nativeEnum(CategoryType).optional() }).optional())
     .query(({ ctx, input }) => {
       return ctx.db.category.findMany({
         where: {
@@ -108,9 +68,6 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  /**
-   * @description Fetches a single category by its slug for the public category pages.
-   */
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(({ ctx, input }) => {
@@ -140,13 +97,7 @@ export const categoryRouter = createTRPCRouter({
     }),
 
   getCategoriesWithFeaturedProducts: publicProcedure
-    .input(
-      z
-        .object({
-          type: z.nativeEnum(CategoryType).optional(),
-        })
-        .optional(),
-    )
+    .input(z.object({ type: z.nativeEnum(CategoryType).optional() }).optional())
     .query(async ({ ctx, input }) => {
       if (input?.type === CategoryType.SERVICE) {
         const categories = await ctx.db.category.findMany({
@@ -158,12 +109,8 @@ export const categoryRouter = createTRPCRouter({
             children: true,
             services: {
               take: 4,
-              where: {
-                isFeatured: true,
-              },
-              include: {
-                shop: true,
-              },
+              where: { isFeatured: true },
+              include: { shop: true },
             },
           },
           orderBy: { name: "asc" },
@@ -171,7 +118,9 @@ export const categoryRouter = createTRPCRouter({
 
         const formattedCategories = categories.map((category) => ({
           ...category,
-          items: category.services.map((service) => addFullImageUrl(service)),
+          items: category.services.map((service) =>
+            addFullProductImageUrl(service),
+          ),
         }));
         return formattedCategories;
       }
@@ -185,12 +134,8 @@ export const categoryRouter = createTRPCRouter({
           children: true,
           products: {
             take: 4,
-            where: {
-              isFeatured: true,
-            },
-            include: {
-              shop: true,
-            },
+            where: { isFeatured: true },
+            include: { shop: true },
           },
         },
         orderBy: { name: "asc" },
@@ -198,7 +143,9 @@ export const categoryRouter = createTRPCRouter({
 
       const formattedCategories = categories.map((category) => ({
         ...category,
-        items: category.products.map((product) => addFullImageUrl(product)),
+        items: category.products.map((product) =>
+          addFullProductImageUrl(product),
+        ),
       }));
       return formattedCategories;
     }),

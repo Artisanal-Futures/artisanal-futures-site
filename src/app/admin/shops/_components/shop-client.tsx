@@ -1,9 +1,7 @@
 "use client";
 
-import type { User } from "@prisma/client";
-
 import type { FilterOption } from "~/components/tables/advanced-data-table";
-import { type Shop } from "~/types/shop";
+import type { RouterOutputs } from "~/trpc/react";
 import { usePermissions } from "~/hooks/use-permissions";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
@@ -12,7 +10,9 @@ import { shopColumns } from "./shop-column-structure";
 import { createShopFilters } from "./shop-filters";
 import { ShopForm } from "./shop-form";
 
-type Props = { shops: (Shop & { owner: User })[] };
+type Props = {
+  shops: RouterOutputs["shop"]["getAll"];
+};
 
 export function ShopClient({ shops }: Props) {
   const { isAdmin } = usePermissions();
@@ -22,7 +22,7 @@ export function ShopClient({ shops }: Props) {
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="shopName"
+        searchKey="name"
         searchPlaceholder="Filter by shop name..."
         columns={shopColumns}
         data={shops ?? []}
@@ -30,18 +30,18 @@ export function ShopClient({ shops }: Props) {
         defaultColumnVisibility={{
           owner: isAdmin,
         }}
-        addButton={
-          isAdmin && (
-            <ItemDialog
-              title={`Create shop`}
-              subtitle="Create a new shop"
-              FormComponent={ShopForm}
-              type="shop"
-              mode="create"
-              contentClassName="max-w-5xl w-full"
-            />
-          )
-        }
+        // addButton={
+        //   isAdmin && (
+        //     <ItemDialog
+        //       title={`Create shop`}
+        //       subtitle="Create a new shop"
+        //       FormComponent={ShopForm}
+        //       type="shop"
+        //       mode="create"
+        //       contentClassName="max-w-5xl w-full"
+        //     />
+        //   )
+        // }
       />
     </div>
   );

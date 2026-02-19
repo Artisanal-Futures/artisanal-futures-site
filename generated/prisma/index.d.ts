@@ -5750,11 +5750,11 @@ export namespace Prisma {
    */
 
   export type TrainingDataSetCountOutputType = {
-    TrainingImage: number
+    trainingImage: number
   }
 
   export type TrainingDataSetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    TrainingImage?: boolean | TrainingDataSetCountOutputTypeCountTrainingImageArgs
+    trainingImage?: boolean | TrainingDataSetCountOutputTypeCountTrainingImageArgs
   }
 
   // Custom InputTypes
@@ -5784,14 +5784,14 @@ export namespace Prisma {
     trainingDataSet: number
     trainingImage: number
     trainingJob: number
-    UpcycleResult: number
+    upcycleResult: number
   }
 
   export type TrainingModelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     trainingDataSet?: boolean | TrainingModelCountOutputTypeCountTrainingDataSetArgs
     trainingImage?: boolean | TrainingModelCountOutputTypeCountTrainingImageArgs
     trainingJob?: boolean | TrainingModelCountOutputTypeCountTrainingJobArgs
-    UpcycleResult?: boolean | TrainingModelCountOutputTypeCountUpcycleResultArgs
+    upcycleResult?: boolean | TrainingModelCountOutputTypeCountUpcycleResultArgs
   }
 
   // Custom InputTypes
@@ -6053,7 +6053,7 @@ export namespace Prisma {
     jobs: number
     routes: number
     vehicles: number
-    User: number
+    user: number
   }
 
   export type DepotCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6062,7 +6062,7 @@ export namespace Prisma {
     jobs?: boolean | DepotCountOutputTypeCountJobsArgs
     routes?: boolean | DepotCountOutputTypeCountRoutesArgs
     vehicles?: boolean | DepotCountOutputTypeCountVehiclesArgs
-    User?: boolean | DepotCountOutputTypeCountUserArgs
+    user?: boolean | DepotCountOutputTypeCountUserArgs
   }
 
   // Custom InputTypes
@@ -6346,11 +6346,11 @@ export namespace Prisma {
    */
 
   export type ServiceCountOutputType = {
-    Category: number
+    categories: number
   }
 
   export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Category?: boolean | ServiceCountOutputTypeCountCategoryArgs
+    categories?: boolean | ServiceCountOutputTypeCountCategoriesArgs
   }
 
   // Custom InputTypes
@@ -6367,7 +6367,7 @@ export namespace Prisma {
   /**
    * ServiceCountOutputType without action
    */
-  export type ServiceCountOutputTypeCountCategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ServiceCountOutputTypeCountCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CategoryWhereInput
   }
 
@@ -6377,11 +6377,11 @@ export namespace Prisma {
    */
 
   export type ProductCountOutputType = {
-    Category: number
+    categories: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    Category?: boolean | ProductCountOutputTypeCountCategoryArgs
+    categories?: boolean | ProductCountOutputTypeCountCategoriesArgs
   }
 
   // Custom InputTypes
@@ -6398,7 +6398,7 @@ export namespace Prisma {
   /**
    * ProductCountOutputType without action
    */
-  export type ProductCountOutputTypeCountCategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProductCountOutputTypeCountCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CategoryWhereInput
   }
 
@@ -6409,14 +6409,14 @@ export namespace Prisma {
 
   export type CategoryCountOutputType = {
     children: number
-    Product: number
-    Service: number
+    products: number
+    services: number
   }
 
   export type CategoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     children?: boolean | CategoryCountOutputTypeCountChildrenArgs
-    Product?: boolean | CategoryCountOutputTypeCountProductArgs
-    Service?: boolean | CategoryCountOutputTypeCountServiceArgs
+    products?: boolean | CategoryCountOutputTypeCountProductsArgs
+    services?: boolean | CategoryCountOutputTypeCountServicesArgs
   }
 
   // Custom InputTypes
@@ -6440,14 +6440,14 @@ export namespace Prisma {
   /**
    * CategoryCountOutputType without action
    */
-  export type CategoryCountOutputTypeCountProductArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type CategoryCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
   }
 
   /**
    * CategoryCountOutputType without action
    */
-  export type CategoryCountOutputTypeCountServiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type CategoryCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceWhereInput
   }
 
@@ -6458,12 +6458,12 @@ export namespace Prisma {
 
   export type UpcycleResultCountOutputType = {
     questions: number
-    TrainingModel: number
+    trainingModel: number
   }
 
   export type UpcycleResultCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questions?: boolean | UpcycleResultCountOutputTypeCountQuestionsArgs
-    TrainingModel?: boolean | UpcycleResultCountOutputTypeCountTrainingModelArgs
+    trainingModel?: boolean | UpcycleResultCountOutputTypeCountTrainingModelArgs
   }
 
   // Custom InputTypes
@@ -18816,9 +18816,9 @@ export namespace Prisma {
     userId?: boolean
     setType?: boolean
     triggerWord?: boolean
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
-    TrainingImage?: boolean | TrainingDataSet$TrainingImageArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    trainingImage?: boolean | TrainingDataSet$trainingImageArgs<ExtArgs>
     _count?: boolean | TrainingDataSetCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingDataSet"]>
 
@@ -18833,8 +18833,8 @@ export namespace Prisma {
     userId?: boolean
     setType?: boolean
     triggerWord?: boolean
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingDataSet"]>
 
   export type TrainingDataSetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18848,8 +18848,8 @@ export namespace Prisma {
     userId?: boolean
     setType?: boolean
     triggerWord?: boolean
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingDataSet"]>
 
   export type TrainingDataSetSelectScalar = {
@@ -18867,26 +18867,26 @@ export namespace Prisma {
 
   export type TrainingDataSetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trainingModelId" | "name" | "description" | "createdAt" | "updatedAt" | "tags" | "userId" | "setType" | "triggerWord", ExtArgs["result"]["trainingDataSet"]>
   export type TrainingDataSetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
-    TrainingImage?: boolean | TrainingDataSet$TrainingImageArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    trainingImage?: boolean | TrainingDataSet$trainingImageArgs<ExtArgs>
     _count?: boolean | TrainingDataSetCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TrainingDataSetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type TrainingDataSetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    TrainingModel?: boolean | TrainingDataSet$TrainingModelArgs<ExtArgs>
-    User?: boolean | UserDefaultArgs<ExtArgs>
+    trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $TrainingDataSetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TrainingDataSet"
     objects: {
-      TrainingModel: Prisma.$TrainingModelPayload<ExtArgs> | null
-      User: Prisma.$UserPayload<ExtArgs>
-      TrainingImage: Prisma.$TrainingImagePayload<ExtArgs>[]
+      trainingModel: Prisma.$TrainingModelPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
+      trainingImage: Prisma.$TrainingImagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19293,9 +19293,9 @@ export namespace Prisma {
    */
   export interface Prisma__TrainingDataSetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    TrainingModel<T extends TrainingDataSet$TrainingModelArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$TrainingModelArgs<ExtArgs>>): Prisma__TrainingModelClient<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    User<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    TrainingImage<T extends TrainingDataSet$TrainingImageArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$TrainingImageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    trainingModel<T extends TrainingDataSet$trainingModelArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$trainingModelArgs<ExtArgs>>): Prisma__TrainingModelClient<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    trainingImage<T extends TrainingDataSet$trainingImageArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$trainingImageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19731,9 +19731,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingDataSet.TrainingModel
+   * TrainingDataSet.trainingModel
    */
-  export type TrainingDataSet$TrainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingDataSet$trainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingModel
      */
@@ -19750,9 +19750,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingDataSet.TrainingImage
+   * TrainingDataSet.trainingImage
    */
-  export type TrainingDataSet$TrainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingDataSet$trainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingImage
      */
@@ -22368,7 +22368,7 @@ export namespace Prisma {
     trainingDataSet?: boolean | TrainingModel$trainingDataSetArgs<ExtArgs>
     trainingImage?: boolean | TrainingModel$trainingImageArgs<ExtArgs>
     trainingJob?: boolean | TrainingModel$trainingJobArgs<ExtArgs>
-    UpcycleResult?: boolean | TrainingModel$UpcycleResultArgs<ExtArgs>
+    upcycleResult?: boolean | TrainingModel$upcycleResultArgs<ExtArgs>
     _count?: boolean | TrainingModelCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingModel"]>
 
@@ -22446,7 +22446,7 @@ export namespace Prisma {
     trainingDataSet?: boolean | TrainingModel$trainingDataSetArgs<ExtArgs>
     trainingImage?: boolean | TrainingModel$trainingImageArgs<ExtArgs>
     trainingJob?: boolean | TrainingModel$trainingJobArgs<ExtArgs>
-    UpcycleResult?: boolean | TrainingModel$UpcycleResultArgs<ExtArgs>
+    upcycleResult?: boolean | TrainingModel$upcycleResultArgs<ExtArgs>
     _count?: boolean | TrainingModelCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TrainingModelIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -22458,7 +22458,7 @@ export namespace Prisma {
       trainingDataSet: Prisma.$TrainingDataSetPayload<ExtArgs>[]
       trainingImage: Prisma.$TrainingImagePayload<ExtArgs>[]
       trainingJob: Prisma.$TrainingJobPayload<ExtArgs>[]
-      UpcycleResult: Prisma.$UpcycleResultPayload<ExtArgs>[]
+      upcycleResult: Prisma.$UpcycleResultPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -22878,7 +22878,7 @@ export namespace Prisma {
     trainingDataSet<T extends TrainingModel$trainingDataSetArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingDataSetArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingDataSetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     trainingImage<T extends TrainingModel$trainingImageArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingImageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     trainingJob<T extends TrainingModel$trainingJobArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingJobArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    UpcycleResult<T extends TrainingModel$UpcycleResultArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$UpcycleResultArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    upcycleResult<T extends TrainingModel$upcycleResultArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$upcycleResultArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -23388,9 +23388,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingModel.UpcycleResult
+   * TrainingModel.upcycleResult
    */
-  export type TrainingModel$UpcycleResultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModel$upcycleResultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the UpcycleResult
      */
@@ -33031,7 +33031,7 @@ export namespace Prisma {
     jobs?: boolean | Depot$jobsArgs<ExtArgs>
     routes?: boolean | Depot$routesArgs<ExtArgs>
     vehicles?: boolean | Depot$vehiclesArgs<ExtArgs>
-    User?: boolean | Depot$UserArgs<ExtArgs>
+    user?: boolean | Depot$userArgs<ExtArgs>
     _count?: boolean | DepotCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["depot"]>
 
@@ -33070,7 +33070,7 @@ export namespace Prisma {
     jobs?: boolean | Depot$jobsArgs<ExtArgs>
     routes?: boolean | Depot$routesArgs<ExtArgs>
     vehicles?: boolean | Depot$vehiclesArgs<ExtArgs>
-    User?: boolean | Depot$UserArgs<ExtArgs>
+    user?: boolean | Depot$userArgs<ExtArgs>
     _count?: boolean | DepotCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DepotIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -33085,7 +33085,7 @@ export namespace Prisma {
       jobs: Prisma.$JobPayload<ExtArgs>[]
       routes: Prisma.$RoutePayload<ExtArgs>[]
       vehicles: Prisma.$VehiclePayload<ExtArgs>[]
-      User: Prisma.$UserPayload<ExtArgs>[]
+      user: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -33494,7 +33494,7 @@ export namespace Prisma {
     jobs<T extends Depot$jobsArgs<ExtArgs> = {}>(args?: Subset<T, Depot$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     routes<T extends Depot$routesArgs<ExtArgs> = {}>(args?: Subset<T, Depot$routesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoutePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     vehicles<T extends Depot$vehiclesArgs<ExtArgs> = {}>(args?: Subset<T, Depot$vehiclesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    User<T extends Depot$UserArgs<ExtArgs> = {}>(args?: Subset<T, Depot$UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    user<T extends Depot$userArgs<ExtArgs> = {}>(args?: Subset<T, Depot$userArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -34057,9 +34057,9 @@ export namespace Prisma {
   }
 
   /**
-   * Depot.User
+   * Depot.user
    */
-  export type Depot$UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Depot$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -49136,7 +49136,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: boolean
     shop?: boolean | Service$shopArgs<ExtArgs>
-    Category?: boolean | Service$CategoryArgs<ExtArgs>
+    categories?: boolean | Service$categoriesArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
@@ -49205,7 +49205,7 @@ export namespace Prisma {
   export type ServiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "priceInCents" | "currency" | "imageUrl" | "durationInMinutes" | "locationType" | "tags" | "attributeTags" | "aiGeneratedTags" | "createdAt" | "updatedAt" | "isPublic" | "shopId" | "isFeatured" | "serviceUrl", ExtArgs["result"]["service"]>
   export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | Service$shopArgs<ExtArgs>
-    Category?: boolean | Service$CategoryArgs<ExtArgs>
+    categories?: boolean | Service$categoriesArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -49219,7 +49219,7 @@ export namespace Prisma {
     name: "Service"
     objects: {
       shop: Prisma.$ShopPayload<ExtArgs> | null
-      Category: Prisma.$CategoryPayload<ExtArgs>[]
+      categories: Prisma.$CategoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -49634,7 +49634,7 @@ export namespace Prisma {
   export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     shop<T extends Service$shopArgs<ExtArgs> = {}>(args?: Subset<T, Service$shopArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    Category<T extends Service$CategoryArgs<ExtArgs> = {}>(args?: Subset<T, Service$CategoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    categories<T extends Service$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Service$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -50096,9 +50096,9 @@ export namespace Prisma {
   }
 
   /**
-   * Service.Category
+   * Service.categories
    */
-  export type Service$CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Service$categoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Category
      */
@@ -50429,7 +50429,7 @@ export namespace Prisma {
     isPublic?: boolean
     isFeatured?: boolean
     shop?: boolean | Product$shopArgs<ExtArgs>
-    Category?: boolean | Product$CategoryArgs<ExtArgs>
+    categories?: boolean | Product$categoriesArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -50504,7 +50504,7 @@ export namespace Prisma {
   export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopProductId" | "name" | "description" | "priceInCents" | "currency" | "imageUrl" | "productUrl" | "attributeTags" | "materialTags" | "environmentalTags" | "aiGeneratedTags" | "createdAt" | "updatedAt" | "scrapeMethod" | "shopId" | "tags" | "isPublic" | "isFeatured", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | Product$shopArgs<ExtArgs>
-    Category?: boolean | Product$CategoryArgs<ExtArgs>
+    categories?: boolean | Product$categoriesArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -50518,7 +50518,7 @@ export namespace Prisma {
     name: "Product"
     objects: {
       shop: Prisma.$ShopPayload<ExtArgs> | null
-      Category: Prisma.$CategoryPayload<ExtArgs>[]
+      categories: Prisma.$CategoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -50935,7 +50935,7 @@ export namespace Prisma {
   export interface Prisma__ProductClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     shop<T extends Product$shopArgs<ExtArgs> = {}>(args?: Subset<T, Product$shopArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    Category<T extends Product$CategoryArgs<ExtArgs> = {}>(args?: Subset<T, Product$CategoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    categories<T extends Product$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Product$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -51399,9 +51399,9 @@ export namespace Prisma {
   }
 
   /**
-   * Product.Category
+   * Product.categories
    */
-  export type Product$CategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Product$categoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Category
      */
@@ -51599,8 +51599,8 @@ export namespace Prisma {
     type?: boolean
     parent?: boolean | Category$parentArgs<ExtArgs>
     children?: boolean | Category$childrenArgs<ExtArgs>
-    Product?: boolean | Category$ProductArgs<ExtArgs>
-    Service?: boolean | Category$ServiceArgs<ExtArgs>
+    products?: boolean | Category$productsArgs<ExtArgs>
+    services?: boolean | Category$servicesArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
@@ -51631,8 +51631,8 @@ export namespace Prisma {
   export type CategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     parent?: boolean | Category$parentArgs<ExtArgs>
     children?: boolean | Category$childrenArgs<ExtArgs>
-    Product?: boolean | Category$ProductArgs<ExtArgs>
-    Service?: boolean | Category$ServiceArgs<ExtArgs>
+    products?: boolean | Category$productsArgs<ExtArgs>
+    services?: boolean | Category$servicesArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -51647,8 +51647,8 @@ export namespace Prisma {
     objects: {
       parent: Prisma.$CategoryPayload<ExtArgs> | null
       children: Prisma.$CategoryPayload<ExtArgs>[]
-      Product: Prisma.$ProductPayload<ExtArgs>[]
-      Service: Prisma.$ServicePayload<ExtArgs>[]
+      products: Prisma.$ProductPayload<ExtArgs>[]
+      services: Prisma.$ServicePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -52051,8 +52051,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     parent<T extends Category$parentArgs<ExtArgs> = {}>(args?: Subset<T, Category$parentArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     children<T extends Category$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Category$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    Product<T extends Category$ProductArgs<ExtArgs> = {}>(args?: Subset<T, Category$ProductArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    Service<T extends Category$ServiceArgs<ExtArgs> = {}>(args?: Subset<T, Category$ServiceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    products<T extends Category$productsArgs<ExtArgs> = {}>(args?: Subset<T, Category$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    services<T extends Category$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Category$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -52525,9 +52525,9 @@ export namespace Prisma {
   }
 
   /**
-   * Category.Product
+   * Category.products
    */
-  export type Category$ProductArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Category$productsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Product
      */
@@ -52549,9 +52549,9 @@ export namespace Prisma {
   }
 
   /**
-   * Category.Service
+   * Category.services
    */
-  export type Category$ServiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Category$servicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Service
      */
@@ -52958,7 +52958,7 @@ export namespace Prisma {
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    TrainingModel?: boolean | UpcycleResult$TrainingModelArgs<ExtArgs>
+    trainingModel?: boolean | UpcycleResult$trainingModelArgs<ExtArgs>
     _count?: boolean | UpcycleResultCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upcycleResult"]>
 
@@ -53077,7 +53077,7 @@ export namespace Prisma {
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    TrainingModel?: boolean | UpcycleResult$TrainingModelArgs<ExtArgs>
+    trainingModel?: boolean | UpcycleResult$trainingModelArgs<ExtArgs>
     _count?: boolean | UpcycleResultCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UpcycleResultIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -53093,7 +53093,7 @@ export namespace Prisma {
       questions: Prisma.$UpcycleQuestionPayload<ExtArgs>[]
       rating: Prisma.$UpcycleRatingPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
-      TrainingModel: Prisma.$TrainingModelPayload<ExtArgs>[]
+      trainingModel: Prisma.$TrainingModelPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -53526,7 +53526,7 @@ export namespace Prisma {
     questions<T extends UpcycleResult$questionsArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rating<T extends UpcycleResult$ratingArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$ratingArgs<ExtArgs>>): Prisma__UpcycleRatingClient<$Result.GetResult<Prisma.$UpcycleRatingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    TrainingModel<T extends UpcycleResult$TrainingModelArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$TrainingModelArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    trainingModel<T extends UpcycleResult$trainingModelArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$trainingModelArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -54028,9 +54028,9 @@ export namespace Prisma {
   }
 
   /**
-   * UpcycleResult.TrainingModel
+   * UpcycleResult.trainingModel
    */
-  export type UpcycleResult$TrainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UpcycleResult$trainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingModel
      */
@@ -67485,9 +67485,9 @@ export namespace Prisma {
     userId?: StringFilter<"TrainingDataSet"> | string
     setType?: EnumLoraTypeFilter<"TrainingDataSet"> | $Enums.LoraType
     triggerWord?: StringFilter<"TrainingDataSet"> | string
-    TrainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
-    User?: XOR<UserScalarRelationFilter, UserWhereInput>
-    TrainingImage?: TrainingImageListRelationFilter
+    trainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    trainingImage?: TrainingImageListRelationFilter
   }
 
   export type TrainingDataSetOrderByWithRelationInput = {
@@ -67501,9 +67501,9 @@ export namespace Prisma {
     userId?: SortOrder
     setType?: SortOrder
     triggerWord?: SortOrder
-    TrainingModel?: TrainingModelOrderByWithRelationInput
-    User?: UserOrderByWithRelationInput
-    TrainingImage?: TrainingImageOrderByRelationAggregateInput
+    trainingModel?: TrainingModelOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    trainingImage?: TrainingImageOrderByRelationAggregateInput
   }
 
   export type TrainingDataSetWhereUniqueInput = Prisma.AtLeast<{
@@ -67520,9 +67520,9 @@ export namespace Prisma {
     userId?: StringFilter<"TrainingDataSet"> | string
     setType?: EnumLoraTypeFilter<"TrainingDataSet"> | $Enums.LoraType
     triggerWord?: StringFilter<"TrainingDataSet"> | string
-    TrainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
-    User?: XOR<UserScalarRelationFilter, UserWhereInput>
-    TrainingImage?: TrainingImageListRelationFilter
+    trainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    trainingImage?: TrainingImageListRelationFilter
   }, "id">
 
   export type TrainingDataSetOrderByWithAggregationInput = {
@@ -67752,7 +67752,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetListRelationFilter
     trainingImage?: TrainingImageListRelationFilter
     trainingJob?: TrainingJobListRelationFilter
-    UpcycleResult?: UpcycleResultListRelationFilter
+    upcycleResult?: UpcycleResultListRelationFilter
   }
 
   export type TrainingModelOrderByWithRelationInput = {
@@ -67779,7 +67779,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetOrderByRelationAggregateInput
     trainingImage?: TrainingImageOrderByRelationAggregateInput
     trainingJob?: TrainingJobOrderByRelationAggregateInput
-    UpcycleResult?: UpcycleResultOrderByRelationAggregateInput
+    upcycleResult?: UpcycleResultOrderByRelationAggregateInput
   }
 
   export type TrainingModelWhereUniqueInput = Prisma.AtLeast<{
@@ -67809,7 +67809,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetListRelationFilter
     trainingImage?: TrainingImageListRelationFilter
     trainingJob?: TrainingJobListRelationFilter
-    UpcycleResult?: UpcycleResultListRelationFilter
+    upcycleResult?: UpcycleResultListRelationFilter
   }, "id">
 
   export type TrainingModelOrderByWithAggregationInput = {
@@ -68590,7 +68590,7 @@ export namespace Prisma {
     jobs?: JobListRelationFilter
     routes?: RouteListRelationFilter
     vehicles?: VehicleListRelationFilter
-    User?: UserListRelationFilter
+    user?: UserListRelationFilter
   }
 
   export type DepotOrderByWithRelationInput = {
@@ -68606,7 +68606,7 @@ export namespace Prisma {
     jobs?: JobOrderByRelationAggregateInput
     routes?: RouteOrderByRelationAggregateInput
     vehicles?: VehicleOrderByRelationAggregateInput
-    User?: UserOrderByRelationAggregateInput
+    user?: UserOrderByRelationAggregateInput
   }
 
   export type DepotWhereUniqueInput = Prisma.AtLeast<{
@@ -68625,7 +68625,7 @@ export namespace Prisma {
     jobs?: JobListRelationFilter
     routes?: RouteListRelationFilter
     vehicles?: VehicleListRelationFilter
-    User?: UserListRelationFilter
+    user?: UserListRelationFilter
   }, "id" | "ownerId">
 
   export type DepotOrderByWithAggregationInput = {
@@ -69791,7 +69791,7 @@ export namespace Prisma {
     isFeatured?: BoolFilter<"Service"> | boolean
     serviceUrl?: StringNullableFilter<"Service"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
-    Category?: CategoryListRelationFilter
+    categories?: CategoryListRelationFilter
   }
 
   export type ServiceOrderByWithRelationInput = {
@@ -69813,7 +69813,7 @@ export namespace Prisma {
     isFeatured?: SortOrder
     serviceUrl?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
-    Category?: CategoryOrderByRelationAggregateInput
+    categories?: CategoryOrderByRelationAggregateInput
   }
 
   export type ServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -69838,7 +69838,7 @@ export namespace Prisma {
     isFeatured?: BoolFilter<"Service"> | boolean
     serviceUrl?: StringNullableFilter<"Service"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
-    Category?: CategoryListRelationFilter
+    categories?: CategoryListRelationFilter
   }, "id">
 
   export type ServiceOrderByWithAggregationInput = {
@@ -69913,7 +69913,7 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Product"> | boolean
     isFeatured?: BoolFilter<"Product"> | boolean
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
-    Category?: CategoryListRelationFilter
+    categories?: CategoryListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -69937,7 +69937,7 @@ export namespace Prisma {
     isPublic?: SortOrder
     isFeatured?: SortOrder
     shop?: ShopOrderByWithRelationInput
-    Category?: CategoryOrderByRelationAggregateInput
+    categories?: CategoryOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -69965,7 +69965,7 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Product"> | boolean
     isFeatured?: BoolFilter<"Product"> | boolean
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
-    Category?: CategoryListRelationFilter
+    categories?: CategoryListRelationFilter
   }, "id" | "shopId_shopProductId">
 
   export type ProductOrderByWithAggregationInput = {
@@ -70030,8 +70030,8 @@ export namespace Prisma {
     type?: EnumCategoryTypeFilter<"Category"> | $Enums.CategoryType
     parent?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     children?: CategoryListRelationFilter
-    Product?: ProductListRelationFilter
-    Service?: ServiceListRelationFilter
+    products?: ProductListRelationFilter
+    services?: ServiceListRelationFilter
   }
 
   export type CategoryOrderByWithRelationInput = {
@@ -70041,8 +70041,8 @@ export namespace Prisma {
     type?: SortOrder
     parent?: CategoryOrderByWithRelationInput
     children?: CategoryOrderByRelationAggregateInput
-    Product?: ProductOrderByRelationAggregateInput
-    Service?: ServiceOrderByRelationAggregateInput
+    products?: ProductOrderByRelationAggregateInput
+    services?: ServiceOrderByRelationAggregateInput
   }
 
   export type CategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -70055,8 +70055,8 @@ export namespace Prisma {
     type?: EnumCategoryTypeFilter<"Category"> | $Enums.CategoryType
     parent?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     children?: CategoryListRelationFilter
-    Product?: ProductListRelationFilter
-    Service?: ServiceListRelationFilter
+    products?: ProductListRelationFilter
+    services?: ServiceListRelationFilter
   }, "id" | "name">
 
   export type CategoryOrderByWithAggregationInput = {
@@ -70119,7 +70119,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    TrainingModel?: TrainingModelListRelationFilter
+    trainingModel?: TrainingModelListRelationFilter
   }
 
   export type UpcycleResultOrderByWithRelationInput = {
@@ -70159,7 +70159,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionOrderByRelationAggregateInput
     rating?: UpcycleRatingOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
-    TrainingModel?: TrainingModelOrderByRelationAggregateInput
+    trainingModel?: TrainingModelOrderByRelationAggregateInput
   }
 
   export type UpcycleResultWhereUniqueInput = Prisma.AtLeast<{
@@ -70202,7 +70202,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    TrainingModel?: TrainingModelListRelationFilter
+    trainingModel?: TrainingModelListRelationFilter
   }, "id" | "trackingId">
 
   export type UpcycleResultOrderByWithAggregationInput = {
@@ -71777,9 +71777,9 @@ export namespace Prisma {
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
-    User: UserCreateNestedOneWithoutTrainingDataSetInput
-    TrainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
+    user: UserCreateNestedOneWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateInput = {
@@ -71793,7 +71793,7 @@ export namespace Prisma {
     userId: string
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUpdateInput = {
@@ -71805,9 +71805,9 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
-    User?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
-    TrainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
+    user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateInput = {
@@ -71821,7 +71821,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetCreateManyInput = {
@@ -72071,7 +72071,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
     trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelUncheckedCreateInput = {
@@ -72098,7 +72098,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
     trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelUpdateInput = {
@@ -72125,7 +72125,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
     trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelUncheckedUpdateInput = {
@@ -72152,7 +72152,7 @@ export namespace Prisma {
     trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
     trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelCreateManyInput = {
@@ -73015,7 +73015,7 @@ export namespace Prisma {
     jobs?: JobCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateInput = {
@@ -73031,7 +73031,7 @@ export namespace Prisma {
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUpdateInput = {
@@ -73047,7 +73047,7 @@ export namespace Prisma {
     jobs?: JobUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateInput = {
@@ -73063,7 +73063,7 @@ export namespace Prisma {
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotCreateManyInput = {
@@ -74324,7 +74324,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: string | null
     shop?: ShopCreateNestedOneWithoutServicesInput
-    Category?: CategoryCreateNestedManyWithoutServiceInput
+    categories?: CategoryCreateNestedManyWithoutServicesInput
   }
 
   export type ServiceUncheckedCreateInput = {
@@ -74345,7 +74345,7 @@ export namespace Prisma {
     shopId?: string | null
     isFeatured?: boolean
     serviceUrl?: string | null
-    Category?: CategoryUncheckedCreateNestedManyWithoutServiceInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutServicesInput
   }
 
   export type ServiceUpdateInput = {
@@ -74366,7 +74366,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneWithoutServicesNestedInput
-    Category?: CategoryUpdateManyWithoutServiceNestedInput
+    categories?: CategoryUpdateManyWithoutServicesNestedInput
   }
 
   export type ServiceUncheckedUpdateInput = {
@@ -74387,7 +74387,7 @@ export namespace Prisma {
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    Category?: CategoryUncheckedUpdateManyWithoutServiceNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutServicesNestedInput
   }
 
   export type ServiceCreateManyInput = {
@@ -74469,7 +74469,7 @@ export namespace Prisma {
     isPublic?: boolean
     isFeatured?: boolean
     shop?: ShopCreateNestedOneWithoutProductsInput
-    Category?: CategoryCreateNestedManyWithoutProductInput
+    categories?: CategoryCreateNestedManyWithoutProductsInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -74492,7 +74492,7 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
-    Category?: CategoryUncheckedCreateNestedManyWithoutProductInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
   }
 
   export type ProductUpdateInput = {
@@ -74515,7 +74515,7 @@ export namespace Prisma {
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     shop?: ShopUpdateOneWithoutProductsNestedInput
-    Category?: CategoryUpdateManyWithoutProductNestedInput
+    categories?: CategoryUpdateManyWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -74538,7 +74538,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
-    Category?: CategoryUncheckedUpdateManyWithoutProductNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -74612,8 +74612,8 @@ export namespace Prisma {
     type?: $Enums.CategoryType
     parent?: CategoryCreateNestedOneWithoutChildrenInput
     children?: CategoryCreateNestedManyWithoutParentInput
-    Product?: ProductCreateNestedManyWithoutCategoryInput
-    Service?: ServiceCreateNestedManyWithoutCategoryInput
+    products?: ProductCreateNestedManyWithoutCategoriesInput
+    services?: ServiceCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryUncheckedCreateInput = {
@@ -74622,8 +74622,8 @@ export namespace Prisma {
     parentId?: string | null
     type?: $Enums.CategoryType
     children?: CategoryUncheckedCreateNestedManyWithoutParentInput
-    Product?: ProductUncheckedCreateNestedManyWithoutCategoryInput
-    Service?: ServiceUncheckedCreateNestedManyWithoutCategoryInput
+    products?: ProductUncheckedCreateNestedManyWithoutCategoriesInput
+    services?: ServiceUncheckedCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryUpdateInput = {
@@ -74632,8 +74632,8 @@ export namespace Prisma {
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     parent?: CategoryUpdateOneWithoutChildrenNestedInput
     children?: CategoryUpdateManyWithoutParentNestedInput
-    Product?: ProductUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUpdateManyWithoutCategoryNestedInput
+    products?: ProductUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryUncheckedUpdateInput = {
@@ -74642,8 +74642,8 @@ export namespace Prisma {
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     children?: CategoryUncheckedUpdateManyWithoutParentNestedInput
-    Product?: ProductUncheckedUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUncheckedUpdateManyWithoutCategoryNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryCreateManyInput = {
@@ -74702,7 +74702,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    TrainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultUncheckedCreateInput = {
@@ -74741,7 +74741,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    TrainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultUpdateInput = {
@@ -74780,7 +74780,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    TrainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateInput = {
@@ -74819,7 +74819,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    TrainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultCreateManyInput = {
@@ -82154,15 +82154,15 @@ export namespace Prisma {
     connect?: ShopWhereUniqueInput
   }
 
-  export type CategoryCreateNestedManyWithoutServiceInput = {
-    create?: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput> | CategoryCreateWithoutServiceInput[] | CategoryUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutServiceInput | CategoryCreateOrConnectWithoutServiceInput[]
+  export type CategoryCreateNestedManyWithoutServicesInput = {
+    create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
-  export type CategoryUncheckedCreateNestedManyWithoutServiceInput = {
-    create?: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput> | CategoryCreateWithoutServiceInput[] | CategoryUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutServiceInput | CategoryCreateOrConnectWithoutServiceInput[]
+  export type CategoryUncheckedCreateNestedManyWithoutServicesInput = {
+    create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
@@ -82191,29 +82191,29 @@ export namespace Prisma {
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutServicesInput, ShopUpdateWithoutServicesInput>, ShopUncheckedUpdateWithoutServicesInput>
   }
 
-  export type CategoryUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput> | CategoryCreateWithoutServiceInput[] | CategoryUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutServiceInput | CategoryCreateOrConnectWithoutServiceInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutServiceInput | CategoryUpsertWithWhereUniqueWithoutServiceInput[]
+  export type CategoryUpdateManyWithoutServicesNestedInput = {
+    create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutServicesInput | CategoryUpsertWithWhereUniqueWithoutServicesInput[]
     set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutServiceInput | CategoryUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutServiceInput | CategoryUpdateManyWithWhereWithoutServiceInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutServicesInput | CategoryUpdateWithWhereUniqueWithoutServicesInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutServicesInput | CategoryUpdateManyWithWhereWithoutServicesInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
-  export type CategoryUncheckedUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput> | CategoryCreateWithoutServiceInput[] | CategoryUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutServiceInput | CategoryCreateOrConnectWithoutServiceInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutServiceInput | CategoryUpsertWithWhereUniqueWithoutServiceInput[]
+  export type CategoryUncheckedUpdateManyWithoutServicesNestedInput = {
+    create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutServicesInput | CategoryUpsertWithWhereUniqueWithoutServicesInput[]
     set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutServiceInput | CategoryUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutServiceInput | CategoryUpdateManyWithWhereWithoutServiceInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutServicesInput | CategoryUpdateWithWhereUniqueWithoutServicesInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutServicesInput | CategoryUpdateManyWithWhereWithoutServicesInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
@@ -82243,15 +82243,15 @@ export namespace Prisma {
     connect?: ShopWhereUniqueInput
   }
 
-  export type CategoryCreateNestedManyWithoutProductInput = {
-    create?: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput> | CategoryCreateWithoutProductInput[] | CategoryUncheckedCreateWithoutProductInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutProductInput | CategoryCreateOrConnectWithoutProductInput[]
+  export type CategoryCreateNestedManyWithoutProductsInput = {
+    create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
-  export type CategoryUncheckedCreateNestedManyWithoutProductInput = {
-    create?: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput> | CategoryCreateWithoutProductInput[] | CategoryUncheckedCreateWithoutProductInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutProductInput | CategoryCreateOrConnectWithoutProductInput[]
+  export type CategoryUncheckedCreateNestedManyWithoutProductsInput = {
+    create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
@@ -82294,29 +82294,29 @@ export namespace Prisma {
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutProductsInput, ShopUpdateWithoutProductsInput>, ShopUncheckedUpdateWithoutProductsInput>
   }
 
-  export type CategoryUpdateManyWithoutProductNestedInput = {
-    create?: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput> | CategoryCreateWithoutProductInput[] | CategoryUncheckedCreateWithoutProductInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutProductInput | CategoryCreateOrConnectWithoutProductInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutProductInput | CategoryUpsertWithWhereUniqueWithoutProductInput[]
+  export type CategoryUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutProductsInput | CategoryUpsertWithWhereUniqueWithoutProductsInput[]
     set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutProductInput | CategoryUpdateWithWhereUniqueWithoutProductInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutProductInput | CategoryUpdateManyWithWhereWithoutProductInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutProductsInput | CategoryUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutProductsInput | CategoryUpdateManyWithWhereWithoutProductsInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
-  export type CategoryUncheckedUpdateManyWithoutProductNestedInput = {
-    create?: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput> | CategoryCreateWithoutProductInput[] | CategoryUncheckedCreateWithoutProductInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutProductInput | CategoryCreateOrConnectWithoutProductInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutProductInput | CategoryUpsertWithWhereUniqueWithoutProductInput[]
+  export type CategoryUncheckedUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutProductsInput | CategoryUpsertWithWhereUniqueWithoutProductsInput[]
     set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutProductInput | CategoryUpdateWithWhereUniqueWithoutProductInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutProductInput | CategoryUpdateManyWithWhereWithoutProductInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutProductsInput | CategoryUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutProductsInput | CategoryUpdateManyWithWhereWithoutProductsInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
@@ -82333,15 +82333,15 @@ export namespace Prisma {
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
-  export type ProductCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput> | ProductCreateWithoutCategoryInput[] | ProductUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ProductCreateOrConnectWithoutCategoryInput | ProductCreateOrConnectWithoutCategoryInput[]
+  export type ProductCreateNestedManyWithoutCategoriesInput = {
+    create?: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput> | ProductCreateWithoutCategoriesInput[] | ProductUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCategoriesInput | ProductCreateOrConnectWithoutCategoriesInput[]
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
-  export type ServiceCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput> | ServiceCreateWithoutCategoryInput[] | ServiceUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutCategoryInput | ServiceCreateOrConnectWithoutCategoryInput[]
+  export type ServiceCreateNestedManyWithoutCategoriesInput = {
+    create?: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput> | ServiceCreateWithoutCategoriesInput[] | ServiceUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutCategoriesInput | ServiceCreateOrConnectWithoutCategoriesInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
@@ -82352,15 +82352,15 @@ export namespace Prisma {
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
-  export type ProductUncheckedCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput> | ProductCreateWithoutCategoryInput[] | ProductUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ProductCreateOrConnectWithoutCategoryInput | ProductCreateOrConnectWithoutCategoryInput[]
+  export type ProductUncheckedCreateNestedManyWithoutCategoriesInput = {
+    create?: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput> | ProductCreateWithoutCategoriesInput[] | ProductUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCategoriesInput | ProductCreateOrConnectWithoutCategoriesInput[]
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
-  export type ServiceUncheckedCreateNestedManyWithoutCategoryInput = {
-    create?: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput> | ServiceCreateWithoutCategoryInput[] | ServiceUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutCategoryInput | ServiceCreateOrConnectWithoutCategoryInput[]
+  export type ServiceUncheckedCreateNestedManyWithoutCategoriesInput = {
+    create?: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput> | ServiceCreateWithoutCategoriesInput[] | ServiceUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutCategoriesInput | ServiceCreateOrConnectWithoutCategoriesInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
@@ -82392,29 +82392,29 @@ export namespace Prisma {
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
-  export type ProductUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput> | ProductCreateWithoutCategoryInput[] | ProductUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ProductCreateOrConnectWithoutCategoryInput | ProductCreateOrConnectWithoutCategoryInput[]
-    upsert?: ProductUpsertWithWhereUniqueWithoutCategoryInput | ProductUpsertWithWhereUniqueWithoutCategoryInput[]
+  export type ProductUpdateManyWithoutCategoriesNestedInput = {
+    create?: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput> | ProductCreateWithoutCategoriesInput[] | ProductUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCategoriesInput | ProductCreateOrConnectWithoutCategoriesInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutCategoriesInput | ProductUpsertWithWhereUniqueWithoutCategoriesInput[]
     set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
-    update?: ProductUpdateWithWhereUniqueWithoutCategoryInput | ProductUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: ProductUpdateManyWithWhereWithoutCategoryInput | ProductUpdateManyWithWhereWithoutCategoryInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutCategoriesInput | ProductUpdateWithWhereUniqueWithoutCategoriesInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutCategoriesInput | ProductUpdateManyWithWhereWithoutCategoriesInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type ServiceUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput> | ServiceCreateWithoutCategoryInput[] | ServiceUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutCategoryInput | ServiceCreateOrConnectWithoutCategoryInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutCategoryInput | ServiceUpsertWithWhereUniqueWithoutCategoryInput[]
+  export type ServiceUpdateManyWithoutCategoriesNestedInput = {
+    create?: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput> | ServiceCreateWithoutCategoriesInput[] | ServiceUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutCategoriesInput | ServiceCreateOrConnectWithoutCategoriesInput[]
+    upsert?: ServiceUpsertWithWhereUniqueWithoutCategoriesInput | ServiceUpsertWithWhereUniqueWithoutCategoriesInput[]
     set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutCategoryInput | ServiceUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutCategoryInput | ServiceUpdateManyWithWhereWithoutCategoryInput[]
+    update?: ServiceUpdateWithWhereUniqueWithoutCategoriesInput | ServiceUpdateWithWhereUniqueWithoutCategoriesInput[]
+    updateMany?: ServiceUpdateManyWithWhereWithoutCategoriesInput | ServiceUpdateManyWithWhereWithoutCategoriesInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
@@ -82432,29 +82432,29 @@ export namespace Prisma {
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
-  export type ProductUncheckedUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput> | ProductCreateWithoutCategoryInput[] | ProductUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ProductCreateOrConnectWithoutCategoryInput | ProductCreateOrConnectWithoutCategoryInput[]
-    upsert?: ProductUpsertWithWhereUniqueWithoutCategoryInput | ProductUpsertWithWhereUniqueWithoutCategoryInput[]
+  export type ProductUncheckedUpdateManyWithoutCategoriesNestedInput = {
+    create?: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput> | ProductCreateWithoutCategoriesInput[] | ProductUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ProductCreateOrConnectWithoutCategoriesInput | ProductCreateOrConnectWithoutCategoriesInput[]
+    upsert?: ProductUpsertWithWhereUniqueWithoutCategoriesInput | ProductUpsertWithWhereUniqueWithoutCategoriesInput[]
     set?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     disconnect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     delete?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
-    update?: ProductUpdateWithWhereUniqueWithoutCategoryInput | ProductUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: ProductUpdateManyWithWhereWithoutCategoryInput | ProductUpdateManyWithWhereWithoutCategoryInput[]
+    update?: ProductUpdateWithWhereUniqueWithoutCategoriesInput | ProductUpdateWithWhereUniqueWithoutCategoriesInput[]
+    updateMany?: ProductUpdateManyWithWhereWithoutCategoriesInput | ProductUpdateManyWithWhereWithoutCategoriesInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type ServiceUncheckedUpdateManyWithoutCategoryNestedInput = {
-    create?: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput> | ServiceCreateWithoutCategoryInput[] | ServiceUncheckedCreateWithoutCategoryInput[]
-    connectOrCreate?: ServiceCreateOrConnectWithoutCategoryInput | ServiceCreateOrConnectWithoutCategoryInput[]
-    upsert?: ServiceUpsertWithWhereUniqueWithoutCategoryInput | ServiceUpsertWithWhereUniqueWithoutCategoryInput[]
+  export type ServiceUncheckedUpdateManyWithoutCategoriesNestedInput = {
+    create?: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput> | ServiceCreateWithoutCategoriesInput[] | ServiceUncheckedCreateWithoutCategoriesInput[]
+    connectOrCreate?: ServiceCreateOrConnectWithoutCategoriesInput | ServiceCreateOrConnectWithoutCategoriesInput[]
+    upsert?: ServiceUpsertWithWhereUniqueWithoutCategoriesInput | ServiceUpsertWithWhereUniqueWithoutCategoriesInput[]
     set?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     disconnect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     delete?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-    update?: ServiceUpdateWithWhereUniqueWithoutCategoryInput | ServiceUpdateWithWhereUniqueWithoutCategoryInput[]
-    updateMany?: ServiceUpdateManyWithWhereWithoutCategoryInput | ServiceUpdateManyWithWhereWithoutCategoryInput[]
+    update?: ServiceUpdateWithWhereUniqueWithoutCategoriesInput | ServiceUpdateWithWhereUniqueWithoutCategoriesInput[]
+    updateMany?: ServiceUpdateManyWithWhereWithoutCategoriesInput | ServiceUpdateManyWithWhereWithoutCategoriesInput[]
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
@@ -86316,7 +86316,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelUncheckedCreateWithoutTrainingDataSetInput = {
@@ -86342,7 +86342,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelCreateOrConnectWithoutTrainingDataSetInput = {
@@ -86493,7 +86493,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelUncheckedUpdateWithoutTrainingDataSetInput = {
@@ -86519,7 +86519,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type UserUpsertWithoutTrainingDataSetInput = {
@@ -86641,8 +86641,8 @@ export namespace Prisma {
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
-    User: UserCreateNestedOneWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
+    user: UserCreateNestedOneWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateWithoutTrainingImageInput = {
@@ -86686,7 +86686,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelUncheckedCreateWithoutTrainingImageInput = {
@@ -86712,7 +86712,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
     trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelCreateOrConnectWithoutTrainingImageInput = {
@@ -86740,8 +86740,8 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
-    User?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
+    user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateWithoutTrainingImageInput = {
@@ -86791,7 +86791,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelUncheckedUpdateWithoutTrainingImageInput = {
@@ -86817,7 +86817,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
     trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelCreateWithoutTrainingJobInput = {
@@ -86843,7 +86843,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
     trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelUncheckedCreateWithoutTrainingJobInput = {
@@ -86869,7 +86869,7 @@ export namespace Prisma {
     visibility?: $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
     trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
-    UpcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
   }
 
   export type TrainingModelCreateOrConnectWithoutTrainingJobInput = {
@@ -86911,7 +86911,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
     trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingModelUncheckedUpdateWithoutTrainingJobInput = {
@@ -86937,7 +86937,7 @@ export namespace Prisma {
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
     trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
     trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
-    UpcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
   }
 
   export type TrainingDataSetCreateWithoutTrainingModelInput = {
@@ -86949,8 +86949,8 @@ export namespace Prisma {
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    User: UserCreateNestedOneWithoutTrainingDataSetInput
-    TrainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    user: UserCreateNestedOneWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateWithoutTrainingModelInput = {
@@ -86963,7 +86963,7 @@ export namespace Prisma {
     userId: string
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetCreateOrConnectWithoutTrainingModelInput = {
@@ -89593,7 +89593,7 @@ export namespace Prisma {
     jobs?: JobCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutAddressInput = {
@@ -89608,7 +89608,7 @@ export namespace Prisma {
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutAddressInput = {
@@ -89848,7 +89848,7 @@ export namespace Prisma {
     jobs?: JobUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutAddressInput = {
@@ -89863,7 +89863,7 @@ export namespace Prisma {
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type DriverUpsertWithoutAddressInput = {
@@ -90197,7 +90197,7 @@ export namespace Prisma {
     jobs?: JobCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutDriversInput = {
@@ -90212,7 +90212,7 @@ export namespace Prisma {
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutDriversInput = {
@@ -90400,7 +90400,7 @@ export namespace Prisma {
     jobs?: JobUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutDriversInput = {
@@ -90415,7 +90415,7 @@ export namespace Prisma {
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type ProfileUpsertWithoutDriverInput = {
@@ -90654,7 +90654,7 @@ export namespace Prisma {
     drivers?: DriverCreateNestedManyWithoutDepotInput
     jobs?: JobCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutVehiclesInput = {
@@ -90669,7 +90669,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedCreateNestedManyWithoutDepotInput
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutVehiclesInput = {
@@ -90930,7 +90930,7 @@ export namespace Prisma {
     drivers?: DriverUpdateManyWithoutDepotNestedInput
     jobs?: JobUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutVehiclesInput = {
@@ -90945,7 +90945,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedUpdateManyWithoutDepotNestedInput
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type DriverUpsertWithoutVehiclesInput = {
@@ -91181,7 +91181,7 @@ export namespace Prisma {
     jobs?: JobCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutClientsInput = {
@@ -91196,7 +91196,7 @@ export namespace Prisma {
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutClientsInput = {
@@ -91328,7 +91328,7 @@ export namespace Prisma {
     jobs?: JobUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutClientsInput = {
@@ -91343,7 +91343,7 @@ export namespace Prisma {
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type JobUpsertWithWhereUniqueWithoutClientInput = {
@@ -91448,7 +91448,7 @@ export namespace Prisma {
     drivers?: DriverCreateNestedManyWithoutDepotInput
     routes?: RouteCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutJobsInput = {
@@ -91463,7 +91463,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedCreateNestedManyWithoutDepotInput
     routes?: RouteUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutJobsInput = {
@@ -91644,7 +91644,7 @@ export namespace Prisma {
     drivers?: DriverUpdateManyWithoutDepotNestedInput
     routes?: RouteUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutJobsInput = {
@@ -91659,7 +91659,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedUpdateManyWithoutDepotNestedInput
     routes?: RouteUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type RouteUpsertWithoutJobsInput = {
@@ -91836,7 +91836,7 @@ export namespace Prisma {
     drivers?: DriverCreateNestedManyWithoutDepotInput
     jobs?: JobCreateNestedManyWithoutDepotInput
     vehicles?: VehicleCreateNestedManyWithoutDepotInput
-    User?: UserCreateNestedManyWithoutDepotInput
+    user?: UserCreateNestedManyWithoutDepotInput
   }
 
   export type DepotUncheckedCreateWithoutRoutesInput = {
@@ -91851,7 +91851,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedCreateNestedManyWithoutDepotInput
     jobs?: JobUncheckedCreateNestedManyWithoutDepotInput
     vehicles?: VehicleUncheckedCreateNestedManyWithoutDepotInput
-    User?: UserUncheckedCreateNestedManyWithoutDepotInput
+    user?: UserUncheckedCreateNestedManyWithoutDepotInput
   }
 
   export type DepotCreateOrConnectWithoutRoutesInput = {
@@ -91982,7 +91982,7 @@ export namespace Prisma {
     drivers?: DriverUpdateManyWithoutDepotNestedInput
     jobs?: JobUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUpdateManyWithoutDepotNestedInput
-    User?: UserUpdateManyWithoutDepotNestedInput
+    user?: UserUpdateManyWithoutDepotNestedInput
   }
 
   export type DepotUncheckedUpdateWithoutRoutesInput = {
@@ -91997,7 +91997,7 @@ export namespace Prisma {
     drivers?: DriverUncheckedUpdateManyWithoutDepotNestedInput
     jobs?: JobUncheckedUpdateManyWithoutDepotNestedInput
     vehicles?: VehicleUncheckedUpdateManyWithoutDepotNestedInput
-    User?: UserUncheckedUpdateManyWithoutDepotNestedInput
+    user?: UserUncheckedUpdateManyWithoutDepotNestedInput
   }
 
   export type VehicleUpsertWithWhereUniqueWithoutRouteInput = {
@@ -92438,7 +92438,7 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
-    Category?: CategoryCreateNestedManyWithoutProductInput
+    categories?: CategoryCreateNestedManyWithoutProductsInput
   }
 
   export type ProductUncheckedCreateWithoutShopInput = {
@@ -92460,7 +92460,7 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
-    Category?: CategoryUncheckedCreateNestedManyWithoutProductInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
   }
 
   export type ProductCreateOrConnectWithoutShopInput = {
@@ -92490,7 +92490,7 @@ export namespace Prisma {
     isPublic?: boolean
     isFeatured?: boolean
     serviceUrl?: string | null
-    Category?: CategoryCreateNestedManyWithoutServiceInput
+    categories?: CategoryCreateNestedManyWithoutServicesInput
   }
 
   export type ServiceUncheckedCreateWithoutShopInput = {
@@ -92510,7 +92510,7 @@ export namespace Prisma {
     isPublic?: boolean
     isFeatured?: boolean
     serviceUrl?: string | null
-    Category?: CategoryUncheckedCreateNestedManyWithoutServiceInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutServicesInput
   }
 
   export type ServiceCreateOrConnectWithoutShopInput = {
@@ -93118,27 +93118,27 @@ export namespace Prisma {
     create: XOR<ShopCreateWithoutServicesInput, ShopUncheckedCreateWithoutServicesInput>
   }
 
-  export type CategoryCreateWithoutServiceInput = {
+  export type CategoryCreateWithoutServicesInput = {
     id?: string
     name: string
     type?: $Enums.CategoryType
     parent?: CategoryCreateNestedOneWithoutChildrenInput
     children?: CategoryCreateNestedManyWithoutParentInput
-    Product?: ProductCreateNestedManyWithoutCategoryInput
+    products?: ProductCreateNestedManyWithoutCategoriesInput
   }
 
-  export type CategoryUncheckedCreateWithoutServiceInput = {
+  export type CategoryUncheckedCreateWithoutServicesInput = {
     id?: string
     name: string
     parentId?: string | null
     type?: $Enums.CategoryType
     children?: CategoryUncheckedCreateNestedManyWithoutParentInput
-    Product?: ProductUncheckedCreateNestedManyWithoutCategoryInput
+    products?: ProductUncheckedCreateNestedManyWithoutCategoriesInput
   }
 
-  export type CategoryCreateOrConnectWithoutServiceInput = {
+  export type CategoryCreateOrConnectWithoutServicesInput = {
     where: CategoryWhereUniqueInput
-    create: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput>
+    create: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput>
   }
 
   export type ShopUpsertWithoutServicesInput = {
@@ -93194,20 +93194,20 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
-  export type CategoryUpsertWithWhereUniqueWithoutServiceInput = {
+  export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
     where: CategoryWhereUniqueInput
-    update: XOR<CategoryUpdateWithoutServiceInput, CategoryUncheckedUpdateWithoutServiceInput>
-    create: XOR<CategoryCreateWithoutServiceInput, CategoryUncheckedCreateWithoutServiceInput>
+    update: XOR<CategoryUpdateWithoutServicesInput, CategoryUncheckedUpdateWithoutServicesInput>
+    create: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput>
   }
 
-  export type CategoryUpdateWithWhereUniqueWithoutServiceInput = {
+  export type CategoryUpdateWithWhereUniqueWithoutServicesInput = {
     where: CategoryWhereUniqueInput
-    data: XOR<CategoryUpdateWithoutServiceInput, CategoryUncheckedUpdateWithoutServiceInput>
+    data: XOR<CategoryUpdateWithoutServicesInput, CategoryUncheckedUpdateWithoutServicesInput>
   }
 
-  export type CategoryUpdateManyWithWhereWithoutServiceInput = {
+  export type CategoryUpdateManyWithWhereWithoutServicesInput = {
     where: CategoryScalarWhereInput
-    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutServiceInput>
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutServicesInput>
   }
 
   export type CategoryScalarWhereInput = {
@@ -93267,27 +93267,27 @@ export namespace Prisma {
     create: XOR<ShopCreateWithoutProductsInput, ShopUncheckedCreateWithoutProductsInput>
   }
 
-  export type CategoryCreateWithoutProductInput = {
+  export type CategoryCreateWithoutProductsInput = {
     id?: string
     name: string
     type?: $Enums.CategoryType
     parent?: CategoryCreateNestedOneWithoutChildrenInput
     children?: CategoryCreateNestedManyWithoutParentInput
-    Service?: ServiceCreateNestedManyWithoutCategoryInput
+    services?: ServiceCreateNestedManyWithoutCategoriesInput
   }
 
-  export type CategoryUncheckedCreateWithoutProductInput = {
+  export type CategoryUncheckedCreateWithoutProductsInput = {
     id?: string
     name: string
     parentId?: string | null
     type?: $Enums.CategoryType
     children?: CategoryUncheckedCreateNestedManyWithoutParentInput
-    Service?: ServiceUncheckedCreateNestedManyWithoutCategoryInput
+    services?: ServiceUncheckedCreateNestedManyWithoutCategoriesInput
   }
 
-  export type CategoryCreateOrConnectWithoutProductInput = {
+  export type CategoryCreateOrConnectWithoutProductsInput = {
     where: CategoryWhereUniqueInput
-    create: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput>
+    create: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput>
   }
 
   export type ShopUpsertWithoutProductsInput = {
@@ -93343,20 +93343,20 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
-  export type CategoryUpsertWithWhereUniqueWithoutProductInput = {
+  export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
     where: CategoryWhereUniqueInput
-    update: XOR<CategoryUpdateWithoutProductInput, CategoryUncheckedUpdateWithoutProductInput>
-    create: XOR<CategoryCreateWithoutProductInput, CategoryUncheckedCreateWithoutProductInput>
+    update: XOR<CategoryUpdateWithoutProductsInput, CategoryUncheckedUpdateWithoutProductsInput>
+    create: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput>
   }
 
-  export type CategoryUpdateWithWhereUniqueWithoutProductInput = {
+  export type CategoryUpdateWithWhereUniqueWithoutProductsInput = {
     where: CategoryWhereUniqueInput
-    data: XOR<CategoryUpdateWithoutProductInput, CategoryUncheckedUpdateWithoutProductInput>
+    data: XOR<CategoryUpdateWithoutProductsInput, CategoryUncheckedUpdateWithoutProductsInput>
   }
 
-  export type CategoryUpdateManyWithWhereWithoutProductInput = {
+  export type CategoryUpdateManyWithWhereWithoutProductsInput = {
     where: CategoryScalarWhereInput
-    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutProductInput>
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutProductsInput>
   }
 
   export type CategoryCreateWithoutChildrenInput = {
@@ -93364,8 +93364,8 @@ export namespace Prisma {
     name: string
     type?: $Enums.CategoryType
     parent?: CategoryCreateNestedOneWithoutChildrenInput
-    Product?: ProductCreateNestedManyWithoutCategoryInput
-    Service?: ServiceCreateNestedManyWithoutCategoryInput
+    products?: ProductCreateNestedManyWithoutCategoriesInput
+    services?: ServiceCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryUncheckedCreateWithoutChildrenInput = {
@@ -93373,8 +93373,8 @@ export namespace Prisma {
     name: string
     parentId?: string | null
     type?: $Enums.CategoryType
-    Product?: ProductUncheckedCreateNestedManyWithoutCategoryInput
-    Service?: ServiceUncheckedCreateNestedManyWithoutCategoryInput
+    products?: ProductUncheckedCreateNestedManyWithoutCategoriesInput
+    services?: ServiceUncheckedCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryCreateOrConnectWithoutChildrenInput = {
@@ -93387,8 +93387,8 @@ export namespace Prisma {
     name: string
     type?: $Enums.CategoryType
     children?: CategoryCreateNestedManyWithoutParentInput
-    Product?: ProductCreateNestedManyWithoutCategoryInput
-    Service?: ServiceCreateNestedManyWithoutCategoryInput
+    products?: ProductCreateNestedManyWithoutCategoriesInput
+    services?: ServiceCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryUncheckedCreateWithoutParentInput = {
@@ -93396,8 +93396,8 @@ export namespace Prisma {
     name: string
     type?: $Enums.CategoryType
     children?: CategoryUncheckedCreateNestedManyWithoutParentInput
-    Product?: ProductUncheckedCreateNestedManyWithoutCategoryInput
-    Service?: ServiceUncheckedCreateNestedManyWithoutCategoryInput
+    products?: ProductUncheckedCreateNestedManyWithoutCategoriesInput
+    services?: ServiceUncheckedCreateNestedManyWithoutCategoriesInput
   }
 
   export type CategoryCreateOrConnectWithoutParentInput = {
@@ -93410,7 +93410,7 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ProductCreateWithoutCategoryInput = {
+  export type ProductCreateWithoutCategoriesInput = {
     id?: string
     shopProductId?: string | null
     name: string
@@ -93432,7 +93432,7 @@ export namespace Prisma {
     shop?: ShopCreateNestedOneWithoutProductsInput
   }
 
-  export type ProductUncheckedCreateWithoutCategoryInput = {
+  export type ProductUncheckedCreateWithoutCategoriesInput = {
     id?: string
     shopProductId?: string | null
     name: string
@@ -93454,12 +93454,12 @@ export namespace Prisma {
     isFeatured?: boolean
   }
 
-  export type ProductCreateOrConnectWithoutCategoryInput = {
+  export type ProductCreateOrConnectWithoutCategoriesInput = {
     where: ProductWhereUniqueInput
-    create: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput>
+    create: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput>
   }
 
-  export type ServiceCreateWithoutCategoryInput = {
+  export type ServiceCreateWithoutCategoriesInput = {
     id?: string
     name: string
     description: string
@@ -93479,7 +93479,7 @@ export namespace Prisma {
     shop?: ShopCreateNestedOneWithoutServicesInput
   }
 
-  export type ServiceUncheckedCreateWithoutCategoryInput = {
+  export type ServiceUncheckedCreateWithoutCategoriesInput = {
     id?: string
     name: string
     description: string
@@ -93499,9 +93499,9 @@ export namespace Prisma {
     serviceUrl?: string | null
   }
 
-  export type ServiceCreateOrConnectWithoutCategoryInput = {
+  export type ServiceCreateOrConnectWithoutCategoriesInput = {
     where: ServiceWhereUniqueInput
-    create: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput>
+    create: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput>
   }
 
   export type CategoryUpsertWithoutChildrenInput = {
@@ -93520,8 +93520,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     parent?: CategoryUpdateOneWithoutChildrenNestedInput
-    Product?: ProductUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUpdateManyWithoutCategoryNestedInput
+    products?: ProductUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryUncheckedUpdateWithoutChildrenInput = {
@@ -93529,8 +93529,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
-    Product?: ProductUncheckedUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUncheckedUpdateManyWithoutCategoryNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutParentInput = {
@@ -93549,36 +93549,36 @@ export namespace Prisma {
     data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutParentInput>
   }
 
-  export type ProductUpsertWithWhereUniqueWithoutCategoryInput = {
+  export type ProductUpsertWithWhereUniqueWithoutCategoriesInput = {
     where: ProductWhereUniqueInput
-    update: XOR<ProductUpdateWithoutCategoryInput, ProductUncheckedUpdateWithoutCategoryInput>
-    create: XOR<ProductCreateWithoutCategoryInput, ProductUncheckedCreateWithoutCategoryInput>
+    update: XOR<ProductUpdateWithoutCategoriesInput, ProductUncheckedUpdateWithoutCategoriesInput>
+    create: XOR<ProductCreateWithoutCategoriesInput, ProductUncheckedCreateWithoutCategoriesInput>
   }
 
-  export type ProductUpdateWithWhereUniqueWithoutCategoryInput = {
+  export type ProductUpdateWithWhereUniqueWithoutCategoriesInput = {
     where: ProductWhereUniqueInput
-    data: XOR<ProductUpdateWithoutCategoryInput, ProductUncheckedUpdateWithoutCategoryInput>
+    data: XOR<ProductUpdateWithoutCategoriesInput, ProductUncheckedUpdateWithoutCategoriesInput>
   }
 
-  export type ProductUpdateManyWithWhereWithoutCategoryInput = {
+  export type ProductUpdateManyWithWhereWithoutCategoriesInput = {
     where: ProductScalarWhereInput
-    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutCategoryInput>
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutCategoriesInput>
   }
 
-  export type ServiceUpsertWithWhereUniqueWithoutCategoryInput = {
+  export type ServiceUpsertWithWhereUniqueWithoutCategoriesInput = {
     where: ServiceWhereUniqueInput
-    update: XOR<ServiceUpdateWithoutCategoryInput, ServiceUncheckedUpdateWithoutCategoryInput>
-    create: XOR<ServiceCreateWithoutCategoryInput, ServiceUncheckedCreateWithoutCategoryInput>
+    update: XOR<ServiceUpdateWithoutCategoriesInput, ServiceUncheckedUpdateWithoutCategoriesInput>
+    create: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput>
   }
 
-  export type ServiceUpdateWithWhereUniqueWithoutCategoryInput = {
+  export type ServiceUpdateWithWhereUniqueWithoutCategoriesInput = {
     where: ServiceWhereUniqueInput
-    data: XOR<ServiceUpdateWithoutCategoryInput, ServiceUncheckedUpdateWithoutCategoryInput>
+    data: XOR<ServiceUpdateWithoutCategoriesInput, ServiceUncheckedUpdateWithoutCategoriesInput>
   }
 
-  export type ServiceUpdateManyWithWhereWithoutCategoryInput = {
+  export type ServiceUpdateManyWithWhereWithoutCategoriesInput = {
     where: ServiceScalarWhereInput
-    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutCategoryInput>
+    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutCategoriesInput>
   }
 
   export type UpcycleQuestionCreateWithoutUpcycleResultInput = {
@@ -93961,7 +93961,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    TrainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutQuestionsInput = {
@@ -93999,7 +93999,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    TrainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutQuestionsInput = {
@@ -94053,7 +94053,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    TrainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutQuestionsInput = {
@@ -94091,7 +94091,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    TrainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -94273,7 +94273,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    TrainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutRatingInput = {
@@ -94311,7 +94311,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
-    TrainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutRatingInput = {
@@ -94365,7 +94365,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    TrainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutRatingInput = {
@@ -94403,7 +94403,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
-    TrainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -95132,8 +95132,8 @@ export namespace Prisma {
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
-    TrainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateWithoutUserInput = {
@@ -95146,7 +95146,7 @@ export namespace Prisma {
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    TrainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetCreateOrConnectWithoutUserInput = {
@@ -95194,7 +95194,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
-    TrainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutUserInput = {
@@ -95232,7 +95232,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    TrainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutUserInput = {
@@ -96382,8 +96382,8 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    User?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
-    TrainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateWithoutTrainingModelInput = {
@@ -96396,7 +96396,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateManyWithoutTrainingModelInput = {
@@ -97900,7 +97900,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
-    Category?: CategoryUpdateManyWithoutProductNestedInput
+    categories?: CategoryUpdateManyWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutShopInput = {
@@ -97922,7 +97922,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
-    Category?: CategoryUncheckedUpdateManyWithoutProductNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutShopInput = {
@@ -97963,7 +97963,7 @@ export namespace Prisma {
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    Category?: CategoryUpdateManyWithoutServiceNestedInput
+    categories?: CategoryUpdateManyWithoutServicesNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutShopInput = {
@@ -97983,7 +97983,7 @@ export namespace Prisma {
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    Category?: CategoryUncheckedUpdateManyWithoutServiceNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutServicesNestedInput
   }
 
   export type ServiceUncheckedUpdateManyWithoutShopInput = {
@@ -98005,50 +98005,50 @@ export namespace Prisma {
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type CategoryUpdateWithoutServiceInput = {
+  export type CategoryUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     parent?: CategoryUpdateOneWithoutChildrenNestedInput
     children?: CategoryUpdateManyWithoutParentNestedInput
-    Product?: ProductUpdateManyWithoutCategoryNestedInput
+    products?: ProductUpdateManyWithoutCategoriesNestedInput
   }
 
-  export type CategoryUncheckedUpdateWithoutServiceInput = {
+  export type CategoryUncheckedUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     children?: CategoryUncheckedUpdateManyWithoutParentNestedInput
-    Product?: ProductUncheckedUpdateManyWithoutCategoryNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCategoriesNestedInput
   }
 
-  export type CategoryUncheckedUpdateManyWithoutServiceInput = {
+  export type CategoryUncheckedUpdateManyWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   }
 
-  export type CategoryUpdateWithoutProductInput = {
+  export type CategoryUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     parent?: CategoryUpdateOneWithoutChildrenNestedInput
     children?: CategoryUpdateManyWithoutParentNestedInput
-    Service?: ServiceUpdateManyWithoutCategoryNestedInput
+    services?: ServiceUpdateManyWithoutCategoriesNestedInput
   }
 
-  export type CategoryUncheckedUpdateWithoutProductInput = {
+  export type CategoryUncheckedUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     children?: CategoryUncheckedUpdateManyWithoutParentNestedInput
-    Service?: ServiceUncheckedUpdateManyWithoutCategoryNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutCategoriesNestedInput
   }
 
-  export type CategoryUncheckedUpdateManyWithoutProductInput = {
+  export type CategoryUncheckedUpdateManyWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -98066,8 +98066,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     children?: CategoryUpdateManyWithoutParentNestedInput
-    Product?: ProductUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUpdateManyWithoutCategoryNestedInput
+    products?: ProductUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryUncheckedUpdateWithoutParentInput = {
@@ -98075,8 +98075,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
     children?: CategoryUncheckedUpdateManyWithoutParentNestedInput
-    Product?: ProductUncheckedUpdateManyWithoutCategoryNestedInput
-    Service?: ServiceUncheckedUpdateManyWithoutCategoryNestedInput
+    products?: ProductUncheckedUpdateManyWithoutCategoriesNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutCategoriesNestedInput
   }
 
   export type CategoryUncheckedUpdateManyWithoutParentInput = {
@@ -98085,7 +98085,7 @@ export namespace Prisma {
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   }
 
-  export type ProductUpdateWithoutCategoryInput = {
+  export type ProductUpdateWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
@@ -98107,7 +98107,7 @@ export namespace Prisma {
     shop?: ShopUpdateOneWithoutProductsNestedInput
   }
 
-  export type ProductUncheckedUpdateWithoutCategoryInput = {
+  export type ProductUncheckedUpdateWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
@@ -98129,7 +98129,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type ProductUncheckedUpdateManyWithoutCategoryInput = {
+  export type ProductUncheckedUpdateManyWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
@@ -98151,7 +98151,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type ServiceUpdateWithoutCategoryInput = {
+  export type ServiceUpdateWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -98171,7 +98171,7 @@ export namespace Prisma {
     shop?: ShopUpdateOneWithoutServicesNestedInput
   }
 
-  export type ServiceUncheckedUpdateWithoutCategoryInput = {
+  export type ServiceUncheckedUpdateWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -98191,7 +98191,7 @@ export namespace Prisma {
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type ServiceUncheckedUpdateManyWithoutCategoryInput = {
+  export type ServiceUncheckedUpdateManyWithoutCategoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -98940,8 +98940,8 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
-    TrainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateWithoutUserInput = {
@@ -98954,7 +98954,7 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    TrainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateManyWithoutUserInput = {
@@ -99004,7 +99004,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
-    TrainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutUserInput = {
@@ -99042,7 +99042,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    TrainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateManyWithoutUserInput = {

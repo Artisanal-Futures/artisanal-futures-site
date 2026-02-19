@@ -16,4 +16,7 @@ export const productSchema = z.object({
     .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
     .default("MANUAL"),
   shopId: z.string(),
+  shopProductId: z.string().optional().nullable(),
+  categoryIds: z.array(z.string()).optional(),
+  isFeatured: z.boolean(),
 });

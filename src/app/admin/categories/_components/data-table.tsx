@@ -1,17 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { type ColumnDef } from "@tanstack/react-table";
-import { toast } from "sonner";
-import { TrashIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { type Category } from "@prisma/client";
+import { type ColumnDef } from "@tanstack/react-table";
+import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
+import type { RouterOutputs } from "~/trpc/react";
 import { api } from "~/trpc/react";
 import { DataTable } from "~/components/ui/data-table";
 import { ItemDialog } from "~/app/admin/_components/item-dialog";
 import { RowCellIdDisplay } from "~/app/admin/_components/row-cell-id-display";
 import { SingleActionDialog } from "~/app/admin/_components/single-action-dialog";
-import { CategoryForm } from "~/components/admin/forms/category-form";
+import { CategoryForm } from "~/app/admin/categories/_components/category-form";
 
 type CategoryWithParent = Category & {
   parent: Category | null;
@@ -33,7 +35,7 @@ export const columns: ColumnDef<CategoryWithParent>[] = [
       return parent ? (
         <span className="text-sm">{parent.name}</span>
       ) : (
-        <span className="text-sm text-muted-foreground">None (Top-Level)</span>
+        <span className="text-muted-foreground text-sm">None (Top-Level)</span>
       );
     },
   },
@@ -42,14 +44,23 @@ export const columns: ColumnDef<CategoryWithParent>[] = [
     cell: ({ row }) => {
       const category = row.original;
       const utils = api.useUtils();
+      const router = useRouter();
 
       const deleteMutation = api.category.delete.useMutation({
-        onSuccess: async () => {
+        onSuccess: () => {
+          toast.dismiss();
           toast.success("Category deleted successfully.");
-          await utils.category.getAll.invalidate();
+          router.refresh();
         },
         onError: (error) => {
+          toast.dismiss();
           toast.error(`Error deleting category: ${error.message}`);
+        },
+        onSettled: () => {
+          void utils.category.getAll.invalidate();
+        },
+        onMutate: () => {
+          toast.loading("Deleting category...");
         },
       });
 
@@ -77,17 +88,15 @@ export const columns: ColumnDef<CategoryWithParent>[] = [
   },
 ];
 
-export function CategoryDataTable() {
-  const { data, isLoading } = api.category.getAll.useQuery();
-
-  if (isLoading) {
-    return <div>Loading categories...</div>;
-  }
-
+export function CategoryDataTable({
+  categories,
+}: {
+  categories: RouterOutputs["category"]["getAll"];
+}) {
   return (
     <DataTable<CategoryWithParent, unknown>
       columns={columns}
-      data={data as CategoryWithParent[] ?? []}
+      data={(categories as CategoryWithParent[]) ?? []}
       searchKey="name"
     />
   );

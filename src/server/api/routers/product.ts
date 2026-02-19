@@ -1,67 +1,13 @@
+import { type Prisma, type PrismaClient } from "generated/prisma";
+import { z } from "zod";
+
+import { addFullProductImageUrl } from "~/lib/add-full-image-url";
+import { productSchema } from "~/lib/validators/products";
 import {
   createTRPCRouter,
   elevatedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import { type Prisma, type PrismaClient } from "@prisma/client";
-
-const productSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  priceInCents: z.number().optional().nullable(),
-  currency: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  productUrl: z.string().optional().nullable(),
-  tags: z.array(z.string()),
-  attributeTags: z.array(z.string()),
-  materialTags: z.array(z.string()),
-  environmentalTags: z.array(z.string()),
-  aiGeneratedTags: z.array(z.string()),
-  scrapeMethod: z
-    .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
-    .default("MANUAL"),
-  shopId: z.string(),
-  shopProductId: z.string().optional().nullable(),
-  categoryIds: z.array(z.string()).optional(),
-  isFeatured: z.boolean(),
-});
-
-// Type for products with potential imageUrl field
-type ProductWithImage = {
-  imageUrl?: string | null;
-  [key: string]: unknown;
-} | null;
-
-const addFullImageUrl = <T extends ProductWithImage>(product: T): T => {
-  if (!product) return product;
-  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
-  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
-    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
-  }
-  return product;
-};
-
-const getCategoriesWithParents = async (
-  db: PrismaClient,
-  categoryIds: string[] | undefined,
-): Promise<string[]> => {
-  if (!categoryIds || categoryIds.length === 0) {
-    return [];
-  }
-
-  const selectedCategories = await db.category.findMany({
-    where: { id: { in: categoryIds } },
-    select: { parentId: true },
-  });
-
-  const parentIds = selectedCategories
-    .map((cat) => cat.parentId)
-    .filter((id): id is string => id !== null);
-
-  return [...new Set([...categoryIds, ...parentIds])];
-};
 
 export const productRouter = createTRPCRouter({
   updateTags: elevatedProcedure
@@ -88,7 +34,7 @@ export const productRouter = createTRPCRouter({
         }),
       );
       return {
-        data: updatedProducts.map(addFullImageUrl),
+        data: updatedProducts.map(addFullProductImageUrl),
         message: `${updatedProducts.length} products updated successfully`,
       };
     }),
@@ -101,7 +47,7 @@ export const productRouter = createTRPCRouter({
     });
 
     // Map to add full image URLs, but preserve the order from the DB
-    let productsWithFullUrls = products.map(addFullImageUrl);
+    let productsWithFullUrls = products.map(addFullProductImageUrl);
 
     // If not admin, filter by ownerId, then re-sort by createdAt DESC to ensure order
     if (ctx.session.user.role !== "ADMIN") {
@@ -140,7 +86,7 @@ export const productRouter = createTRPCRouter({
       ]);
 
       return {
-        products: products.map(addFullImageUrl),
+        products: products.map(addFullProductImageUrl),
         totalCount,
         page,
         totalPages: Math.ceil(totalCount / limit),
@@ -152,7 +98,7 @@ export const productRouter = createTRPCRouter({
       where: { id: input },
       include: { shop: true, categories: true },
     });
-    return addFullImageUrl(product);
+    return addFullProductImageUrl(product);
   }),
 
   getByShopId: publicProcedure
@@ -179,7 +125,7 @@ export const productRouter = createTRPCRouter({
       ]);
 
       return {
-        products: products.map(addFullImageUrl),
+        products: products.map(addFullProductImageUrl),
         totalCount,
         page,
         totalPages: Math.ceil(totalCount / limit),
@@ -205,7 +151,7 @@ export const productRouter = createTRPCRouter({
         },
       });
       return {
-        data: addFullImageUrl(product),
+        data: addFullProductImageUrl(product),
         message: "Product created successfully",
       };
     }),
@@ -230,7 +176,7 @@ export const productRouter = createTRPCRouter({
         },
       });
       return {
-        data: addFullImageUrl(product),
+        data: addFullProductImageUrl(product),
         message: "Product updated successfully",
       };
     }),
@@ -242,7 +188,7 @@ export const productRouter = createTRPCRouter({
         where: { id: input },
       });
       return {
-        data: addFullImageUrl(product),
+        data: addFullProductImageUrl(product),
         message: "Product deleted successfully",
       };
     }),
@@ -273,7 +219,7 @@ export const productRouter = createTRPCRouter({
       );
 
       return {
-        data: products.map(addFullImageUrl),
+        data: products.map(addFullProductImageUrl),
         message: "Products imported successfully",
       };
     }),
@@ -338,7 +284,7 @@ export const productRouter = createTRPCRouter({
 
         // For "all", subcategories is always empty
         return {
-          products: products.map(addFullImageUrl),
+          products: products.map(addFullProductImageUrl),
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
           subcategories: [],
@@ -411,7 +357,7 @@ export const productRouter = createTRPCRouter({
       ]);
 
       return {
-        products: products.map(addFullImageUrl),
+        products: products.map(addFullProductImageUrl),
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
         subcategories: parentCategory.children,
@@ -473,7 +419,7 @@ export const productRouter = createTRPCRouter({
 
       return {
         message: `Successfully updated ${updatedProducts.length} product(s).`,
-        data: updatedProducts.map(addFullImageUrl),
+        data: updatedProducts.map(addFullProductImageUrl),
       };
     }),
 
@@ -490,8 +436,28 @@ export const productRouter = createTRPCRouter({
     });
 
     // Map to add full image URLs, but preserve the order from the DB
-    const productsWithFullUrls = products.map(addFullImageUrl);
+    const productsWithFullUrls = products.map(addFullProductImageUrl);
 
     return productsWithFullUrls;
   }),
 });
+
+const getCategoriesWithParents = async (
+  db: PrismaClient,
+  categoryIds: string[] | undefined,
+): Promise<string[]> => {
+  if (!categoryIds || categoryIds.length === 0) {
+    return [];
+  }
+
+  const selectedCategories = await db.category.findMany({
+    where: { id: { in: categoryIds } },
+    select: { parentId: true },
+  });
+
+  const parentIds = selectedCategories
+    .map((cat) => cat.parentId)
+    .filter((id): id is string => id !== null);
+
+  return [...new Set([...categoryIds, ...parentIds])];
+};

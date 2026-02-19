@@ -22,9 +22,9 @@ model TrainingDataSet {
   userId          String
   setType         LoraType        @default(UNKNOWN)
   triggerWord     String          @default("TOK")
-  TrainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
-  User            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  TrainingImage   TrainingImage[]
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  trainingImage   TrainingImage[]
 }
 
 model TrainingImage {
@@ -81,7 +81,7 @@ model TrainingModel {
   trainingDataSet  TrainingDataSet[]
   trainingImage    TrainingImage[]
   trainingJob      TrainingJob[]
-  UpcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
 }
 
 model WebsiteProvision {

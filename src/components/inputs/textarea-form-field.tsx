@@ -1,4 +1,6 @@
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
+
+import { cn } from "~/lib/utils";
 import {
   FormControl,
   FormDescription,
@@ -7,10 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-
 import { Textarea } from "~/components/ui/textarea";
-
-import { cn } from "~/lib/utils";
 
 type Props<CurrentForm extends FieldValues> = {
   form: UseFormReturn<CurrentForm>;
@@ -21,6 +20,10 @@ type Props<CurrentForm extends FieldValues> = {
   disabled?: boolean;
   placeholder?: string;
   defaultValue?: string;
+
+  textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
+  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   rows?: number;
 };
 
@@ -30,10 +33,13 @@ export const TextareaFormField = <CurrentForm extends FieldValues>({
   label,
   description,
   className,
-  defaultValue,
-  rows,
   disabled,
   placeholder,
+  defaultValue,
+  textareaRef,
+  onFocus,
+  onBlur,
+  rows = 4,
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -42,14 +48,30 @@ export const TextareaFormField = <CurrentForm extends FieldValues>({
       render={({ field }) => (
         <FormItem className={cn("col-span-full", className)}>
           <FormLabel>{label}</FormLabel>
+
           <FormControl>
-            <Textarea
-              disabled={disabled}
-              defaultValue={defaultValue}
-              placeholder={placeholder ?? ""}
-              rows={rows}
-              {...field}
-            />
+            <div className="space-y-2">
+              <Textarea
+                disabled={disabled}
+                placeholder={placeholder ?? ""}
+                defaultValue={defaultValue}
+                {...field}
+                ref={(el) => {
+                  field.ref(el);
+                  if (textareaRef) {
+                    (
+                      textareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
+                    ).current = el;
+                  }
+                }}
+                onBlur={(e) => {
+                  field.onBlur();
+                  onBlur?.(e);
+                }}
+                onFocus={onFocus}
+                rows={rows}
+              />
+            </div>
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
 import { api } from "~/trpc/react";
+
 import { BulkServiceForm } from "./bulk-service-form";
 
 type Props = {
@@ -10,7 +12,7 @@ type Props = {
     clearRowSelection: () => void;
   } | null;
   onSuccessCallback: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 export function BulkServiceFormWrapper({
@@ -24,7 +26,7 @@ export function BulkServiceFormWrapper({
   if (!initialData) {
     return null;
   }
-  
+
   const { selectedServiceIds, clearRowSelection } = initialData;
 
   return (

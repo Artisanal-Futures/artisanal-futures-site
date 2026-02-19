@@ -1,8 +1,8 @@
-import Image from 'next/image'
+import Image from "next/image";
 
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 
-type Props = { imageUrl: string }
+type Props = { imageUrl: string };
 
 export const EventPopup = ({ imageUrl }: Props) => {
   return (
@@ -19,12 +19,12 @@ export const EventPopup = ({ imageUrl }: Props) => {
             height={160}
             src={imageUrl}
             alt="Details "
-            className="aspect-auto w-full "
+            className="aspect-auto w-full"
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

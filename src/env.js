@@ -1,6 +1,5 @@
-import { z } from "zod";
-
 import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   /**
@@ -62,6 +61,8 @@ export const env = createEnv({
     BETTER_AUTH_DISCORD_ID: z.string(),
     BETTER_AUTH_DISCORD_SECRET: z.string(),
     BETTER_AUTH_URL: z.string().url(),
+
+    SIMPLEPRESS_HASH_SECRET: z.string().min(1),
   },
 
   /**
@@ -158,6 +159,8 @@ export const env = createEnv({
     BETTER_AUTH_DISCORD_ID: process.env.BETTER_AUTH_DISCORD_ID,
     BETTER_AUTH_DISCORD_SECRET: process.env.BETTER_AUTH_DISCORD_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+
+    SIMPLEPRESS_HASH_SECRET: process.env.SIMPLEPRESS_HASH_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

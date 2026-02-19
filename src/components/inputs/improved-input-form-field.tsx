@@ -12,26 +12,17 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
-type Props<CurrentForm extends FieldValues> = {
-  form: UseFormReturn<CurrentForm>;
-  name: Path<CurrentForm>;
-  label?: string;
-  description?: string;
-  className?: string;
-  disabled?: boolean;
-  placeholder?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  onChangeAdditional?: (value: string) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  inputId?: string;
-  inputRef?: React.RefObject<HTMLInputElement | null>;
-  type?: InputHTMLAttributes<HTMLInputElement>["type"];
-  required?: boolean;
-  autoFocus?: boolean;
-};
+type Props<CurrentForm extends FieldValues> =
+  InputHTMLAttributes<HTMLInputElement> & {
+    form: UseFormReturn<CurrentForm>;
+    name: Path<CurrentForm>;
+    label?: string;
+    description?: string;
+    className?: string;
+    onChangeAdditional?: (value: string) => void;
+    inputId?: string;
+    inputRef?: React.RefObject<HTMLInputElement | null>;
+  };
 
 export const InputFormField = <CurrentForm extends FieldValues>({
   form,
@@ -39,17 +30,10 @@ export const InputFormField = <CurrentForm extends FieldValues>({
   label,
   description,
   className,
-  disabled,
-  placeholder,
-  onChange,
   onChangeAdditional,
-  onKeyDown,
-  onFocus,
-  onBlur,
   inputId,
   inputRef,
-  required,
-  autoFocus,
+  ...inputProps
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -57,13 +41,14 @@ export const InputFormField = <CurrentForm extends FieldValues>({
       name={name}
       render={({ field }) => {
         const { ref: _fieldRef, ...fieldRest } = field;
+
         return (
           <FormItem className={cn("col-span-full", className)}>
             {label && <FormLabel>{label}</FormLabel>}
             <FormControl>
               <Input
-                disabled={disabled}
-                placeholder={placeholder ?? ""}
+                // disabled={disabled}
+                // placeholder={placeholder ?? ""}
                 {...fieldRest}
                 ref={(el) => {
                   field.ref(el);
@@ -77,22 +62,22 @@ export const InputFormField = <CurrentForm extends FieldValues>({
                   if (!!onChangeAdditional) {
                     onChangeAdditional(e.target.value);
                   }
-
-                  if (!!onChange) {
-                    onChange(e.target.value);
+                  if (!!inputProps.onChange) {
+                    inputProps.onChange(e);
                   } else {
                     field.onChange(e.target.value);
                   }
                 }}
-                onKeyDown={onKeyDown}
-                onFocus={onFocus}
-                onBlur={(e) => {
-                  field.onBlur();
-                  onBlur?.(e);
-                }}
+                // onKeyDown={onKeyDown}
+                // onFocus={onFocus}
+                // onBlur={(e) => {
+                //   field.onBlur();
+                //   onBlur?.(e);
+                // }}
                 id={inputId}
-                required={required}
-                autoFocus={autoFocus}
+                // required={required}
+                // autoFocus={autoFocus}
+                {...inputProps}
               />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}

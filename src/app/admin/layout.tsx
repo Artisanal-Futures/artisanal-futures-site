@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 
 import { env } from "~/env";
+import { getSession } from "~/server/better-auth/server";
+import { HydrateClient } from "~/trpc/server";
 
 import SidebarWrapper from "./_components/sidebar-wrapper";
 
@@ -10,9 +11,9 @@ type Props = {
 };
 
 export default async function AdminPanelLayout(props: Props) {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
-  if (!session?.user) {
+  if (!session) {
     redirect(
       `/auth/sign-in?callbackUrl=${encodeURIComponent(
         `${env.NEXTAUTH_URL}/admin`,
@@ -20,9 +21,13 @@ export default async function AdminPanelLayout(props: Props) {
     );
   }
 
-  if (session?.user?.role === "USER") {
+  if (session?.user?.role !== "ADMIN") {
     redirect(`/unauthorized`);
   }
 
-  return <SidebarWrapper>{props.children}</SidebarWrapper>;
+  return (
+    <HydrateClient>
+      <SidebarWrapper>{props.children}</SidebarWrapper>
+    </HydrateClient>
+  );
 }

@@ -53,7 +53,7 @@ model Service {
   isFeatured        Boolean    @default(false)
   serviceUrl        String?
   shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  Category          Category[] @relation("CategoryToService")
+  categories          Category[] @relation("CategoryToService")
 }
 
 model Product {
@@ -77,7 +77,7 @@ model Product {
   isPublic          Boolean             @default(false)
   isFeatured        Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  Category          Category[]          @relation("CategoryToProduct")
+  categories        Category[]          @relation("CategoryToProduct")
 
   @@unique([shopId, shopProductId])
 }
@@ -89,8 +89,8 @@ model Category {
   type     CategoryType @default(PRODUCT)
   parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
   children Category[]   @relation("Subcategories")
-  Product  Product[]    @relation("CategoryToProduct")
-  Service  Service[]    @relation("CategoryToService")
+  products  Product[]    @relation("CategoryToProduct")
+  services  Service[]    @relation("CategoryToService")
 }
 
 enum CategoryType {

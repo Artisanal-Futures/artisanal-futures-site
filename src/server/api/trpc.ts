@@ -7,14 +7,13 @@
  * need to use are documented accordingly near the end.
  */
 
-import { auth } from "~/server/better-auth";
-import { db } from "~/server/db";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { initTRPC, TRPCError } from "@trpc/server";
-
 import { env } from "~/env";
+import { auth } from "~/server/better-auth";
+import { db } from "~/server/db";
 
 /**
  * 1. CONTEXT
@@ -193,6 +192,38 @@ export const protectedDevelopmentProcedure = t.procedure
       ctx: {
         // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
+
+export const artisanProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(async ({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    if (
+      ctx.session.user.role !== "ARTISAN" &&
+      ctx.session.user.role !== "ADMIN"
+    ) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const shopsAvailable = await ctx.db.shop.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : {
+              ownerId: ctx.session.user.id,
+            },
+    });
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+        shopsAvailable,
       },
     });
   });

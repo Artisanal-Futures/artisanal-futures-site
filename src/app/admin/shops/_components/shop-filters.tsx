@@ -1,11 +1,9 @@
 "use client";
 
-import type { User } from "@prisma/client";
-
-import type { Shop } from "~/types/shop";
+import type { RouterOutputs } from "~/trpc/react";
 
 export const createShopFilters = (
-  shops: (Shop & { owner: User })[],
+  shops: RouterOutputs["shop"]["getAll"],
   isElevated: boolean,
 ) => {
   const owners = [

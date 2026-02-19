@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Role } from "generated/prisma";
 import { Ellipsis, LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-
-import { Role } from "@prisma/client";
+import { signOut } from "next-auth/react";
 
 import { env } from "~/env";
 import { getMenuList } from "~/lib/admin-menu-list";
 import { cn } from "~/lib/utils";
+import { authClient } from "~/server/better-auth/client";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import {
@@ -36,10 +36,10 @@ export function Menu({ isOpen }: Props) {
         .map((menu) => ({
           ...menu,
           submenus: menu.submenus.filter(
-            (submenu) => !submenu.restrictedAccess.includes(userRole),
+            (submenu) => !submenu.restrictedAccess.includes(userRole as Role),
           ),
         }))
-        .filter((menu) => !menu.restrictedAccess.includes(userRole)),
+        .filter((menu) => !menu.restrictedAccess.includes(userRole as Role)),
     }))
     .filter((group) => group.menus.length > 0);
 

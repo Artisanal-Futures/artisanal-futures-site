@@ -1,12 +1,16 @@
+import type { VariantProps } from "class-variance-authority";
+import type { LucideIcon } from "lucide-react";
 import * as React from "react";
-import { Loader2, type LucideIcon } from "lucide-react";
-import { Button, type ButtonProps } from "~/components/ui/button";
+import { Loader2 } from "lucide-react";
 
-interface LoadButtonProps extends ButtonProps {
-  isLoading: boolean;
-  loadingText?: string;
-  Icon?: LucideIcon;
-}
+import { Button, buttonVariants } from "~/components/ui/button";
+
+type LoadButtonProps = React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    isLoading: boolean;
+    loadingText?: string;
+    Icon?: LucideIcon;
+  };
 
 export const LoadButton = React.forwardRef<HTMLButtonElement, LoadButtonProps>(
   ({ isLoading, loadingText, Icon, children, ...props }, ref) => {
@@ -17,10 +21,10 @@ export const LoadButton = React.forwardRef<HTMLButtonElement, LoadButtonProps>(
         ) : (
           Icon && <Icon className="mr-2 size-4" />
         )}
-        {isLoading ? loadingText ?? "Loading..." : children}
+        {isLoading ? (loadingText ?? "Loading...") : children}
       </Button>
     );
-  }
+  },
 );
 
 LoadButton.displayName = "LoadButton";

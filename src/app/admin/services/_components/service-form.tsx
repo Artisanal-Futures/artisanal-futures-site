@@ -1,16 +1,23 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import type { ServiceWithShop } from "~/types/service";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "~/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "~/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -18,13 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { LoadButton } from "~/components/common/load-button";
+import { Switch } from "~/components/ui/switch";
 import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
-import { Switch } from "~/components/ui/switch";
-import { MultiSelectFormField, type OptionType } from "~/components/inputs/multi-select-form-field";
+import { LoadButton } from "~/components/common/load-button";
 
 const serviceFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -48,10 +55,14 @@ type ServiceForm = z.infer<typeof serviceFormSchema>;
 type Props = {
   initialData: ServiceWithShop | null;
   onSuccessCallback?: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
-export function ServiceForm({ initialData, onSuccessCallback, dialogRef }: Props) {
+export function ServiceForm({
+  initialData,
+  onSuccessCallback,
+  dialogRef,
+}: Props) {
   const { uploadFile, isUploading } = useFileUpload({
     route: "services",
     api: "/api/upload-service",
@@ -125,34 +136,56 @@ export function ServiceForm({ initialData, onSuccessCallback, dialogRef }: Props
     }
   }
 
-  const isLoading = createService.isPending || updateService.isPending || isUploading;
+  const isLoading =
+    createService.isPending || updateService.isPending || isUploading;
 
   const categoryOptions: OptionType[] =
     categories
-      ?.filter(cat => cat.type === 'SERVICE')
+      ?.filter((cat) => cat.type === "SERVICE")
       .map((cat) => ({
         value: cat.id,
-        label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ""}${cat.name}`,
       })) ?? [];
 
   return (
     <Form {...form}>
       <form
         onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
-        onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
         className="h-full space-y-8"
       >
         <div className="h-[50svh] overflow-y-auto p-1">
           <div className="flex flex-col gap-4 md:grid md:grid-cols-6">
             <div className="col-span-2 flex flex-col gap-4">
-              <InputFormField form={form} name="name" label="Service name" placeholder="e.g., Pottery Workshop" />
-              <ImageFormField form={form} name="image" label="Service image" currentImageUrl={initialData?.imageUrl ?? ""} />
+              <InputFormField
+                form={form}
+                name="name"
+                label="Service name"
+                placeholder="e.g., Pottery Workshop"
+              />
+              <ImageFormField
+                form={form}
+                name="image"
+                label="Service image"
+                currentImageUrl={initialData?.imageUrl ?? ""}
+              />
               <div className="space-y-2">
                 <label className="text-sm font-medium">Select Shop</label>
-                <Select onValueChange={(value) => form.setValue("shopId", value)} defaultValue={initialData?.shopId ?? undefined}>
-                  <SelectTrigger><SelectValue placeholder="Select a shop" /></SelectTrigger>
+                <Select
+                  onValueChange={(value) => form.setValue("shopId", value)}
+                  defaultValue={initialData?.shopId ?? undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a shop" />
+                  </SelectTrigger>
                   <SelectContent>
-                    {shops?.map((shop) => ( <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem> ))}
+                    {shops?.map((shop) => (
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -174,19 +207,45 @@ export function ServiceForm({ initialData, onSuccessCallback, dialogRef }: Props
                 )}
               />
               <div className="grid grid-cols-2 gap-4">
-                <InputFormField form={form} name="priceInCents" label="Price (in cents)" type="number" />
-                <InputFormField form={form} name="durationInMinutes" label="Duration (minutes)" type="number" />
+                <InputFormField
+                  form={form}
+                  name="priceInCents"
+                  label="Price (in cents)"
+                  type="number"
+                />
+                <InputFormField
+                  form={form}
+                  name="durationInMinutes"
+                  label="Duration (minutes)"
+                  type="number"
+                />
               </div>
-              <InputFormField form={form} name="locationType" label="Location Type" placeholder="e.g., Online, In-Person" />
-              <TextareaFormField form={form} name="description" label="Description" />
+              <InputFormField
+                form={form}
+                name="locationType"
+                label="Location Type"
+                placeholder="e.g., Online, In-Person"
+              />
+              <TextareaFormField
+                form={form}
+                name="description"
+                label="Description"
+              />
               <TagFormField form={form} name="tags" label="Tags" />
               <FormField
                 control={form.control}
                 name="isPublic"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5"><FormLabel>Public Visibility</FormLabel></div>
-                    <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                    <div className="space-y-0.5">
+                      <FormLabel>Public Visibility</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
@@ -194,8 +253,14 @@ export function ServiceForm({ initialData, onSuccessCallback, dialogRef }: Props
           </div>
         </div>
         <div className="flex h-auto justify-end gap-2">
-          <Button variant="outline" onClick={onSuccessCallback} type="button">Cancel</Button>
-          <LoadButton isLoading={isLoading} loadingText={initialData ? "Updating..." : "Creating..."} type="submit">
+          <Button variant="outline" onClick={onSuccessCallback} type="button">
+            Cancel
+          </Button>
+          <LoadButton
+            isLoading={isLoading}
+            loadingText={initialData ? "Updating..." : "Creating..."}
+            type="submit"
+          >
             {initialData ? "Update service" : "Create service"}
           </LoadButton>
         </div>

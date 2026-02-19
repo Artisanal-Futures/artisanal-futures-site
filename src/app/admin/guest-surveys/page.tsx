@@ -1,26 +1,21 @@
-import { getServerAuthSession } from "~/server/auth";
-
+import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
-import { AdminClientLayout } from "../_components/client-layout";
+import { TrailHeader } from "../_components/trail-header";
 import { GuestSurveysClient } from "./_components/guest-surveys-client";
 
-export const metadata = {
-  title: "Guest Surveys",
-};
-
 export default async function AdminGuestSurveysPage() {
-  const session = await getServerAuthSession();
+  const session = await getSession();
   const isAdmin = session?.user.role === "ADMIN";
 
   if (!isAdmin) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+      <div className="bg-background flex min-h-screen flex-col items-center justify-center">
         <div className="mx-auto max-w-md text-center">
-          <h1 className="mb-4 text-4xl font-bold text-primary">
+          <h1 className="text-primary mb-4 text-4xl font-bold">
             Access Denied
           </h1>
-          <p className="mb-8 text-lg text-muted-foreground">
+          <p className="text-muted-foreground mb-8 text-lg">
             Sorry, you are not authorized to access this page. Please contact an
             administrator if you believe this is a mistake.
           </p>
@@ -30,11 +25,23 @@ export default async function AdminGuestSurveysPage() {
   }
   const guests = await api.guest.getAll();
   return (
-    <AdminClientLayout
-      title={`Guest Surveys (${guests?.length ?? 0})`}
-      currentPage="Guest Surveys"
-    >
-      <GuestSurveysClient guests={guests ?? []} />
-    </AdminClientLayout>
+    <>
+      <TrailHeader
+        breadcrumbs={[{ label: `Guest Surveys (${guests?.length ?? 0})` }]}
+      />
+      <div className="admin-container">
+        <div className="admin-header">
+          <div>
+            <h1>All Guest Surveys</h1>
+            <p>Manage surveys for guests of AF</p>
+          </div>
+        </div>
+        <GuestSurveysClient guests={guests ?? []} />
+      </div>
+    </>
   );
 }
+
+export const metadata = {
+  title: "Guest Surveys",
+};

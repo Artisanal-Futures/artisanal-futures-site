@@ -1,68 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { type Prisma, type PrismaClient } from "generated/prisma";
+import { z } from "zod";
+
+import { addFullServiceImageUrl } from "~/lib/add-full-image-url";
+import { serviceSchema } from "~/lib/validators/services";
 import {
   adminProcedure,
   createTRPCRouter,
   elevatedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import { type Prisma, type PrismaClient } from "@prisma/client";
-
-const serviceSchema = z.object({
-  name: z.string().min(1, "Name is required."),
-  description: z.string().min(1, "Description is required."),
-  priceInCents: z.coerce.number().optional().nullable(),
-  currency: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  durationInMinutes: z.coerce.number().optional().nullable(),
-  locationType: z.string().optional().nullable(),
-  tags: z.array(z.string()),
-  attributeTags: z.array(z.string()),
-  aiGeneratedTags: z.array(z.string()),
-  shopId: z.string().min(1, "Shop is required."),
-  isPublic: z.boolean().default(false),
-  categoryIds: z.array(z.string()).optional(),
-});
-
-type ServiceWithImageUrl<T> = T & {
-  imageUrl?: string | null;
-};
-
-// Generic addFullImageUrl that preserves the original type structure
-const addFullImageUrl = <T extends { imageUrl?: string | null }>(
-  service: T | null,
-): T | null => {
-  if (!service) return null;
-  const storageBaseUrl = "https://storage.artisanalfutures.org/services";
-  if (service.imageUrl && !service.imageUrl.startsWith("http")) {
-    return { ...service, imageUrl: `${storageBaseUrl}/${service.imageUrl}` };
-  }
-  return service;
-};
-
-const getCategoriesWithParents = async (
-  db: PrismaClient,
-  categoryIds: string[] | undefined,
-): Promise<string[]> => {
-  if (!categoryIds || categoryIds.length === 0) {
-    return [];
-  }
-
-  const selectedCategories = await db.category.findMany({
-    where: { id: { in: categoryIds } },
-    select: { parentId: true },
-  });
-
-  const parentIds = selectedCategories
-    .map((cat) => cat.parentId)
-    .filter((id): id is string => id !== null);
-
-  return [...new Set([...categoryIds, ...parentIds])];
-};
 
 export const serviceRouter = createTRPCRouter({
   updateTags: elevatedProcedure
@@ -84,7 +30,7 @@ export const serviceRouter = createTRPCRouter({
         }),
       );
       return {
-        data: updatedServices.map(addFullImageUrl),
+        data: updatedServices.map(addFullServiceImageUrl),
         message: `${updatedServices.length} services updated successfully`,
       };
     }),
@@ -94,7 +40,7 @@ export const serviceRouter = createTRPCRouter({
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
-    return services.map(addFullImageUrl);
+    return services.map(addFullServiceImageUrl);
   }),
 
   update: adminProcedure
@@ -117,7 +63,7 @@ export const serviceRouter = createTRPCRouter({
         },
       });
       return {
-        data: addFullImageUrl(service),
+        data: addFullServiceImageUrl(service),
         message: "Service updated successfully",
       };
     }),
@@ -141,7 +87,7 @@ export const serviceRouter = createTRPCRouter({
         },
       });
       return {
-        data: addFullImageUrl(service),
+        data: addFullServiceImageUrl(service),
         message: "Service created successfully",
       };
     }),
@@ -151,7 +97,7 @@ export const serviceRouter = createTRPCRouter({
       where: { id: input },
     });
     return {
-      data: addFullImageUrl(service),
+      data: addFullServiceImageUrl(service),
       message: "Service deleted successfully",
     };
   }),
@@ -195,7 +141,7 @@ export const serviceRouter = createTRPCRouter({
       }
       return {
         message: `Successfully updated ${updatedServices.length} services.`,
-        data: updatedServices.map(addFullImageUrl),
+        data: updatedServices.map(addFullServiceImageUrl),
       };
     }),
 
@@ -222,7 +168,7 @@ export const serviceRouter = createTRPCRouter({
         }),
       );
       return {
-        data: services.map(addFullImageUrl),
+        data: services.map(addFullServiceImageUrl),
         message: "Services imported successfully",
       };
     }),
@@ -252,7 +198,7 @@ export const serviceRouter = createTRPCRouter({
       ]);
 
       return {
-        services: services.map(addFullImageUrl),
+        services: services.map(addFullServiceImageUrl),
         totalCount,
         page,
         totalPages: Math.ceil(totalCount / limit),
@@ -264,7 +210,7 @@ export const serviceRouter = createTRPCRouter({
       where: { id: input },
       include: { shop: true },
     });
-    return addFullImageUrl(service);
+    return addFullServiceImageUrl(service);
   }),
 
   getByShopId: publicProcedure
@@ -290,7 +236,7 @@ export const serviceRouter = createTRPCRouter({
       ]);
 
       return {
-        services: services.map(addFullImageUrl),
+        services: services.map(addFullServiceImageUrl),
         totalCount,
         page,
         totalPages: Math.ceil(totalCount / limit),
@@ -357,7 +303,7 @@ export const serviceRouter = createTRPCRouter({
 
         // For "all-services", subcategories is always empty
         return {
-          services: services.map(addFullImageUrl),
+          services: services.map(addFullServiceImageUrl),
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
           subcategories: [],
@@ -429,10 +375,30 @@ export const serviceRouter = createTRPCRouter({
       ]);
 
       return {
-        services: services.map(addFullImageUrl),
+        services: services.map(addFullServiceImageUrl),
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
         subcategories: parentCategory.children,
       };
     }),
 });
+
+const getCategoriesWithParents = async (
+  db: PrismaClient,
+  categoryIds: string[] | undefined,
+): Promise<string[]> => {
+  if (!categoryIds || categoryIds.length === 0) {
+    return [];
+  }
+
+  const selectedCategories = await db.category.findMany({
+    where: { id: { in: categoryIds } },
+    select: { parentId: true },
+  });
+
+  const parentIds = selectedCategories
+    .map((cat) => cat.parentId)
+    .filter((id): id is string => id !== null);
+
+  return [...new Set([...categoryIds, ...parentIds])];
+};

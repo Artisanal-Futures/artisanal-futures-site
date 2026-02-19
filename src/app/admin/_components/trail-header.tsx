@@ -1,4 +1,6 @@
 import { Fragment } from "react";
+import { UserButton } from "@daveyplate/better-auth-ui";
+import { LayoutDashboardIcon } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -8,9 +10,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
+import { UserNav } from "~/components/layout/user-nav";
 import { SheetMenu } from "~/components/admin/sheet-menu";
 import { ModeToggle } from "~/components/common/mode-toggle";
-import { UserNav } from "~/components/layout/user-nav";
 
 type Props = {
   breadcrumbs: {
@@ -21,7 +23,7 @@ type Props = {
 
 export const TrailHeader = ({ breadcrumbs }: Props) => {
   return (
-    <header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary sticky top-0 z-10 w-full shadow backdrop-blur">
       <div className="mx-4 flex h-14 items-center sm:mx-8">
         <div className="flex items-center space-x-4 lg:space-x-0">
           <SheetMenu />
@@ -54,7 +56,25 @@ export const TrailHeader = ({ breadcrumbs }: Props) => {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <ModeToggle />
-          <UserNav />
+
+          <UserButton
+            size="icon"
+            classNames={{
+              trigger: {
+                base: "border-primary border",
+                avatar: {
+                  base: "size-10",
+                },
+              },
+            }}
+            additionalLinks={[
+              {
+                icon: <LayoutDashboardIcon className="h-4 w-4" />,
+                label: "Admin",
+                href: "/admin/dashboard",
+              },
+            ]}
+          />
         </div>
       </div>
     </header>

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { DatabaseMigrationClient } from "../_components/product-migration-client";
-import { AdminClientLayout } from "../../_components/client-layout";
+import { TrailHeader } from "../../_components/trail-header";
 
 export const metadata = {
   title: "Migrate Products",
@@ -14,12 +14,16 @@ export default async function DatabaseMigrationPage() {
   }
 
   return (
-    <AdminClientLayout
-      currentPage="Migrate Products"
-      title="Migrate Products"
-      breadcrumbs={[{ label: "Products", href: "/admin/products" }]}
-    >
-      <DatabaseMigrationClient />
-    </AdminClientLayout>
+    <>
+      <TrailHeader
+        breadcrumbs={[
+          { label: "Products", href: "/admin/products" },
+          { label: "Migrate Products" },
+        ]}
+      />
+      <div className="admin-container">
+        <DatabaseMigrationClient />
+      </div>
+    </>
   );
 }

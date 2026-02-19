@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-
 import { CategoryType } from "@prisma/client";
 
 import { api } from "~/trpc/server";
@@ -7,11 +6,6 @@ import SiteLayout from "~/app/(site)/layout";
 
 import { ProductCategoriesClient } from "./_components/product-categories-client";
 import { ProductSearch } from "./_components/product-search";
-
-export const metadata = {
-  title: "All Product Categories",
-  description: "Browse all product categories.",
-};
 
 export default async function ProductCategoriesPage() {
   const categories = await api.category.getCategoriesWithFeaturedProducts({
@@ -25,7 +19,7 @@ export default async function ProductCategoriesPage() {
           <h1 className="mb-4 text-5xl font-bold tracking-tight">
             All Product Categories
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+          <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
             Explore our products by browsing through all available categories.
           </p>
           <Suspense fallback={null}>
@@ -37,3 +31,8 @@ export default async function ProductCategoriesPage() {
     </SiteLayout>
   );
 }
+
+export const metadata = {
+  title: "All Product Categories",
+  description: "Browse all product categories.",
+};

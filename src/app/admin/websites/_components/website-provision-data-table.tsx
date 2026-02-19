@@ -1,20 +1,21 @@
 "use client";
 
+import type { Shop, WebsiteProvision } from "@prisma/client";
 import * as React from "react";
+import { useRouter } from "next/navigation";
+import { type ColumnDef } from "@tanstack/react-table";
 import { MailIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import type { Shop, WebsiteProvision } from "@prisma/client";
-import { Button } from "@/src/components/ui/button";
-import { type ColumnDef } from "@tanstack/react-table";
-
+import type { RouterOutputs } from "~/trpc/react";
 import { api } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/data-table";
 import { ItemDialog } from "~/app/admin/_components/item-dialog";
 import { RowCellIdDisplay } from "~/app/admin/_components/row-cell-id-display";
 import { SingleActionDialog } from "~/app/admin/_components/single-action-dialog";
 
-import { WebsiteProvisionForm } from "./website-form";
+import { WebsiteProvisionForm } from "./website-provision-form";
 
 type ShopWithWebsite = Shop & {
   websiteProvision: WebsiteProvision | null;
@@ -55,7 +56,7 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
           {website}
         </a>
       ) : (
-        <span className="text-sm text-muted-foreground">-</span>
+        <span className="text-muted-foreground text-sm">-</span>
       );
     },
   },
@@ -70,7 +71,7 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
           {finalDomain}
         </a>
       ) : (
-        <span className="text-sm text-muted-foreground">-</span>
+        <span className="text-muted-foreground text-sm">-</span>
       );
     },
   },
@@ -80,13 +81,22 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
       const shop = row.original;
       const utils = api.useUtils();
       const hasWebsiteProvision = !!shop.websiteProvision;
+      const router = useRouter();
       const deleteMutation = api.websiteProvision.delete.useMutation({
-        onSuccess: async () => {
+        onSuccess: () => {
+          toast.dismiss();
           toast.success("Website provision delete successfully.");
-          await utils.shop.getAllWithWebsites.invalidate();
+          router.refresh();
         },
         onError: (error) => {
+          toast.dismiss();
           toast.error(`Error deleting website provision ${error.message}`);
+        },
+        onSettled: () => {
+          void utils.shop.getAllWithWebsites.invalidate();
+        },
+        onMutate: () => {
+          toast.loading("Deleting website provision...");
         },
       });
       return (
@@ -135,17 +145,15 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
   },
 ];
 
-export function WebsiteProvisionDataTable() {
-  const { data, isLoading } = api.shop.getAllWithWebsites.useQuery();
+type Props = {
+  websiteProvisions: RouterOutputs["shop"]["getAllWithWebsites"];
+};
 
-  if (isLoading) {
-    return <div>Loading shops...</div>;
-  }
-
+export function WebsiteProvisionDataTable({ websiteProvisions }: Props) {
   return (
     <DataTable<ShopWithWebsite, unknown>
       columns={columns}
-      data={(data as ShopWithWebsite[]) ?? []}
+      data={(websiteProvisions as ShopWithWebsite[]) ?? []}
       searchKey="name"
     />
   );

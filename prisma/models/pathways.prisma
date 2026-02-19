@@ -11,7 +11,7 @@ model Depot {
   jobs      Job[]
   routes    Route[]
   vehicles  Vehicle[]
-  User      User[]    @relation("DepotToUser")
+  user      User[]    @relation("DepotToUser")
 }
 
 model Address {

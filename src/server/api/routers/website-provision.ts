@@ -1,4 +1,4 @@
-import crypto from "node:crypto";
+import { TRPCError } from "@trpc/server";
 import {
   createCoolifyDeployment,
   deleteCoolifyDeployment,
@@ -6,31 +6,19 @@ import {
 } from "~/services/coolify";
 import { z } from "zod";
 
-import { TRPCError } from "@trpc/server";
-
-import { env } from "~/env";
 import {
   cancelProvisionSchema,
   createProvisionSchema,
 } from "~/lib/validators/website-provision";
+import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
+import { generateSimplePressLink } from "~/lib/website-provisions/generate-sp-link";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-
-const requireAdmin = (userRole: string | undefined) => {
-  if (userRole !== "ADMIN") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Only admins can perform this action",
-    });
-  }
-};
+import { adminProcedure, createTRPCRouter } from "../trpc";
 
 export const websiteProvisionRouter = createTRPCRouter({
-  getShopForProvision: protectedProcedure
+  getShopForProvision: adminProcedure
     .input(z.object({ shopId: z.string().cuid() }))
     .query(async ({ ctx, input }) => {
-      requireAdmin(ctx.session.user.role);
-
       const shop = await ctx.db.shop.findUnique({
         where: { id: input.shopId },
         include: {
@@ -72,11 +60,9 @@ export const websiteProvisionRouter = createTRPCRouter({
       };
     }),
 
-  create: protectedProcedure
+  create: adminProcedure
     .input(createProvisionSchema)
     .mutation(async ({ ctx, input }) => {
-      requireAdmin(ctx.session.user.role);
-
       const adminUser = "af_admin";
       const adminPassword = generateSecurePassword();
 
@@ -107,6 +93,7 @@ export const websiteProvisionRouter = createTRPCRouter({
           "woocommerce",
           "better-wp-security",
           "all-in-one-wp-migration",
+          "admin-site-enhancements",
         ],
         theme: input.config?.theme ?? "storefront",
       };
@@ -122,16 +109,11 @@ export const websiteProvisionRouter = createTRPCRouter({
           contactEmail: input.contactEmail,
           config: config,
         },
-        include: {
-          user: true,
-        },
+        include: { user: true },
       });
 
       try {
         const coolifyResult = await createCoolifyDeployment(provision);
-
-        // console.log(coolifyResult.domain);
-
         const isLive = await verifyDeployment(
           `https://${coolifyResult.domain}`,
         );
@@ -178,11 +160,51 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
     }),
 
-  delete: protectedProcedure
+  createNextJs: adminProcedure
+    .input(createProvisionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const existingProvision = await ctx.db.websiteProvision.findUnique({
+        where: { shopId: input.shopId },
+      });
+
+      if (existingProvision) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This shop already has an active website provision",
+        });
+      }
+
+      const provision = await ctx.db.websiteProvision.create({
+        data: {
+          userId: input.userId,
+          shopId: input.shopId,
+          framework: input.framework,
+          siteType: input.siteType,
+          status: "ACTIVE",
+          businessName: input.businessName,
+          contactEmail: input.contactEmail,
+          subdomain: input.subdomain,
+          customDomain: `${input.subdomain}.simplepress.dev`,
+          hasCustomDomain: true,
+
+          config: {},
+        },
+        include: { user: true },
+      });
+
+      const redirectUrl = generateSimplePressLink({
+        userEmail: input.contactEmail,
+        subdomain: input.subdomain ?? "",
+      });
+      return {
+        provision,
+        redirectUrl,
+      };
+    }),
+
+  delete: adminProcedure
     .input(cancelProvisionSchema)
     .mutation(async ({ ctx, input }) => {
-      requireAdmin(ctx.session.user.role);
-
       const provision = await ctx.db.websiteProvision.findUnique({
         where: { id: input.id },
       });
@@ -211,71 +233,4 @@ export const websiteProvisionRouter = createTRPCRouter({
 
       return { success: true };
     }),
-
-  // notify: protectedProcedure
-  //     .input(notifyArtisanSchema)
-  //     .mutation(async ({ ctx, input}) =>{
-  //         requireAdmin(ctx.session.user.role);
-
-  //         const provision = await ctx.db.websiteProvision.findUnique({
-  //             where: { id: input.id },
-  //             include: {
-  //                 user: true,
-  //                 shop: {
-  //                     include: {
-  //                         owner: true,
-  //                     },
-  //                 },
-  //             },
-  //         });
-
-  //         if(!provision){
-  //             throw new TRPCError({
-  //                 code: "NOT_FOUND",
-  //                 message: "Provision not found",
-  //             });
-  //         }
-
-  //         if(provision.status !== "ACTIVE") {
-  //             throw new TRPCError({
-  //                 code: "BAD_REQUEST",
-  //                 message: "Can only notify for active provisions",
-  //             });
-  //         }
-
-  //         const config = provision.config as {
-  //             adminUser: string;
-  //             adminPassword: string;
-  //             adminEmail: string;
-  //         };
-
-  //         await ctx.db.websiteProvision.update({
-  //             where: { id: input.id },
-  //             data: {
-  //                 notes: `${provision.notes || ""}\n\n[${new Date().toISOString()}] Artisan Notified`,
-  //             },
-  //         });
-
-  //         return {
-  //             success: true,
-  //             emailData: {
-  //                 recipientEmail: provision.shop.owner.email,
-  //                 recipientName: provision.shop.ownerName,
-  //                 businessName: provision.businessName,
-  //                 siteUrl: provision.deploymentUrl,
-  //                 loginUrl: `${provision.deploymentUrl}/wp-admin`,
-  //                 adminUsername: config.adminUser,
-  //                 adminPassword: config.adminPassword,
-  //                 customeMessage: input.message,
-  //             },
-  //         };
-  //     }),
 });
-
-function generateSecurePassword(length = 32): string {
-  return crypto
-    .randomBytes(length)
-    .toString("base64")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .slice(0, length);
-}

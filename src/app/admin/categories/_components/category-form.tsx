@@ -1,10 +1,11 @@
 "use client";
 
+import type { Category } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CategoryType } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { type Category, CategoryType } from "@prisma/client";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { InputFormField, SelectFormField } from "~/components/inputs";
 
 const categoryFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -46,7 +48,7 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
   const createCategory = api.category.create.useMutation({
     onSuccess: async () => {
       toast.success("Category created successfully.");
-      await utils.category.getAll.invalidate(); 
+      await utils.category.getAll.invalidate();
       onSuccessCallback();
     },
     onError: (error) => {
@@ -89,19 +91,13 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <FormField
-            control={form.control}
+          <InputFormField
+            form={form}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Clothing" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Category Name"
+            placeholder="e.g., Clothing"
           />
+
           <FormField
             control={form.control}
             name="parentId"
@@ -118,9 +114,16 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="null">None (Top-Level Category)</SelectItem>
+                    <SelectItem value="null">
+                      None (Top-Level Category)
+                    </SelectItem>
                     {categories
-                      ?.filter((cat) => !cat.parentId && cat.id !== initialData?.id && cat.type === selectedType) 
+                      ?.filter(
+                        (cat) =>
+                          !cat.parentId &&
+                          cat.id !== initialData?.id &&
+                          cat.type === selectedType,
+                      )
                       .map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
@@ -132,34 +135,25 @@ export function CategoryForm({ initialData, onSuccessCallback }: Props) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
+
+          <SelectFormField
+            form={form}
             name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={!!initialData}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={CategoryType.PRODUCT}>Product</SelectItem>
-                    <SelectItem value={CategoryType.SERVICE}>Service</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Category Type"
+            disabled={!!initialData}
+            placeholder="Select a category type"
+            values={[
+              { value: CategoryType.PRODUCT, label: "Product" },
+              { value: CategoryType.SERVICE, label: "Service" },
+            ]}
           />
         </div>
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : initialData ? "Save Changes" : "Create Category"}
+          {isLoading
+            ? "Saving..."
+            : initialData
+              ? "Save Changes"
+              : "Create Category"}
         </Button>
       </form>
     </Form>

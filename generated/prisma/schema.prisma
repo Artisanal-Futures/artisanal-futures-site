@@ -148,9 +148,9 @@ model TrainingDataSet {
   userId          String
   setType         LoraType        @default(UNKNOWN)
   triggerWord     String          @default("TOK")
-  TrainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
-  User            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  TrainingImage   TrainingImage[]
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  trainingImage   TrainingImage[]
 }
 
 model TrainingImage {
@@ -207,7 +207,7 @@ model TrainingModel {
   trainingDataSet  TrainingDataSet[]
   trainingImage    TrainingImage[]
   trainingJob      TrainingJob[]
-  UpcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
 }
 
 model WebsiteProvision {
@@ -440,7 +440,7 @@ model Depot {
   jobs      Job[]
   routes    Route[]
   vehicles  Vehicle[]
-  User      User[]    @relation("DepotToUser")
+  user      User[]    @relation("DepotToUser")
 }
 
 model Address {
@@ -731,7 +731,7 @@ model Service {
   isFeatured        Boolean    @default(false)
   serviceUrl        String?
   shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  Category          Category[] @relation("CategoryToService")
+  categories        Category[] @relation("CategoryToService")
 }
 
 model Product {
@@ -755,7 +755,7 @@ model Product {
   isPublic          Boolean             @default(false)
   isFeatured        Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  Category          Category[]          @relation("CategoryToProduct")
+  categories        Category[]          @relation("CategoryToProduct")
 
   @@unique([shopId, shopProductId])
 }
@@ -767,8 +767,8 @@ model Category {
   type     CategoryType @default(PRODUCT)
   parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
   children Category[]   @relation("Subcategories")
-  Product  Product[]    @relation("CategoryToProduct")
-  Service  Service[]    @relation("CategoryToService")
+  products Product[]    @relation("CategoryToProduct")
+  services Service[]    @relation("CategoryToService")
 }
 
 enum CategoryType {
@@ -820,7 +820,7 @@ model UpcycleResult {
   questions                 UpcycleQuestion[]
   rating                    UpcycleRating?
   user                      User              @relation(fields: [userId], references: [id])
-  TrainingModel             TrainingModel[]   @relation("TrainingModelToUpcycleResult")
+  trainingModel             TrainingModel[]   @relation("TrainingModelToUpcycleResult")
 }
 
 model UpcycleQuestion {
