@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { authClient } from "~/server/better-auth/client";
 import { ShieldCheck, Store, User } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import type { Role } from "@prisma/client";
-
+import type { Role } from "../../generated/prisma";
 import { env } from "~/env";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 const UserNav = () => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData } = authClient.useSession();
   const isImageUrl = (url: string) => {
     return url.startsWith("http");
   };
@@ -71,7 +71,7 @@ const UserNav = () => {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium leading-none">
+                <p className="text-sm leading-none font-medium">
                   {sessionData?.user?.name}{" "}
                 </p>
 
@@ -92,7 +92,7 @@ const UserNav = () => {
                   )}
                 </>
               </div>
-              <p className="text-xs leading-none text-muted-foreground">
+              <p className="text-muted-foreground text-xs leading-none">
                 {sessionData?.user?.email}
               </p>
             </div>

@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { authClient } from "~/server/better-auth/client";
 import { cn } from "~/utils/styles";
 import { ShieldCheck, Store, User } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
@@ -32,7 +33,7 @@ export const MobileNav = ({
 }: {
   links: { id: string; name: string }[];
 }) => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData } = authClient.useSession();
   const pathname = usePathname();
 
   // Fetch the category data needed for the dropdown
@@ -79,7 +80,7 @@ export const MobileNav = ({
                       {/* Link to the main categories page */}
                       <Link
                         href="/categories"
-                        className="block rounded-md p-2 text-muted-foreground hover:bg-accent"
+                        className="text-muted-foreground hover:bg-accent block rounded-md p-2"
                       >
                         All Categories
                       </Link>
@@ -88,7 +89,7 @@ export const MobileNav = ({
                         <Link
                           key={category.id}
                           href={`/category/${category.name.toLowerCase()}`}
-                          className="block rounded-md p-2 text-muted-foreground hover:bg-accent"
+                          className="text-muted-foreground hover:bg-accent block rounded-md p-2"
                         >
                           {category.name}
                         </Link>

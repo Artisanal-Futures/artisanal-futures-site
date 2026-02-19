@@ -1,0 +1,180 @@
+model GenerationJob {
+  id          String   @id
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model TrainingDataSet {
+  id              String          @id
+  trainingModelId String?
+  name            String?
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  tags            String[]
+  userId          String
+  setType         LoraType        @default(UNKNOWN)
+  triggerWord     String          @default("TOK")
+  TrainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  User            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  TrainingImage   TrainingImage[]
+}
+
+model TrainingImage {
+  id                   String           @id
+  trainingModelId      String?
+  imageUrl             String
+  userCaption          String?
+  autoCaption          String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime
+  referenceId          String?
+  imageType            LoraType         @default(UNKNOWN)
+  trainingDataSetId    String?
+  isRegularization     Boolean          @default(false)
+  autoCaptionUpdatedAt DateTime?
+  userCaptionUpdatedAt DateTime?
+  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
+  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
+}
+
+model TrainingJob {
+  id              String          @id
+  trainingModelId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  status          status          @default(QUEUED)
+  error           String?
+  referenceId     String?
+  type            TrainingJobType @default(GENERIC_JOB)
+  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
+}
+
+model TrainingModel {
+  id               String             @id
+  userId           String
+  triggerWord      String
+  status           status             @default(QUEUED)
+  weightsUrl       String
+  log              Json?
+  zipFileUrl       String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  trainingSettings Json?
+  trainingDetails  Json?
+  error            String?
+  referenceId      String?
+  versionId        String?
+  loraType         LoraType           @default(SUBJECT)
+  trainingSubject  String             @default("Unknown Object")
+  description      String?
+  tags             String[]
+  title            String?
+  visibility       TrainingVisibility @default(PRIVATE)
+  trainingDataSet  TrainingDataSet[]
+  trainingImage    TrainingImage[]
+  trainingJob      TrainingJob[]
+  UpcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+}
+
+model WebsiteProvision {
+  id                     String          @id @default(cuid())
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  userId                 String
+  framework              Framework
+  siteType               SiteType
+  status                 ProvisionStatus @default(PENDING)
+  hasCustomDomain        Boolean         @default(false)
+  customDomain           String?         @unique
+  subdomain              String?         @unique
+  businessName           String
+  businessTagline        String?
+  contactEmail           String
+  contactPhone           String?
+  businessAddress        Json?
+  socialLinks            Json?
+  coolifyProjectUuid     String?         @unique
+  coolifyServerUuid      String?
+  deploymentUrl          String?
+  lastDeploymentAt       DateTime?
+  lastHealthCheck        DateTime?
+  healthCheckStatus      String?
+  config                 Json
+  cpuLimit               String?
+  memoryLimit            String?
+  errorMessage           String?
+  deploymentLogs         String?
+  notes                  String?
+  isTest                 Boolean         @default(false)
+  deletedAt              DateTime?
+  shopId                 String          @unique
+  coolifyDatabaseUuid    String?
+  coolifyServiceUuid     String?         @unique
+  adminPasswordEncrypted String?
+  adminUser              String?
+  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([framework])
+  @@index([status])
+  @@index([subdomain])
+  @@index([userId])
+}
+
+enum Framework {
+  WORDPRESS
+  NEXTJS
+  GHOST
+  STRAPI
+}
+
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
+
+enum ProvisionStatus {
+  PENDING
+  PROVISIONING
+  BUILDING
+  DEPLOYING
+  ACTIVE
+  FAILED
+  SUSPENDED
+  DELETING
+  DELETED
+}
+
+enum SiteType {
+  ECOMMERCE
+  BLOG
+  PORTFOLIO
+  LANDING_PAGE
+  BUSINESS
+  CUSTOM
+}
+
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
+
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}

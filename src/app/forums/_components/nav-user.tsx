@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { ChevronsUpDown, User2Icon } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
+import Link from "next/link";
+import { ChevronsUpDown, User2Icon } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,25 +13,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
+} from "~/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '~/components/ui/sidebar'
+} from "~/components/ui/sidebar";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
-  const { data: sessionData } = useSession()
+  const { isMobile } = useSidebar();
+  const { data: sessionData } = authClient.useSession();
 
   // const setUserRole = api.users.setRole.useMutation({
   //   onSuccess: () => {
@@ -75,7 +75,7 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
@@ -98,7 +98,7 @@ export function NavUser({
                   Profile
                 </Link>
               </DropdownMenuItem>
-              {sessionData?.user?.role == 'ADMIN' && (
+              {sessionData?.user?.role == "ADMIN" && (
                 <DropdownMenuItem>
                   <Link href="/admin/dashboard" className="w-full">
                     Admin Dashboard
@@ -123,5 +123,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

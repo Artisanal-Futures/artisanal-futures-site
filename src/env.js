@@ -55,6 +55,13 @@ export const env = createEnv({
     COOLIFY_UUID: z.string().min(1),
     WORDPRESS_DOCKER_REGISTRY: z.string().min(1),
     ENCRYPTION_KEY: z.string().min(1),
+    BETTER_AUTH_SECRET:
+      process.env.NODE_ENV === "production"
+        ? z.string()
+        : z.string().optional(),
+    BETTER_AUTH_DISCORD_ID: z.string(),
+    BETTER_AUTH_DISCORD_SECRET: z.string(),
+    BETTER_AUTH_URL: z.string().url(),
   },
 
   /**
@@ -146,6 +153,11 @@ export const env = createEnv({
 
     WORDPRESS_DOCKER_REGISTRY: process.env.WORDPRESS_DOCKER_REGISTRY,
     ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_DISCORD_ID: process.env.BETTER_AUTH_DISCORD_ID,
+    BETTER_AUTH_DISCORD_SECRET: process.env.BETTER_AUTH_DISCORD_SECRET,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

@@ -1,90 +1,149 @@
-import { Suspense } from 'react'
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 
-import { Separator } from '~/components/ui/separator'
-import { ErrorText, ProviderSignInButton } from '../_components'
-import { ProviderSignUpForm } from '../_components/provider-sign-up-form'
+import { AuthView } from "@daveyplate/better-auth-ui";
 
 export const metadata = {
-  title: 'Sign In ',
-}
-
-export default function SignUpPage() {
-  // const session = await getServerAuthSession()
-  // if (session) redirect('/')
-
-  // console.log(searchParams)
-  // const urlCode = searchParams?.code
-
-  // if (!urlCode) redirect('/auth/password-protect')
-
-  // if (urlCode) {
-  //   const twoMinutes = 60 * 2000
-
-  //   cookies().set('code', urlCode, {
-  //     path: '/',
-  //     httpOnly: true,
-  //     expires: new Date(Date.now() + twoMinutes),
-  //   })
-  // }
-
-  const providers = [
-    {
-      id: 'google',
-      name: 'Google',
-    },
-    {
-      id: 'discord',
-      name: 'Discord',
-    },
-
-    {
-      id: 'auth0',
-      name: 'Auth0',
-    },
-  ]
-
+  title: "Sign Up",
+  description: "Sign up to join the Crossroads Community Association",
+};
+export default async function SignUpPage() {
   return (
-    <>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ErrorText />
-      </Suspense>
-
-      <ProviderSignUpForm storeName={'Artisanal Futures'}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <div className="flex flex-col w-full">
-            <div className="flex gap-4">
-              {providers &&
-                Object.values(providers).map((provider) => {
-                  if (
-                    provider.name !== 'Auth0' &&
-                    provider.name !== 'Credentials'
-                  ) {
-                    return (
-                      <ProviderSignInButton
-                        id={provider.id}
-                        name={provider.name}
-                        key={provider.name}
-                      />
-                    )
-                  }
-                })}
-            </div>{' '}
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  or
-                </span>
-              </div>
+    <div className="bg-background flex min-h-screen">
+      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
+        <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
+        <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
+          <Link
+            href="/"
+            className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
+          >
+            {/* <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-full">
+              <span className="text-primary-foreground text-sm font-bold">
+                CCA
+              </span>
             </div>
-            <div className="flex w-full justify-center">
-              <ProviderSignInButton id={'auth0'} name={'Sign up with email'} />
+
+            <span className="text-xl font-bold">
+              Crossroads Community Association
+            </span> */}{" "}
+            <Image
+              src="/logo-transparent.png"
+              alt="Crossroads Community Association"
+              width={100}
+              height={100}
+            />
+          </Link>
+
+          <div className="max-w-md">
+            <h1 className="mb-4 text-4xl font-bold text-balance">
+              Join Our Growing Community
+            </h1>
+            <p className="text-primary-foreground/80 mb-8 text-lg">
+              Create your account to connect with neighbors, join clubs, and
+              make a difference in District 3.
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <p className="text-primary-foreground/90 text-sm">
+                  Access to 13+ active block clubs and community groups
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <p className="text-primary-foreground/90 text-sm">
+                  Member events and volunteer opportunities
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <p className="text-primary-foreground/90 text-sm">
+                  Resources and support for neighborhood improvement
+                </p>
+              </div>
             </div>
           </div>
-        </Suspense>
-      </ProviderSignUpForm>
-    </>
-  )
+
+          <div className="text-primary-foreground/60 text-sm">
+            © 2026 Crossroads Community Association. All rights reserved.
+            <span className="text-muted-foreground mx-2">|</span>
+            Site by{" "}
+            <a
+              href="https://artisanalfutures.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground underline"
+            >
+              Artisanal Futures
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <div className="bg-background sticky top-0 z-10 border-b p-4 lg:hidden">
+          <Link
+            href="/"
+            className="text-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm">Back to Home</span>
+          </Link>
+        </div>
+
+        <div className="flex flex-1 items-center justify-center p-6 md:p-12">
+          <div className="w-full max-w-md">
+            <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
+              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
+                <span className="text-primary-foreground text-sm font-bold">
+                  {" "}
+                  CCA{" "}
+                </span>
+              </div>
+              <span className="text-foreground text-xl font-bold">
+                Crossroads Community Association
+              </span>
+            </div>
+
+            <AuthView view="SIGN_UP" />
+
+            <div className="mt-8 hidden text-left lg:block">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-muted-foreground border-t p-4 text-center text-xs">
+          By signing up, you agree to our{" "}
+          <Link
+            href="/policies/terms-of-service"
+            className="text-primary hover:underline"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/policies/privacy-policy"
+            className="text-primary hover:underline"
+          >
+            Privacy Policy
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }

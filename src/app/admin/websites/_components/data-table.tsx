@@ -1,12 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { MailIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { MailIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import type { Shop } from "@prisma/client";
+import type { Shop, WebsiteProvision } from "@prisma/client";
 import { Button } from "@/src/components/ui/button";
-import { WebsiteProvision } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { api } from "~/trpc/react";

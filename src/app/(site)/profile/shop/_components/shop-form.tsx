@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { authClient } from "~/server/better-auth/client";
 import { useForm } from "react-hook-form";
 
 import type { Shop } from "@prisma/client";
@@ -50,7 +50,7 @@ export const ShopForm: React.FC<Props> = ({
     entity: "shop",
   });
 
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const params = useParams();
 
   const { shopId } = params as { shopId: string };
@@ -105,10 +105,10 @@ export const ShopForm: React.FC<Props> = ({
       {!onboardingView && (
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-primary">
+            <h2 className="text-primary text-2xl font-semibold">
               {initialData?.name} Dashboard
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Configure how your store is shown to visitors
             </p>
           </div>

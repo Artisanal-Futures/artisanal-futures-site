@@ -1,7 +1,7 @@
-import type { Role } from '@prisma/client'
-import { z } from 'zod'
+import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
+import { z } from "zod";
 
-import { adminProcedure, createTRPCRouter } from '~/server/api/trpc'
+import type { Role } from "@prisma/client";
 
 export const authRouter = createTRPCRouter({
   changeRole: adminProcedure
@@ -10,10 +10,10 @@ export const authRouter = createTRPCRouter({
       await ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: { role: input.role as Role },
-      })
+      });
       return {
         data: ctx.session.user,
         message: `${ctx.session.user.name} was updated to ${ctx.session.user.role}`,
-      }
+      };
     }),
-})
+});

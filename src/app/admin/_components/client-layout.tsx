@@ -28,7 +28,7 @@ export function AdminClientLayout({
   breadcrumbs = [],
 }: Props) {
   return (
-    <ContentLayout title={title}>
+    <>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -53,6 +53,6 @@ export function AdminClientLayout({
         </BreadcrumbList>
       </Breadcrumb>
       {children}
-    </ContentLayout>
+    </>
   );
 }

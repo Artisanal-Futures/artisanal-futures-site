@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "~/server/better-auth/client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -29,7 +29,7 @@ const formSchema = z.object({
 export const ShopModal = () => {
   const ShopModal = useShopModal();
 
-  const { data: sessionData } = useSession();
+  const { data: sessionData } = authClient.useSession();
 
   const { mutate } = api.shop.create.useMutation({
     onSuccess: ({ data }) => {

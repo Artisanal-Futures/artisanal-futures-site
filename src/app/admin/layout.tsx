@@ -1,27 +1,28 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { getServerAuthSession } from "~/server/auth";
 
-import { env } from '~/env'
-import { getServerAuthSession } from '~/server/auth'
-import SidebarWrapper from './_components/sidebar-wrapper'
+import { env } from "~/env";
+
+import SidebarWrapper from "./_components/sidebar-wrapper";
 
 type Props = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export default async function AdminPanelLayout(props: Props) {
-  const session = await getServerAuthSession()
+  const session = await getServerAuthSession();
 
   if (!session?.user) {
     redirect(
       `/auth/sign-in?callbackUrl=${encodeURIComponent(
         `${env.NEXTAUTH_URL}/admin`,
       )}`,
-    )
+    );
   }
 
-  if (session?.user?.role === 'USER') {
-    redirect(`/unauthorized`)
+  if (session?.user?.role === "USER") {
+    redirect(`/unauthorized`);
   }
 
-  return <SidebarWrapper>{props.children}</SidebarWrapper>
+  return <SidebarWrapper>{props.children}</SidebarWrapper>;
 }

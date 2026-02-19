@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { authClient } from "~/server/better-auth/client";
 
 import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
@@ -15,7 +15,7 @@ import { LoadButton } from "~/components/common/load-button";
 const Page = () => {
   const router = useRouter();
   const [input, setInput] = useState<string>("");
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
 
   if (!session) {
     void router.push("/auth/sign-in?callbackUrl=/forums/r/create");
@@ -98,7 +98,7 @@ const Page = () => {
 
   return (
     <div className="container mx-auto flex h-full max-w-3xl items-center">
-      <div className="relative h-fit w-full space-y-6 rounded-lg bg-background p-4">
+      <div className="bg-background relative h-fit w-full space-y-6 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-semibold">Create a Community</h1>
         </div>

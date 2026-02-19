@@ -2,7 +2,7 @@
 
 import { startTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { authClient } from "~/server/better-auth/client";
 
 import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
@@ -22,7 +22,7 @@ export const SubscribeLeaveToggle = ({
   subredditName,
 }: Props) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
 
   const subscribeMutation = api.forumSubreddit.subscribeToSubreddit.useMutation(
     {
@@ -131,7 +131,7 @@ export const SubscribeLeaveToggle = ({
     return (
       <LoadButton
         isLoading={false}
-        className="mb-4 mt-1 w-full"
+        className="mt-1 mb-4 w-full"
         onClick={() => router.push("/auth/sign-in?callbackUrl=/forums")}
       >
         Login to join community
@@ -141,7 +141,7 @@ export const SubscribeLeaveToggle = ({
 
   return isSubscribed ? (
     <LoadButton
-      className="mb-4 mt-1 w-full"
+      className="mt-1 mb-4 w-full"
       isLoading={unsubscribeMutation.isPending}
       onClick={() => unsubscribeMutation.mutate({ subredditId })}
     >
@@ -149,7 +149,7 @@ export const SubscribeLeaveToggle = ({
     </LoadButton>
   ) : (
     <LoadButton
-      className="mb-4 mt-1 w-full"
+      className="mt-1 mb-4 w-full"
       isLoading={subscribeMutation.isPending}
       onClick={() => subscribeMutation.mutate({ subredditId })}
     >
