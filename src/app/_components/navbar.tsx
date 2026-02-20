@@ -50,14 +50,14 @@ export const Navbar = () => {
   const closeMenu = () => setMobileMenuOpen(false);
 
   const authActions = (
-    <>
+    <div className="flex items-center gap-1">
       <Button variant="ghost" size="sm" asChild>
         <Link href="/auth/sign-in">Log in</Link>
       </Button>
       <Button size="sm" asChild>
-        <Link href="/join">Join Us</Link>
+        <Link href="/auth/sign-up">Join Us</Link>
       </Button>
-    </>
+    </div>
   );
 
   const userMenu = user && (

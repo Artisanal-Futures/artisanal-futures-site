@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 "use client";
 
-import { AuthUIProvider } from "@daveyplate/better-auth-ui";
-
-import Link from "next/link";
-import { useRouter } from "nextjs-toploader/app";
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { AuthUIProvider } from "@daveyplate/better-auth-ui";
+import { useRouter } from "nextjs-toploader/app";
 import { Toaster } from "sonner";
 
+import { env } from "~/env";
 import { authClient } from "~/server/better-auth/client";
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -29,10 +29,7 @@ export function Providers({ children }: { children: ReactNode }) {
         router.refresh();
       }}
       social={{
-        providers: ["discord"],
-      }}
-      signUp={{
-        fields: ["terms"],
+        providers: ["discord", "google"],
       }}
       additionalFields={{
         terms: {

@@ -1,26 +1,16 @@
-import type { Shop } from "generated/prisma";
 import Link from "next/link";
 
 import { api } from "~/trpc/server";
 import { ShopCard } from "~/app/(site)/shops/_components/shop-card";
 
-export const metadata = {
-  title: "Shops",
-  description: "Browse our featured artisans&apos; stores",
-};
-
 export default async function ShopsPage() {
   const shops = await api.shop.getAllValid();
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-5xl font-bold tracking-tight">
-          Artisanal Shops
-        </h1>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-          Discover unique handcrafted goods from our featured artisans
-        </p>
+    <div className="site-container">
+      <div className="site-header">
+        <h1>Artisanal Shops</h1>
+        <p>Discover unique handcrafted goods from our featured artisans</p>
       </div>
 
       {shops?.length === 0 ? (
@@ -38,10 +28,10 @@ export default async function ShopsPage() {
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {shops.map((artisan: Shop) => (
+          {shops.map((shop) => (
             <ShopCard
-              {...artisan}
-              key={artisan.id}
+              key={shop.id}
+              shop={shop}
               className="transform transition duration-300 hover:scale-105"
             />
           ))}
@@ -50,3 +40,8 @@ export default async function ShopsPage() {
     </div>
   );
 }
+
+export const metadata = {
+  title: "Shops",
+  description: "Browse all our artisans' stores",
+};

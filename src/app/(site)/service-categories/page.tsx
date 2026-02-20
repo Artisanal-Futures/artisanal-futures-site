@@ -7,34 +7,30 @@ import SiteLayout from "~/app/(site)/layout";
 import { ServiceCategoriesClient } from "./_components/service-categories-client";
 import { ServiceSearch } from "./_components/service-search";
 
-export const metadata = {
-  title: "All Service Categories",
-  description: "Browse all service categories.",
-};
-
 export default async function ServiceCategoriesPage() {
   const categories = await api.category.getCategoriesWithFeaturedProducts({
     type: CategoryType.SERVICE,
   });
 
   return (
-    <SiteLayout>
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-5xl font-bold tracking-tight">
-            All Service Categories
-          </h1>
-          <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-            Explore our services by browsing through all available categories
-            and subcategories.
-          </p>
-          <Suspense fallback={null}>
-            <ServiceSearch />
-          </Suspense>
-        </div>
-
-        <ServiceCategoriesClient categories={categories} />
+    <div className="site-container">
+      <div className="site-header">
+        <h1>All Service Categories</h1>
+        <p>
+          Explore our services by browsing through all available categories and
+          subcategories.
+        </p>
+        <Suspense fallback={null}>
+          <ServiceSearch />
+        </Suspense>
       </div>
-    </SiteLayout>
+
+      <ServiceCategoriesClient categories={categories} />
+    </div>
   );
 }
+
+export const metadata = {
+  title: "Service Categories",
+  description: "Browse all our artisans' services by category",
+};

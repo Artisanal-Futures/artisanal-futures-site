@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { ServiceWithShop } from "~/types/service";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
-import { NewServiceCard } from "~/app/(site)/services/_components/new-service-card";
+import { NewServiceCard } from "~/app/(site)/service-categories/_components/new-service-card";
 
 type Props = {
   categories: (Category & { items: Product[] | Service[] })[];

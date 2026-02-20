@@ -1,23 +1,19 @@
-import type { Shop } from "generated/prisma";
-import type { FC } from "react";
+import Link from "next/link";
 import { cn } from "~/utils/styles";
 import { Store, User } from "lucide-react";
 
+import type { RouterOutputs } from "~/trpc/react";
 import { env } from "~/env";
 import BlurImage from "~/components/ui/blur-image";
 
-type Props = Shop & React.HTMLAttributes<HTMLDivElement>;
+type Props = {
+  className?: string;
+  shop: NonNullable<RouterOutputs["shop"]["getAllValid"][number]>;
+};
 
-export const ShopCard: FC<Props> = ({
-  id,
-  ownerName,
-  name,
-  website,
-  logoPhoto,
+export const ShopCard = ({ shop, className }: Props) => {
+  const { id, ownerName, name, website, logoPhoto, ownerPhoto } = shop;
 
-  className,
-  ownerPhoto,
-}) => {
   const availableImage = `${env.NEXT_PUBLIC_STORAGE_URL}/shops/${
     ownerPhoto! && ownerPhoto != ""
       ? ownerPhoto
@@ -29,7 +25,7 @@ export const ShopCard: FC<Props> = ({
   return (
     <div className={cn("", className)}>
       <div className="group relative w-full overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg">
-        <a href={`/shops/${id}`}>
+        <Link href={`/shops/${id}`}>
           <div className="relative aspect-square w-full overflow-hidden">
             <BlurImage
               src={availableImage}
@@ -37,7 +33,7 @@ export const ShopCard: FC<Props> = ({
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
-        </a>
+        </Link>
 
         <div className="space-y-4 p-4">
           <div className="flex flex-col">

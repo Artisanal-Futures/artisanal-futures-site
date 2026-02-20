@@ -45,7 +45,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     });
 
   return (
-    <div>
+    <>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold tracking-tight">{category?.name}</h1>
       </div>
@@ -55,6 +55,17 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         totalCount={totalCount}
         totalPages={totalPages}
       />
-    </div>
+    </>
   );
 }
+
+export const generateMetadata = async ({ params }: Props) => {
+  const serverParams = await params;
+  const categoryName = decodeURIComponent(serverParams.slug);
+  const category = await api.category.getBySlug({ slug: categoryName });
+
+  return {
+    title: category?.name ?? "Product Category",
+    description: `Browse all our artisans' products in the ${category?.name} category`,
+  };
+};

@@ -28,6 +28,6 @@ export default async function ProductCategoriesPage() {
 }
 
 export const metadata = {
-  title: "All Product Categories",
-  description: "Browse all product categories.",
+  title: "Product Categories",
+  description: "Browse all our artisans' products by category",
 };

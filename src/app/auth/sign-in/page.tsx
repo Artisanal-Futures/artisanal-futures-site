@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Leaf } from "lucide-react";
-
 import { AuthView } from "@daveyplate/better-auth-ui";
+import { ArrowLeft, Leaf } from "lucide-react";
 
 export const metadata = {
   title: "Sign In",
@@ -28,7 +27,7 @@ export default async function SignInPage() {
               Crossroads Community Association
             </span> */}
             <Image
-              src="/logo-transparent.png"
+              src="/logo.png"
               alt="Crossroads Community Association"
               width={100}
               height={100}

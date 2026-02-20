@@ -1,15 +1,15 @@
 import Link from "next/link";
 
-export const metadata = { title: "About Us" };
-
 export default function AboutUsPage() {
   return (
-    <>
-      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        Welcome to Artisanal Futures!
-      </h1>
+    <div className="site-container">
+      <div className="site-header text-left">
+        <h1 className="scroll-m-20 border-b pb-2 text-left text-3xl font-semibold tracking-tight first:mt-0">
+          Welcome to Artisanal Futures!
+        </h1>
+      </div>
 
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         Thank you for joining the Artisanal Futures platform. Our mission is to
         help worker-owned businesses, worker collectives, artisanal enterprise,
         and other forms of grass-roots economic development and civic support.
@@ -25,7 +25,7 @@ export default function AboutUsPage() {
         and even feed back into our business participants. Thus, it is a vision
         for the transition to a decolonized circular economy.
       </p>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         We do not charge any fees or handle any transactions. Customers can
         search for your products or services on the platform, but they will be
         redirected to your website for making any online purchase.
@@ -33,12 +33,12 @@ export default function AboutUsPage() {
       <h2 className="mt-6 scroll-m-20 text-2xl font-semibold tracking-tight">
         Getting started
       </h2>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         To be part of the Artisanal Futures Platform, you first must get a code
         from either us, or an existing artisan. Once you got that, go ahead and{" "}
         <Link
           href="/auth/sign-up"
-          className="font-medium text-primary underline underline-offset-4"
+          className="text-primary font-medium underline underline-offset-4"
         >
           sign up
         </Link>
@@ -66,7 +66,7 @@ export default function AboutUsPage() {
       <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         Disclaimer
       </h2>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         The Artisanal Futures platform encourages a collaborative and creative
         environment. While we strive to provide a positive experience, we must
         emphasize that:
@@ -84,25 +84,25 @@ export default function AboutUsPage() {
       <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         User Agreement
       </h2>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         You agree to abide by our{" "}
         <Link
           href="/legal/privacy"
-          className="font-medium text-primary underline underline-offset-4"
+          className="text-primary font-medium underline underline-offset-4"
         >
           Privacy Policy
         </Link>
         ,{" "}
         <Link
           href="/legal/collective-agreement"
-          className="font-medium text-primary underline underline-offset-4"
+          className="text-primary font-medium underline underline-offset-4"
         >
           The Artisanal Futures Collective Agreement
         </Link>
         , and{" "}
         <Link
           href="/legal/terms-of-use"
-          className="font-medium text-primary underline underline-offset-4"
+          className="text-primary font-medium underline underline-offset-4"
         >
           Terms of Use.
         </Link>{" "}
@@ -112,16 +112,18 @@ export default function AboutUsPage() {
       <h2 className="mt-6 scroll-m-20 text-2xl font-semibold tracking-tight">
         Support
       </h2>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 not-first:mt-6">
         Questions? Reach out to our Support Team at{" "}
         <a
           href="mailto:support@artisanalfutures.org"
-          className="font-medium text-primary underline underline-offset-4"
+          className="text-primary font-medium underline underline-offset-4"
         >
           support@artisanalfutures.org
         </a>
         for assistance
       </p>
-    </>
+    </div>
   );
 }
+
+export const metadata = { title: "About Us" };

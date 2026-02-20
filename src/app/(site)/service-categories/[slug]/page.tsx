@@ -69,3 +69,14 @@ export default async function ServiceCategoryPage({
     </div>
   );
 }
+
+export const generateMetadata = async ({ params }: Props) => {
+  const serverParams = await params;
+  const categoryName = decodeURIComponent(serverParams.slug);
+  const category = await api.category.getBySlug({ slug: categoryName });
+
+  return {
+    title: category?.name ?? "Service Category",
+    description: `Browse all our artisans' services in the ${category?.name} category`,
+  };
+};

@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import type { FC } from "react";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 import type { ServiceWithShop } from "~/types/service";
@@ -78,19 +78,20 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
           </CardFooter>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-svh max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
+      <DialogContent className="max-h-svh sm:max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {service.name}
           </DialogTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             By {service?.shop?.name}
           </p>
         </DialogHeader>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="aspect-square overflow-hidden rounded-lg">
-            <img
+          <div className="relative aspect-square overflow-hidden rounded-lg">
+            <Image
+              fill
               src={service.imageUrl ?? "/img/background-fallback.jpg"}
               alt={`Image of ${service.name}`}
               className="h-full w-full object-cover"
@@ -102,13 +103,13 @@ export const NewServiceCard: FC<Props> = ({ service }) => {
           </div>
 
           <div className="flex h-full flex-col space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
               {service.shop?.attributeTags?.map((tag) => tag).join(" • ")}
             </p>
             <div>
               <h4 className="font-semibold">Description</h4>
               <ScrollArea className="h-48">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {stripHtmlTags(service.description)}
                 </p>
               </ScrollArea>

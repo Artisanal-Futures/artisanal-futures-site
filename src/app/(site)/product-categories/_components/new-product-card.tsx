@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import type { FC } from "react";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 import type { ProductWithRelations } from "~/types/product";
@@ -56,10 +56,6 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </div>
 
           <CardHeader className="space-y-1">
-            {/* <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
-            </p> */}
-
             <CardTitle className="line-clamp-1 text-xl capitalize">
               {product.name}
             </CardTitle>
@@ -85,22 +81,23 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </CardFooter>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-h-svh max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
+      <DialogContent className="max-h-svh sm:max-w-4xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             {product.name}
           </DialogTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             By {product?.shop?.name}
           </p>
         </DialogHeader>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="aspect-square overflow-hidden rounded-lg">
-            <img
+          <div className="relative aspect-square overflow-hidden rounded-lg">
+            <Image
               src={product.imageUrl ?? "/img/background-fallback.jpg"}
+              fill
               alt={`Image of ${product.name}`}
-              className="h-full w-full object-cover"
+              className="object-cover"
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
                 currentTarget.src = "/img/background-fallback.jpg";
@@ -109,13 +106,13 @@ export const NewProductCard: FC<Props> = ({ product }) => {
           </div>
 
           <div className="flex h-full flex-col space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
               {product.shop?.attributeTags?.map((tag) => tag).join(" • ")}
             </p>
             <div>
               <h4 className="font-semibold">Description</h4>
               <ScrollArea className="h-48">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {stripHtmlTags(product.description)}
                 </p>
               </ScrollArea>
@@ -204,17 +201,6 @@ export const NewProductCard: FC<Props> = ({ product }) => {
             </div>
           </div>
         </div>
-
-        {/* <div className="mt-4 flex gap-4">
-          <Button asChild className="flex-1">
-            <Link href={productUrl ?? "#"} target="_blank">
-              View Product
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="flex-1">
-            <Link href={`/shops/${product.shopId}`}>View Shop</Link>
-          </Button>
-        </div> */}
       </DialogContent>
     </Dialog>
   );
