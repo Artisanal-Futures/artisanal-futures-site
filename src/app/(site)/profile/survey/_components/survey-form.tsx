@@ -1,9 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-
-import type { Shop, Survey } from "@prisma/client";
+import type { Shop, Survey } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 import type { SurveyFormValues } from "../_validators/schema";
 import { api } from "~/trpc/react";
@@ -67,11 +66,11 @@ export const SurveyForm: React.FC<Props> = ({ initialData, shop }) => {
     <ScrollArea className="h-full w-full">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-primary">
+          <h2 className="text-primary text-2xl font-semibold">
             {initialData?.id ? "Update Survey" : "New Survey"}{" "}
             {shop ? `for ${shop.name ?? "your shop"}` : ""}
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Let us know more about your business and preferences
           </p>
         </div>

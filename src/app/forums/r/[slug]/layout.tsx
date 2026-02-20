@@ -1,28 +1,30 @@
-import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { format } from 'date-fns'
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { format } from "date-fns";
 
-import { SubscribeLeaveToggle } from '~/app/forums/_components/subscribe-leave-toggle'
-import { ToFeedButton } from '~/app/forums/_components/to-feed-button'
-import { buttonVariants } from '~/components/ui/button'
-import { getServerAuthSession } from '~/server/auth'
-import { db } from '~/server/db'
-import { SubredditEditButton } from '../../_components/subreddit-edit-button'
+import { getSession } from "~/server/better-auth/server";
+import { db } from "~/server/db";
+import { buttonVariants } from "~/components/ui/button";
+import { SubscribeLeaveToggle } from "~/app/forums/_components/subscribe-leave-toggle";
+import { ToFeedButton } from "~/app/forums/_components/to-feed-button";
+
+import { SubredditEditButton } from "../../_components/subreddit-edit-button";
 
 export const metadata: Metadata = {
-  title: 'Artisanal Futures Forums',
-}
+  title: "Artisanal Futures Forums",
+};
 
 const Layout = async ({
   children,
-  params: { slug },
+  params,
 }: {
-  children: ReactNode
-  params: { slug: string }
+  children: ReactNode;
+  params: Promise<{ slug: string }>;
 }) => {
-  const session = await getServerAuthSession()
+  const { slug } = await params;
+  const session = await getSession();
 
   const subreddit = await db.subreddit.findFirst({
     where: {
@@ -36,7 +38,7 @@ const Layout = async ({
         },
       },
     },
-  })
+  });
 
   const subscription = !session?.user
     ? undefined
@@ -49,11 +51,11 @@ const Layout = async ({
             id: session.user.id,
           },
         },
-      })
+      });
 
-  const isSubscribed = !!subscription
+  const isSubscribed = !!subscription;
 
-  if (!subreddit) return notFound()
+  if (!subreddit) return notFound();
 
   const memberCount = await db.subscription.count({
     where: {
@@ -61,7 +63,7 @@ const Layout = async ({
         name: slug,
       },
     },
-  })
+  });
 
   return (
     <div className="mx-auto h-full max-w-7xl sm:container">
@@ -72,14 +74,14 @@ const Layout = async ({
           <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
           {/* info sidebar */}
-          <div className="order-first h-fit overflow-hidden rounded-lg border border-border md:order-last">
-            <div className="flex items-center justify-between bg-secondary px-6 py-4">
-              <p className="py-3 font-semibold text-foreground">
+          <div className="border-border order-first h-fit overflow-hidden rounded-lg border md:order-last">
+            <div className="bg-secondary flex items-center justify-between px-6 py-4">
+              <p className="text-foreground py-3 font-semibold">
                 About r/{subreddit.name}
               </p>
 
               {(subreddit.creatorId === session?.user?.id ||
-                session?.user?.role === 'ADMIN') && (
+                session?.user?.role === "ADMIN") && (
                 <SubredditEditButton
                   subredditId={subreddit.id}
                   name={subreddit.name}
@@ -88,7 +90,7 @@ const Layout = async ({
                 />
               )}
             </div>
-            <div className="divide-y divide-border bg-background px-6 text-sm leading-6">
+            <div className="divide-border bg-background divide-y px-6 text-sm leading-6">
               {subreddit.description && (
                 <div className="py-3">
                   <p className="text-foreground">{subreddit.description}</p>
@@ -98,7 +100,7 @@ const Layout = async ({
                 <span className="text-muted-foreground">Created</span>
                 <span className="text-foreground">
                   <time dateTime={subreddit.createdAt.toDateString()}>
-                    {format(subreddit.createdAt, 'MMMM d, yyyy')}
+                    {format(subreddit.createdAt, "MMMM d, yyyy")}
                   </time>
                 </span>
               </div>
@@ -127,8 +129,8 @@ const Layout = async ({
                 <div className="py-4">
                   <Link
                     className={buttonVariants({
-                      variant: 'outline',
-                      className: 'w-full',
+                      variant: "outline",
+                      className: "w-full",
                     })}
                     href={`/forums/r/${slug}/submit`}
                   >
@@ -141,7 +143,7 @@ const Layout = async ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

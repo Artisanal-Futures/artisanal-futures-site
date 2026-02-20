@@ -3,26 +3,29 @@ import { api } from "~/trpc/server";
 import { ServiceCategoryClient } from "./_components/service-category-client";
 
 type Props = {
-  params: { slug: string };
-  searchParams: Record<string, string | string[] | undefined>;
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function ServiceCategoryPage({
   params,
   searchParams,
 }: Props) {
-  const page = Number(searchParams.page ?? 1);
-  const limit = Number(searchParams.limit ?? 20);
-  const sort = (searchParams.sort as "asc" | "desc") ?? "asc";
-  const storeId = searchParams.store as string | undefined;
-  const search = searchParams.search as string | undefined;
-  const attributes = searchParams.attributes
-    ? (searchParams.attributes as string).split(",")
+  const serverParams = await params;
+  const serverSearchParams = await searchParams;
+
+  const page = Number(serverSearchParams.page ?? 1);
+  const limit = Number(serverSearchParams.limit ?? 20);
+  const sort = (serverSearchParams.sort as "asc" | "desc") ?? "asc";
+  const storeId = serverSearchParams.store as string | undefined;
+  const search = serverSearchParams.search as string | undefined;
+  const attributes = serverSearchParams.attributes
+    ? (serverSearchParams.attributes as string).split(",")
     : undefined;
 
-  const categoryName = decodeURIComponent(params.slug);
-  const subcategoryName = searchParams.subcategory
-    ? decodeURIComponent(searchParams.subcategory as string)
+  const categoryName = decodeURIComponent(serverParams.slug);
+  const subcategoryName = serverSearchParams.subcategory
+    ? decodeURIComponent(serverSearchParams.subcategory as string)
     : undefined;
 
   const {

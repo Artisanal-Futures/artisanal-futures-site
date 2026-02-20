@@ -4,11 +4,12 @@ import ProfileCard from "~/app/(site)/shops/[shopId]/_components/profile-card";
 import { ProductGrid } from "./_components/product-grid";
 
 type Props = {
-  params: { shopId: string };
+  params: Promise<{ shopId: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
-  const shop = await api.shop.get(params?.shopId);
+  const { shopId } = await params;
+  const shop = await api.shop.get(shopId);
   return {
     title: shop?.name ?? "Artisan Profile",
     description: `View ${shop?.name}'s profile and products`,
@@ -16,7 +17,8 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ProfilePage({ params }: Props) {
-  const shop = await api.shop.get(params?.shopId);
+  const { shopId } = await params;
+  const shop = await api.shop.get(shopId);
 
   return (
     <>
@@ -55,7 +57,7 @@ export default async function ProfilePage({ params }: Props) {
                 Browse through {shop.name}&apos;s unique collection
               </p>
             </div>
-            <ProductGrid id={params?.shopId ?? ""} />
+            <ProductGrid id={shopId} />
 
             {/* <ArtisanProductsGrid name={shop.name} /> */}
           </section>
@@ -67,7 +69,7 @@ export default async function ProfilePage({ params }: Props) {
                 <h2 className="mb-4 scroll-m-20 text-3xl font-semibold tracking-tight">
                   About {shop.name}
                 </h2>
-                <div className="prose max-w-none lg:prose-lg">
+                <div className="prose lg:prose-lg max-w-none">
                   <p className="text-muted-foreground">{shop.description}</p>
                 </div>
               </div>

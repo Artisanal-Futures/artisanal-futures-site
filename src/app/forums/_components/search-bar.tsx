@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import debounce from "lodash/debounce";
 import { Users } from "lucide-react";
@@ -22,7 +22,7 @@ export const SearchBar = () => {
   const commandRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  useOnClickOutside(commandRef, () => {
+  useOnClickOutside(commandRef as RefObject<HTMLDivElement>, () => {
     setInput("");
   });
 
@@ -75,7 +75,6 @@ export const SearchBar = () => {
       className="relative z-50 h-auto max-w-lg overflow-visible rounded-lg border border-border bg-background shadow-sm transition-colors dark:border-border/40 dark:bg-background/95 dark:shadow-md dark:shadow-black/20"
     >
       <CommandInput
-        isLoading={isFetching}
         onValueChange={(text) => {
           if (text != null) {
             setInput(text);

@@ -1,8 +1,7 @@
 "use client";
 
+import type { Category, Product, Service } from "generated/prisma";
 import Link from "next/link";
-
-import type { Category, Product, Service } from "@prisma/client";
 
 import type { ServiceWithShop } from "~/types/service";
 import { cn } from "~/lib/utils";
@@ -47,7 +46,7 @@ export function ServiceCategoriesClient({ categories }: Props) {
             </div>
           )}
           {category?.items?.length === 0 && (
-            <p className="text-left text-muted-foreground">
+            <p className="text-muted-foreground text-left">
               No services found for the selected filters.
             </p>
           )}

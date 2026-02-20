@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { getServerAuthSession } from "~/server/auth";
 import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 

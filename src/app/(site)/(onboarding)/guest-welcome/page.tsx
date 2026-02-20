@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
+
+import { getSession } from "~/server/better-auth/server";
 
 import GuestArtisanRegistrationForm from "./_components/guest-form";
 
 export default async function WelcomePage() {
-  const sessionData = await getServerAuthSession();
+  const sessionData = await getSession();
 
   if (!sessionData) redirect(`/auth/sign-in?callbackUrl=/guest-welcome`);
   // if (

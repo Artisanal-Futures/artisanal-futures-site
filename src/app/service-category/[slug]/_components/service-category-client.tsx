@@ -3,8 +3,7 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-import { type Category } from "@prisma/client";
+import { type Category } from "generated/prisma";
 
 import { type ServiceWithShop } from "~/types/service";
 import { api } from "~/trpc/react";
@@ -223,7 +222,7 @@ const FilterControls = memo(function FilterControls({
               <Link
                 href={pathname}
                 scroll={false}
-                className="mt-2 block text-sm text-muted-foreground hover:underline"
+                className="text-muted-foreground mt-2 block text-sm hover:underline"
               >
                 Clear filter
               </Link>
@@ -380,7 +379,7 @@ export function ServiceCategoryClient({
       </aside>
       <main className="flex-1 space-y-6 px-4 md:px-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Showing {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
             {(currentPage - 1) * itemsPerPage + initialServices.length} of{" "}
             {totalCount} services
@@ -395,7 +394,7 @@ export function ServiceCategoryClient({
               onChange={(e) =>
                 updateSearchParams({ limit: Number(e.target.value) })
               }
-              className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm"
+              className="border-input bg-background h-8 w-24 rounded-md border px-2 py-1 text-sm"
             >
               <option value="10">10</option>
               <option value="20">20</option>
@@ -425,7 +424,7 @@ export function ServiceCategoryClient({
         )}
 
         {initialServices.length === 0 && (
-          <p className="text-center text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             No services found for the selected filters.
           </p>
         )}

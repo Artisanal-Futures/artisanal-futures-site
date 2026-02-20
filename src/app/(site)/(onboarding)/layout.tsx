@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
+
+import { getSession } from "~/server/better-auth/server";
 
 export default async function OnboardingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   if (!session) {
     return redirect("/auth/sign-in");

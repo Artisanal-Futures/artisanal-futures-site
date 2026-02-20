@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import type { Shop, User } from "generated/prisma";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CheckCircle2,
   PackageIcon,
@@ -13,11 +16,8 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import type { Shop, User } from "@prisma/client";
-import { toastService } from "@dreamwalker-studios/toasts";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import type { ArtisanOnboardingFormSchemaType } from "../_validators/schema";
+import type { RouterOutputs } from "~/trpc/react";
 import type { Survey } from "~/types/survey";
 import { env } from "~/env";
 import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
@@ -46,8 +46,8 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { LoadButton } from "~/components/common/load-button";
 import { ImageFormField } from "~/components/inputs/image-form-field";
+import { LoadButton } from "~/components/common/load-button";
 
 import { artisanOnboardingFormSchema } from "../_validators/schema";
 
@@ -61,8 +61,8 @@ const STORE_ATTRIBUTES = [
   "Food Sovereignty",
 ] as const;
 type Props = {
-  surveyInitialData: Survey | null;
-  shopInitialData: (Shop & { owner?: User }) | null;
+  surveyInitialData: RouterOutputs["survey"]["getCurrent"]["survey"];
+  shopInitialData: RouterOutputs["survey"]["getCurrent"]["shop"];
 };
 export const OnboardingForm = ({
   surveyInitialData,
@@ -316,7 +316,7 @@ export const OnboardingForm = ({
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="mt-2 text-sm text-muted-foreground">
+                        <FormDescription className="text-muted-foreground mt-2 text-sm">
                           This is different from what you have put on the shop
                           page: the more you can say, the better! Pretend
                           it&apos;s an interview -- what can you say that gives
@@ -425,8 +425,8 @@ export const OnboardingForm = ({
                   className="space-y-8"
                 >
                   {/* Shop Images Section */}
-                  <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-lg font-medium text-primary">
+                  <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
+                    <h3 className="text-primary mb-4 text-lg font-medium">
                       Shop Images
                     </h3>
                     <div className="grid grid-cols-2 gap-6">
@@ -456,8 +456,8 @@ export const OnboardingForm = ({
                   </div>
 
                   {/* Basic Info Section */}
-                  <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-lg font-medium text-primary">
+                  <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
+                    <h3 className="text-primary mb-4 text-lg font-medium">
                       Basic Information
                     </h3>
                     <div className="space-y-6">
@@ -515,8 +515,8 @@ export const OnboardingForm = ({
                   </div>
 
                   {/* Description Section */}
-                  <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-lg font-medium text-primary">
+                  <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
+                    <h3 className="text-primary mb-4 text-lg font-medium">
                       Shop Details
                     </h3>
                     <div className="space-y-6">
@@ -559,15 +559,15 @@ export const OnboardingForm = ({
                   </div>
 
                   {/* Store Attributes Section */}
-                  <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                    <h3 className="mb-4 text-lg font-medium text-primary">
+                  <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
+                    <h3 className="text-primary mb-4 text-lg font-medium">
                       Store Attributes
                     </h3>
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                       {STORE_ATTRIBUTES.map((attribute) => (
                         <div
                           key={attribute}
-                          className="flex items-center space-x-3 rounded-md border border-border p-3 transition-colors hover:bg-accent"
+                          className="border-border hover:bg-accent flex items-center space-x-3 rounded-md border p-3 transition-colors"
                         >
                           <Checkbox
                             id={attribute}
@@ -630,8 +630,8 @@ export const OnboardingForm = ({
             {modifySurvey.isPending || createSurvey.isPending ? (
               <CardContent className="flex items-center justify-center py-8">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                  <p className="text-sm text-muted-foreground">
+                  <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+                  <p className="text-muted-foreground text-sm">
                     Setting up your profile...
                   </p>
                 </div>
@@ -651,7 +651,7 @@ export const OnboardingForm = ({
                   <Card className="transition-all hover:shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <UsersIcon className="h-6 w-6 text-primary" />
+                        <UsersIcon className="text-primary h-6 w-6" />
                         Join the Community
                       </CardTitle>
                       <CardDescription>
@@ -669,7 +669,7 @@ export const OnboardingForm = ({
                   <Card className="transition-all hover:shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Store className="h-6 w-6 text-primary" />
+                        <Store className="text-primary h-6 w-6" />
                         Manage Your Shop
                       </CardTitle>
                       <CardDescription>
@@ -687,7 +687,7 @@ export const OnboardingForm = ({
                   <Card className="transition-all hover:shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <PackageIcon className="h-6 w-6 text-primary" />
+                        <PackageIcon className="text-primary h-6 w-6" />
                         Add Products
                       </CardTitle>
                       <CardDescription>
@@ -705,7 +705,7 @@ export const OnboardingForm = ({
                   <Card className="transition-all hover:shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <WrenchIcon className="h-6 w-6 text-primary" />
+                        <WrenchIcon className="text-primary h-6 w-6" />
                         Explore Tools
                       </CardTitle>
                       <CardDescription>

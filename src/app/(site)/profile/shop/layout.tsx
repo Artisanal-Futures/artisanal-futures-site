@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 
+import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
 export default async function ShopLayout({
@@ -8,7 +8,7 @@ export default async function ShopLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   if (!session) redirect("/unauthorized");
 

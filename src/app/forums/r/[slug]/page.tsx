@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { notFound } from "next/navigation";
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
-import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
 
+import { getSession } from "~/server/better-auth/server";
+import { db } from "~/server/db";
 import { MiniCreatePost } from "~/app/forums/_components/mini-create-post";
 import { PostFeed } from "~/app/forums/_components/post-feed";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 const page = async ({ params }: Props) => {
-  const { slug } = params;
+  const { slug } = await params;
 
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   const subreddit = await db.subreddit.findFirst({
     where: { name: slug },

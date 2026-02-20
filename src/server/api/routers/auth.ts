@@ -1,7 +1,7 @@
-import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
+import type { Role } from "generated/prisma";
 import { z } from "zod";
 
-import type { Role } from "@prisma/client";
+import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   changeRole: adminProcedure

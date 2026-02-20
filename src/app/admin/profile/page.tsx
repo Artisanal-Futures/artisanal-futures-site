@@ -1,4 +1,4 @@
-import { getServerAuthSession } from "~/server/auth";
+import { getSession } from "~/server/better-auth/server";
 
 import { AdminClientLayout } from "../_components/client-layout";
 import { ProfileForm } from "./_components/profile-form";
@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function ProfilePage() {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   return (
     <AdminClientLayout currentPage="Profile" title="Profile Settings">

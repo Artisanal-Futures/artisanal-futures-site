@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { NewServiceClient } from "./_components/new-service-client";
 
 export const metadata = {
@@ -5,6 +6,14 @@ export const metadata = {
   description:
     "Search through all our artisans' services and support small businesses",
 };
+
+function ServicesPageFallback() {
+  return (
+    <div className="rounded-lg bg-background p-8 text-center text-muted-foreground">
+      Loading services...
+    </div>
+  );
+}
 
 export default function ServicesPage() {
   return (
@@ -20,7 +29,9 @@ export default function ServicesPage() {
       </div>
 
       <div className="rounded-lg bg-background shadow-sm">
-        <NewServiceClient />
+        <Suspense fallback={<ServicesPageFallback />}>
+          <NewServiceClient />
+        </Suspense>
       </div>
     </div>
   );

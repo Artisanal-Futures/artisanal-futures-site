@@ -1,10 +1,10 @@
-import { db } from "~/server/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { genericOAuth, auth0 } from "better-auth/plugins";
-import { createAuthMiddleware, APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
+import { auth0, genericOAuth } from "better-auth/plugins";
 
 import { env } from "~/env";
+import { db } from "~/server/db";
 
 const useSecureCookies = env.BETTER_AUTH_URL.startsWith("https://");
 const hostName = !useSecureCookies
@@ -113,8 +113,7 @@ export const auth = betterAuth({
         });
 
         const isNewUser =
-          existingUser &&
-          Date.now() - existingUser.createdAt.getTime() < 5000;
+          existingUser && Date.now() - existingUser.createdAt.getTime() < 5000;
 
         if (isNewUser) {
           const code = await ctx.getSignedCookie(
@@ -132,7 +131,7 @@ export const auth = betterAuth({
           }
 
           // Clear the code cookie after successful sign-up
-          ctx.setCookies("signup-code", "", { maxAge: 0 });
+          ctx.setCookie("signup-code", "", { maxAge: 0 });
         }
       }
 

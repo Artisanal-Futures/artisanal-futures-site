@@ -1,6 +1,5 @@
 import { Suspense } from "react";
-
-import { CategoryType } from "@prisma/client";
+import { CategoryType } from "generated/prisma";
 
 import { api } from "~/trpc/server";
 import SiteLayout from "~/app/(site)/layout";
@@ -25,7 +24,7 @@ export default async function ServiceCategoriesPage() {
           <h1 className="mb-4 text-5xl font-bold tracking-tight">
             All Service Categories
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+          <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
             Explore our services by browsing through all available categories
             and subcategories.
           </p>

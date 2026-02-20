@@ -1,33 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-'use client'
+"use client";
 
-import type EditorJS from '@editorjs/editorjs'
-import type { z } from 'zod'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
+import type EditorJS from "@editorjs/editorjs";
+import type { z } from "zod";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import TextareaAutosize from "react-textarea-autosize";
 
-import { PostUpdateValidator } from '~/lib/validators/post'
+import { PostUpdateValidator } from "~/lib/validators/post";
 
-import '~/styles/editor.css'
+import "~/styles/editor.css";
 
-import { toastService } from '@dreamwalker-studios/toasts'
+import { toastService } from "@dreamwalker-studios/toasts";
 
-import { env } from '~/env'
-import { useFileUpload } from '~/lib/file-upload/hooks/use-file-upload'
-import { api } from '~/trpc/react'
+import { env } from "~/env";
+import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
+import { api } from "~/trpc/react";
 
-type FormData = z.infer<typeof PostUpdateValidator>
+type FormData = z.infer<typeof PostUpdateValidator>;
 
 interface EditorProps {
-  postId: string
-  content?: unknown
-  title?: string
-  children?: React.ReactNode
-  onSuccess?: () => void
+  postId: string;
+  content?: unknown;
+  title?: string;
+  children?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
 export const EditEditor: React.FC<EditorProps> = ({
@@ -38,18 +38,18 @@ export const EditEditor: React.FC<EditorProps> = ({
   onSuccess,
 }) => {
   const { uploadFile, uploadedFile } = useFileUpload({
-    route: 'post',
-    api: '/api/upload-post',
+    route: "post",
+    api: "/api/upload-post",
     generateThumbnail: false,
-  })
+  });
 
-  const uploadRef = useRef<string | null>(null)
+  const uploadRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey
+      uploadRef.current = uploadedFile.objectKey;
     }
-  }, [uploadedFile])
+  }, [uploadedFile]);
 
   const {
     register,
@@ -59,36 +59,36 @@ export const EditEditor: React.FC<EditorProps> = ({
     resolver: zodResolver(PostUpdateValidator),
     defaultValues: {
       postId,
-      title: title ?? '',
+      title: title ?? "",
       content: content ?? null,
     },
-  })
-  const ref = useRef<EditorJS>()
-  const _titleRef = useRef<HTMLTextAreaElement>(null)
-  const router = useRouter()
-  const [isMounted, setIsMounted] = useState<boolean>(false)
+  });
+  const ref = useRef<EditorJS | undefined>(undefined);
+  const _titleRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const updatePostMutation = api.forumSubreddit.updateSubredditPost.useMutation(
     {
       onError: () =>
         toastService.error({
-          message: 'Your post was not published. Please try again.',
+          message: "Your post was not published. Please try again.",
         }),
       onSuccess: () => {
         // // turn pathname /r/mycommunity/submit into /r/mycommunity
         // const newPathname = pathname.split("/").slice(0, -1).join("/");
         // router.push(newPathname);
 
-        router.refresh()
+        router.refresh();
 
         if (onSuccess) {
-          onSuccess()
+          onSuccess();
         }
 
-        toastService.success('Your post has been published.')
+        toastService.success("Your post has been published.");
       },
     },
-  )
+  );
 
   // const { mutate: createPost } = useMutation({
   //   mutationFn: async ({
@@ -121,23 +121,23 @@ export const EditEditor: React.FC<EditorProps> = ({
   // });
 
   const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import('@editorjs/editorjs')).default
-    const Header = (await import('@editorjs/header')).default
-    const Embed = (await import('@editorjs/embed')).default
-    const Table = (await import('@editorjs/table')).default
-    const List = (await import('@editorjs/list')).default
-    const Code = (await import('@editorjs/code')).default
-    const LinkTool = (await import('@editorjs/link')).default
-    const InlineCode = (await import('@editorjs/inline-code')).default
-    const ImageTool = (await import('@editorjs/image')).default
+    const EditorJS = (await import("@editorjs/editorjs")).default;
+    const Header = (await import("@editorjs/header")).default;
+    const Embed = (await import("@editorjs/embed")).default;
+    const Table = (await import("@editorjs/table")).default;
+    const List = (await import("@editorjs/list")).default;
+    const Code = (await import("@editorjs/code")).default;
+    const LinkTool = (await import("@editorjs/link")).default;
+    const InlineCode = (await import("@editorjs/inline-code")).default;
+    const ImageTool = (await import("@editorjs/image")).default;
 
     if (!ref.current) {
       const editor = new EditorJS({
-        holder: 'editor',
+        holder: "editor",
         onReady() {
-          ref.current = editor
+          ref.current = editor;
         },
-        placeholder: 'Type here to write your post...',
+        placeholder: "Type here to write your post...",
         inlineToolbar: true,
         data: {
           blocks: content
@@ -149,7 +149,7 @@ export const EditEditor: React.FC<EditorProps> = ({
           linkTool: {
             class: LinkTool,
             config: {
-              endpoint: '/api/link',
+              endpoint: "/api/link",
             },
           },
           image: {
@@ -157,14 +157,14 @@ export const EditEditor: React.FC<EditorProps> = ({
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  const res = await uploadFile(file)
+                  const res = await uploadFile(file);
 
                   return {
                     success: 1,
                     file: {
                       url: `${env.NEXT_PUBLIC_STORAGE_URL}/posts/${res}`,
                     },
-                  }
+                  };
 
                   // Wait for uploadRef to be updated
                   // return new Promise((resolve) => {
@@ -190,62 +190,64 @@ export const EditEditor: React.FC<EditorProps> = ({
           table: Table,
           embed: Embed,
         },
-      })
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [, value] of Object.entries(errors)) {
-        value
+        value;
         toastService.error({
           message: (value as { message: string }).message,
-        })
+        });
       }
     }
-  }, [errors])
+  }, [errors]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsMounted(true)
+    if (typeof window !== "undefined") {
+      setIsMounted(true);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const init = async () => {
-      await initializeEditor()
+      await initializeEditor();
 
       setTimeout(() => {
-        _titleRef?.current?.focus()
-      }, 0)
-    }
+        _titleRef?.current?.focus();
+      }, 0);
+    };
 
     if (isMounted) {
-      void init()
+      void init();
 
       return () => {
-        ref.current?.destroy()
-        ref.current = undefined
-      }
+        if (ref.current) {
+          ref.current.destroy();
+          ref.current = undefined;
+        }
+      };
     }
-  }, [isMounted, initializeEditor])
+  }, [isMounted, initializeEditor]);
 
   async function onSubmit(data: FormData) {
-    const blocks = await ref.current?.save()
+    const blocks = await ref.current?.save();
 
     updatePostMutation.mutate({
       title: data.title,
       content: blocks,
       postId: data.postId,
-    })
+    });
   }
 
   if (!isMounted) {
-    return null
+    return null;
   }
 
-  const { ref: titleRef, ...rest } = register('title')
+  const { ref: titleRef, ...rest } = register("title");
 
   return (
     <form
@@ -253,13 +255,12 @@ export const EditEditor: React.FC<EditorProps> = ({
       className="w-fit"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="w-full rounded-lg border border-border bg-background p-4">
+      <div className="border-border bg-background w-full rounded-lg border p-4">
         <div className="prose prose-stone dark:prose-invert">
           <TextareaAutosize
             ref={(e) => {
-              titleRef(e)
-              // @ts-expect-error editorjs types
-              _titleRef.current = e
+              titleRef(e);
+              _titleRef.current = e;
             }}
             {...rest}
             placeholder="Title"
@@ -267,15 +268,15 @@ export const EditEditor: React.FC<EditorProps> = ({
           />
           <div id="editor" className="min-h-[500px]" />
           <p className="text-sm text-gray-500">
-            Use{' '}
-            <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
+            Use{" "}
+            <kbd className="bg-muted rounded-md border px-1 text-xs uppercase">
               Tab
-            </kbd>{' '}
+            </kbd>{" "}
             to open the command menu.
           </p>
         </div>
       </div>
       {children}
     </form>
-  )
-}
+  );
+};

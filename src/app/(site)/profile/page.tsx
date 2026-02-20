@@ -1,6 +1,5 @@
-import { getServerAuthSession } from "~/server/auth";
-
 import { env } from "~/env";
+import { getSession } from "~/server/better-auth/server";
 import { Separator } from "~/components/ui/separator";
 import DevelopmentChangeRole from "~/app/(site)/profile/_components/development-change-role";
 
@@ -13,7 +12,7 @@ export const metadata = {
 };
 
 export default async function ProfilePage() {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   return (
     <>

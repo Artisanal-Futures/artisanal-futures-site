@@ -1,17 +1,16 @@
 "use client";
 
+import type { Shop } from "generated/prisma";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { authClient } from "~/server/better-auth/client";
-import { useForm } from "react-hook-form";
-
-import type { Shop } from "@prisma/client";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 import type { ShopFormValues } from "../_validators/schema";
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button, buttonVariants } from "~/components/ui/button";

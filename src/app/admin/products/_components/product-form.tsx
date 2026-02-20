@@ -1,11 +1,10 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import type { ProductWithRelations } from "~/types/product";
@@ -21,13 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { LoadButton } from "~/components/common/load-button";
-import { FancySwitchFormField } from "~/components/inputs";
 import { ImageFormField } from "~/components/inputs/image-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
+import { LoadButton } from "~/components/common/load-button";
+import { FancySwitchFormField } from "~/components/inputs";
 
 const productFormSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -43,9 +42,7 @@ const productFormSchema = z.object({
   aiGeneratedTags: z.array(z.string()),
   shopId: z.string().min(1, "Shop selection is required."),
   shopProductId: z.string().optional().nullable(),
-  scrapeMethod: z
-    .enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"])
-    .default("MANUAL"),
+  scrapeMethod: z.enum(["MANUAL", "WORDPRESS", "SHOPIFY", "SQUARESPACE"]),
   image: z.any().optional(),
   categoryIds: z.array(z.string()).optional(),
   isFeatured: z.boolean(),
@@ -56,7 +53,7 @@ type ProductForm = z.infer<typeof productFormSchema>;
 type Props = {
   initialData: ProductWithRelations | null;
   onSuccessCallback?: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 export function ProjectForm({ initialData, onSuccessCallback }: Props) {

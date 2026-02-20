@@ -1,29 +1,30 @@
-'use client'
+"use client";
 
-import type { Post as PostType, User, Vote } from '@prisma/client'
-import type { FC } from 'react'
-import { useRef } from 'react'
-import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
+import type { Post as PostType, User, Vote } from "generated/prisma";
+import type { FC } from "react";
+import { useRef } from "react";
+import Link from "next/link";
+import { MessageSquare } from "lucide-react";
 
-import { env } from '~/env'
-import { formatTimeToNow } from '~/lib/utils'
-import { EditorOutput } from './editor-output'
-import { HeartPostVoteClient } from './post-vote/heart-post-vote-client'
-import { PostVoteClient } from './post-vote/post-vote-client'
+import { env } from "~/env";
+import { formatTimeToNow } from "~/lib/utils";
 
-type PartialVote = Pick<Vote, 'type'>
+import { EditorOutput } from "./editor-output";
+import { HeartPostVoteClient } from "./post-vote/heart-post-vote-client";
+import { PostVoteClient } from "./post-vote/post-vote-client";
+
+type PartialVote = Pick<Vote, "type">;
 
 type Props = {
   post: PostType & {
-    author: User
-    votes: Vote[]
-  }
-  votesAmt: number
-  subredditName: string
-  currentVote?: PartialVote
-  commentAmt: number
-}
+    author: User;
+    votes: Vote[];
+  };
+  votesAmt: number;
+  subredditName: string;
+  currentVote?: PartialVote;
+  commentAmt: number;
+};
 
 export const SinglePost: FC<Props> = ({
   post,
@@ -32,10 +33,10 @@ export const SinglePost: FC<Props> = ({
   subredditName,
   commentAmt,
 }) => {
-  const pRef = useRef<HTMLParagraphElement>(null)
+  const pRef = useRef<HTMLParagraphElement>(null);
 
   return (
-    <div className="rounded-md bg-background shadow">
+    <div className="bg-background rounded-md shadow">
       <div className="flex justify-between px-6 py-4">
         {env.NEXT_PUBLIC_HEART_VOTE_DISABLED ? (
           <PostVoteClient
@@ -52,11 +53,11 @@ export const SinglePost: FC<Props> = ({
         )}
 
         <div className="w-0 flex-1">
-          <div className="mt-1 max-h-40 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-1 max-h-40 text-xs">
             {subredditName ? (
               <>
                 <a
-                  className="text-sm text-foreground underline underline-offset-2"
+                  className="text-foreground text-sm underline underline-offset-2"
                   href={`/forums/r/${subredditName}`}
                 >
                   r/{subredditName}
@@ -64,11 +65,11 @@ export const SinglePost: FC<Props> = ({
                 <span className="px-1">•</span>
               </>
             ) : null}
-            <span>Posted by u/{post.author.username}</span>{' '}
+            <span>Posted by u/{post.author.username}</span>{" "}
             {formatTimeToNow(new Date(post.createdAt))}
           </div>
           <a href={`/forums/r/${subredditName}/post/${post.id}`}>
-            <h1 className="py-2 text-lg font-semibold leading-6 text-foreground">
+            <h1 className="text-foreground py-2 text-lg leading-6 font-semibold">
               {post.title}
             </h1>
           </a>
@@ -86,7 +87,7 @@ export const SinglePost: FC<Props> = ({
         </div>
       </div>
 
-      <div className="z-20 bg-muted px-4 py-4 text-sm sm:px-6">
+      <div className="bg-muted z-20 px-4 py-4 text-sm sm:px-6">
         <Link
           href={`/forums/r/${subredditName}/post/${post.id}`}
           className="flex w-fit items-center gap-2"
@@ -95,5 +96,5 @@ export const SinglePost: FC<Props> = ({
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

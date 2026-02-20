@@ -1,10 +1,11 @@
 "use client";
 
 import { memo, useCallback, useMemo, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { type Category } from "@prisma/client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { type Category } from "generated/prisma";
 
+import { type ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -17,9 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
 import { NewProductCard } from "~/app/(site)/products/_components/new-product-card";
-import { type ProductWithRelations } from "~/types/product";
 
 const STORE_ATTRIBUTES = [
   "African American Culture",
@@ -61,7 +60,7 @@ const usePagination = ({
     const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
     const rightSiblingIndex = Math.min(
       currentPage + siblingCount,
-      totalPageCount
+      totalPageCount,
     );
 
     const shouldShowLeftDots = leftSiblingIndex > 2;
@@ -80,7 +79,7 @@ const usePagination = ({
       const rightItemCount = 3 + 2 * siblingCount;
       const rightRange = range(
         totalPageCount - rightItemCount + 1,
-        totalPageCount
+        totalPageCount,
       );
       return [firstPageIndex, DOTS, ...rightRange];
     }
@@ -115,7 +114,7 @@ function Pagination({
     siblingCount,
     pageSize,
   });
-  
+
   const totalPageCount = Math.ceil(totalCount / pageSize);
 
   if (currentPage === 0 || totalPageCount < 2) {
@@ -158,13 +157,16 @@ function Pagination({
           );
         })}
       </div>
-      <Button onClick={onNext} disabled={currentPage >= totalPageCount} size="sm">
+      <Button
+        onClick={onNext}
+        disabled={currentPage >= totalPageCount}
+        size="sm"
+      >
         Next
       </Button>
     </div>
   );
 }
-
 
 const FilterControls = memo(function FilterControls({
   updateSearchParams,
@@ -184,9 +186,8 @@ const FilterControls = memo(function FilterControls({
   const selectedStore = searchParams.get("store") ?? "all";
   const sortOrder = (searchParams.get("sort") as "asc" | "desc") ?? "asc";
   const selectedAttributes = useMemo(
-    () =>
-      searchParams.get("attributes")?.split(",").filter(Boolean) ?? [],
-    [searchParams]
+    () => searchParams.get("attributes")?.split(",").filter(Boolean) ?? [],
+    [searchParams],
   );
   const selectedSubcategorySlug = searchParams.get("subcategory");
 
@@ -209,7 +210,7 @@ const FilterControls = memo(function FilterControls({
               <li key={sub.id}>
                 <Link
                   href={`${pathname}?subcategory=${encodeURIComponent(
-                    sub.name
+                    sub.name,
                   )}`}
                   scroll={false}
                   className={`block rounded-md p-2 text-sm ${
@@ -226,7 +227,7 @@ const FilterControls = memo(function FilterControls({
               <Link
                 href={pathname}
                 scroll={false}
-                className="mt-2 block text-sm text-muted-foreground hover:underline"
+                className="text-muted-foreground mt-2 block text-sm hover:underline"
               >
                 Clear filter
               </Link>
@@ -347,7 +348,7 @@ export function CategoryClient({
       });
 
       const isFilterChange = Object.keys(newParams).some(
-        (key) => key !== "page" && key !== "limit"
+        (key) => key !== "page" && key !== "limit",
       );
       if (isFilterChange) {
         params.delete("page");
@@ -355,18 +356,18 @@ export function CategoryClient({
 
       router.push(`${pathname}?${params.toString()}`, { scroll: false });
     },
-    [pathname, router, searchParams]
+    [pathname, router, searchParams],
   );
 
   const { data: stores } = api.shop.getAllValid.useQuery();
   const resetFilters = useCallback(
     () => router.push(pathname, { scroll: false }),
-    [router, pathname]
+    [router, pathname],
   );
 
   return (
     <div className="mt-5 flex flex-col gap-6 md:flex-row md:items-start">
-      <aside className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:w-72 md:shrink-0 md:sticky md:top-4 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
+      <aside className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:sticky md:top-4 md:max-h-[calc(100vh-8rem)] md:w-72 md:shrink-0 md:overflow-y-auto">
         <FilterControls
           updateSearchParams={updateSearchParams}
           resetFilters={resetFilters}
@@ -385,9 +386,8 @@ export function CategoryClient({
       </aside>
       <main className="flex-1 space-y-6 px-4 md:px-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing{" "}
-            {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
+          <p className="text-muted-foreground text-sm">
+            Showing {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
             {(currentPage - 1) * itemsPerPage + initialProducts.length} of{" "}
             {totalCount} products
           </p>
@@ -401,7 +401,7 @@ export function CategoryClient({
               onChange={(e) =>
                 updateSearchParams({ limit: Number(e.target.value) })
               }
-              className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm"
+              className="border-input bg-background h-8 w-24 rounded-md border px-2 py-1 text-sm"
             >
               <option value="10">10</option>
               <option value="20">20</option>
@@ -431,7 +431,7 @@ export function CategoryClient({
         )}
 
         {initialProducts.length === 0 && (
-          <p className="text-center text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             No products found for the selected filters.
           </p>
         )}

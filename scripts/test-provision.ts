@@ -1,4 +1,5 @@
-import { createCoolifyDeployment } from "~/server/api/services/coolify";
+import { createCoolifyDeployment } from "~/services/coolify";
+
 import { db } from "~/server/db";
 
 async function testCreateProvision() {

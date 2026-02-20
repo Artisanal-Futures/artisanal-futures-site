@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { type Category } from "@prisma/client";
+import { type Category } from "generated/prisma";
 import { type ColumnDef } from "@tanstack/react-table";
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";

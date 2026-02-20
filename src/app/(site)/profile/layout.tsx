@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 
 import { env } from "~/env";
+import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 import { Separator } from "~/components/ui/separator";
 import { SidebarNav } from "~/app/(site)/profile/_components/sidebar-nav";
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default async function ProfileLayout({ children }: Props) {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   if (!session) {
     redirect(
@@ -82,7 +82,7 @@ export default async function ProfileLayout({ children }: Props) {
           </div>
         </div>
         <Separator className="my-6" />
-        <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+        <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
           <aside className="-mx-4 lg:w-1/5">
             <SidebarNav items={navItems} />
           </aside>

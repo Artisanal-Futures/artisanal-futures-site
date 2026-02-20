@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { CategoryType } from "@prisma/client";
+import { CategoryType } from "generated/prisma";
 
 import { api } from "~/trpc/server";
 import SiteLayout from "~/app/(site)/layout";

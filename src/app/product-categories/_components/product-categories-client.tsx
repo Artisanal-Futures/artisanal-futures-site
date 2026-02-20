@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { type Category, type Product, type Service } from "generated/prisma";
 
-import { Category, Product, Service } from "@prisma/client";
-
-import { ProductWithRelations } from "~/types/product";
+import { type ProductWithRelations } from "~/types/product";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { buttonVariants } from "~/components/ui/button";
@@ -69,7 +68,7 @@ export function ProductCategoriesClient({
             </div>
           )}
           {category?.items?.length === 0 && (
-            <p className="text-left text-muted-foreground">
+            <p className="text-muted-foreground text-left">
               No products found for the selected filters.
             </p>
           )}

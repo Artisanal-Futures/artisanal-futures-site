@@ -1,5 +1,5 @@
-import type { User } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { User } from "generated/prisma";
 
 import type { RouterOutputs } from "~/trpc/react";
 import type { Shop } from "~/types/shop";

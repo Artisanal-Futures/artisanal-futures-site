@@ -1,16 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
 import { api } from "~/trpc/react";
+
 import { BulkProductForm } from "./bulk-product-form";
 
 type WrapperProps = {
   initialData: {
     selectedProductIds: string[];
     clearRowSelection: () => void;
-  } | null; 
+  } | null;
   onSuccessCallback: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 export function BulkProductFormWrapper({

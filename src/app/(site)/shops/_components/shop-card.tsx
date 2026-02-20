@@ -1,8 +1,7 @@
+import type { Shop } from "generated/prisma";
 import type { FC } from "react";
 import { cn } from "~/utils/styles";
 import { Store, User } from "lucide-react";
-
-import type { Shop } from "@prisma/client";
 
 import { env } from "~/env";
 import BlurImage from "~/components/ui/blur-image";

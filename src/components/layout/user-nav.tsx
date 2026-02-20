@@ -1,13 +1,13 @@
 "use client";
 
+import type { Role } from "generated/prisma";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, Store, User } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import type { Role } from "@prisma/client";
-
 import { env } from "~/env";
+import { authClient } from "~/server/better-auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
@@ -104,7 +104,7 @@ export const UserNav = () => {
                 Profile
               </Link>
             </DropdownMenuItem>
-            {authorizedRoles.includes(sessionData?.user?.role) && (
+            {authorizedRoles.includes(sessionData?.user?.role as Role) && (
               <>
                 <DropdownMenuItem>
                   <Link href="/profile/shop" className="w-full">

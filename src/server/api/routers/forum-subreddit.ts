@@ -1,12 +1,12 @@
+import type { Vote } from "generated/prisma";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import type { Vote } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
 
 // const CACHE_AFTER_UPVOTES = 1;
 

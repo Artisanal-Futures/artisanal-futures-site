@@ -1,12 +1,11 @@
 "use client";
 
+import type { VoteType } from "generated/prisma";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
-
-import type { VoteType } from "@prisma/client";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { Heart } from "lucide-react";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -69,7 +68,7 @@ export const HeartPostVoteClient = ({
 
   if (IS_VOTE_DISABLED) return null;
   return (
-    <div className="flex flex-col gap-4 pb-4 pr-6 sm:w-20 sm:gap-0 sm:pb-0">
+    <div className="flex flex-col gap-4 pr-6 pb-4 sm:w-20 sm:gap-0 sm:pb-0">
       <Button
         onClick={() => subredditPostVote.mutate({ voteType: "UP", postId })}
         size="sm"
@@ -87,7 +86,7 @@ export const HeartPostVoteClient = ({
         />
       </Button>
 
-      <p className="py-2 text-center text-sm font-medium text-foreground">
+      <p className="text-foreground py-2 text-center text-sm font-medium">
         {votesAmt}
       </p>
     </div>

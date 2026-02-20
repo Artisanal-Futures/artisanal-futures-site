@@ -45,7 +45,7 @@ const serviceFormSchema = z.object({
   shopId: z.string().min(1, "Shop selection is required."),
   durationInMinutes: z.coerce.number().optional().nullable(),
   locationType: z.string().optional().nullable(),
-  isPublic: z.boolean().default(false),
+  isPublic: z.boolean(),
   image: z.any().optional(),
   categoryIds: z.array(z.string()).optional(),
 });

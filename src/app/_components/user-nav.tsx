@@ -1,13 +1,12 @@
 "use client";
 
+import type { Role } from "generated/prisma";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authClient } from "~/server/better-auth/client";
 import { ShieldCheck, Store, User } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
 
-import type { Role } from "../../generated/prisma";
 import { env } from "~/env";
+import { authClient } from "~/server/better-auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
@@ -31,7 +30,7 @@ const UserNav = () => {
   if (!sessionData) {
     return (
       <>
-        <Button
+        {/* <Button
           onClick={sessionData ? () => void signOut() : () => void signIn()}
           variant={"ghost"}
           className="max-md:w-full"
@@ -43,7 +42,7 @@ const UserNav = () => {
           className="max-md:w-full"
         >
           Sign Up
-        </Button>
+        </Button> */}
       </>
     );
   } else
@@ -104,7 +103,7 @@ const UserNav = () => {
                 Profile
               </Link>
             </DropdownMenuItem>
-            {authorizedRoles.includes(sessionData?.user?.role) && (
+            {/* {authorizedRoles.includes(sessionData?.user?.role) && (
               <>
                 <DropdownMenuItem>
                   <Link href="/profile/shop" className="w-full">
@@ -117,7 +116,7 @@ const UserNav = () => {
                   </Link>
                 </DropdownMenuItem>
               </>
-            )}
+            )} */}
             {/* 
             {(sessionData?.user?.role === "GUEST" ||
               sessionData?.user?.role === "ADMIN") && (
@@ -152,9 +151,9 @@ const UserNav = () => {
             </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => void signOut()}>
+          {/* <DropdownMenuItem onClick={() => void signOut()}>
             Log out
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     );

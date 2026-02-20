@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { Clock, FileText, Home, Scale, Scroll } from "lucide-react";
-// import { TeamSwitcher } from "~/components/team-switcher";
-import { useSession } from "next-auth/react";
 
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
+// import { TeamSwitcher } from "~/components/team-switcher";
+
 import {
   Sidebar,
   SidebarContent,

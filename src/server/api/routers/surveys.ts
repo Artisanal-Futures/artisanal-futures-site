@@ -1,13 +1,12 @@
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { surveySchema } from "~/lib/validators/survey";
 import {
   createTRPCRouter,
   elevatedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import { TRPCError } from "@trpc/server";
-
-import { surveySchema } from "~/lib/validators/survey";
 
 export const surveysRouter = createTRPCRouter({
   getAll: elevatedProcedure.query(async ({ ctx }) => {
@@ -175,6 +174,7 @@ export const surveysRouter = createTRPCRouter({
             website: input.website ?? "",
             attributeTags: input.attributeTags,
             ownerName: input.ownerName ?? "",
+            email: ctx.session.user.email ?? "",
           },
           update: {
             name: input.storeName,
@@ -200,6 +200,7 @@ export const surveysRouter = createTRPCRouter({
             ownerPhoto: input.ownerPhoto,
             website: input.website ?? "",
             attributeTags: input.attributeTags,
+            email: ctx.session.user.email ?? "",
           },
         });
       }

@@ -1,8 +1,8 @@
 "use client";
 
-import type { Category } from "@prisma/client";
+import type { Category } from "generated/prisma";
+import { CategoryType } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CategoryType } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";

@@ -7,9 +7,9 @@ import { useEffect, useRef } from "react";
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
 // import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
 
 import type { ExtendedPost } from "~/types/post";
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useIntersection } from "~/hooks/use-intersection";
 

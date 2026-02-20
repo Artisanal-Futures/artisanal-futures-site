@@ -1,3 +1,4 @@
+import type { Role } from "generated/prisma";
 import type { LucideIcon } from "lucide-react";
 import {
   BoxesIcon,
@@ -11,8 +12,6 @@ import {
   StoreIcon,
   UserIcon,
 } from "lucide-react";
-
-import type { Role } from "@prisma/client";
 
 type Submenu = {
   href: string;

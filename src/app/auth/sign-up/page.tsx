@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { authClient } from "~/server/better-auth/client";
 
 function SignUpForm({
@@ -60,17 +60,10 @@ function SignUpForm({
         email,
         password,
         name,
+        role: "USER",
+        code,
         callbackURL: "/",
-        fetchOptions: {
-          onRequest: async (ctx) => {
-            const body = await ctx.request.json();
-            return new Request(ctx.request.url, {
-              ...ctx.request,
-              body: JSON.stringify({ ...body, code }),
-            });
-          },
-        },
-      });
+      } as any);
 
       router.push("/");
     } catch (err: any) {
@@ -283,7 +276,7 @@ function SignUpForm({
   );
 }
 
-export default function SignUpPage() {
+function SignUpPageContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState(searchParams.get("code") || "");
   const [error, setError] = useState("");
@@ -425,5 +418,61 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function SignUpPageFallback() {
+  return (
+    <div className="bg-background flex min-h-screen">
+      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
+        <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
+        <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
+          <Link
+            href="/"
+            className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
+          >
+            <Image
+              src="/logo-transparent.png"
+              alt="Crossroads Community Association"
+              width={100}
+              height={100}
+            />
+          </Link>
+          <div className="max-w-md">
+            <h1 className="mb-4 text-4xl font-bold text-balance">
+              Join Our Growing Community
+            </h1>
+            <p className="text-primary-foreground/80 mb-8 text-lg">
+              Create your account to connect with neighbors, join clubs, and
+              make a difference in District 3.
+            </p>
+          </div>
+          <div className="text-primary-foreground/60 text-sm">
+            © 2026 Crossroads Community Association. All rights reserved.
+            <span className="text-muted-foreground mx-2">|</span>
+            Site by{" "}
+            <a
+              href="https://artisanalfutures.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground underline"
+            >
+              Artisanal Futures
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto p-6 md:p-12">
+        <div className="text-muted-foreground text-sm">Loading...</div>
+      </div>
+    </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<SignUpPageFallback />}>
+      <SignUpPageContent />
+    </Suspense>
   );
 }

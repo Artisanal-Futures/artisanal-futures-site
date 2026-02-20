@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { PencilIcon, XCircleIcon } from "lucide-react";
-
 import {
   type PaginationState,
   type RowSelectionState,
 } from "@tanstack/react-table";
+import { PencilIcon, XCircleIcon } from "lucide-react";
 
 import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
@@ -61,8 +60,6 @@ export function ProductClient({ products, shops }: Props) {
         `${product.name} ${product.description} ${product.id}`.toLowerCase(),
     }));
   }, [products]);
-
-  console.log(enhancedProducts);
 
   const toolbarActionsNode = useMemo(() => {
     if (selectedProductIds.length === 0) return null;

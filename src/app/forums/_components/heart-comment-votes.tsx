@@ -1,13 +1,12 @@
 "use client";
 
+import type { CommentVote } from "generated/prisma";
 import type { FC } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
-
-import type { CommentVote } from "@prisma/client";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { Heart } from "lucide-react";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -88,7 +87,7 @@ export const HeartCommentVotes: FC<Props> = ({
         />
       </Button>
 
-      <span className="text-xs font-medium text-foreground">{votesAmt}</span>
+      <span className="text-foreground text-xs font-medium">{votesAmt}</span>
     </div>
   );
 };

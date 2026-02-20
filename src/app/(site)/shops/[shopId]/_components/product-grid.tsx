@@ -1,9 +1,8 @@
 "use client";
 
+import type { Shop } from "generated/prisma";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
-import type { Shop } from "@prisma/client";
 
 import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
@@ -55,7 +54,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
   if (!productData || productsWithShops.length === 0)
     return (
       <div className="my-auto">
-        <p className="my-auto text-xl text-muted-foreground">
+        <p className="text-muted-foreground my-auto text-xl">
           This shop has no products yet. But check back later to see what they
           have!
         </p>
@@ -66,7 +65,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
     <>
       <Container className="p-4 shadow-inner">
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
             {Math.min(currentPage * itemsPerPage, productData.totalCount)} of{" "}
             {productData.totalCount} products
@@ -82,7 +81,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
                 setItemsPerPage(parseInt(e.target.value, 10));
                 setCurrentPage(1);
               }}
-              className="h-8 w-24 rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="border-input bg-background ring-offset-background focus-visible:ring-ring h-8 w-24 rounded-md border px-2 py-1 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <option value="10">10</option>
               <option value="20">20</option>
@@ -108,7 +107,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage <= 1}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              className="border-input bg-background ring-offset-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
             >
               Previous
             </button>
@@ -120,10 +119,10 @@ export const ProductGrid = ({ id }: { id: string }) => {
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
-                  className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  className={`focus-visible:ring-ring inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
                     currentPage === pageNum
                       ? "bg-primary text-primary-foreground"
-                      : "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+                      : "border-input bg-background hover:bg-accent hover:text-accent-foreground border"
                   }`}
                 >
                   {pageNum}
@@ -137,7 +136,7 @@ export const ProductGrid = ({ id }: { id: string }) => {
                 )
               }
               disabled={currentPage >= productData.totalPages}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              className="border-input bg-background ring-offset-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
             >
               Next
             </button>

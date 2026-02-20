@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { NewProductClient } from "./_components/new-product-client";
 
 export const metadata = {
@@ -5,6 +6,14 @@ export const metadata = {
   description:
     "Search through all our artisans&apos; products and support small businesses",
 };
+
+function ProductsPageFallback() {
+  return (
+    <div className="rounded-lg bg-background p-8 text-center text-muted-foreground">
+      Loading products...
+    </div>
+  );
+}
 
 export default function ProductsPage() {
   return (
@@ -20,7 +29,9 @@ export default function ProductsPage() {
       </div>
 
       <div className="rounded-lg bg-background shadow-sm">
-        <NewProductClient />
+        <Suspense fallback={<ProductsPageFallback />}>
+          <NewProductClient />
+        </Suspense>
       </div>
     </div>
   );

@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import crypto from "node:crypto";
+import type { WebsiteProvision } from "generated/prisma";
 import yaml from "js-yaml";
-
-import type { WebsiteProvision } from "@prisma/client";
 
 import { env } from "~/env";
 

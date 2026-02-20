@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SiteType } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SiteType } from "@prisma/client";
 import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

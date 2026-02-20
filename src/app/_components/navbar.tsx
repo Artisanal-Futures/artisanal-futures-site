@@ -5,20 +5,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { authClient } from "~/server/better-auth/client";
+import { UserButton } from "@daveyplate/better-auth-ui";
 import { cn } from "~/utils/styles";
 import { Heart, LayoutDashboardIcon, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 
-import { UserButton } from "@daveyplate/better-auth-ui";
-
+import { authClient } from "~/server/better-auth/client";
 import { Button } from "~/components/ui/button";
 import { navigationMenuTriggerStyle } from "~/components/ui/navigation-menu";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { HamburgerIcon } from "~/components/hamburger-icon";
 import Container from "~/app/_components/container";
-import NavbarActions from "~/app/_components/navbar-actions";
 
 const navLinks = [
   { href: "/shops", label: "Shops" },

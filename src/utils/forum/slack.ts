@@ -1,5 +1,5 @@
 // import { markdownToBlocks } from "@instantish/mack";
-// import type { Post } from "@prisma/client";
+// import type { Post } from "generated/prisma";
 // import { marked } from "marked";
 // import { env } from "~/env";
 

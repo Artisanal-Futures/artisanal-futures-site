@@ -1,16 +1,15 @@
 "use client";
 
+import type { CommentVote, ForumComment, User } from "generated/prisma";
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MessageSquare } from "lucide-react";
-import { useSession } from "next-auth/react";
-
-import type { CommentVote, ForumComment, User } from "@prisma/client";
 import { toastService } from "@dreamwalker-studios/toasts";
+import { MessageSquare } from "lucide-react";
 
 import { env } from "~/env";
 import { formatTimeToNow } from "~/lib/utils";
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useOnClickOutside } from "~/hooks/use-on-click-outside";
 import { Badge } from "~/components/ui/badge";
@@ -26,7 +25,7 @@ import { UserAvatar } from "../user-avatar";
 
 type ExtendedComment = ForumComment & {
   votes: CommentVote[];
-  author: User;
+  author: Omit<User, "email"> & { email: string | null };
 };
 
 type Props = {
@@ -49,7 +48,7 @@ export const PostComment: FC<Props> = ({
   const commentRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState<string>(`@${comment.author.username} `);
   const router = useRouter();
-  useOnClickOutside(commentRef, () => {
+  useOnClickOutside(commentRef as React.RefObject<HTMLDivElement>, () => {
     setIsReplying(false);
   });
 
@@ -170,7 +169,7 @@ export const PostComment: FC<Props> = ({
             <div className="mt-2 flex justify-end gap-2">
               <Button
                 tabIndex={-1}
-                variant="subtle"
+                variant="ghost"
                 onClick={() => setIsReplying(false)}
               >
                 Cancel

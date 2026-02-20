@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ChevronsUpDown, User2Icon } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 
+import { authClient } from "~/server/better-auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -116,8 +116,10 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => void signOut()}>
-              Log out
+            <DropdownMenuItem asChild>
+              <Link href="/auth/sign-out" className="w-full">
+                Log out
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

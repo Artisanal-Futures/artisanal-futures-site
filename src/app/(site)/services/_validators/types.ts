@@ -1,4 +1,4 @@
-// import type { Service, Shop } from "@prisma/client";
+// import type { Service, Shop } from "generated/prisma";
 
 // export type ServiceWithShop = Service & {
 //   shop?: Shop;
@@ -9,9 +9,9 @@ export type FastAPIService = {
   description: string;
   principles: string;
   the_artisan: string;
-  url:string;
+  url: string;
   image: string;
-  serviceID: string; 
+  serviceID: string;
   assessment: FastAPIServiceAssessment[];
   id: number;
 };
