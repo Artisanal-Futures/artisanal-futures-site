@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 // SearchBar component (client component)
-export function ProductSearch() {
+export function ServiceSearch() {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -11,7 +11,7 @@ export function ProductSearch() {
     e.preventDefault();
     if (value.trim()) {
       setLoading(true);
-      window.location.href = `/product-category/all-products?search=${encodeURIComponent(
+      window.location.href = `/service-categories/all-services?search=${encodeURIComponent(
         value.trim(),
       )}`;
     }
@@ -25,16 +25,16 @@ export function ProductSearch() {
     >
       <input
         type="text"
-        className="w-full rounded border border-slate-300 px-4 py-2 text-lg shadow-sm focus:border-primary focus:outline-none"
-        placeholder="Search all products..."
+        className="focus:border-primary w-full rounded border border-slate-300 px-4 py-2 text-lg shadow-sm focus:outline-none"
+        placeholder="Search all services..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        aria-label="Search products"
+        aria-label="Search services"
         disabled={loading}
       />
       <button
         type="submit"
-        className="rounded bg-primary px-4 py-2 text-white transition hover:bg-primary/90 disabled:opacity-60"
+        className="bg-primary hover:bg-primary/90 rounded px-4 py-2 text-white transition disabled:opacity-60"
         disabled={loading}
       >
         Search

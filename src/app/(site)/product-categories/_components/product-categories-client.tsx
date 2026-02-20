@@ -5,15 +5,13 @@ import { type Category, type Product, type Service } from "generated/prisma";
 
 import { type ProductWithRelations } from "~/types/product";
 import { cn } from "~/lib/utils";
-import { api } from "~/trpc/react";
 import { buttonVariants } from "~/components/ui/button";
-import { NewProductCard } from "~/app/(site)/products/_components/new-product-card";
+import { NewProductCard } from "~/app/(site)/product-categories/_components/new-product-card";
 
-export function ProductCategoriesClient({
-  categories,
-}: {
+type Props = {
   categories: (Category & { items: Product[] | Service[] })[];
-}) {
+};
+export function ProductCategoriesClient({ categories }: Props) {
   return (
     <div className="space-y-12">
       {categories.map((category) => (
@@ -21,7 +19,7 @@ export function ProductCategoriesClient({
           <div className="flex items-center justify-between gap-2">
             <h2 className="mb-4 text-3xl font-bold tracking-tight">
               <Link
-                href={`/product-category/${encodeURIComponent(category.name)}`}
+                href={`/product-categories/${encodeURIComponent(category.name)}`}
                 className="hover:underline"
               >
                 {category.name}
@@ -29,26 +27,14 @@ export function ProductCategoriesClient({
             </h2>
             <div className="flex items-center gap-2">
               <Link
-                href={`/product-category/${encodeURIComponent(category.name)}`}
+                href={`/product-categories/${encodeURIComponent(category.name)}`}
                 className={cn(buttonVariants({ variant: "outline" }))}
               >
                 View All {category.name}s
               </Link>
             </div>
           </div>
-          {/* {category.children.length > 0 && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-              {category.children.map((sub) => (
-                <Link
-                  key={sub.id}
-                  href={`/product-category/${encodeURIComponent(category.name)}?subcategory=${encodeURIComponent(sub.name)}`}
-                  className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent"
-                >
-                  <h3 className="font-semibold">{sub.name}</h3>
-                </Link>
-              ))}
-            </div>
-          )} */}
+
           {category.items.length > 0 && (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
               {category.items.map((product) => (
@@ -56,14 +42,6 @@ export function ProductCategoriesClient({
                   key={product.id}
                   product={product as ProductWithRelations}
                 />
-
-                // <Link
-                //   key={product.id}
-                //   href={`/product/${product.id}`}
-                //   className="block rounded-lg border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:bg-accent"
-                // >
-                //   <h3 className="font-semibold">{product.name}</h3>
-                // </Link>
               ))}
             </div>
           )}

@@ -100,6 +100,8 @@ export const env = createEnv({
       (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
+
+    NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
   },
 
   /**
@@ -161,6 +163,9 @@ export const env = createEnv({
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 
     SIMPLEPRESS_HASH_SECRET: process.env.SIMPLEPRESS_HASH_SECRET,
+
+    NEXT_PUBLIC_STORAGE_BUCKET_NAME:
+      process.env.NEXT_PUBLIC_STORAGE_BUCKET_NAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { NewProductCard } from "~/app/(site)/products/_components/new-product-card";
+import { NewProductCard } from "~/app/(site)/product-categories/_components/new-product-card";
 
 const STORE_ATTRIBUTES = [
   "African American Culture",

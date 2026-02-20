@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 
-// SearchBar component (client component)
-export function ServiceSearch() {
+export function ProductSearch() {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (value.trim()) {
       setLoading(true);
-      window.location.href = `/service-category/all-services?search=${encodeURIComponent(
+      window.location.href = `/product-categories/all-products?search=${encodeURIComponent(
         value.trim(),
       )}`;
     }
@@ -25,16 +24,16 @@ export function ServiceSearch() {
     >
       <input
         type="text"
-        className="w-full rounded border border-slate-300 px-4 py-2 text-lg shadow-sm focus:border-primary focus:outline-none"
-        placeholder="Search all services..."
+        className="focus:border-primary w-full rounded border border-slate-300 px-4 py-2 text-lg shadow-sm focus:outline-none"
+        placeholder="Search all products..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        aria-label="Search services"
+        aria-label="Search products"
         disabled={loading}
       />
       <button
         type="submit"
-        className="rounded bg-primary px-4 py-2 text-white transition hover:bg-primary/90 disabled:opacity-60"
+        className="bg-primary hover:bg-primary/90 rounded px-4 py-2 text-white transition disabled:opacity-60"
         disabled={loading}
       >
         Search

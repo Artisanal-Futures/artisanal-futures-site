@@ -298,3 +298,18 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
     @apply border-background border-t-foreground mr-2 h-4 w-4 animate-spin rounded-full border-2;
   }
 }
+
+@layer site {
+  .site-container {
+    @apply container mx-auto px-4 py-12;
+  }
+  .site-header {
+    @apply mb-12 text-center;
+  }
+  .site-header h1 {
+    @apply mb-4 text-5xl font-bold tracking-tight;
+  }
+  .site-header p {
+    @apply text-muted-foreground mx-auto max-w-2xl text-xl;
+  }
+}

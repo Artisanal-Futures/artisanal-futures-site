@@ -125,7 +125,8 @@ export const categoryRouter = createTRPCRouter({
         return formattedCategories;
       }
 
-      const categories = await ctx.db.category.findMany({
+      // First, get the categories and their featured products (up to 4)
+      let categories = await ctx.db.category.findMany({
         where: {
           parentId: null,
           type: input?.type,
@@ -140,6 +141,30 @@ export const categoryRouter = createTRPCRouter({
         },
         orderBy: { name: "asc" },
       });
+
+      // If any category has less than 4 featured products, fill in with non-featured products
+      categories = await Promise.all(
+        categories.map(async (category) => {
+          let products = category.products;
+          if (products.length < 4) {
+            // Find more products (non-featured), ignoring those already in products
+            const additionalProducts = await ctx.db.product.findMany({
+              where: {
+                categories: { some: { id: category.id } },
+                isFeatured: false,
+                id: {
+                  notIn: products.map((p) => p.id),
+                },
+              },
+              include: { shop: true },
+              take: 4 - products.length,
+              orderBy: { createdAt: "desc" },
+            });
+            products = [...products, ...additionalProducts];
+          }
+          return { ...category, products };
+        }),
+      );
 
       const formattedCategories = categories.map((category) => ({
         ...category,
