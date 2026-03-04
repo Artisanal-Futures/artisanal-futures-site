@@ -5,7 +5,6 @@ import { toRouteHandler } from "@better-upload/server/adapters/next";
 import { env } from "~/env";
 import { s3Client } from "~/lib/s3/client";
 import { auth } from "~/server/better-auth";
-import { db } from "~/server/db";
 
 const router: Router = {
   client: s3Client,
@@ -16,14 +15,14 @@ const router: Router = {
       multipleFiles: false,
       onBeforeUpload: async ({ req, file }) => {
         const user = await auth.api.getSession({ headers: req.headers });
-        if (!user || user.user.role !== "ADMIN") {
+        if (user?.user.role !== "ADMIN") {
           throw new RejectUpload("You are not allowed to upload images.");
         }
         return {
           objectInfo: {
             key: `${file.name}`,
             metadata: {
-              pathname: `https://${env.NEXT_PUBLIC_STORAGE_URL}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${file.name}`,
+              pathname: `https://${env.MINIO_ENDPOINT}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${file.name}`,
             },
           },
         };
@@ -37,25 +36,18 @@ const router: Router = {
       fileTypes: ["image/*"],
       multipleFiles: false,
       onBeforeUpload: async ({ req, file, clientMetadata }) => {
-        const { businessId } = clientMetadata as { businessId?: string };
+        const { businessSlug } = clientMetadata as { businessSlug?: string };
 
         const user = await auth.api.getSession({ headers: req.headers });
         if (!user) {
           throw new RejectUpload("Not logged in!");
         }
-        const business = businessId
-          ? await db.shop.findUnique({ where: { id: businessId } })
-          : await db.shop.findFirst({ where: { ownerId: user.user.id } });
-
-        if (!business) {
-          throw new RejectUpload("Shop not found. Upload failed.");
-        }
 
         return {
           objectInfo: {
-            key: `${businessId}/${file.name}`,
+            key: `${businessSlug ?? "shops"}/${file.name}`,
             metadata: {
-              pathname: `https://${env.NEXT_PUBLIC_STORAGE_URL}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${business.id}/${file.name}`,
+              pathname: `https://storage.artisanalfutures.org/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${businessSlug}/${file.name}`,
             },
           },
         };

@@ -1,15 +1,27 @@
+"use client";
+
 import type { ColumnDef } from "@tanstack/react-table";
-import type { User } from "generated/prisma";
+import Link from "next/link";
+import { PencilIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
-import type { Shop } from "~/types/shop";
-import { env } from "~/env";
+import { cn } from "~/lib/utils";
+import { buttonVariants } from "~/components/ui/button";
 import { RowImageLink } from "~/components/admin/row-image-link";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
-import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteShopDialog } from "./delete-shop-dialog";
-import { ShopForm } from "./shop-form";
+
+function isValidUrl(url?: string): boolean {
+  if (!url || typeof url !== "string") return false;
+  try {
+    // Accepts http, https, protocol-relative, or root-relative urls
+    const pattern = /^(https?:\/\/|\/\/|\/)[^\s/$.?#].[^\s]*$/i;
+    return pattern.test(url);
+  } catch {
+    return false;
+  }
+}
 
 export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
   [
@@ -22,7 +34,7 @@ export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
         <RowImageLink
           id={row.original.id}
           name={`${row.original.name} `}
-          image={`${env.NEXT_PUBLIC_STORAGE_URL}/shops/${row.original.logoPhoto}`}
+          image={`${isValidUrl(row.original?.logoPhoto ?? "") ? row.original?.logoPhoto : "/placeholder-image.webp"}`}
           hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
@@ -60,15 +72,17 @@ export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
         <div className="flex gap-2">
           <DeleteShopDialog shopId={row.original.id} />
 
-          <ItemDialog
-            id={row.original.id}
-            title={`Update shop`}
-            subtitle="Make changes to the shop"
-            initialData={row.original}
-            FormComponent={ShopForm}
-            contentClassName="sm:max-w-6xl"
-            mode="update"
-          />
+          <Link
+            href={`/admin/shops/${row.original.id}`}
+            className={cn(
+              buttonVariants({
+                variant: "default",
+                className: "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+              }),
+            )}
+          >
+            <PencilIcon className="mr-1 h-4 w-4" /> Edit
+          </Link>
         </div>
       ),
     },

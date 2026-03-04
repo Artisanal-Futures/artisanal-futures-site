@@ -685,7 +685,7 @@ model Shop {
   logoPhoto        String?
   coverPhoto       String?
   phone            String?
-  email            String
+  email            String?
   website          String?
   ownerId          String
   createdAt        DateTime          @default(now())

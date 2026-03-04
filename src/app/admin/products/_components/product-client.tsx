@@ -20,7 +20,6 @@ import { ItemDialog } from "../../_components/item-dialog";
 import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
-import { ProjectForm } from "./product-form";
 
 type Props = {
   products: ProductWithRelations[];
@@ -109,13 +108,12 @@ export function ProductClient({ products, shops }: Props) {
             Migrate Products
           </Link>
         )}
-        <ItemDialog
-          title="Create project"
-          subtitle="Create a new project"
-          FormComponent={ProjectForm}
-          type="project"
-          mode="create"
-        />
+        <Link
+          href="/admin/products/new"
+          className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
+        >
+          New Product
+        </Link>
       </>
     ),
     [],

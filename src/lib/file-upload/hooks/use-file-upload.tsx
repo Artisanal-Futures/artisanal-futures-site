@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useUploadFile } from "better-upload/client";
+import { useUploadFile } from "@better-upload/client";
 
 type Props = {
   route: string;
@@ -21,12 +21,6 @@ export const useFileUpload = ({
       api,
     },
   );
-
-  useEffect(() => {
-    if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey;
-    }
-  }, [uploadedFile]);
 
   const uploadFile = async (file: File): Promise<string | null> => {
     await upload(file);

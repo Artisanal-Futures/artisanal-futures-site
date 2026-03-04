@@ -1,14 +1,13 @@
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import {
   createTRPCRouter,
   elevatedProcedure,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import { TRPCError } from "@trpc/server";
-
-import { shopSchema } from "~/lib/validators/shop";
 
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: protectedProcedure.query(async ({ ctx }) => {
@@ -78,13 +77,7 @@ export const shopsRouter = createTRPCRouter({
     });
   }),
   create: elevatedProcedure
-    .input(
-      shopSchema.extend({
-        logoPhoto: z.string().optional().nullish(),
-        ownerPhoto: z.string().optional().nullish(),
-        coverPhoto: z.string().optional().nullish(),
-      }),
-    )
+    .input(shopSchema)
     .mutation(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.create({
         data: {
@@ -92,12 +85,12 @@ export const shopsRouter = createTRPCRouter({
           ownerName: input.ownerName
             ? input.ownerName
             : (ctx.session.user?.name ?? ""),
-          ownerId: input.ownerId ? input.ownerId : ctx.session.user.id,
+          ownerId: input.ownerId ?? ctx.session.user.id,
           bio: input.bio ?? "",
           description: input.description ?? "",
-          logoPhoto: input.logoPhoto,
-          ownerPhoto: input.ownerPhoto,
-          coverPhoto: input.coverPhoto,
+          logoPhoto: input.logoPhotoUrl,
+          ownerPhoto: input.ownerPhotoUrl,
+          coverPhoto: input.coverPhotoUrl,
           attributeTags: input.attributeTags ?? [],
           address: {
             create: {
@@ -118,14 +111,7 @@ export const shopsRouter = createTRPCRouter({
     }),
 
   update: elevatedProcedure
-    .input(
-      shopSchema.extend({
-        id: z.string(),
-        logoPhoto: z.string().optional().nullish(),
-        ownerPhoto: z.string().optional().nullish(),
-        coverPhoto: z.string().optional().nullish(),
-      }),
-    )
+    .input(shopUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.findUnique({
         where: { id: input.id },
@@ -141,25 +127,7 @@ export const shopsRouter = createTRPCRouter({
         });
       }
 
-      const updatedShop = await ctx.db.shop.update({
-        where: { id: input.id },
-        data: {
-          name: input.name,
-          ownerName: input.ownerName,
-          bio: input?.bio ?? "",
-          ownerId: input?.ownerId ?? ctx.session.user.id,
-          description: input?.description ?? "",
-          logoPhoto: input.logoPhoto,
-          ownerPhoto: input.ownerPhoto,
-          coverPhoto: input.coverPhoto,
-          phone: input?.phone ?? "",
-          email: input?.email ?? "",
-          website: input?.website ?? "",
-          attributeTags: input?.attributeTags ?? [],
-        },
-      });
-
-      await ctx.db.shopAddress.update({
+      const updatedAddress = await ctx.db.shopAddress.update({
         where: { shopId: input.id },
         data: {
           address: input?.address ?? "",
@@ -169,7 +137,36 @@ export const shopsRouter = createTRPCRouter({
           country: input?.country ?? "",
         },
       });
-      return { data: updatedShop, message: "Shop updated successfully" };
+
+      const updatedShop = await ctx.db.shop.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          ownerName: input.ownerName,
+          bio: input?.bio ?? "",
+          ownerId: input?.ownerId ?? ctx.session.user.id,
+          description: input?.description ?? "",
+          logoPhoto: input.logoPhotoUrl,
+          ownerPhoto: input.ownerPhotoUrl,
+          coverPhoto: input.coverPhotoUrl,
+          phone: input?.phone ?? "",
+          email: input?.email ?? "",
+          website: input?.website ?? "",
+          attributeTags: input?.attributeTags ?? [],
+        },
+      });
+
+      return {
+        data: {
+          ...updatedShop,
+          address: updatedAddress.address,
+          city: updatedAddress.city,
+          state: updatedAddress.state,
+          zip: updatedAddress.zip,
+          country: updatedAddress.country,
+        },
+        message: "Shop updated successfully",
+      };
     }),
 
   delete: elevatedProcedure

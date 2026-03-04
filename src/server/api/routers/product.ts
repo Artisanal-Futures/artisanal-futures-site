@@ -135,23 +135,31 @@ export const productRouter = createTRPCRouter({
   create: elevatedProcedure
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
-      const { categoryIds, ...productData } = input;
+      const { categoryIds, tags, ...productData } = input;
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
         categoryIds,
       );
 
+      const formattedTags = tags.map((tag) => tag.text);
+
       const product = await ctx.db.product.create({
         data: {
           ...productData,
+          tags: formattedTags,
           categories: {
             connect: allCategoryIds.map((id) => ({ id })),
           },
         },
       });
       return {
-        data: addFullProductImageUrl(product),
+        data: {
+          ...product,
+          tags,
+          categoryIds,
+          shopId: input.shopId,
+        },
         message: "Product created successfully",
       };
     }),
@@ -159,24 +167,30 @@ export const productRouter = createTRPCRouter({
   update: elevatedProcedure
     .input(productSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { id, categoryIds, ...productData } = input;
+      const { id, categoryIds, tags, ...productData } = input;
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
         categoryIds,
       );
 
+      const formattedTags = tags.map((tag) => tag.text);
+
       const product = await ctx.db.product.update({
         where: { id },
         data: {
           ...productData,
-          categories: {
-            set: allCategoryIds.map((id) => ({ id })),
-          },
+          tags: formattedTags,
+          categories: { set: allCategoryIds.map((id) => ({ id })) },
         },
       });
       return {
-        data: addFullProductImageUrl(product),
+        data: {
+          ...product,
+          tags,
+          categoryIds,
+          shopId: input.shopId,
+        },
         message: "Product updated successfully",
       };
     }),
@@ -204,16 +218,17 @@ export const productRouter = createTRPCRouter({
               shopProductId: product.shopProductId,
             },
           });
-
+          const { tags, ...productData } = product;
+          const formattedTags = tags.map((tag) => tag.text);
           if (existingProduct) {
             return ctx.db.product.update({
               where: { id: existingProduct.id },
-              data: product,
+              data: { ...productData, tags: formattedTags },
             });
           }
 
           return ctx.db.product.create({
-            data: product,
+            data: { ...productData, tags: formattedTags },
           });
         }),
       );

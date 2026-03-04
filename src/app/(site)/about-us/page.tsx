@@ -119,7 +119,7 @@ export default function AboutUsPage() {
           className="text-primary font-medium underline underline-offset-4"
         >
           support@artisanalfutures.org
-        </a>
+        </a>{" "}
         for assistance
       </p>
     </div>

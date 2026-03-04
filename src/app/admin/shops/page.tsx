@@ -1,10 +1,13 @@
+import Link from "next/link";
+import { CirclePlusIcon } from "lucide-react";
+
+import { cn } from "~/lib/utils";
 import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
+import { buttonVariants } from "~/components/ui/button";
 
-import { ItemDialog } from "../_components/item-dialog";
 import { TrailHeader } from "../_components/trail-header";
 import { ShopClient } from "./_components/shop-client";
-import { ShopForm } from "./_components/shop-form";
 
 export default async function ShopsAdminPage() {
   const shops = await api.shop.getAll();
@@ -21,14 +24,12 @@ export default async function ShopsAdminPage() {
           </div>
 
           {session?.user?.role === "ADMIN" && (
-            <ItemDialog
-              type="Shop"
-              title="Create New Shop"
-              subtitle="Fill out the form to add a new shop."
-              mode="create"
-              FormComponent={ShopForm}
-              contentClassName="sm:max-w-5xl w-full"
-            />
+            <Link
+              href="/admin/shops/new"
+              className={cn(buttonVariants({ variant: "default" }))}
+            >
+              <CirclePlusIcon className="mr-1 h-4 w-4" /> Create New Shop
+            </Link>
           )}
         </div>
         <ShopClient shops={shops} />

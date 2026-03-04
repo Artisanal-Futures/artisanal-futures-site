@@ -5,10 +5,8 @@ import type { RouterOutputs } from "~/trpc/react";
 import { usePermissions } from "~/hooks/use-permissions";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-import { ItemDialog } from "../../_components/item-dialog";
 import { shopColumns } from "./shop-column-structure";
 import { createShopFilters } from "./shop-filters";
-import { ShopForm } from "./shop-form";
 
 type Props = {
   shops: RouterOutputs["shop"]["getAll"];
@@ -30,18 +28,6 @@ export function ShopClient({ shops }: Props) {
         defaultColumnVisibility={{
           owner: isAdmin,
         }}
-        // addButton={
-        //   isAdmin && (
-        //     <ItemDialog
-        //       title={`Create shop`}
-        //       subtitle="Create a new shop"
-        //       FormComponent={ShopForm}
-        //       type="shop"
-        //       mode="create"
-        //       contentClassName="max-w-5xl w-full"
-        //     />
-        //   )
-        // }
       />
     </div>
   );

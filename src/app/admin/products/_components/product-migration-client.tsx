@@ -6,7 +6,6 @@
 "use client";
 
 import { useState } from "react";
-
 import { toastService } from "@dreamwalker-studios/toasts";
 
 import type {
@@ -195,6 +194,7 @@ export function DatabaseMigrationClient() {
           isFeatured: false,
           shopId: product.shopId ?? "",
           shopProductId: product.shopProductId ?? "",
+          tags: product.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
         })),
       );
       toastService.success("Migration completed successfully");
@@ -241,7 +241,7 @@ export function DatabaseMigrationClient() {
         </div>
 
         <div className="relative space-y-2">
-          <div className="rounded-md bg-muted p-4 text-sm">
+          <div className="bg-muted rounded-md p-4 text-sm">
             <h4 className="mb-2 font-medium">How to get your product data:</h4>
             {selectedSource === "SHOPIFY" ? (
               <ol className="list-decimal space-y-1 pl-4">
@@ -284,7 +284,7 @@ export function DatabaseMigrationClient() {
             placeholder="Paste product JSON..."
             className="min-h-[200px]"
           />
-          <div className="absolute right-2 top-2">
+          <div className="absolute top-2 right-2">
             <Button onClick={parseJSON}>Parse JSON</Button>
           </div>
         </div>
@@ -330,7 +330,7 @@ export function DatabaseMigrationClient() {
 
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Data Preview</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Total rows: {previewData.length}
               </p>
             </div>

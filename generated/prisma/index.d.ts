@@ -46630,7 +46630,7 @@ export namespace Prisma {
     logoPhoto: string | null
     coverPhoto: string | null
     phone: string | null
-    email: string
+    email: string | null
     website: string | null
     ownerId: string
     createdAt: Date
@@ -46770,7 +46770,7 @@ export namespace Prisma {
       logoPhoto: string | null
       coverPhoto: string | null
       phone: string | null
-      email: string
+      email: string | null
       website: string | null
       ownerId: string
       createdAt: Date
@@ -69589,7 +69589,7 @@ export namespace Prisma {
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
     coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
-    email?: StringFilter<"Shop"> | string
+    email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
     ownerId?: StringFilter<"Shop"> | string
     createdAt?: DateTimeFilter<"Shop"> | Date | string
@@ -69612,7 +69612,7 @@ export namespace Prisma {
     logoPhoto?: SortOrderInput | SortOrder
     coverPhoto?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
-    email?: SortOrder
+    email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
@@ -69638,7 +69638,7 @@ export namespace Prisma {
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
     coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
-    email?: StringFilter<"Shop"> | string
+    email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
     ownerId?: StringFilter<"Shop"> | string
     createdAt?: DateTimeFilter<"Shop"> | Date | string
@@ -69661,7 +69661,7 @@ export namespace Prisma {
     logoPhoto?: SortOrderInput | SortOrder
     coverPhoto?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
-    email?: SortOrder
+    email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
@@ -69685,7 +69685,7 @@ export namespace Prisma {
     logoPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     coverPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Shop"> | string | null
-    email?: StringWithAggregatesFilter<"Shop"> | string
+    email?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     website?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     ownerId?: StringWithAggregatesFilter<"Shop"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
@@ -74091,7 +74091,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -74113,7 +74113,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -74135,7 +74135,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74157,7 +74157,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74179,7 +74179,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -74197,7 +74197,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -74214,7 +74214,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -87269,7 +87269,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -87290,7 +87290,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -87396,7 +87396,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -87417,7 +87417,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -92980,7 +92980,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -93001,7 +93001,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -93038,7 +93038,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93059,7 +93059,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93080,7 +93080,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -93101,7 +93101,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -93161,7 +93161,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93182,7 +93182,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93229,7 +93229,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -93250,7 +93250,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     ownerId: string
     createdAt?: Date | string
@@ -93310,7 +93310,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -93331,7 +93331,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -95030,7 +95030,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -95051,7 +95051,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -95733,7 +95733,7 @@ export namespace Prisma {
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
     coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
-    email?: StringFilter<"Shop"> | string
+    email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
     ownerId?: StringFilter<"Shop"> | string
     createdAt?: DateTimeFilter<"Shop"> | Date | string
@@ -98421,7 +98421,7 @@ export namespace Prisma {
     logoPhoto?: string | null
     coverPhoto?: string | null
     phone?: string | null
-    email: string
+    email?: string | null
     website?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -98838,7 +98838,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98859,7 +98859,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -98880,7 +98880,7 @@ export namespace Prisma {
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
