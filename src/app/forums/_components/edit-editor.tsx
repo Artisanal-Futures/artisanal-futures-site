@@ -45,11 +45,11 @@ export const EditEditor: React.FC<EditorProps> = ({
 
   const uploadRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey;
-    }
-  }, [uploadedFile]);
+  // useEffect(() => {
+  //   if (uploadedFile?.objectKey) {
+  //     uploadRef.current = uploadedFile.objectKey;
+  //   }
+  // }, [uploadedFile]);
 
   const {
     register,
@@ -198,6 +198,7 @@ export const EditEditor: React.FC<EditorProps> = ({
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [, value] of Object.entries(errors)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         value;
         toastService.error({
           message: (value as { message: string }).message,

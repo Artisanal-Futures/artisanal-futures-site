@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Legal",
   description: "The legal information for Artisanal Futures",
@@ -16,7 +18,7 @@ export default function LegalPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <a
+        <Link
           href="/legal/terms-of-use"
           className="block rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg"
         >
@@ -26,9 +28,9 @@ export default function LegalPage() {
           <p className="text-gray-600">
             Our terms and conditions for using the platform
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/legal/privacy"
           className="block rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg"
         >
@@ -36,9 +38,9 @@ export default function LegalPage() {
             Privacy Policy
           </h2>
           <p className="text-gray-600">How we handle and protect your data</p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/legal/collective-agreement"
           className="block rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg"
         >
@@ -48,9 +50,9 @@ export default function LegalPage() {
           <p className="text-gray-600">
             Guidelines for our artisanal community
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/legal/help-center"
           className="block rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg"
         >
@@ -60,9 +62,9 @@ export default function LegalPage() {
           <p className="text-gray-600">
             Get support and find answers to common questions
           </p>
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/legal/cookies"
           className="block rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg"
         >
@@ -70,7 +72,7 @@ export default function LegalPage() {
             Cookie Policy
           </h2>
           <p className="text-gray-600">Information about how we use cookies</p>
-        </a>
+        </Link>
       </div>
     </div>
   );

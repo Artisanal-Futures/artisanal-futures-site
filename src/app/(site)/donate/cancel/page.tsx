@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function DonateCancelPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center justify-center px-4 py-16">
@@ -32,18 +34,18 @@ export default function DonateCancelPage() {
         <br />
         You can try again anytime.
       </p>
-      <a
+      <Link
         href="/donate"
         className="rounded-md bg-blue-600 px-6 py-2 text-white transition hover:bg-blue-700"
       >
         Try Again
-      </a>
-      <a
+      </Link>
+      <Link
         href="/"
         className="mt-3 text-sm text-gray-600 underline underline-offset-2 hover:text-gray-900"
       >
         Back to Home
-      </a>
+      </Link>
     </div>
   );
 }

@@ -154,7 +154,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been unsubscribed from this subreddit.",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -202,7 +202,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been subscribed to this subreddit.",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -358,7 +358,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",

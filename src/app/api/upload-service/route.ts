@@ -1,13 +1,16 @@
-import { createUploadRouteHandler, route } from 'better-upload/server'
+import type { Router } from "@better-upload/server";
+import { RejectUpload, route } from "@better-upload/server";
+import { toRouteHandler } from "@better-upload/server/adapters/next";
 
-import { s3Client } from '~/lib/file-upload/clients/s3'
+import { s3Client } from "~/lib/s3/client";
 
-export const { POST } = createUploadRouteHandler({
+const router: Router = {
   client: s3Client,
-  bucketName: 'services',
+  bucketName: "services",
   routes: {
     services: route({
-      fileTypes: ['image/*'],
+      fileTypes: ["image/*"],
     }),
   },
-})
+};
+export const { POST } = toRouteHandler(router);

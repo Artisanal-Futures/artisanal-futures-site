@@ -72,7 +72,7 @@ export const auth = betterAuth({
     before: createAuthMiddleware(async (ctx) => {
       // 1. ENFORCE PASSCODE ON EMAIL/PASSWORD SIGN-UP
       if (ctx.path === "/sign-up/email") {
-        const code = ctx.body?.code as string | undefined;
+        const code = (ctx.body as { code: string | undefined })?.code;
 
         if (code !== process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
           throw new APIError("UNAUTHORIZED", {

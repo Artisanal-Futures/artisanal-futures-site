@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function DonateSuccessPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center justify-center px-4 py-16">
@@ -32,12 +34,12 @@ export default function DonateSuccessPage() {
         Your support makes a difference for artisan communities and worker-owned
         businesses.
       </p>
-      <a
+      <Link
         href="/"
         className="rounded-md bg-green-600 px-6 py-2 text-white transition hover:bg-green-700"
       >
         Back to Home
-      </a>
+      </Link>
     </div>
   );
 }

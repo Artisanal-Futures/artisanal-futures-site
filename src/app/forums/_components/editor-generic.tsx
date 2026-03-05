@@ -50,11 +50,11 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
 
   const uploadRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey;
-    }
-  }, [uploadedFile]);
+  // useEffect(() => {
+  //   if (uploadedFile?.objectKey) {
+  //     uploadRef.current = uploadedFile.objectKey;
+  //   }
+  // }, [uploadedFile]);
 
   const [selectedSubreddit, setSelectedSubreddit] = useState<string>("");
 
@@ -155,6 +155,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [, value] of Object.entries(errors)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         value;
         toastService.error({
           message: (value as { message: string }).message,

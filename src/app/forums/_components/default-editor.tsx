@@ -35,11 +35,13 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 
   const uploadRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey;
-    }
-  }, [uploadedFile]);
+  //TODO: Fix this
+
+  // useEffect(() => {
+  //   if (uploadedFile?.objectKey) {
+  //     uploadRef.current = uploadedFile.objectKey;
+  //   }
+  // }, [uploadedFile]);
 
   const {
     register,
@@ -182,7 +184,8 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [, value] of Object.entries(errors)) {
-        value;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        (value as { message: string }).message;
         toastService.error({
           message: (value as { message: string }).message,
         });

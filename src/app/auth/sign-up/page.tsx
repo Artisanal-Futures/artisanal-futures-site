@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+
 import { authClient } from "~/server/better-auth/client";
 
 function SignUpForm({
@@ -26,7 +30,9 @@ function SignUpForm({
   const [isLoading, setIsLoading] = useState(false);
   const isValidated = !!searchParams.get("code");
 
-  const handleOAuthSignUp = async (provider: "google" | "discord" | "auth0") => {
+  const handleOAuthSignUp = async (
+    provider: "google" | "discord" | "auth0",
+  ) => {
     if (code !== process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
       setError("Invalid or missing sign-up code");
       return;
@@ -67,7 +73,7 @@ function SignUpForm({
 
       router.push("/");
     } catch (err: any) {
-      setError(err?.message || "Sign-up failed. Please try again.");
+      setError(err?.message ?? "Sign-up failed. Please try again.");
       setIsLoading(false);
     }
   };
@@ -76,8 +82,8 @@ function SignUpForm({
     return (
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-bold mb-2">Enter Sign-Up Code</h2>
-          <p className="text-muted-foreground text-sm mb-4">
+          <h2 className="mb-2 text-2xl font-bold">Enter Sign-Up Code</h2>
+          <p className="text-muted-foreground mb-4 text-sm">
             You need a valid sign-up code to create an account.
           </p>
         </div>
@@ -101,12 +107,12 @@ function SignUpForm({
                 }
               }
             }}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             required
           />
         </div>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && <p className="text-destructive text-sm">{error}</p>}
 
         <button
           onClick={() => {
@@ -116,7 +122,7 @@ function SignUpForm({
               setError("Invalid sign-up code");
             }
           }}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+          className="focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           Continue
         </button>
@@ -134,15 +140,15 @@ function SignUpForm({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-2">Create your account</h2>
+        <h2 className="mb-2 text-2xl font-bold">Create your account</h2>
         <p className="text-muted-foreground text-sm">
           Choose your preferred sign-up method
         </p>
       </div>
 
       {error && (
-        <div className="rounded-md bg-destructive/10 p-3">
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="bg-destructive/10 rounded-md p-3">
+          <p className="text-destructive text-sm">{error}</p>
         </div>
       )}
 
@@ -150,7 +156,7 @@ function SignUpForm({
         <button
           onClick={() => handleOAuthSignUp("google")}
           disabled={isLoading}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+          className="focus-visible:ring-ring border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-10 w-full items-center justify-center rounded-md border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
@@ -176,7 +182,7 @@ function SignUpForm({
         <button
           onClick={() => handleOAuthSignUp("discord")}
           disabled={isLoading}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+          className="focus-visible:ring-ring border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-10 w-full items-center justify-center rounded-md border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="#5865F2">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
@@ -187,7 +193,7 @@ function SignUpForm({
         <button
           onClick={() => handleOAuthSignUp("auth0")}
           disabled={isLoading}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+          className="focus-visible:ring-ring border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-10 w-full items-center justify-center rounded-md border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21.98 7.448L19.62 0H4.347L2.02 7.448c-1.352 4.312.03 9.206 3.815 12.015L12.007 24l6.157-4.537c3.755-2.81 5.182-7.688 3.815-12.015zM12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12z" />
@@ -201,7 +207,7 @@ function SignUpForm({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-background text-muted-foreground px-2">
             Or continue with email
           </span>
         </div>
@@ -218,7 +224,7 @@ function SignUpForm({
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
           />
         </div>
@@ -233,7 +239,7 @@ function SignUpForm({
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
           />
         </div>
@@ -248,11 +254,11 @@ function SignUpForm({
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
             minLength={8}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Must be at least 8 characters
           </p>
         </div>
@@ -260,7 +266,7 @@ function SignUpForm({
         <button
           type="submit"
           disabled={isLoading}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full disabled:opacity-50"
+          className="focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
         >
           {isLoading ? "Creating account..." : "Create account"}
         </button>
@@ -278,7 +284,7 @@ function SignUpForm({
 
 function SignUpPageContent() {
   const searchParams = useSearchParams();
-  const [code, setCode] = useState(searchParams.get("code") || "");
+  const [code, setCode] = useState(searchParams.get("code") ?? "");
   const [error, setError] = useState("");
   const [isValidated, setIsValidated] = useState(!!searchParams.get("code"));
 
@@ -386,7 +392,12 @@ function SignUpPageContent() {
               </span>
             </div>
 
-            <SignUpForm code={code} setCode={setCode} error={error} setError={setError} />
+            <SignUpForm
+              code={code}
+              setCode={setCode}
+              error={error}
+              setError={setError}
+            />
 
             <div className="mt-8 hidden text-left lg:block">
               <Link

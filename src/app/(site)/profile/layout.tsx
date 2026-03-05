@@ -16,7 +16,7 @@ export default async function ProfileLayout({ children }: Props) {
   if (!session) {
     redirect(
       `/auth/sign-in?callbackUrl=${encodeURIComponent(
-        `${env.NEXTAUTH_URL}/profile`,
+        `${env.BETTER_AUTH_URL}/profile`,
       )}`,
     );
   }

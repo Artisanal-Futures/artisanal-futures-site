@@ -81,12 +81,12 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
       const shop = row.original;
       const utils = api.useUtils();
       const hasWebsiteProvision = !!shop.websiteProvision;
-      const router = useRouter();
+      // const router = useRouter();
       const deleteMutation = api.websiteProvision.delete.useMutation({
         onSuccess: () => {
           toast.dismiss();
           toast.success("Website provision delete successfully.");
-          router.refresh();
+          void utils.websiteProvision.invalidate();
         },
         onError: (error) => {
           toast.dismiss();
@@ -110,7 +110,7 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
                 ownerId: shop.ownerId,
                 shopId: shop.id,
                 name: shop.name,
-                email: shop.email,
+                email: shop.email ?? "",
               }}
               FormComponent={WebsiteProvisionForm}
               mode="create"

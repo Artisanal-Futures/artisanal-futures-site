@@ -16,7 +16,7 @@ export default async function AdminPanelLayout(props: Props) {
   if (!session) {
     redirect(
       `/auth/sign-in?callbackUrl=${encodeURIComponent(
-        `${env.NEXTAUTH_URL}/admin`,
+        `${env.BETTER_AUTH_URL}/admin`,
       )}`,
     );
   }

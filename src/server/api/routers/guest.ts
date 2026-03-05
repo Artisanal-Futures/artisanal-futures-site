@@ -1,15 +1,15 @@
-import { emailService } from '@dreamwalker-studios/email'
-import { env as emailEnv } from '@dreamwalker-studios/email/env'
-import { z } from 'zod'
+import { emailService } from "@dreamwalker-studios/email";
+import { env as emailEnv } from "@dreamwalker-studios/email/env";
+import { InquiryTemplate } from "~/services/email/blueprints/inquiry-template";
+import { WelcomeGuestEmail } from "~/services/email/blueprints/welcome-guest";
+import { z } from "zod";
 
 import {
   adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from '~/server/api/trpc'
-import { InquiryTemplate } from '~/services/email/blueprints/inquiry-template'
-import { WelcomeGuestEmail } from '~/services/email/blueprints/welcome-guest'
+} from "~/server/api/trpc";
 
 export const guestRouter = createTRPCRouter({
   create: protectedProcedure
@@ -31,26 +31,26 @@ export const guestRouter = createTRPCRouter({
           state: input.state,
           artisanalPractice: input.artisanalPractice,
           otherPractice: input.otherPractice,
-          email: ctx.session.user.email!,
+          email: ctx.session.user.email ?? "",
           userId: ctx.session.user.id,
         },
-      })
+      });
 
       await emailService.sendEmail({
         from: emailEnv.NO_RESPOND_EMAIL,
-        to: ctx.session.user.email!,
-        subject: 'Welcome to Artisanal Futures',
+        to: ctx.session.user.email ?? "",
+        subject: "Welcome to Artisanal Futures",
         template: WelcomeGuestEmail,
         data: {
           name: input.name,
-          webinarLink: 'https://wpi.zoom.us/j/99084453348',
+          webinarLink: "https://wpi.zoom.us/j/99084453348",
         },
-      })
+      });
 
       return {
         data: guest,
-        message: 'Survey submitted successfully',
-      }
+        message: "Survey submitted successfully",
+      };
     }),
 
   isCompleted: protectedProcedure.query(async ({ ctx }) => {
@@ -58,16 +58,16 @@ export const guestRouter = createTRPCRouter({
       where: {
         OR: [
           { userId: ctx.session.user.id },
-          { email: ctx.session.user.email! },
+          { email: ctx.session.user.email ?? "" },
         ],
       },
-    })
-    return !!guests
+    });
+    return !!guests;
   }),
 
   getAll: adminProcedure.query(async ({ ctx }) => {
-    const guests = await ctx.db.guestSurvey.findMany()
-    return guests
+    const guests = await ctx.db.guestSurvey.findMany();
+    return guests;
   }),
 
   sendInquiry: publicProcedure
@@ -82,19 +82,19 @@ export const guestRouter = createTRPCRouter({
       const email = await emailService.sendEmail({
         from: emailEnv.NO_RESPOND_EMAIL,
         to: input.email,
-        subject: 'New Inquiry',
+        subject: "New Inquiry",
         template: InquiryTemplate,
         data: {
           fullName: input.name,
           message: input.body,
           email: input.email,
         },
-      })
+      });
 
       return {
         data: email,
-        message: 'Email sent. We will get back to you shortly',
-      }
+        message: "Email sent. We will get back to you shortly",
+      };
     }),
 
   // onboard: protectedProcedure
@@ -180,4 +180,4 @@ export const guestRouter = createTRPCRouter({
   //       })
   //     }
   //   }),
-})
+});

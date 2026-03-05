@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { authClient } from "~/server/better-auth/client";
+import { toastService } from "@dreamwalker-studios/toasts";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { toastService } from "@dreamwalker-studios/toasts";
-import { zodResolver } from "@hookform/resolvers/zod";
-
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useShopModal } from "~/hooks/use-shop-modal";
 import { Button } from "~/components/ui/button";
@@ -69,7 +68,7 @@ export const ShopModal = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values);
+    // mutate(values);
   };
 
   return (

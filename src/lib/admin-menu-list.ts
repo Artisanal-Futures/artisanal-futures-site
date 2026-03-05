@@ -2,6 +2,7 @@ import type { Role } from "generated/prisma";
 import type { LucideIcon } from "lucide-react";
 import {
   BoxesIcon,
+  Database,
   FolderTree,
   Globe,
   HandshakeIcon,
@@ -105,6 +106,14 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: "Tools",
       menus: [
+        {
+          href: `/admin/fork-import`,
+          label: "Fork import",
+          active: pathname.includes(`/admin/fork-import`),
+          icon: Database,
+          submenus: [],
+          restrictedAccess: [],
+        },
         {
           href: `/admin/upcycling`,
           label: "Upcycling",

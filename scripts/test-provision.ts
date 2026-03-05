@@ -38,12 +38,12 @@ async function testCreateProvision() {
         hasCustomDomain: false,
 
         businessName: shop.name + " (TEST)",
-        contactEmail: shop.email,
+        contactEmail: shop.email ?? "",
 
         config: {
           adminUser: "testadmin",
           adminPassword: "TestPass123!",
-          adminEmail: shop.email || user.email,
+          adminEmail: shop.email ?? user.email,
         },
 
         isTest: true,

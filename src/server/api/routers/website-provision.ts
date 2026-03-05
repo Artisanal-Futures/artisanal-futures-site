@@ -41,7 +41,7 @@ export const websiteProvisionRouter = createTRPCRouter({
         onboardingData: {
           businessName: shop.name,
           ownerName: shop.ownerName,
-          contactEmail: shop.email || shop.owner.email,
+          contactEmail: shop.email ?? shop.owner.email,
           contactPhone: shop.phone,
           businessAddress: shop.address
             ? {

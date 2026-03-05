@@ -44,20 +44,19 @@ export const columns: ColumnDef<CategoryWithParent>[] = [
     cell: ({ row }) => {
       const category = row.original;
       const utils = api.useUtils();
-      const router = useRouter();
 
       const deleteMutation = api.category.delete.useMutation({
         onSuccess: () => {
           toast.dismiss();
           toast.success("Category deleted successfully.");
-          router.refresh();
+          void utils.category.invalidate();
         },
         onError: (error) => {
           toast.dismiss();
           toast.error(`Error deleting category: ${error.message}`);
         },
         onSettled: () => {
-          void utils.category.getAll.invalidate();
+          void utils.category.invalidate();
         },
         onMutate: () => {
           toast.loading("Deleting category...");
