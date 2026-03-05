@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "~/utils/styles";
+import { toastService } from "@dreamwalker-studios/toasts";
 import { Loader2, Trash } from "lucide-react";
 
-import { toastService } from "@dreamwalker-studios/toasts";
-
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import {
   AlertDialog,

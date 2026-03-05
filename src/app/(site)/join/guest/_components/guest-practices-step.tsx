@@ -46,7 +46,7 @@ export function GuestPracticesStep({
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const guestCreate = api.guest.create.useMutation({
+  const guestCreate = api.onboarding.onboardGuest.useMutation({
     onSuccess: () => {
       window.location.href = "/join/guest/welcome";
     },
@@ -78,7 +78,9 @@ export function GuestPracticesStep({
     const state = formData.state ?? "";
 
     if (!email || !password || !name) {
-      setError("Missing account details. Please go back and complete the form.");
+      setError(
+        "Missing account details. Please go back and complete the form.",
+      );
       return;
     }
 
@@ -97,7 +99,9 @@ export function GuestPracticesStep({
     } catch (err) {
       setIsSubmitting(false);
       const message =
-        err instanceof Error ? err.message : "Sign-up failed. Please try again.";
+        err instanceof Error
+          ? err.message
+          : "Sign-up failed. Please try again.";
       setError(message);
       toast.error(message);
       return;
@@ -110,6 +114,7 @@ export function GuestPracticesStep({
       artisanalPractice,
       otherPractice: artisanalPractice === "other" ? otherPractice : "",
       email,
+      invitationCode: formData.invitationCode ?? "",
     });
   };
 

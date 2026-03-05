@@ -1,6 +1,5 @@
 import { getSession } from "~/server/better-auth/server";
 
-import { AdminClientLayout } from "../_components/client-layout";
 import { TrailHeader } from "../_components/trail-header";
 
 export const metadata = {

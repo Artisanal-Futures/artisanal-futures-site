@@ -1,14 +1,12 @@
 "use client";
 
+import type { AriaTimeFieldProps, TimeValue } from "react-aria";
 import { useRef } from "react";
-import {
-  useLocale,
-  useTimeField,
-  type AriaTimeFieldProps,
-  type TimeValue,
-} from "react-aria";
+import { useLocale, useTimeField } from "react-aria";
 import { useTimeFieldState } from "react-stately";
-import { cn } from "~/utils/styles";
+
+import { cn } from "~/lib/utils";
+
 import { DateSegment } from "./date-segment";
 
 function TimeField(props: AriaTimeFieldProps<TimeValue>) {
@@ -28,8 +26,8 @@ function TimeField(props: AriaTimeFieldProps<TimeValue>) {
       {...fieldProps}
       ref={ref}
       className={cn(
-        "inline-flex h-10 w-full flex-1 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        props.isDisabled ? "cursor-not-allowed opacity-50" : ""
+        "border-input ring-offset-background focus-within:ring-ring focus-visible:ring-ring inline-flex h-10 w-full flex-1 rounded-md border bg-transparent px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+        props.isDisabled ? "cursor-not-allowed opacity-50" : "",
       )}
     >
       {state.segments.map((segment, i) => (

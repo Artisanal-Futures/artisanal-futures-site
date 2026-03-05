@@ -4,7 +4,11 @@ import {
   artisanOnboardingSchema,
   guestOnboardingSchema,
 } from "~/lib/validators/onboarding";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
 
 export const onboardingRouter = createTRPCRouter({
   onboardArtisan: protectedProcedure
@@ -119,4 +123,13 @@ export const onboardingRouter = createTRPCRouter({
         redirectUrl: "/join/guest/welcome",
       };
     }),
+
+  getGuestSurveys: adminProcedure.query(async ({ ctx }) => {
+    const guests = await ctx.db.guestSurvey.findMany();
+    return guests;
+  }),
+  getArtisanSurveys: adminProcedure.query(async ({ ctx }) => {
+    const artisans = await ctx.db.artisanSurvey.findMany();
+    return artisans;
+  }),
 });

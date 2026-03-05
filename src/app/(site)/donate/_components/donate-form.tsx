@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { cn } from "~/utils/styles";
 
+import { cn } from "~/lib/utils";
 import { ButtonGroup } from "~/components/ui/button-group";
 import { Checkbox } from "~/components/ui/checkbox";
 

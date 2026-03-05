@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import React from "react";
 import Image from "next/image";
-import { cn } from "~/utils/styles";
 import { Calendar, MapPin } from "lucide-react";
 
 import type { Shop } from "~/types/shop";
 import { env } from "~/env";
+import { cn } from "~/lib/utils";
 
 import { ProfileContactBar } from "./profile-contact-bar";
 
@@ -51,11 +51,11 @@ const ProfileCard: FC<IProps> = ({
               <h1 className="text-4xl font-bold tracking-tight text-gray-900">
                 {ownerName}
               </h1>
-              <h2 className="mt-1 text-2xl font-medium text-primary">{name}</h2>
+              <h2 className="text-primary mt-1 text-2xl font-medium">{name}</h2>
             </div>
           </div>
 
-          <div className="flex gap-4 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex gap-4 text-sm">
             {address?.city && address?.state && (
               <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />

@@ -2,14 +2,12 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ModalProvider } from "~/providers/modal-provider";
-import { Providers } from "~/providers/providers";
-import { ThemeProvider } from "~/providers/theme-provider";
+import { Toaster } from "@dreamwalker-studios/toasts";
 import NextTopLoader from "nextjs-toploader";
 
-import { Toaster } from "@dreamwalker-studios/toasts";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import { Providers } from "~/providers/providers";
+import { ThemeProvider } from "~/providers/theme-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +36,6 @@ export default function RootLayout({
               <NextTopLoader />
               {children}
               <Toaster />
-              <ModalProvider />
             </TRPCReactProvider>
           </Providers>
         </ThemeProvider>

@@ -1,23 +1,24 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
+import { useState } from "react";
+import Image from "next/image";
 
-import { Input } from '~/components/ui/input'
-import { classNames } from '~/utils/styles'
-import { useSizerStore } from '../_hooks/use-sizer'
-import { type BodyPart, type Part } from '../_validators/types'
-import ActualInch from './actual-inch'
+import { cn } from "~/lib/utils";
+import { Input } from "~/components/ui/input";
+
+import { useSizerStore } from "../_hooks/use-sizer";
+import { type BodyPart, type Part } from "../_validators/types";
+import ActualInch from "./actual-inch";
 
 const ActualPattern = () => {
   const { bodyParts, actual_pattern, pixels_per_inch, updateBodyPart } =
-    useSizerStore((state) => state)
+    useSizerStore((state) => state);
 
-  const device_pixels_per_inch = pixels_per_inch
+  const device_pixels_per_inch = pixels_per_inch;
 
   const [ppiSliderValue, setPpiSliderValue] = useState<number>(
     device_pixels_per_inch,
-  )
+  );
 
   return (
     <>
@@ -34,12 +35,12 @@ const ActualPattern = () => {
                 key={idx}
                 style={{
                   width: `${
-                    part.type === 'horizontal'
+                    part.type === "horizontal"
                       ? part.virtual_length * device_pixels_per_inch
                       : 10
                   }px`,
                   height: `${
-                    part.type === 'vertical'
+                    part.type === "vertical"
                       ? part.virtual_length * device_pixels_per_inch
                       : 10
                   }px`,
@@ -51,11 +52,11 @@ const ActualPattern = () => {
                     part.location.y * (device_pixels_per_inch / pixels_per_inch)
                   }px`,
                 }}
-                className={classNames(
-                  `virtual-part-${idx} absolute whitespace-nowrap bg-black/40 text-black ${
-                    part.type === 'vertical' ? 'w-[10px]' : 'h-[10px]'
+                className={cn(
+                  `virtual-part-${idx} absolute bg-black/40 whitespace-nowrap text-black ${
+                    part.type === "vertical" ? "w-[10px]" : "h-[10px]"
                   }`,
-                  `  absolute  `,
+                  `absolute`,
                 )}
                 tabIndex={idx}
                 role="button"
@@ -71,14 +72,14 @@ const ActualPattern = () => {
                       type="number"
                       defaultValue={part.actual_length}
                       onChange={(e) => {
-                        console.log(e)
+                        console.log(e);
                         updateBodyPart(
                           key as Part,
                           {
                             ...part,
                             actual_length: Number(e.target.value),
                           } as BodyPart,
-                        )
+                        );
                       }}
                       className="relative -top-1 w-12"
                     />
@@ -88,20 +89,20 @@ const ActualPattern = () => {
                   </label>
                 </div>
               </div>
-            )
+            );
         })}
 
         <Image
           alt=""
           id="actual_pattern"
-          src={actual_pattern?.blob ?? ''}
+          src={actual_pattern?.blob ?? ""}
           width={actual_pattern.width! * (ppiSliderValue / pixels_per_inch)}
           height={actual_pattern.height! * (ppiSliderValue / pixels_per_inch)}
-          className={classNames(`-z-10`)}
+          className={cn(`-z-10`)}
         />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ActualPattern
+export default ActualPattern;

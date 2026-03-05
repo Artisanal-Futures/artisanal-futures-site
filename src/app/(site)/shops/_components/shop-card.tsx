@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { cn } from "~/utils/styles";
 import { Store, User } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { env } from "~/env";
+import { cn } from "~/lib/utils";
 import BlurImage from "~/components/ui/blur-image";
 
 type Props = {

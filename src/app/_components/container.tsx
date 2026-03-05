@@ -1,4 +1,4 @@
-import { cn } from "~/utils/styles";
+import { cn } from "~/lib/utils";
 
 const Container: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,

@@ -1,15 +1,13 @@
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { updateAccountSchema } from "~/lib/validators/account";
 import {
   adminProcedure,
   createTRPCRouter,
   elevatedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { uploadImage } from "~/utils/forum/cloudinary";
-import { z } from "zod";
-
-import { TRPCError } from "@trpc/server";
-
-import { updateAccountSchema } from "~/lib/validators/account";
 
 export const userRouter = createTRPCRouter({
   getAll: elevatedProcedure.query(async ({ ctx }) => {
@@ -115,12 +113,6 @@ export const userRouter = createTRPCRouter({
     .query(async ({}) => {
       const gemoji = (await import("gemoji")).gemoji;
       return gemoji;
-    }),
-
-  uploadForumImage: protectedProcedure
-    .input(z.any())
-    .mutation(async ({ input: file }) => {
-      return uploadImage(file as File);
     }),
 
   update: protectedProcedure

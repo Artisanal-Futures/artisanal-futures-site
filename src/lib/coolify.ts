@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import crypto from "node:crypto";
 import type { WebsiteProvision } from "generated/prisma";
 import yaml from "js-yaml";
@@ -299,6 +296,7 @@ export async function verifyDeployment(
         return true;
       }
     } catch (error) {
+      console.error("Verification error:", error);
       console.log(`Verification attempt ${i + 1} failed, retrying...`);
     }
 

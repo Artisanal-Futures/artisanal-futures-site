@@ -23,7 +23,7 @@ export default async function AdminGuestSurveysPage() {
       </div>
     );
   }
-  const guests = await api.guest.getAll();
+  const guests = await api.onboarding.getGuestSurveys();
   return (
     <>
       <TrailHeader

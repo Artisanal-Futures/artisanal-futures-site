@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
-import { cn } from "~/utils/styles";
 import { ShieldCheck, Store, User } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 
+import { cn } from "~/lib/utils";
 import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 // Import the Accordion components

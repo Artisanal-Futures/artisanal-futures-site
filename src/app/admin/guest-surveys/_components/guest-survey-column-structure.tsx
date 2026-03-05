@@ -1,8 +1,7 @@
-import { cn } from "~/utils/styles";
-
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { GuestSurveyColumn } from "../_validators/types";
+import { cn } from "~/lib/utils";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { ViewGuestSurveyDialog } from "./view-prompt-dialog";

@@ -1,7 +1,6 @@
-import { cn } from "~/utils/styles";
-
 import { type ColumnDef } from "@tanstack/react-table";
 
+import { cn } from "~/lib/utils";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { type UpcyclingColumn } from "../_validators/types";

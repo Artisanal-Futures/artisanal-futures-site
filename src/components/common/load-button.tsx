@@ -3,7 +3,8 @@ import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import { Loader2 } from "lucide-react";
 
-import { Button, buttonVariants } from "~/components/ui/button";
+import type { buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 
 type LoadButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {

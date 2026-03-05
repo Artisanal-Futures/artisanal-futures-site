@@ -1,6 +1,5 @@
 import { api } from "~/trpc/server";
 
-import { AdminClientLayout } from "../_components/client-layout";
 import { TrailHeader } from "../_components/trail-header";
 import { ProductClient } from "./_components/product-client";
 

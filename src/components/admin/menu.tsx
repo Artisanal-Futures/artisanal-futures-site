@@ -44,7 +44,7 @@ export function Menu({ isOpen }: Props) {
     .filter((group) => group.menus.length > 0);
 
   return (
-    <ScrollArea className="[&>div>div[style]]:!block">
+    <ScrollArea className="[&>div>div[style]]:block!">
       <nav className="mt-8 h-full w-full">
         <ul className="flex min-h-[calc(100vh-48px-36px-16px-32px-16px)] flex-col items-start space-y-1 px-2 lg:min-h-[calc(100vh-32px-40px-32px-16px)]">
           {filteredMenuList.map(({ groupLabel, menus }, index) => (

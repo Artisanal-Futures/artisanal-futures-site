@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
 import {
   createCoolifyDeployment,
   deleteCoolifyDeployment,
   verifyDeployment,
-} from "~/services/coolify";
-import { z } from "zod";
-
+} from "~/lib/coolify";
 import {
   cancelProvisionSchema,
   createProvisionSchema,

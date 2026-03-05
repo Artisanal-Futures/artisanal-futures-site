@@ -6,11 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@daveyplate/better-auth-ui";
-import { cn } from "~/utils/styles";
 import { Heart, LayoutDashboardIcon, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 
+import { cn } from "~/lib/utils";
 import { authClient } from "~/server/better-auth/client";
 import { Button } from "~/components/ui/button";
 import { navigationMenuTriggerStyle } from "~/components/ui/navigation-menu";
