@@ -3,14 +3,14 @@ import { z } from "zod";
 
 import { updateAccountSchema } from "~/lib/validators/account";
 import {
-  adminProcedure,
+  adminArtisanProcedure,
+  adminOnlyProcedure,
   createTRPCRouter,
-  elevatedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
 
 export const userRouter = createTRPCRouter({
-  getAll: elevatedProcedure.query(async ({ ctx }) => {
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany();
 
     if (ctx.session.user.role !== "ADMIN") {
@@ -20,7 +20,7 @@ export const userRouter = createTRPCRouter({
     return users;
   }),
 
-  get: adminProcedure
+  get: adminOnlyProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
@@ -35,7 +35,7 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  delete: adminProcedure
+  delete: adminOnlyProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.delete({

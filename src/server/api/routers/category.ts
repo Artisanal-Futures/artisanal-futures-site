@@ -5,20 +5,20 @@ import { z } from "zod";
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
 import { categorySchema } from "~/lib/validators/category";
 import {
-  adminProcedure,
+  adminOnlyProcedure,
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const categoryRouter = createTRPCRouter({
-  getAll: adminProcedure.query(({ ctx }) => {
+  getAll: adminOnlyProcedure.query(({ ctx }) => {
     return ctx.db.category.findMany({
       orderBy: { name: "asc" },
       include: { parent: true },
     });
   }),
 
-  create: adminProcedure
+  create: adminOnlyProcedure
     .input(categorySchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.category.create({
@@ -30,7 +30,7 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  update: adminProcedure
+  update: adminOnlyProcedure
     .input(categorySchema)
     .mutation(async ({ ctx, input }) => {
       if (!input.id) {
@@ -48,7 +48,7 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  delete: adminProcedure
+  delete: adminOnlyProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.category.delete({

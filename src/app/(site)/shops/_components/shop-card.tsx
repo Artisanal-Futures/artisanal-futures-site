@@ -1,70 +1,73 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Store, User } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
-import { env } from "~/env";
-import { cn } from "~/lib/utils";
-import BlurImage from "~/components/ui/blur-image";
+import { handleImageUrl } from "~/lib/handle-image-url";
 
-type Props = {
-  className?: string;
-  shop: NonNullable<RouterOutputs["shop"]["getAllValid"][number]>;
-};
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
-export const ShopCard = ({ shop, className }: Props) => {
-  const { id, ownerName, name, website, logoPhoto, ownerPhoto } = shop;
-
-  const availableImage = `${env.NEXT_PUBLIC_STORAGE_URL}/shops/${
-    ownerPhoto! && ownerPhoto != ""
-      ? ownerPhoto
-      : logoPhoto! && logoPhoto != ""
-        ? logoPhoto
-        : "background-fallback.jpg"
-  }`;
-
+type Shop = NonNullable<RouterOutputs["shop"]["getAllPublic"][number]>;
+export function ShopCard({ shop }: { shop: Shop }) {
   return (
-    <div className={cn("", className)}>
-      <div className="group relative w-full overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-lg">
-        <Link href={`/shops/${id}`}>
-          <div className="relative aspect-square w-full overflow-hidden">
-            <BlurImage
-              src={availableImage}
-              alt={`${name}'s shop image`}
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-        </Link>
+    <article className="group border-border bg-card hover:border-ring/30 relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all hover:shadow-md">
+      {/* Owner portrait */}
 
-        <div className="space-y-4 p-4">
-          <div className="flex flex-col">
-            <h3 className="text-xl font-semibold tracking-tight text-slate-900">
-              {ownerName}
-            </h3>
-            <p className="text-sm text-slate-500">{name}</p>
-          </div>
-
-          <div className="flex gap-2">
-            <a
-              href={`/shops/${id}`}
-              className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-100 py-2 text-center text-sm font-medium text-slate-900 transition-colors hover:bg-slate-200"
-            >
-              <Store className="h-4 w-4" />
-              View Shop
-            </a>
-            {website && (
-              <a
-                href={website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-900 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-slate-800"
-              >
-                <User className="h-4 w-4" />
-                Website
-              </a>
-            )}
-          </div>
+      {shop?.ownerPhoto ? (
+        <div className="bg-muted relative aspect-4/3 w-full overflow-hidden">
+          <Image
+            src={handleImageUrl(shop?.ownerPhoto)}
+            alt={`Portrait of ${shop?.ownerName}`}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
         </div>
+      ) : (
+        <div className="bg-muted flex aspect-4/3 w-full items-center justify-center">
+          <span className="text-muted-foreground text-3xl font-semibold">
+            {getInitials(shop?.ownerName ?? "")}
+          </span>
+        </div>
+      )}
+
+      {/* Identity */}
+      <div className="flex flex-col items-center gap-1 px-6 pt-5 pb-6 text-center">
+        <h2 className="text-foreground text-base leading-tight font-semibold text-balance">
+          {shop?.ownerName}
+        </h2>
+        <span className="text-muted-foreground text-sm">{shop?.name}</span>
       </div>
-    </div>
+
+      {/* Footer actions */}
+      <div className="border-border mt-auto flex items-center border-t">
+        <Link
+          href={`/shops/${shop?.id}`}
+          className="text-foreground hover:bg-secondary flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
+        >
+          View Profile
+        </Link>
+        {shop?.website && (
+          <>
+            <div className="bg-border h-8 w-px" />
+            <a
+              href={shop?.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:bg-secondary hover:text-foreground flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
+            >
+              Website
+              <ExternalLink className="size-3.5" />
+            </a>
+          </>
+        )}
+      </div>
+    </article>
   );
-};
+}

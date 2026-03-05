@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { PencilIcon } from "lucide-react";
+import { EyeIcon, PencilIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
@@ -82,6 +82,18 @@ export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
             )}
           >
             <PencilIcon className="mr-1 h-4 w-4" /> Edit
+          </Link>
+
+          <Link
+            href={`/shops/${row.original.id}`}
+            className={cn(
+              buttonVariants({
+                variant: "default",
+                className: "h-8 bg-green-500 text-xs hover:bg-green-600",
+              }),
+            )}
+          >
+            <EyeIcon className="mr-1 h-4 w-4" /> View
           </Link>
         </div>
       ),

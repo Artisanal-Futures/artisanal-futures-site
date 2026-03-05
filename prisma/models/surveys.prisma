@@ -1,0 +1,68 @@
+model Survey {
+  id              String   @id @default(cuid())
+
+  ownerId         String?
+  shopId          String
+
+  processes       String?
+  materials       String?
+  principles      String?
+  description     String?
+  unmoderatedForm Boolean  @default(false)
+  moderatedForm   Boolean  @default(false)
+  hiddenForm      Boolean  @default(false)
+  privateForm     Boolean  @default(false)
+  supplyChain     Boolean  @default(false)
+  messagingOptIn  Boolean  @default(false)
+
+  businessType    String?
+  country         String?
+  email           String?
+  experience      String?
+  practice        String?
+  state           String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([ownerId])
+}
+
+model GuestSurvey {
+  id                String   @id @default(cuid())
+  name              String   @default("Guest")
+  email             String
+  country           String?
+  state             String?
+  artisanalPractice String?
+  otherPractice     String?
+
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+
+  createdAt         DateTime @default(now())
+  @@index([userId])
+}
+
+// Newest version of the survey given to new artisans.
+model ArtisanSurvey {
+  id                String   @id @default(cuid())
+  userId            String
+  name              String
+  businessName      String
+  businessInterview String @db.Text
+  businessLocation  String?
+  businessEmail     String?
+  businessPhone     String?
+  businessWebsite   String?
+
+  businessType      String
+  productCategories String[]
+  principles        String[]
+
+  processes         String[]
+  materials         String[]
+
+  socials     Json?
+  createdAt   DateTime @default(now())
+}

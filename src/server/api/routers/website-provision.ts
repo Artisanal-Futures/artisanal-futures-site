@@ -13,10 +13,10 @@ import {
 import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
 import { generateSimplePressLink } from "~/lib/website-provisions/generate-sp-link";
 
-import { adminProcedure, createTRPCRouter } from "../trpc";
+import { adminOnlyProcedure, createTRPCRouter } from "../trpc";
 
 export const websiteProvisionRouter = createTRPCRouter({
-  getShopForProvision: adminProcedure
+  getShopForProvision: adminOnlyProcedure
     .input(z.object({ shopId: z.string().cuid() }))
     .query(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.findUnique({
@@ -60,7 +60,7 @@ export const websiteProvisionRouter = createTRPCRouter({
       };
     }),
 
-  create: adminProcedure
+  create: adminOnlyProcedure
     .input(createProvisionSchema)
     .mutation(async ({ ctx, input }) => {
       const adminUser = "af_admin";
@@ -160,7 +160,7 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
     }),
 
-  createNextJs: adminProcedure
+  createNextJs: adminOnlyProcedure
     .input(createProvisionSchema)
     .mutation(async ({ ctx, input }) => {
       const existingProvision = await ctx.db.websiteProvision.findUnique({
@@ -202,7 +202,7 @@ export const websiteProvisionRouter = createTRPCRouter({
       };
     }),
 
-  delete: adminProcedure
+  delete: adminOnlyProcedure
     .input(cancelProvisionSchema)
     .mutation(async ({ ctx, input }) => {
       const provision = await ctx.db.websiteProvision.findUnique({

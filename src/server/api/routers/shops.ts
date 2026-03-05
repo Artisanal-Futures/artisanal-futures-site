@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import {
+  adminArtisanProcedure,
   createTRPCRouter,
-  elevatedProcedure,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
@@ -12,35 +13,49 @@ import {
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: protectedProcedure.query(async ({ ctx }) => {
     const shops = ctx.db.shop.findMany({
-      include: {
-        websiteProvision: true,
-      },
-      orderBy: {
-        name: "asc",
-      },
+      include: { websiteProvision: true },
+      orderBy: { name: "asc" },
     });
     return shops;
   }),
 
   getShopOwners: publicProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({
-      where: {
-        role: "ARTISAN",
+      where: { OR: [{ role: "ARTISAN" }, { role: "ADMIN" }] },
+      select: {
+        id: true,
+        name: true,
       },
+      orderBy: { name: "asc" },
     });
 
     return users;
   }),
-  getAllValid: publicProcedure.query(({ ctx }) => {
+
+  getAllPublic: publicProcedure.query(({ ctx }) => {
     return ctx.db.shop.findMany({
-      where: {
-        name: { not: "" },
-        OR: [{ logoPhoto: { not: "" } }, { ownerPhoto: { not: "" } }],
-        website: { not: "" },
+      select: {
+        id: true,
+        name: true,
+        ownerName: true,
+        bio: true,
+        description: true,
+        logoPhoto: true,
+        ownerPhoto: true,
+        website: true,
+        email: true,
+        phone: true,
+        address: true,
+        attributeTags: true,
+        createdAt: true,
+      },
+      orderBy: {
+        name: "asc",
       },
     });
   }),
-  getAll: elevatedProcedure.query(async ({ ctx }) => {
+
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const shops = await ctx.db.shop.findMany({
       include: { owner: true, address: true },
       orderBy: { createdAt: "desc" },
@@ -54,7 +69,6 @@ export const shopsRouter = createTRPCRouter({
       ...shop,
       logoPhoto: `${shop?.logoPhoto}`,
       ownerPhoto: `${shop?.ownerPhoto}`,
-      coverPhoto: `${shop?.coverPhoto}`,
     }));
   }),
 
@@ -63,34 +77,26 @@ export const shopsRouter = createTRPCRouter({
     .query(async ({ ctx, input: shopId }) => {
       const shop = await ctx.db.shop.findUnique({
         where: { id: shopId },
-        include: { address: true },
+        include: { address: true, products: true, services: true },
       });
 
       return shop;
     }),
 
-  getCurrentUserShop: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.shop.findFirst({
-      where: {
-        ownerId: ctx.session.user.id,
-      },
-    });
-  }),
-  create: elevatedProcedure
+  create: adminArtisanProcedure
     .input(shopSchema)
     .mutation(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.create({
         data: {
+          ownerId: input.ownerId ?? ctx.session.user.id,
           name: input.name,
           ownerName: input.ownerName
             ? input.ownerName
             : (ctx.session.user?.name ?? ""),
-          ownerId: input.ownerId ?? ctx.session.user.id,
+          ownerPhoto: input.ownerPhotoUrl,
           bio: input.bio ?? "",
           description: input.description ?? "",
           logoPhoto: input.logoPhotoUrl,
-          ownerPhoto: input.ownerPhotoUrl,
-          coverPhoto: input.coverPhotoUrl,
           attributeTags: input.attributeTags ?? [],
           address: {
             create: {
@@ -110,78 +116,79 @@ export const shopsRouter = createTRPCRouter({
       return { data: shop, message: "Shop created successfully" };
     }),
 
-  update: elevatedProcedure
+  update: adminArtisanProcedure
     .input(shopUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      const shop = await ctx.db.shop.findUnique({
-        where: { id: input.id },
-      });
+      const isUserAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.id,
+      );
 
-      if (
-        shop?.ownerId !== ctx.session.user.id &&
-        ctx.session.user.role !== "ADMIN"
-      ) {
+      if (!isUserAuthorized) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Shop does not belong to current user",
         });
       }
 
-      const updatedAddress = await ctx.db.shopAddress.update({
-        where: { shopId: input.id },
-        data: {
-          address: input?.address ?? "",
-          city: input?.city ?? "",
-          state: input?.state ?? "",
-          zip: input?.zip ?? "",
-          country: input?.country ?? "",
-        },
-      });
+      const updateShopData = await ctx.db.$transaction(async (tx) => {
+        const updatedAddress = await tx.shopAddress.update({
+          where: { shopId: input.id },
+          data: {
+            address: input?.address ?? "",
+            city: input?.city ?? "",
+            state: input?.state ?? "",
+            zip: input?.zip ?? "",
+            country: input?.country ?? "",
+          },
+        });
 
-      const updatedShop = await ctx.db.shop.update({
-        where: { id: input.id },
-        data: {
-          name: input.name,
-          ownerName: input.ownerName,
-          bio: input?.bio ?? "",
-          ownerId: input?.ownerId ?? ctx.session.user.id,
-          description: input?.description ?? "",
-          logoPhoto: input.logoPhotoUrl,
-          ownerPhoto: input.ownerPhotoUrl,
-          coverPhoto: input.coverPhotoUrl,
-          phone: input?.phone ?? "",
-          email: input?.email ?? "",
-          website: input?.website ?? "",
-          attributeTags: input?.attributeTags ?? [],
-        },
+        const updatedShop = await tx.shop.update({
+          where: { id: input.id },
+          data: {
+            ownerId: input?.ownerId ?? ctx.session.user.id,
+
+            name: input.name,
+            ownerName: input.ownerName,
+            ownerPhoto: input.ownerPhotoUrl,
+            bio: input?.bio ?? "",
+            description: input?.description ?? "",
+            logoPhoto: input.logoPhotoUrl,
+            phone: input?.phone ?? "",
+            email: input?.email ?? "",
+            website: input?.website ?? "",
+            attributeTags: input?.attributeTags ?? [],
+          },
+        });
+
+        return {
+          updatedShop,
+          updatedAddress,
+        };
       });
 
       return {
         data: {
-          ...updatedShop,
-          address: updatedAddress.address,
-          city: updatedAddress.city,
-          state: updatedAddress.state,
-          zip: updatedAddress.zip,
-          country: updatedAddress.country,
+          ...updateShopData.updatedShop,
+          address: updateShopData.updatedAddress.address,
+          city: updateShopData.updatedAddress.city,
+          state: updateShopData.updatedAddress.state,
+          zip: updateShopData.updatedAddress.zip,
+          country: updateShopData.updatedAddress.country,
         },
         message: "Shop updated successfully",
       };
     }),
 
-  delete: elevatedProcedure
+  delete: adminArtisanProcedure
     .input(z.object({ shopId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const shop = await ctx.db.shop.findUnique({
-        where: {
-          id: input.shopId,
-        },
-      });
+      const isUserAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
 
-      if (
-        shop?.ownerId !== ctx.session.user.id &&
-        ctx.session.user.role !== "ADMIN"
-      ) {
+      if (!isUserAuthorized) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Shop does not belong to current user",

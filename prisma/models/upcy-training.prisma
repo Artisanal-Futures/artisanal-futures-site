@@ -1,3 +1,24 @@
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
+
+
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
+
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}
+
 model GenerationJob {
   id          String   @id
   userId      String
@@ -84,97 +105,5 @@ model TrainingModel {
   upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
 }
 
-model WebsiteProvision {
-  id                     String          @id @default(cuid())
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
-  userId                 String
-  framework              Framework
-  siteType               SiteType
-  status                 ProvisionStatus @default(PENDING)
-  hasCustomDomain        Boolean         @default(false)
-  customDomain           String?         @unique
-  subdomain              String?         @unique
-  businessName           String
-  businessTagline        String?
-  contactEmail           String
-  contactPhone           String?
-  businessAddress        Json?
-  socialLinks            Json?
-  coolifyProjectUuid     String?         @unique
-  coolifyServerUuid      String?
-  deploymentUrl          String?
-  lastDeploymentAt       DateTime?
-  lastHealthCheck        DateTime?
-  healthCheckStatus      String?
-  config                 Json
-  cpuLimit               String?
-  memoryLimit            String?
-  errorMessage           String?
-  deploymentLogs         String?
-  notes                  String?
-  isTest                 Boolean         @default(false)
-  deletedAt              DateTime?
-  shopId                 String          @unique
-  coolifyDatabaseUuid    String?
-  coolifyServiceUuid     String?         @unique
-  adminPasswordEncrypted String?
-  adminUser              String?
-  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([createdAt])
-  @@index([deletedAt])
-  @@index([framework])
-  @@index([status])
-  @@index([subdomain])
-  @@index([userId])
-}
 
-enum Framework {
-  WORDPRESS
-  NEXTJS
-  GHOST
-  STRAPI
-}
-
-enum LoraType {
-  SUBJECT
-  STYLE
-  MULTI_CONCEPT
-  REGULARIZATION
-  UNKNOWN
-  SINGLE_CONCEPT
-}
-
-enum ProvisionStatus {
-  PENDING
-  PROVISIONING
-  BUILDING
-  DEPLOYING
-  ACTIVE
-  FAILED
-  SUSPENDED
-  DELETING
-  DELETED
-}
-
-enum SiteType {
-  ECOMMERCE
-  BLOG
-  PORTFOLIO
-  LANDING_PAGE
-  BUSINESS
-  CUSTOM
-}
-
-enum TrainingJobType {
-  CAPTION_IMAGE
-  TRAIN_MODEL
-  GENERIC_JOB
-}
-
-enum TrainingVisibility {
-  PUBLIC
-  PRIVATE
-}

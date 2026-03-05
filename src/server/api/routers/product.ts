@@ -4,13 +4,13 @@ import { z } from "zod";
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
 import { productSchema } from "~/lib/validators/products";
 import {
+  adminArtisanProcedure,
   createTRPCRouter,
-  elevatedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
-  updateTags: elevatedProcedure
+  updateTags: adminArtisanProcedure
     .input(
       z.object({
         productIds: z.array(z.string()),
@@ -39,7 +39,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  getAll: elevatedProcedure.query(async ({ ctx }) => {
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     // Always order by createdAt DESC in the DB query
     const products = await ctx.db.product.findMany({
       include: { shop: true, categories: true },
@@ -132,7 +132,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  create: elevatedProcedure
+  create: adminArtisanProcedure
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
       const { categoryIds, tags, ...productData } = input;
@@ -164,7 +164,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  update: elevatedProcedure
+  update: adminArtisanProcedure
     .input(productSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id, categoryIds, tags, ...productData } = input;
@@ -195,7 +195,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  delete: elevatedProcedure
+  delete: adminArtisanProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const product = await ctx.db.product.delete({
@@ -379,7 +379,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  bulkUpdate: elevatedProcedure
+  bulkUpdate: adminArtisanProcedure
     .input(
       z.object({
         productIds: z

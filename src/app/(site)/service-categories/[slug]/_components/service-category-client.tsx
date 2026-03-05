@@ -352,7 +352,7 @@ export function ServiceCategoryClient({
     [pathname, router, searchParams],
   );
 
-  const { data: stores } = api.shop.getAllValid.useQuery();
+  const { data: stores } = api.shop.getAllPublic.useQuery();
   const resetFilters = useCallback(
     () => router.push(pathname, { scroll: false }),
     [router, pathname],

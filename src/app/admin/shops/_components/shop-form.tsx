@@ -10,10 +10,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type { ShopFormData } from "~/lib/validators/shop";
-import type { Shop } from "~/types/shop";
+import type { RouterOutputs } from "~/trpc/react";
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { cn, slugify } from "~/lib/utils";
 import { shopFormSchema } from "~/lib/validators/shop";
-import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useDirtyForm } from "~/hooks/use-dirty-form";
 import { useKeyboardEnter } from "~/hooks/use-keyboard-enter";
@@ -44,7 +44,9 @@ import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 import { SelectFormField } from "~/components/inputs";
 
 type Props = {
-  initialData: Shop | null;
+  initialData: RouterOutputs["shop"]["get"];
+  userRole: string;
+  potentialShopOwners: RouterOutputs["shop"]["getShopOwners"];
 };
 
 const STORE_ATTRIBUTES = [
@@ -57,19 +59,18 @@ const STORE_ATTRIBUTES = [
   "Food Sovereignty",
 ] as const;
 
-export function ShopForm({ initialData }: Props) {
-  const { data: session } = authClient.useSession();
-
-  const userRole = session?.user.role ?? "ARTISAN";
+export function ShopForm({
+  initialData,
+  userRole,
+  potentialShopOwners,
+}: Props) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const shopOwners = api.shop.getShopOwners.useQuery();
 
   const router = useRouter();
   const apiUtils = api.useUtils();
 
   const formRef = useRef<HTMLFormElement>(null);
   const logoFileInputRef = useRef<HTMLInputElement | null>(null);
-  const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const ownerFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const initialFormValues: ShopFormData = {
@@ -89,30 +90,14 @@ export function ShopForm({ initialData }: Props) {
     ownerId: initialData?.ownerId ?? "",
 
     ownerPhotoUrl: initialData?.ownerPhoto
-      ? initialData.ownerPhoto.startsWith(
-          "https://storage.artisanalfutures.org/",
-        )
-        ? initialData.ownerPhoto
-        : `https://storage.artisanalfutures.org/shops/${initialData.ownerPhoto}`
+      ? handleImageUrl(initialData.ownerPhoto)
       : undefined,
     logoPhotoUrl: initialData?.logoPhoto
-      ? initialData.logoPhoto.startsWith(
-          "https://storage.artisanalfutures.org/",
-        )
-        ? initialData.logoPhoto
-        : `https://storage.artisanalfutures.org/shops/${initialData.logoPhoto}`
-      : undefined,
-    coverPhotoUrl: initialData?.coverPhoto
-      ? initialData.coverPhoto.startsWith(
-          "https://storage.artisanalfutures.org/",
-        )
-        ? initialData.coverPhoto
-        : `https://storage.artisanalfutures.org/shops/${initialData.coverPhoto}`
+      ? handleImageUrl(initialData.logoPhoto)
       : undefined,
 
     ownerPhotoFile: null,
     logoPhotoFile: null,
-    coverPhotoFile: null,
   };
 
   const form = useForm<ShopFormData>({
@@ -181,7 +166,10 @@ export function ShopForm({ initialData }: Props) {
     const businessSlug = slugify(data.name);
 
     let logoPhotoUrl: string | undefined = data.logoPhotoUrl ?? undefined;
+    let ownerPhotoUrl: string | undefined = data.ownerPhotoUrl ?? undefined;
     const logoFile = data.logoPhotoFile;
+    const ownerFile = data.ownerPhotoFile;
+
     if (logoFile instanceof File) {
       try {
         const response = await imageUploader.upload(logoFile, {
@@ -197,25 +185,6 @@ export function ShopForm({ initialData }: Props) {
       }
     }
 
-    let coverPhotoUrl: string | undefined = data.coverPhotoUrl ?? undefined;
-    const coverFile = data.coverPhotoFile;
-    if (coverFile instanceof File) {
-      try {
-        const response = await imageUploader.upload(coverFile, {
-          metadata: { businessSlug },
-        });
-        const fileLocation =
-          (response.file.objectInfo.metadata?.pathname as string | undefined) ??
-          "";
-        if (fileLocation) coverPhotoUrl = fileLocation;
-      } catch {
-        toast.error("Failed to upload cover photo.");
-        return;
-      }
-    }
-
-    let ownerPhotoUrl: string | undefined = data.ownerPhotoUrl ?? undefined;
-    const ownerFile = data.ownerPhotoFile;
     if (ownerFile instanceof File) {
       try {
         const response = await imageUploader.upload(ownerFile, {
@@ -239,7 +208,6 @@ export function ShopForm({ initialData }: Props) {
         ...data,
         ownerPhotoUrl,
         logoPhotoUrl,
-        coverPhotoUrl,
       });
     } else {
       updateShop.mutate({
@@ -247,7 +215,6 @@ export function ShopForm({ initialData }: Props) {
         ...data,
         ownerPhotoUrl,
         logoPhotoUrl,
-        coverPhotoUrl,
       });
     }
   };
@@ -258,12 +225,10 @@ export function ShopForm({ initialData }: Props) {
         ...data,
         ownerPhotoFile: null,
         logoPhotoFile: null,
-        coverPhotoFile: null,
       });
     else form.reset(initialFormValues);
 
     if (logoFileInputRef.current) logoFileInputRef.current.value = "";
-    if (coverFileInputRef.current) coverFileInputRef.current.value = "";
     if (ownerFileInputRef.current) ownerFileInputRef.current.value = "";
   };
 
@@ -366,9 +331,8 @@ export function ShopForm({ initialData }: Props) {
                   <CardContent className="space-y-6">
                     {userRole === "ADMIN" && (
                       <>
-                        {!shopOwners ||
-                        !shopOwners.data ||
-                        shopOwners.data.length === 0 ? (
+                        {!potentialShopOwners ||
+                        potentialShopOwners?.length === 0 ? (
                           <div className="flex flex-col gap-2">
                             <FormLabel>
                               Who is the owner of this shop?
@@ -382,11 +346,19 @@ export function ShopForm({ initialData }: Props) {
                             form={form}
                             name="ownerId"
                             label="Select a current elevated user to be the owner of this shop *"
-                            values={shopOwners.data.map((owner) => ({
+                            values={potentialShopOwners.map((owner) => ({
                               key: owner.name,
                               value: owner.id,
                               label: owner.name,
                             }))}
+                            onValueChange={(value) => {
+                              form.setValue(
+                                "ownerName",
+                                potentialShopOwners.find(
+                                  (owner) => owner.id === value,
+                                )?.name ?? "",
+                              );
+                            }}
                           />
                         )}
                       </>
@@ -488,15 +460,7 @@ export function ShopForm({ initialData }: Props) {
                       existingPreviewUrl={initialData?.logoPhoto ?? undefined}
                       inputRef={logoFileInputRef}
                     />
-                    <ImageUploadFormField
-                      form={form}
-                      name="coverPhotoFile"
-                      label="Cover Photo"
-                      description="Upload your store cover photo image here!"
-                      disabled={isPending}
-                      existingPreviewUrl={initialData?.coverPhoto ?? undefined}
-                      inputRef={coverFileInputRef}
-                    />
+
                     <div className="space-y-2">
                       <FormLabel htmlFor="shop-attributes">
                         Shop Attributes

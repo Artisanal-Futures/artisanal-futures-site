@@ -1,48 +1,17 @@
-model GeneratedImages {
-  id           String @id @default(cuid())
-  userId       String
-  projectTitle String
-  prompt       String
-  imageUrl     String
-  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+model Category {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  parentId String?
+  type     CategoryType @default(PRODUCT)
+  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
+  children Category[]   @relation("Subcategories")
+  products Product[]    @relation("CategoryToProduct")
+  services Service[]    @relation("CategoryToService")
 }
 
-model GenerationSurvey {
-  id                       String @id @default(cuid())
-  userId                   String
-  projectTitle             String
-  levelOfStatisfaction     String
-  directDigitalFabrication String
-  user                     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model Variation {
-  id             String @id @default(cuid())
-  userId         String
-  projectTitle   String
-  guidancePrompt String
-  imageUrl       String
-  exceutionTime  String
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model Modification {
-  id             String @id @default(cuid())
-  userId         String
-  projectTitle   String
-  guidanceScale  String
-  prompt         String
-  negativePrompt String
-  exceutionTime  String
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+enum CategoryType {
+  PRODUCT
+  SERVICE
 }
 
 model Subreddit {
@@ -124,185 +93,101 @@ enum VoteType {
   DOWN
 }
 
-model GenerationJob {
-  id          String   @id
-  userId      String
-  type        String
-  status      String
-  replicateId String?
-  input       Json
-  output      Json?
-  error       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-}
-
-model TrainingDataSet {
-  id              String          @id
-  trainingModelId String?
-  name            String?
-  description     String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime
-  tags            String[]
-  userId          String
-  setType         LoraType        @default(UNKNOWN)
-  triggerWord     String          @default("TOK")
-  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
-  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  trainingImage   TrainingImage[]
-}
-
-model TrainingImage {
-  id                   String           @id
-  trainingModelId      String?
-  imageUrl             String
-  userCaption          String?
-  autoCaption          String?
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime
-  referenceId          String?
-  imageType            LoraType         @default(UNKNOWN)
-  trainingDataSetId    String?
-  isRegularization     Boolean          @default(false)
-  autoCaptionUpdatedAt DateTime?
-  userCaptionUpdatedAt DateTime?
-  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
-  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
-}
-
-model TrainingJob {
-  id              String          @id
-  trainingModelId String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime
-  status          status          @default(QUEUED)
-  error           String?
-  referenceId     String?
-  type            TrainingJobType @default(GENERIC_JOB)
-  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
-}
-
-model TrainingModel {
-  id               String             @id
-  userId           String
-  triggerWord      String
-  status           status             @default(QUEUED)
-  weightsUrl       String
-  log              Json?
-  zipFileUrl       String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime
-  trainingSettings Json?
-  trainingDetails  Json?
-  error            String?
-  referenceId      String?
-  versionId        String?
-  loraType         LoraType           @default(SUBJECT)
-  trainingSubject  String             @default("Unknown Object")
-  description      String?
-  tags             String[]
-  title            String?
-  visibility       TrainingVisibility @default(PRIVATE)
-  trainingDataSet  TrainingDataSet[]
-  trainingImage    TrainingImage[]
-  trainingJob      TrainingJob[]
-  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
-}
-
-model WebsiteProvision {
-  id                     String          @id @default(cuid())
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
-  userId                 String
-  framework              Framework
-  siteType               SiteType
-  status                 ProvisionStatus @default(PENDING)
-  hasCustomDomain        Boolean         @default(false)
-  customDomain           String?         @unique
-  subdomain              String?         @unique
-  businessName           String
-  businessTagline        String?
-  contactEmail           String
-  contactPhone           String?
-  businessAddress        Json?
-  socialLinks            Json?
-  coolifyProjectUuid     String?         @unique
-  coolifyServerUuid      String?
-  deploymentUrl          String?
-  lastDeploymentAt       DateTime?
-  lastHealthCheck        DateTime?
-  healthCheckStatus      String?
-  config                 Json
-  cpuLimit               String?
-  memoryLimit            String?
-  errorMessage           String?
-  deploymentLogs         String?
-  notes                  String?
-  isTest                 Boolean         @default(false)
-  deletedAt              DateTime?
-  shopId                 String          @unique
-  coolifyDatabaseUuid    String?
-  coolifyServiceUuid     String?         @unique
-  adminPasswordEncrypted String?
-  adminUser              String?
-  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([createdAt])
-  @@index([deletedAt])
-  @@index([framework])
-  @@index([status])
-  @@index([subdomain])
-  @@index([userId])
-}
-
-enum Framework {
+enum ProductScrapeMethod {
+  MANUAL
   WORDPRESS
-  NEXTJS
-  GHOST
-  STRAPI
+  SHOPIFY
+  SQUARESPACE
 }
 
-enum LoraType {
-  SUBJECT
-  STYLE
-  MULTI_CONCEPT
-  REGULARIZATION
-  UNKNOWN
-  SINGLE_CONCEPT
+model Service {
+  id                String     @id @default(cuid())
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  durationInMinutes Int?
+  locationType      String?
+  tags              String[]
+  attributeTags     String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  isPublic          Boolean    @default(false)
+  shopId            String?
+  isFeatured        Boolean    @default(false)
+  serviceUrl        String?
+  shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[] @relation("CategoryToService")
 }
 
-enum ProvisionStatus {
-  PENDING
-  PROVISIONING
-  BUILDING
-  DEPLOYING
-  ACTIVE
-  FAILED
-  SUSPENDED
-  DELETING
-  DELETED
+model Product {
+  id                String              @id @default(cuid())
+  shopProductId     String?
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  productUrl        String?
+  attributeTags     String[]
+  materialTags      String[]
+  environmentalTags String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  scrapeMethod      ProductScrapeMethod @default(MANUAL)
+  shopId            String?
+  tags              String[]
+  isPublic          Boolean             @default(false)
+  isFeatured        Boolean             @default(false)
+  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[]          @relation("CategoryToProduct")
+
+  @@unique([shopId, shopProductId])
 }
 
-enum SiteType {
-  ECOMMERCE
-  BLOG
-  PORTFOLIO
-  LANDING_PAGE
-  BUSINESS
-  CUSTOM
+model Shop {
+  id      String @id @default(cuid())
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+
+  websiteProvision WebsiteProvision?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Public Information
+  name          String
+  ownerName     String
+  ownerPhoto    String?
+  bio           String? // Bio is of the shop owner. Since this is a platform for artisans, we want to show off the artisans here.
+  description   String? // This is the description of the shop itself. What does the owner want to share with site visitors?
+  logoPhoto     String?
+  phone         String?
+  email         String?
+  website       String?
+  attributeTags String[]
+  products      Product[]
+  services      Service[]
+  address       ShopAddress?
+
+  // Decommissioned Fields
+  coverPhoto String?
 }
 
-enum TrainingJobType {
-  CAPTION_IMAGE
-  TRAIN_MODEL
-  GENERIC_JOB
-}
-
-enum TrainingVisibility {
-  PUBLIC
-  PRIVATE
+model ShopAddress {
+  id         String  @id @default(cuid())
+  address    String?
+  additional String?
+  city       String?
+  state      String?
+  zip        String?
+  country    String?
+  shopId     String? @unique
+  street     String?
+  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 }
 
 model Member {
@@ -676,111 +561,123 @@ enum JobType {
   OTHER
 }
 
-model Shop {
-  id               String            @id @default(cuid())
-  ownerName        String
-  bio              String?
-  description      String?
-  ownerPhoto       String?
-  logoPhoto        String?
-  coverPhoto       String?
-  phone            String?
-  email            String?
-  website          String?
-  ownerId          String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  attributeTags    String[]
-  name             String
-  products         Product[]
-  services         Service[]
-  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-  address          ShopAddress?
-  websiteProvision WebsiteProvision?
+model Survey {
+  id String @id @default(cuid())
+
+  ownerId String?
+  shopId  String
+
+  processes       String?
+  materials       String?
+  principles      String?
+  description     String?
+  unmoderatedForm Boolean @default(false)
+  moderatedForm   Boolean @default(false)
+  hiddenForm      Boolean @default(false)
+  privateForm     Boolean @default(false)
+  supplyChain     Boolean @default(false)
+  messagingOptIn  Boolean @default(false)
+
+  businessType String?
+  country      String?
+  email        String?
+  experience   String?
+  practice     String?
+  state        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
 }
 
-model ShopAddress {
-  id         String  @id @default(cuid())
-  address    String?
-  additional String?
-  city       String?
-  state      String?
-  zip        String?
-  country    String?
-  shopId     String? @unique
-  street     String?
-  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+model GuestSurvey {
+  id                String  @id @default(cuid())
+  name              String  @default("Guest")
+  email             String
+  country           String?
+  state             String?
+  artisanalPractice String?
+  otherPractice     String?
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
-model Service {
-  id                String     @id @default(cuid())
+// Newest version of the survey given to new artisans.
+model ArtisanSurvey {
+  id                String  @id @default(cuid())
+  userId            String
   name              String
-  description       String
-  priceInCents      Int?
-  currency          String?
-  imageUrl          String?
-  durationInMinutes Int?
-  locationType      String?
-  tags              String[]
-  attributeTags     String[]
-  aiGeneratedTags   String[]
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  isPublic          Boolean    @default(false)
-  shopId            String?
-  isFeatured        Boolean    @default(false)
-  serviceUrl        String?
-  shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  categories        Category[] @relation("CategoryToService")
+  businessName      String
+  businessInterview String  @db.Text
+  businessLocation  String?
+  businessEmail     String?
+  businessPhone     String?
+  businessWebsite   String?
+
+  businessType      String
+  productCategories String[]
+  principles        String[]
+
+  processes String[]
+  materials String[]
+
+  socials   Json?
+  createdAt DateTime @default(now())
 }
 
-model Product {
-  id                String              @id @default(cuid())
-  shopProductId     String?
-  name              String
-  description       String
-  priceInCents      Int?
-  currency          String?
-  imageUrl          String?
-  productUrl        String?
-  attributeTags     String[]
-  materialTags      String[]
-  environmentalTags String[]
-  aiGeneratedTags   String[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  scrapeMethod      ProductScrapeMethod @default(MANUAL)
-  shopId            String?
-  tags              String[]
-  isPublic          Boolean             @default(false)
-  isFeatured        Boolean             @default(false)
-  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  categories        Category[]          @relation("CategoryToProduct")
+// These are for the v0.1.0 of UPCY. Currently not in use.
 
-  @@unique([shopId, shopProductId])
+model GeneratedImages {
+  id           String @id @default(cuid())
+  userId       String
+  projectTitle String
+  prompt       String
+  imageUrl     String
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
-model Category {
-  id       String       @id @default(cuid())
-  name     String       @unique
-  parentId String?
-  type     CategoryType @default(PRODUCT)
-  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
-  children Category[]   @relation("Subcategories")
-  products Product[]    @relation("CategoryToProduct")
-  services Service[]    @relation("CategoryToService")
+model GenerationSurvey {
+  id                       String @id @default(cuid())
+  userId                   String
+  projectTitle             String
+  levelOfStatisfaction     String
+  directDigitalFabrication String
+  user                     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
-enum CategoryType {
-  PRODUCT
-  SERVICE
+model Variation {
+  id             String @id @default(cuid())
+  userId         String
+  projectTitle   String
+  guidancePrompt String
+  imageUrl       String
+  exceutionTime  String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
-enum ProductScrapeMethod {
-  MANUAL
-  WORDPRESS
-  SHOPIFY
-  SQUARESPACE
+model Modification {
+  id             String @id @default(cuid())
+  userId         String
+  projectTitle   String
+  guidanceScale  String
+  prompt         String
+  negativePrompt String
+  exceutionTime  String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model UpcycleResult {
@@ -892,6 +789,187 @@ enum UpcycleThumb {
   NEUTRAL
 }
 
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
+
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
+
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+model GenerationJob {
+  id          String   @id
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model TrainingDataSet {
+  id              String          @id
+  trainingModelId String?
+  name            String?
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  tags            String[]
+  userId          String
+  setType         LoraType        @default(UNKNOWN)
+  triggerWord     String          @default("TOK")
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  trainingImage   TrainingImage[]
+}
+
+model TrainingImage {
+  id                   String           @id
+  trainingModelId      String?
+  imageUrl             String
+  userCaption          String?
+  autoCaption          String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime
+  referenceId          String?
+  imageType            LoraType         @default(UNKNOWN)
+  trainingDataSetId    String?
+  isRegularization     Boolean          @default(false)
+  autoCaptionUpdatedAt DateTime?
+  userCaptionUpdatedAt DateTime?
+  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
+  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
+}
+
+model TrainingJob {
+  id              String          @id
+  trainingModelId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  status          status          @default(QUEUED)
+  error           String?
+  referenceId     String?
+  type            TrainingJobType @default(GENERIC_JOB)
+  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
+}
+
+model TrainingModel {
+  id               String             @id
+  userId           String
+  triggerWord      String
+  status           status             @default(QUEUED)
+  weightsUrl       String
+  log              Json?
+  zipFileUrl       String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  trainingSettings Json?
+  trainingDetails  Json?
+  error            String?
+  referenceId      String?
+  versionId        String?
+  loraType         LoraType           @default(SUBJECT)
+  trainingSubject  String             @default("Unknown Object")
+  description      String?
+  tags             String[]
+  title            String?
+  visibility       TrainingVisibility @default(PRIVATE)
+  trainingDataSet  TrainingDataSet[]
+  trainingImage    TrainingImage[]
+  trainingJob      TrainingJob[]
+  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+}
+
+enum ProvisionStatus {
+  PENDING
+  PROVISIONING
+  BUILDING
+  DEPLOYING
+  ACTIVE
+  FAILED
+  SUSPENDED
+  DELETING
+  DELETED
+}
+
+enum SiteType {
+  ECOMMERCE
+  BLOG
+  PORTFOLIO
+  LANDING_PAGE
+  BUSINESS
+  CUSTOM
+}
+
+enum Framework {
+  WORDPRESS
+  NEXTJS
+  GHOST
+  STRAPI
+}
+
+model WebsiteProvision {
+  id                     String          @id @default(cuid())
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  userId                 String
+  framework              Framework
+  siteType               SiteType
+  status                 ProvisionStatus @default(PENDING)
+  hasCustomDomain        Boolean         @default(false)
+  customDomain           String?         @unique
+  subdomain              String?         @unique
+  businessName           String
+  businessTagline        String?
+  contactEmail           String
+  contactPhone           String?
+  businessAddress        Json?
+  socialLinks            Json?
+  coolifyProjectUuid     String?         @unique
+  coolifyServerUuid      String?
+  deploymentUrl          String?
+  lastDeploymentAt       DateTime?
+  lastHealthCheck        DateTime?
+  healthCheckStatus      String?
+  config                 Json
+  cpuLimit               String?
+  memoryLimit            String?
+  errorMessage           String?
+  deploymentLogs         String?
+  notes                  String?
+  isTest                 Boolean         @default(false)
+  deletedAt              DateTime?
+  shopId                 String          @unique
+  coolifyDatabaseUuid    String?
+  coolifyServiceUuid     String?         @unique
+  adminPasswordEncrypted String?
+  adminUser              String?
+  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([framework])
+  @@index([status])
+  @@index([subdomain])
+  @@index([userId])
+}
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -986,73 +1064,11 @@ model Verification {
   @@map("VerificationToken")
 }
 
-model Survey {
-  id              String   @id @default(cuid())
-  processes       String?
-  materials       String?
-  principles      String?
-  description     String?
-  unmoderatedForm Boolean  @default(false)
-  moderatedForm   Boolean  @default(false)
-  hiddenForm      Boolean  @default(false)
-  privateForm     Boolean  @default(false)
-  supplyChain     Boolean  @default(false)
-  messagingOptIn  Boolean  @default(false)
-  ownerId         String?
-  shopId          String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  businessType    String?
-  country         String?
-  email           String?
-  experience      String?
-  practice        String?
-  state           String?
-
-  @@index([ownerId])
-}
-
-model GuestSurvey {
-  id                String   @id @default(cuid())
-  name              String?
-  country           String?
-  state             String?
-  artisanalPractice String?
-  otherPractice     String?
-  email             String
-  createdAt         DateTime @default(now())
-  userId            String?
-  user              User?    @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-}
-
-model ArtisanSurvey {
-  id                String  @id @default(cuid())
-  userId            String
-  name              String
-  businessName      String
-  businessInterview String  @db.Text
-  businessLocation  String?
-  businessEmail     String?
-  businessPhone     String?
-  businessWebsite   String?
-
-  businessType      String
-  productCategories String[]
-  principles        String[]
-
-  processes String[]
-  materials String[]
-
-  socials   Json?
-  createdAt DateTime @default(now())
-}
-
 enum Role {
   USER
   ADMIN
   ARTISAN
   DRIVER
   GUEST
+  MANAGER
 }

@@ -65,7 +65,7 @@ export function TagProductsButton() {
   const [newTag, setNewTag] = useState("");
 
   const { data: productsData = [] } = api.product.getAll.useQuery();
-  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
+  const { data: storesData = [] } = api.shop.getAllPublic.useQuery();
 
   // Type guard functions
   const isValidProduct = (item: unknown): item is ProductData => {

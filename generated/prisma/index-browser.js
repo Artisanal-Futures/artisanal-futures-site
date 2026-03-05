@@ -121,39 +121,11 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.GeneratedImagesScalarFieldEnum = {
+exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  projectTitle: 'projectTitle',
-  prompt: 'prompt',
-  imageUrl: 'imageUrl'
-};
-
-exports.Prisma.GenerationSurveyScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  projectTitle: 'projectTitle',
-  levelOfStatisfaction: 'levelOfStatisfaction',
-  directDigitalFabrication: 'directDigitalFabrication'
-};
-
-exports.Prisma.VariationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  projectTitle: 'projectTitle',
-  guidancePrompt: 'guidancePrompt',
-  imageUrl: 'imageUrl',
-  exceutionTime: 'exceutionTime'
-};
-
-exports.Prisma.ModificationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  projectTitle: 'projectTitle',
-  guidanceScale: 'guidanceScale',
-  prompt: 'prompt',
-  negativePrompt: 'negativePrompt',
-  exceutionTime: 'exceutionTime'
+  name: 'name',
+  parentId: 'parentId',
+  type: 'type'
 };
 
 exports.Prisma.SubredditScalarFieldEnum = {
@@ -204,118 +176,76 @@ exports.Prisma.CommentVoteScalarFieldEnum = {
   type: 'type'
 };
 
-exports.Prisma.GenerationJobScalarFieldEnum = {
+exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  type: 'type',
-  status: 'status',
-  replicateId: 'replicateId',
-  input: 'input',
-  output: 'output',
-  error: 'error',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.TrainingDataSetScalarFieldEnum = {
-  id: 'id',
-  trainingModelId: 'trainingModelId',
   name: 'name',
   description: 'description',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  tags: 'tags',
-  userId: 'userId',
-  setType: 'setType',
-  triggerWord: 'triggerWord'
-};
-
-exports.Prisma.TrainingImageScalarFieldEnum = {
-  id: 'id',
-  trainingModelId: 'trainingModelId',
+  priceInCents: 'priceInCents',
+  currency: 'currency',
   imageUrl: 'imageUrl',
-  userCaption: 'userCaption',
-  autoCaption: 'autoCaption',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  referenceId: 'referenceId',
-  imageType: 'imageType',
-  trainingDataSetId: 'trainingDataSetId',
-  isRegularization: 'isRegularization',
-  autoCaptionUpdatedAt: 'autoCaptionUpdatedAt',
-  userCaptionUpdatedAt: 'userCaptionUpdatedAt'
-};
-
-exports.Prisma.TrainingJobScalarFieldEnum = {
-  id: 'id',
-  trainingModelId: 'trainingModelId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  status: 'status',
-  error: 'error',
-  referenceId: 'referenceId',
-  type: 'type'
-};
-
-exports.Prisma.TrainingModelScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  triggerWord: 'triggerWord',
-  status: 'status',
-  weightsUrl: 'weightsUrl',
-  log: 'log',
-  zipFileUrl: 'zipFileUrl',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  trainingSettings: 'trainingSettings',
-  trainingDetails: 'trainingDetails',
-  error: 'error',
-  referenceId: 'referenceId',
-  versionId: 'versionId',
-  loraType: 'loraType',
-  trainingSubject: 'trainingSubject',
-  description: 'description',
+  durationInMinutes: 'durationInMinutes',
+  locationType: 'locationType',
   tags: 'tags',
-  title: 'title',
-  visibility: 'visibility'
-};
-
-exports.Prisma.WebsiteProvisionScalarFieldEnum = {
-  id: 'id',
+  attributeTags: 'attributeTags',
+  aiGeneratedTags: 'aiGeneratedTags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId',
-  framework: 'framework',
-  siteType: 'siteType',
-  status: 'status',
-  hasCustomDomain: 'hasCustomDomain',
-  customDomain: 'customDomain',
-  subdomain: 'subdomain',
-  businessName: 'businessName',
-  businessTagline: 'businessTagline',
-  contactEmail: 'contactEmail',
-  contactPhone: 'contactPhone',
-  businessAddress: 'businessAddress',
-  socialLinks: 'socialLinks',
-  coolifyProjectUuid: 'coolifyProjectUuid',
-  coolifyServerUuid: 'coolifyServerUuid',
-  deploymentUrl: 'deploymentUrl',
-  lastDeploymentAt: 'lastDeploymentAt',
-  lastHealthCheck: 'lastHealthCheck',
-  healthCheckStatus: 'healthCheckStatus',
-  config: 'config',
-  cpuLimit: 'cpuLimit',
-  memoryLimit: 'memoryLimit',
-  errorMessage: 'errorMessage',
-  deploymentLogs: 'deploymentLogs',
-  notes: 'notes',
-  isTest: 'isTest',
-  deletedAt: 'deletedAt',
+  isPublic: 'isPublic',
   shopId: 'shopId',
-  coolifyDatabaseUuid: 'coolifyDatabaseUuid',
-  coolifyServiceUuid: 'coolifyServiceUuid',
-  adminPasswordEncrypted: 'adminPasswordEncrypted',
-  adminUser: 'adminUser'
+  isFeatured: 'isFeatured',
+  serviceUrl: 'serviceUrl'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  shopProductId: 'shopProductId',
+  name: 'name',
+  description: 'description',
+  priceInCents: 'priceInCents',
+  currency: 'currency',
+  imageUrl: 'imageUrl',
+  productUrl: 'productUrl',
+  attributeTags: 'attributeTags',
+  materialTags: 'materialTags',
+  environmentalTags: 'environmentalTags',
+  aiGeneratedTags: 'aiGeneratedTags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  scrapeMethod: 'scrapeMethod',
+  shopId: 'shopId',
+  tags: 'tags',
+  isPublic: 'isPublic',
+  isFeatured: 'isFeatured'
+};
+
+exports.Prisma.ShopScalarFieldEnum = {
+  id: 'id',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  ownerName: 'ownerName',
+  ownerPhoto: 'ownerPhoto',
+  bio: 'bio',
+  description: 'description',
+  logoPhoto: 'logoPhoto',
+  phone: 'phone',
+  email: 'email',
+  website: 'website',
+  attributeTags: 'attributeTags',
+  coverPhoto: 'coverPhoto'
+};
+
+exports.Prisma.ShopAddressScalarFieldEnum = {
+  id: 'id',
+  address: 'address',
+  additional: 'additional',
+  city: 'city',
+  state: 'state',
+  zip: 'zip',
+  country: 'country',
+  shopId: 'shopId',
+  street: 'street'
 };
 
 exports.Prisma.MemberScalarFieldEnum = {
@@ -532,83 +462,94 @@ exports.Prisma.OptimizedStopScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ShopScalarFieldEnum = {
+exports.Prisma.SurveyScalarFieldEnum = {
   id: 'id',
-  ownerName: 'ownerName',
-  bio: 'bio',
-  description: 'description',
-  ownerPhoto: 'ownerPhoto',
-  logoPhoto: 'logoPhoto',
-  coverPhoto: 'coverPhoto',
-  phone: 'phone',
-  email: 'email',
-  website: 'website',
   ownerId: 'ownerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  attributeTags: 'attributeTags',
-  name: 'name'
-};
-
-exports.Prisma.ShopAddressScalarFieldEnum = {
-  id: 'id',
-  address: 'address',
-  additional: 'additional',
-  city: 'city',
-  state: 'state',
-  zip: 'zip',
+  shopId: 'shopId',
+  processes: 'processes',
+  materials: 'materials',
+  principles: 'principles',
+  description: 'description',
+  unmoderatedForm: 'unmoderatedForm',
+  moderatedForm: 'moderatedForm',
+  hiddenForm: 'hiddenForm',
+  privateForm: 'privateForm',
+  supplyChain: 'supplyChain',
+  messagingOptIn: 'messagingOptIn',
+  businessType: 'businessType',
   country: 'country',
-  shopId: 'shopId',
-  street: 'street'
-};
-
-exports.Prisma.ServiceScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  priceInCents: 'priceInCents',
-  currency: 'currency',
-  imageUrl: 'imageUrl',
-  durationInMinutes: 'durationInMinutes',
-  locationType: 'locationType',
-  tags: 'tags',
-  attributeTags: 'attributeTags',
-  aiGeneratedTags: 'aiGeneratedTags',
+  email: 'email',
+  experience: 'experience',
+  practice: 'practice',
+  state: 'state',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  isPublic: 'isPublic',
-  shopId: 'shopId',
-  isFeatured: 'isFeatured',
-  serviceUrl: 'serviceUrl'
+  updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ProductScalarFieldEnum = {
+exports.Prisma.GuestSurveyScalarFieldEnum = {
   id: 'id',
-  shopProductId: 'shopProductId',
   name: 'name',
-  description: 'description',
-  priceInCents: 'priceInCents',
-  currency: 'currency',
+  email: 'email',
+  country: 'country',
+  state: 'state',
+  artisanalPractice: 'artisanalPractice',
+  otherPractice: 'otherPractice',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ArtisanSurveyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  businessName: 'businessName',
+  businessInterview: 'businessInterview',
+  businessLocation: 'businessLocation',
+  businessEmail: 'businessEmail',
+  businessPhone: 'businessPhone',
+  businessWebsite: 'businessWebsite',
+  businessType: 'businessType',
+  productCategories: 'productCategories',
+  principles: 'principles',
+  processes: 'processes',
+  materials: 'materials',
+  socials: 'socials',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GeneratedImagesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectTitle: 'projectTitle',
+  prompt: 'prompt',
+  imageUrl: 'imageUrl'
+};
+
+exports.Prisma.GenerationSurveyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectTitle: 'projectTitle',
+  levelOfStatisfaction: 'levelOfStatisfaction',
+  directDigitalFabrication: 'directDigitalFabrication'
+};
+
+exports.Prisma.VariationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectTitle: 'projectTitle',
+  guidancePrompt: 'guidancePrompt',
   imageUrl: 'imageUrl',
-  productUrl: 'productUrl',
-  attributeTags: 'attributeTags',
-  materialTags: 'materialTags',
-  environmentalTags: 'environmentalTags',
-  aiGeneratedTags: 'aiGeneratedTags',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  scrapeMethod: 'scrapeMethod',
-  shopId: 'shopId',
-  tags: 'tags',
-  isPublic: 'isPublic',
-  isFeatured: 'isFeatured'
+  exceutionTime: 'exceutionTime'
 };
 
-exports.Prisma.CategoryScalarFieldEnum = {
+exports.Prisma.ModificationScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  parentId: 'parentId',
-  type: 'type'
+  userId: 'userId',
+  projectTitle: 'projectTitle',
+  guidanceScale: 'guidanceScale',
+  prompt: 'prompt',
+  negativePrompt: 'negativePrompt',
+  exceutionTime: 'exceutionTime'
 };
 
 exports.Prisma.UpcycleResultScalarFieldEnum = {
@@ -677,6 +618,120 @@ exports.Prisma.UpcycleRatingScalarFieldEnum = {
   reasoning: 'reasoning'
 };
 
+exports.Prisma.GenerationJobScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  replicateId: 'replicateId',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrainingDataSetScalarFieldEnum = {
+  id: 'id',
+  trainingModelId: 'trainingModelId',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tags: 'tags',
+  userId: 'userId',
+  setType: 'setType',
+  triggerWord: 'triggerWord'
+};
+
+exports.Prisma.TrainingImageScalarFieldEnum = {
+  id: 'id',
+  trainingModelId: 'trainingModelId',
+  imageUrl: 'imageUrl',
+  userCaption: 'userCaption',
+  autoCaption: 'autoCaption',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  referenceId: 'referenceId',
+  imageType: 'imageType',
+  trainingDataSetId: 'trainingDataSetId',
+  isRegularization: 'isRegularization',
+  autoCaptionUpdatedAt: 'autoCaptionUpdatedAt',
+  userCaptionUpdatedAt: 'userCaptionUpdatedAt'
+};
+
+exports.Prisma.TrainingJobScalarFieldEnum = {
+  id: 'id',
+  trainingModelId: 'trainingModelId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status',
+  error: 'error',
+  referenceId: 'referenceId',
+  type: 'type'
+};
+
+exports.Prisma.TrainingModelScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  triggerWord: 'triggerWord',
+  status: 'status',
+  weightsUrl: 'weightsUrl',
+  log: 'log',
+  zipFileUrl: 'zipFileUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  trainingSettings: 'trainingSettings',
+  trainingDetails: 'trainingDetails',
+  error: 'error',
+  referenceId: 'referenceId',
+  versionId: 'versionId',
+  loraType: 'loraType',
+  trainingSubject: 'trainingSubject',
+  description: 'description',
+  tags: 'tags',
+  title: 'title',
+  visibility: 'visibility'
+};
+
+exports.Prisma.WebsiteProvisionScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  framework: 'framework',
+  siteType: 'siteType',
+  status: 'status',
+  hasCustomDomain: 'hasCustomDomain',
+  customDomain: 'customDomain',
+  subdomain: 'subdomain',
+  businessName: 'businessName',
+  businessTagline: 'businessTagline',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  businessAddress: 'businessAddress',
+  socialLinks: 'socialLinks',
+  coolifyProjectUuid: 'coolifyProjectUuid',
+  coolifyServerUuid: 'coolifyServerUuid',
+  deploymentUrl: 'deploymentUrl',
+  lastDeploymentAt: 'lastDeploymentAt',
+  lastHealthCheck: 'lastHealthCheck',
+  healthCheckStatus: 'healthCheckStatus',
+  config: 'config',
+  cpuLimit: 'cpuLimit',
+  memoryLimit: 'memoryLimit',
+  errorMessage: 'errorMessage',
+  deploymentLogs: 'deploymentLogs',
+  notes: 'notes',
+  isTest: 'isTest',
+  deletedAt: 'deletedAt',
+  shopId: 'shopId',
+  coolifyDatabaseUuid: 'coolifyDatabaseUuid',
+  coolifyServiceUuid: 'coolifyServiceUuid',
+  adminPasswordEncrypted: 'adminPasswordEncrypted',
+  adminUser: 'adminUser'
+};
+
 exports.Prisma.ExampleScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -732,61 +787,6 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.SurveyScalarFieldEnum = {
-  id: 'id',
-  processes: 'processes',
-  materials: 'materials',
-  principles: 'principles',
-  description: 'description',
-  unmoderatedForm: 'unmoderatedForm',
-  moderatedForm: 'moderatedForm',
-  hiddenForm: 'hiddenForm',
-  privateForm: 'privateForm',
-  supplyChain: 'supplyChain',
-  messagingOptIn: 'messagingOptIn',
-  ownerId: 'ownerId',
-  shopId: 'shopId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  businessType: 'businessType',
-  country: 'country',
-  email: 'email',
-  experience: 'experience',
-  practice: 'practice',
-  state: 'state'
-};
-
-exports.Prisma.GuestSurveyScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  country: 'country',
-  state: 'state',
-  artisanalPractice: 'artisanalPractice',
-  otherPractice: 'otherPractice',
-  email: 'email',
-  createdAt: 'createdAt',
-  userId: 'userId'
-};
-
-exports.Prisma.ArtisanSurveyScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  name: 'name',
-  businessName: 'businessName',
-  businessInterview: 'businessInterview',
-  businessLocation: 'businessLocation',
-  businessEmail: 'businessEmail',
-  businessPhone: 'businessPhone',
-  businessWebsite: 'businessWebsite',
-  businessType: 'businessType',
-  productCategories: 'productCategories',
-  principles: 'principles',
-  processes: 'processes',
-  materials: 'materials',
-  socials: 'socials',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -816,66 +816,21 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.CategoryType = exports.$Enums.CategoryType = {
+  PRODUCT: 'PRODUCT',
+  SERVICE: 'SERVICE'
+};
+
 exports.VoteType = exports.$Enums.VoteType = {
   UP: 'UP',
   DOWN: 'DOWN'
 };
 
-exports.LoraType = exports.$Enums.LoraType = {
-  SUBJECT: 'SUBJECT',
-  STYLE: 'STYLE',
-  MULTI_CONCEPT: 'MULTI_CONCEPT',
-  REGULARIZATION: 'REGULARIZATION',
-  UNKNOWN: 'UNKNOWN',
-  SINGLE_CONCEPT: 'SINGLE_CONCEPT'
-};
-
-exports.status = exports.$Enums.status = {
-  QUEUED: 'QUEUED',
-  PROCESSING: 'PROCESSING',
-  SUCCEEDED: 'SUCCEEDED',
-  FAILED: 'FAILED',
-  CANCELED: 'CANCELED',
-  TIMEOUT: 'TIMEOUT'
-};
-
-exports.TrainingJobType = exports.$Enums.TrainingJobType = {
-  CAPTION_IMAGE: 'CAPTION_IMAGE',
-  TRAIN_MODEL: 'TRAIN_MODEL',
-  GENERIC_JOB: 'GENERIC_JOB'
-};
-
-exports.TrainingVisibility = exports.$Enums.TrainingVisibility = {
-  PUBLIC: 'PUBLIC',
-  PRIVATE: 'PRIVATE'
-};
-
-exports.Framework = exports.$Enums.Framework = {
+exports.ProductScrapeMethod = exports.$Enums.ProductScrapeMethod = {
+  MANUAL: 'MANUAL',
   WORDPRESS: 'WORDPRESS',
-  NEXTJS: 'NEXTJS',
-  GHOST: 'GHOST',
-  STRAPI: 'STRAPI'
-};
-
-exports.SiteType = exports.$Enums.SiteType = {
-  ECOMMERCE: 'ECOMMERCE',
-  BLOG: 'BLOG',
-  PORTFOLIO: 'PORTFOLIO',
-  LANDING_PAGE: 'LANDING_PAGE',
-  BUSINESS: 'BUSINESS',
-  CUSTOM: 'CUSTOM'
-};
-
-exports.ProvisionStatus = exports.$Enums.ProvisionStatus = {
-  PENDING: 'PENDING',
-  PROVISIONING: 'PROVISIONING',
-  BUILDING: 'BUILDING',
-  DEPLOYING: 'DEPLOYING',
-  ACTIVE: 'ACTIVE',
-  FAILED: 'FAILED',
-  SUSPENDED: 'SUSPENDED',
-  DELETING: 'DELETING',
-  DELETED: 'DELETED'
+  SHOPIFY: 'SHOPIFY',
+  SQUARESPACE: 'SQUARESPACE'
 };
 
 exports.MemberRole = exports.$Enums.MemberRole = {
@@ -927,18 +882,6 @@ exports.RouteStatus = exports.$Enums.RouteStatus = {
   CREATE: 'CREATE'
 };
 
-exports.ProductScrapeMethod = exports.$Enums.ProductScrapeMethod = {
-  MANUAL: 'MANUAL',
-  WORDPRESS: 'WORDPRESS',
-  SHOPIFY: 'SHOPIFY',
-  SQUARESPACE: 'SQUARESPACE'
-};
-
-exports.CategoryType = exports.$Enums.CategoryType = {
-  PRODUCT: 'PRODUCT',
-  SERVICE: 'SERVICE'
-};
-
 exports.RefinementType = exports.$Enums.RefinementType = {
   ITEM: 'ITEM',
   STYLE: 'STYLE'
@@ -950,6 +893,15 @@ exports.UpcycleType = exports.$Enums.UpcycleType = {
   TRAIN_AND_GENERATE: 'TRAIN_AND_GENERATE',
   GENERATE_ON_PRE_TRAINED: 'GENERATE_ON_PRE_TRAINED',
   TRAIN_ONLY: 'TRAIN_ONLY'
+};
+
+exports.status = exports.$Enums.status = {
+  QUEUED: 'QUEUED',
+  PROCESSING: 'PROCESSING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELED: 'CANCELED',
+  TIMEOUT: 'TIMEOUT'
 };
 
 exports.ResourceType = exports.$Enums.ResourceType = {
@@ -966,31 +918,75 @@ exports.UpcycleThumb = exports.$Enums.UpcycleThumb = {
   NEUTRAL: 'NEUTRAL'
 };
 
+exports.LoraType = exports.$Enums.LoraType = {
+  SUBJECT: 'SUBJECT',
+  STYLE: 'STYLE',
+  MULTI_CONCEPT: 'MULTI_CONCEPT',
+  REGULARIZATION: 'REGULARIZATION',
+  UNKNOWN: 'UNKNOWN',
+  SINGLE_CONCEPT: 'SINGLE_CONCEPT'
+};
+
+exports.TrainingJobType = exports.$Enums.TrainingJobType = {
+  CAPTION_IMAGE: 'CAPTION_IMAGE',
+  TRAIN_MODEL: 'TRAIN_MODEL',
+  GENERIC_JOB: 'GENERIC_JOB'
+};
+
+exports.TrainingVisibility = exports.$Enums.TrainingVisibility = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE'
+};
+
+exports.Framework = exports.$Enums.Framework = {
+  WORDPRESS: 'WORDPRESS',
+  NEXTJS: 'NEXTJS',
+  GHOST: 'GHOST',
+  STRAPI: 'STRAPI'
+};
+
+exports.SiteType = exports.$Enums.SiteType = {
+  ECOMMERCE: 'ECOMMERCE',
+  BLOG: 'BLOG',
+  PORTFOLIO: 'PORTFOLIO',
+  LANDING_PAGE: 'LANDING_PAGE',
+  BUSINESS: 'BUSINESS',
+  CUSTOM: 'CUSTOM'
+};
+
+exports.ProvisionStatus = exports.$Enums.ProvisionStatus = {
+  PENDING: 'PENDING',
+  PROVISIONING: 'PROVISIONING',
+  BUILDING: 'BUILDING',
+  DEPLOYING: 'DEPLOYING',
+  ACTIVE: 'ACTIVE',
+  FAILED: 'FAILED',
+  SUSPENDED: 'SUSPENDED',
+  DELETING: 'DELETING',
+  DELETED: 'DELETED'
+};
+
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
   ARTISAN: 'ARTISAN',
   DRIVER: 'DRIVER',
-  GUEST: 'GUEST'
+  GUEST: 'GUEST',
+  MANAGER: 'MANAGER'
 };
 
 exports.Prisma.ModelName = {
-  GeneratedImages: 'GeneratedImages',
-  GenerationSurvey: 'GenerationSurvey',
-  Variation: 'Variation',
-  Modification: 'Modification',
+  Category: 'Category',
   Subreddit: 'Subreddit',
   Subscription: 'Subscription',
   Post: 'Post',
   ForumComment: 'ForumComment',
   Vote: 'Vote',
   CommentVote: 'CommentVote',
-  GenerationJob: 'GenerationJob',
-  TrainingDataSet: 'TrainingDataSet',
-  TrainingImage: 'TrainingImage',
-  TrainingJob: 'TrainingJob',
-  TrainingModel: 'TrainingModel',
-  WebsiteProvision: 'WebsiteProvision',
+  Service: 'Service',
+  Product: 'Product',
+  Shop: 'Shop',
+  ShopAddress: 'ShopAddress',
   Member: 'Member',
   Message: 'Message',
   Conversation: 'Conversation',
@@ -1009,23 +1005,28 @@ exports.Prisma.ModelName = {
   Route: 'Route',
   OptimizedRoutePath: 'OptimizedRoutePath',
   OptimizedStop: 'OptimizedStop',
-  Shop: 'Shop',
-  ShopAddress: 'ShopAddress',
-  Service: 'Service',
-  Product: 'Product',
-  Category: 'Category',
+  Survey: 'Survey',
+  GuestSurvey: 'GuestSurvey',
+  ArtisanSurvey: 'ArtisanSurvey',
+  GeneratedImages: 'GeneratedImages',
+  GenerationSurvey: 'GenerationSurvey',
+  Variation: 'Variation',
+  Modification: 'Modification',
   UpcycleResult: 'UpcycleResult',
   UpcycleQuestion: 'UpcycleQuestion',
   Notification: 'Notification',
   UpcycleRating: 'UpcycleRating',
+  GenerationJob: 'GenerationJob',
+  TrainingDataSet: 'TrainingDataSet',
+  TrainingImage: 'TrainingImage',
+  TrainingJob: 'TrainingJob',
+  TrainingModel: 'TrainingModel',
+  WebsiteProvision: 'WebsiteProvision',
   Example: 'Example',
   Account: 'Account',
   Session: 'Session',
   User: 'User',
-  Verification: 'Verification',
-  Survey: 'Survey',
-  GuestSurvey: 'GuestSurvey',
-  ArtisanSurvey: 'ArtisanSurvey'
+  Verification: 'Verification'
 };
 
 /**

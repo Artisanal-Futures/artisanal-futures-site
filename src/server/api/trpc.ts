@@ -81,7 +81,7 @@ export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 
 /**
- * Middleware for timing procedure execution and adding an articifial delay in development.
+ * Middleware for timing procedure execution and adding an artificial delay in development.
  *
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
@@ -134,7 +134,7 @@ export const protectedProcedure = t.procedure
     });
   });
 
-export const elevatedProcedure = t.procedure
+export const adminArtisanProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session?.user) {
@@ -157,7 +157,7 @@ export const elevatedProcedure = t.procedure
     });
   });
 
-export const adminProcedure = t.procedure
+export const adminOnlyProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session?.user) {

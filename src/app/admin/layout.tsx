@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { env } from "~/env";
 import { getSession } from "~/server/better-auth/server";
 import { HydrateClient } from "~/trpc/server";
+import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
-import SidebarWrapper from "./_components/sidebar-wrapper";
+import { AppSidebar } from "./_components/app-sidebar";
 
 type Props = {
   children: React.ReactNode;
@@ -27,7 +28,19 @@ export default async function AdminPanelLayout(props: Props) {
 
   return (
     <HydrateClient>
-      <SidebarWrapper>{props.children}</SidebarWrapper>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" session={session} />
+        <SidebarInset>
+          <div className="min-h-screen bg-gray-50">{props.children}</div>
+        </SidebarInset>
+      </SidebarProvider>
     </HydrateClient>
   );
 }

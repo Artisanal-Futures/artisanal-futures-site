@@ -4,14 +4,14 @@ import { z } from "zod";
 import { addFullServiceImageUrl } from "~/lib/add-full-image-url";
 import { serviceSchema } from "~/lib/validators/services";
 import {
-  adminProcedure,
+  adminArtisanProcedure,
+  adminOnlyProcedure,
   createTRPCRouter,
-  elevatedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const serviceRouter = createTRPCRouter({
-  updateTags: elevatedProcedure
+  updateTags: adminArtisanProcedure
     .input(
       z.object({
         serviceIds: z.array(z.string()),
@@ -35,7 +35,7 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  getAll: adminProcedure.query(async ({ ctx }) => {
+  getAll: adminOnlyProcedure.query(async ({ ctx }) => {
     const services = await ctx.db.service.findMany({
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
@@ -43,7 +43,7 @@ export const serviceRouter = createTRPCRouter({
     return services.map(addFullServiceImageUrl);
   }),
 
-  update: adminProcedure
+  update: adminOnlyProcedure
     .input(serviceSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id, categoryIds, ...serviceData } = input;
@@ -68,7 +68,7 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  create: adminProcedure
+  create: adminOnlyProcedure
     .input(serviceSchema)
     .mutation(async ({ ctx, input }) => {
       const { categoryIds, ...serviceData } = input;
@@ -92,17 +92,19 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  delete: adminProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-    const service = await ctx.db.service.delete({
-      where: { id: input },
-    });
-    return {
-      data: addFullServiceImageUrl(service),
-      message: "Service deleted successfully",
-    };
-  }),
+  delete: adminOnlyProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const service = await ctx.db.service.delete({
+        where: { id: input },
+      });
+      return {
+        data: addFullServiceImageUrl(service),
+        message: "Service deleted successfully",
+      };
+    }),
 
-  bulkUpdate: adminProcedure
+  bulkUpdate: adminOnlyProcedure
     .input(
       z.object({
         serviceIds: z

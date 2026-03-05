@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  adminProcedure,
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
 import { type UpcyclingItem } from "~/types";
 import axios from "axios";
 import { z } from "zod";
 
 import { env } from "~/env";
+import {
+  adminOnlyProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
 
 const AI_AGENT_BACKEND_URL = `${env.AI_AGENT_BACKEND_URL}/sdm/api/v2`;
 
@@ -30,7 +30,7 @@ export const upcyclingRouter = createTRPCRouter({
     return generationsWithUser as UpcyclingItem[];
   }),
 
-  delete: adminProcedure
+  delete: adminOnlyProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const response = await axios.delete(

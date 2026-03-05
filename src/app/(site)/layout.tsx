@@ -9,11 +9,11 @@ type Props = { children: React.ReactNode };
 export default async function SiteLayout({ children }: Props) {
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col">
+      <main className="bg-background min-h-screen">
         <Navbar />
-        <Container className="flex h-full grow flex-col items-stretch p-8">
-          {children}
-        </Container>
+        {/* <Container className="flex h-full grow flex-col items-stretch p-8"> */}
+        {children}
+        {/* </Container> */}
         <Footer />
       </main>
       <CookieConsent />

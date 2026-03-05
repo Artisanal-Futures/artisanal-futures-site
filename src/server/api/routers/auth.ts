@@ -1,10 +1,10 @@
 import type { Role } from "generated/prisma";
 import { z } from "zod";
 
-import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
+import { adminOnlyProcedure, createTRPCRouter } from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
-  changeRole: adminProcedure
+  changeRole: adminOnlyProcedure
     .input(z.object({ role: z.string() }))
     .mutation(async ({ input, ctx }) => {
       await ctx.db.user.update({

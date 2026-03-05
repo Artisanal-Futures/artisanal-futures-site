@@ -1,6 +1,4 @@
 import { Fragment } from "react";
-import { UserButton } from "@daveyplate/better-auth-ui";
-import { LayoutDashboardIcon } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -10,8 +8,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { SheetMenu } from "~/components/admin/sheet-menu";
-import { ModeToggle } from "~/components/common/mode-toggle";
+import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
+import { SidebarTrigger } from "~/components/ui/sidebar";
 
 type Props = {
   breadcrumbs: {
@@ -20,62 +19,53 @@ type Props = {
   }[];
 };
 
-export const TrailHeader = ({ breadcrumbs }: Props) => {
+export function TrailHeader({ breadcrumbs }: Props) {
   return (
-    <header className="bg-background/95 supports-backdrop-filter:bg-background/60 dark:shadow-secondary sticky top-0 z-10 w-full shadow backdrop-blur">
-      <div className="mx-4 flex h-14 items-center sm:mx-8">
-        <div className="flex items-center space-x-4 lg:space-x-0">
-          <SheetMenu />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/admin/dashboard">
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              {breadcrumbs.map((breadcrumb) =>
-                breadcrumb.href ? (
-                  <Fragment key={breadcrumb.label}>
-                    <BreadcrumbItem key={breadcrumb.label}>
-                      <BreadcrumbLink href={breadcrumb.href}>
-                        {breadcrumb.label}
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                  </Fragment>
-                ) : (
-                  <BreadcrumbItem key={breadcrumb.label}>
-                    <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
-                  </BreadcrumbItem>
-                ),
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <ModeToggle />
+    <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+        <SidebarTrigger className="-ml-1" />
+        <Separator
+          orientation="vertical"
+          className="mx-2 data-[orientation=vertical]:h-4"
+        />
 
-          <UserButton
-            size="icon"
-            classNames={{
-              trigger: {
-                base: "border-primary border",
-                avatar: {
-                  base: "size-10",
-                },
-              },
-            }}
-            additionalLinks={[
-              {
-                icon: <LayoutDashboardIcon className="h-4 w-4" />,
-                label: "Admin",
-                href: "/admin/dashboard",
-              },
-            ]}
-          />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            {breadcrumbs.map((breadcrumb) =>
+              breadcrumb.href ? (
+                <Fragment key={breadcrumb.label}>
+                  <BreadcrumbItem key={breadcrumb.label}>
+                    <BreadcrumbLink href={breadcrumb.href}>
+                      {breadcrumb.label}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                </Fragment>
+              ) : (
+                <BreadcrumbItem key={breadcrumb.label}>
+                  <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                </BreadcrumbItem>
+              ),
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="ml-auto flex items-center gap-2">
+          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
+            <a
+              href="#!"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="dark:text-foreground"
+            >
+              GitHub
+            </a>
+          </Button>
         </div>
       </div>
     </header>
   );
-};
+}

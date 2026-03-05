@@ -23,20 +23,17 @@ export const shopSchema = z.object({
 
   ownerPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
-  coverPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
 });
 
 export const shopFormSchema = shopSchema.extend({
   ownerPhotoFile: z.instanceof(File).optional().nullable(),
   logoPhotoFile: z.instanceof(File).optional().nullable(),
-  coverPhotoFile: z.instanceof(File).optional().nullable(),
 });
 
 export const shopUpdateSchema = shopSchema.extend({
   id: z.string(),
   ownerPhotoUrl: z.string().url().optional().or(z.literal("")),
   logoPhotoUrl: z.string().url().optional().or(z.literal("")),
-  coverPhotoUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export type ShopFormData = z.infer<typeof shopFormSchema>;

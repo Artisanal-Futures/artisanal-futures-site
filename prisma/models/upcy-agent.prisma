@@ -1,3 +1,7 @@
+// These are for the v0.1.0 of UPCY. Currently not in use.
+
+
+
 model GeneratedImages {
   id           String @id @default(cuid())
   userId       String

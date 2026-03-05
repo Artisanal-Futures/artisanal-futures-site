@@ -41,7 +41,7 @@ import {
 } from "~/components/ui/select";
 
 type Service = RouterOutputs["service"]["getAll"][number];
-type Store = RouterOutputs["shop"]["getAllValid"][number];
+type Store = RouterOutputs["shop"]["getAllPublic"][number];
 
 // Define explicit interfaces to ensure type safety
 interface ServiceData {
@@ -66,7 +66,7 @@ export function TagServicesButton() {
   const [newTag, setNewTag] = useState("");
 
   const { data: servicesData = [] } = api.service.getAll.useQuery();
-  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
+  const { data: storesData = [] } = api.shop.getAllPublic.useQuery();
 
   // Type guard functions - fix the type predicate issue
   const isValidService = (item: Service): item is Service & ServiceData => {

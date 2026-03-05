@@ -1,7 +1,15 @@
+import { getSession } from "~/server/better-auth/server";
+import { api } from "~/trpc/server";
+
 import { ShopForm } from "../_components/shop-form";
 import { TrailHeader } from "../../_components/trail-header";
 
-export default async function NewProductPage() {
+export default async function NewShopPage() {
+  const potentialShopOwners = await api.shop.getShopOwners();
+  const session = await getSession();
+
+  const userRole = session?.user.role ?? "ARTISAN";
+
   return (
     <>
       <TrailHeader
@@ -11,7 +19,11 @@ export default async function NewProductPage() {
         ]}
       />
 
-      <ShopForm initialData={null} />
+      <ShopForm
+        initialData={null}
+        userRole={userRole}
+        potentialShopOwners={potentialShopOwners}
+      />
     </>
   );
 }

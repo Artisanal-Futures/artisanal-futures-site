@@ -1,3 +1,4 @@
+import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
 import { ShopForm } from "../_components/shop-form";
@@ -9,6 +10,10 @@ type Props = {
 export default async function EditShopPage({ params }: Props) {
   const { id } = await params;
   const shop = await api.shop.get(id);
+  const potentialShopOwners = await api.shop.getShopOwners();
+  const session = await getSession();
+
+  const userRole = session?.user.role ?? "ARTISAN";
 
   return (
     <>
@@ -19,7 +24,11 @@ export default async function EditShopPage({ params }: Props) {
         ]}
       />
 
-      <ShopForm initialData={shop} />
+      <ShopForm
+        initialData={shop}
+        userRole={userRole}
+        potentialShopOwners={potentialShopOwners}
+      />
     </>
   );
 }
@@ -27,6 +36,6 @@ export const generateMetadata = async ({ params }: Props) => {
   const { id } = await params;
   const shop = await api.shop.get(id);
   return {
-    title: shop?.name ?? "Shop",
+    title: `Edit ${shop?.name ?? "Shop"}`,
   };
 };

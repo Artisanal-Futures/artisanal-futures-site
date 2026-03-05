@@ -1,10 +1,20 @@
 import { z } from "zod";
 
-import { createTRPCRouter, adminProcedure, publicProcedure } from "~/server/api/trpc";
+import {
+  adminOnlyProcedure,
+  createTRPCRouter,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { compareTable as runCompareTable, getExistingRows } from "~/server/fork-import/compare";
 import { applyTable } from "~/server/fork-import/apply";
-import { getDelegateName, IMPORTABLE_TABLE_KEYS } from "~/server/fork-import/config";
+import {
+  getExistingRows,
+  compareTable as runCompareTable,
+} from "~/server/fork-import/compare";
+import {
+  getDelegateName,
+  IMPORTABLE_TABLE_KEYS,
+} from "~/server/fork-import/config";
 
 const forkImportTableSchema = z.object({
   tableKey: z.string(),
@@ -81,7 +91,7 @@ export const migrationRouter = createTRPCRouter({
   }),
 
   /** Parse fork JSON and return list of tables with counts (only importable keys). Uses mutation so large JSON is sent in body (avoids 431). */
-  getForkImportTables: adminProcedure
+  getForkImportTables: adminOnlyProcedure
     .input(z.object({ json: z.string() }))
     .mutation(({ input }) => {
       const allowlist = new Set(IMPORTABLE_TABLE_KEYS);
@@ -102,7 +112,7 @@ export const migrationRouter = createTRPCRouter({
     }),
 
   /** Compare JSON rows for one table to current DB; returns new/updated (or for auth, new + existingIds). Uses mutation so large payloads go in request body (avoids 431). */
-  compareForkTable: adminProcedure
+  compareForkTable: adminOnlyProcedure
     .input(forkImportTableSchema)
     .mutation(async ({ ctx, input }) => {
       if (!getDelegateName(input.tableKey)) {
@@ -116,7 +126,7 @@ export const migrationRouter = createTRPCRouter({
     }),
 
   /** Apply new/updated rows for one table. Auth tables: new only, with mapping. */
-  applyForkTable: adminProcedure
+  applyForkTable: adminOnlyProcedure
     .input(forkApplySchema)
     .mutation(async ({ ctx, input }) => {
       return applyTable(ctx.db, input.tableKey, input.new, input.updated);

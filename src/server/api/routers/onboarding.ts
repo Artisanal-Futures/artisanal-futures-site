@@ -5,7 +5,7 @@ import {
   guestOnboardingSchema,
 } from "~/lib/validators/onboarding";
 import {
-  adminProcedure,
+  adminOnlyProcedure,
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
@@ -124,11 +124,11 @@ export const onboardingRouter = createTRPCRouter({
       };
     }),
 
-  getGuestSurveys: adminProcedure.query(async ({ ctx }) => {
+  getGuestSurveys: adminOnlyProcedure.query(async ({ ctx }) => {
     const guests = await ctx.db.guestSurvey.findMany();
     return guests;
   }),
-  getArtisanSurveys: adminProcedure.query(async ({ ctx }) => {
+  getArtisanSurveys: adminOnlyProcedure.query(async ({ ctx }) => {
     const artisans = await ctx.db.artisanSurvey.findMany();
     return artisans;
   }),

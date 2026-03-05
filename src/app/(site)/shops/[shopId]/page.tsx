@@ -1,7 +1,9 @@
-import { api } from "~/trpc/server";
-import ProfileCard from "~/app/(site)/shops/[shopId]/_components/profile-card";
+import { notFound } from "next/navigation";
 
-import { ProductGrid } from "./_components/product-grid";
+import { api } from "~/trpc/server";
+
+import { ArtisanHero } from "./_components/artisan-hero";
+import { ProductServiceGrid } from "./_components/product-service-grid";
 
 type Props = {
   params: Promise<{ shopId: string }>;
@@ -16,67 +18,27 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function ProfilePage({ params }: Props) {
+export default async function ShopProfilePage({ params }: Props) {
   const { shopId } = await params;
   const shop = await api.shop.get(shopId);
 
+  if (!shop) {
+    return notFound();
+  }
+
   return (
-    <>
-      {/* <ProfileCard className="mx-auto h-full" {...shop} />
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      {/* Hero: Artisan first, business second */}
+      <ArtisanHero shop={shop} />
 
-      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        Products
-      </h2>
-      <ArtisanProductsGrid shopName={shop?.name} /> */}
-
-      {!shop && (
-        <div className="flex h-[50vh] flex-col items-center justify-center">
-          <h1 className="text-3xl font-semibold">Shop not found</h1>
-          <p className="text-muted-foreground">
-            We couldn&apos;t find the shop you&apos;re looking for.
-          </p>
-        </div>
-      )}
-
-      {shop && (
-        <div className="flex min-h-[50vh] flex-col gap-12">
-          {/* Hero Section with Profile */}
-          <section className="bg-slate-50">
-            <div className="container py-8">
-              <ProfileCard className="mx-auto h-full" {...shop} />
-            </div>
-          </section>
-
-          {/* Products Section */}
-          <section className="container">
-            <div className="mb-8">
-              <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
-                Products
-              </h2>
-              <p className="text-muted-foreground">
-                Browse through {shop.name}&apos;s unique collection
-              </p>
-            </div>
-            <ProductGrid id={shopId} />
-
-            {/* <ArtisanProductsGrid name={shop.name} /> */}
-          </section>
-
-          {/* About Section */}
-          {shop.bio && (
-            <section className="bg-slate-50">
-              <div className="container py-12">
-                <h2 className="mb-4 scroll-m-20 text-3xl font-semibold tracking-tight">
-                  About {shop.name}
-                </h2>
-                <div className="prose lg:prose-lg max-w-none">
-                  <p className="text-muted-foreground">{shop.description}</p>
-                </div>
-              </div>
-            </section>
-          )}
-        </div>
-      )}
-    </>
+      {/* Products & Services */}
+      <div className="mt-12">
+        <ProductServiceGrid
+          products={shop.products}
+          services={shop.services}
+          website={shop.website ?? ""}
+        />
+      </div>
+    </div>
   );
 }

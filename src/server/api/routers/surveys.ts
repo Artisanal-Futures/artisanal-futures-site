@@ -3,13 +3,13 @@ import { z } from "zod";
 
 import { surveySchema } from "~/lib/validators/survey";
 import {
+  adminArtisanProcedure,
   createTRPCRouter,
-  elevatedProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
 
 export const surveysRouter = createTRPCRouter({
-  getAll: elevatedProcedure.query(async ({ ctx }) => {
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const surveys = await ctx.db.survey.findMany({
       orderBy: { createdAt: "desc" },
     });
@@ -56,7 +56,7 @@ export const surveysRouter = createTRPCRouter({
         },
       });
     }),
-  create: elevatedProcedure
+  create: adminArtisanProcedure
     .input(surveySchema)
     .mutation(async ({ ctx, input }) => {
       const survey = await ctx.db.survey.create({
@@ -76,7 +76,7 @@ export const surveysRouter = createTRPCRouter({
       };
     }),
 
-  update: elevatedProcedure
+  update: adminArtisanProcedure
     .input(
       surveySchema.extend({
         surveyId: z.string(),
@@ -346,7 +346,7 @@ export const surveysRouter = createTRPCRouter({
       };
     }),
 
-  delete: elevatedProcedure
+  delete: adminArtisanProcedure
     .input(z.object({ surveyId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const survey = await ctx.db.survey.findFirst({
