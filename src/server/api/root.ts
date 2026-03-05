@@ -6,6 +6,7 @@ import { forumRouter } from "./routers/forum";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
 import { guestRouter } from "./routers/guest";
 import { migrationRouter } from "./routers/migration";
+import { onboardingRouter } from "./routers/onboarding";
 import { productRouter } from "./routers/product";
 import { serviceRouter } from "./routers/service";
 import { shopsRouter } from "./routers/shops";
@@ -34,6 +35,7 @@ export const appRouter = createTRPCRouter({
   guest: guestRouter,
   upcycling: upcyclingRouter,
   websiteProvision: websiteProvisionRouter,
+  onboarding: onboardingRouter,
 });
 
 // export type definition of API

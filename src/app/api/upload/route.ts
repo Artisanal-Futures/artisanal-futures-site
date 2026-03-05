@@ -57,37 +57,69 @@ const router: Router = {
       },
     }),
 
-    // images: route({
-    //   fileTypes: ["image/*"],
-    //   multipleFiles: true,
-    //   maxFiles: 5,
-    //   onBeforeUpload: async ({ req }) => {
-    //     const user = await auth.api.getSession({ headers: req.headers });
+    postImage: route({
+      fileTypes: ["image/*"],
+      multipleFiles: false,
+      onBeforeUpload: async ({ req, file }) => {
+        const user = await auth.api.getSession({ headers: req.headers });
+        if (!user) {
+          throw new RejectUpload("Not logged in!");
+        }
+        return {
+          objectInfo: {
+            key: `${file.name}`,
+            metadata: {
+              pathname: `https://${env.MINIO_ENDPOINT}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/posts/${file.name}`,
+            },
+          },
+        };
+      },
+      onAfterSignedUrl: async ({ metadata }) => {
+        return { metadata: { ...metadata } };
+      },
+    }),
 
-    //     if (!user || user.user.role === "USER" || user.user.role === "GUEST") {
-    //       throw new RejectUpload("You are not allowed to upload images.");
-    //     }
+    onboardingArtisan: route({
+      fileTypes: ["image/*"],
+      multipleFiles: true,
+      maxFiles: 2,
+      onBeforeUpload: async ({ req, clientMetadata }) => {
+        const { businessSlug } = clientMetadata as { businessSlug?: string };
 
-    //     const business = await checkBusiness();
+        return {
+          generateObjectInfo: ({ file }) => {
+            const key = `$${file.name}`;
 
-    //     if (!business) {
-    //       throw new RejectUpload("Business not found!");
-    //     }
+            return {
+              key,
+              metadata: {
+                pathName: `https://${env.NEXT_PUBLIC_STORAGE_URL}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${businessSlug}/${file.name}`,
+              },
+            };
+          },
+        };
+      },
+    }),
 
-    //     return {
-    //       generateObjectInfo: ({ file }) => {
-    //         const key = `${business.id}/${file.name}`;
+    onboardingImage: route({
+      fileTypes: ["image/*"],
+      multipleFiles: false,
+      onBeforeUpload: async ({ req, file, clientMetadata }) => {
+        const { businessSlug } = clientMetadata as { businessSlug?: string };
 
-    //         return {
-    //           key,
-    //           metadata: {
-    //             pathName: `https://${env.NEXT_PUBLIC_STORAGE_URL}/business-sites/${business.id}/${file.name}`,
-    //           },
-    //         };
-    //       },
-    //     };
-    //   },
-    // }),
+        return {
+          objectInfo: {
+            key: `${businessSlug ?? "shops"}/${file.name}`,
+            metadata: {
+              pathname: `https://${env.MINIO_ENDPOINT}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/${businessSlug}/${file.name}`,
+            },
+          },
+        };
+      },
+      onAfterSignedUrl: async ({ metadata }) => {
+        return { metadata: { ...metadata } };
+      },
+    }),
   },
 };
 export const { POST } = toRouteHandler(router);

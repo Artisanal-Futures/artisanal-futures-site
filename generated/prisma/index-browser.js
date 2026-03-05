@@ -768,6 +768,25 @@ exports.Prisma.GuestSurveyScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.ArtisanSurveyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  businessName: 'businessName',
+  businessInterview: 'businessInterview',
+  businessLocation: 'businessLocation',
+  businessEmail: 'businessEmail',
+  businessPhone: 'businessPhone',
+  businessWebsite: 'businessWebsite',
+  businessType: 'businessType',
+  productCategories: 'productCategories',
+  principles: 'principles',
+  processes: 'processes',
+  materials: 'materials',
+  socials: 'socials',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1005,7 +1024,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Verification: 'Verification',
   Survey: 'Survey',
-  GuestSurvey: 'GuestSurvey'
+  GuestSurvey: 'GuestSurvey',
+  ArtisanSurvey: 'ArtisanSurvey'
 };
 
 /**

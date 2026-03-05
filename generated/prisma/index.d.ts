@@ -263,6 +263,11 @@ export type Survey = $Result.DefaultSelection<Prisma.$SurveyPayload>
  * 
  */
 export type GuestSurvey = $Result.DefaultSelection<Prisma.$GuestSurveyPayload>
+/**
+ * Model ArtisanSurvey
+ * 
+ */
+export type ArtisanSurvey = $Result.DefaultSelection<Prisma.$ArtisanSurveyPayload>
 
 /**
  * Enums
@@ -1191,6 +1196,16 @@ export class PrismaClient<
     * ```
     */
   get guestSurvey(): Prisma.GuestSurveyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.artisanSurvey`: Exposes CRUD operations for the **ArtisanSurvey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ArtisanSurveys
+    * const artisanSurveys = await prisma.artisanSurvey.findMany()
+    * ```
+    */
+  get artisanSurvey(): Prisma.ArtisanSurveyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1681,7 +1696,8 @@ export namespace Prisma {
     User: 'User',
     Verification: 'Verification',
     Survey: 'Survey',
-    GuestSurvey: 'GuestSurvey'
+    GuestSurvey: 'GuestSurvey',
+    ArtisanSurvey: 'ArtisanSurvey'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1700,7 +1716,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "generatedImages" | "generationSurvey" | "variation" | "modification" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "shop" | "shopAddress" | "service" | "product" | "category" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "example" | "account" | "session" | "user" | "verification" | "survey" | "guestSurvey"
+      modelProps: "generatedImages" | "generationSurvey" | "variation" | "modification" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "shop" | "shopAddress" | "service" | "product" | "category" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "example" | "account" | "session" | "user" | "verification" | "survey" | "guestSurvey" | "artisanSurvey"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -5404,6 +5420,80 @@ export namespace Prisma {
           }
         }
       }
+      ArtisanSurvey: {
+        payload: Prisma.$ArtisanSurveyPayload<ExtArgs>
+        fields: Prisma.ArtisanSurveyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArtisanSurveyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArtisanSurveyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          findFirst: {
+            args: Prisma.ArtisanSurveyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArtisanSurveyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          findMany: {
+            args: Prisma.ArtisanSurveyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>[]
+          }
+          create: {
+            args: Prisma.ArtisanSurveyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          createMany: {
+            args: Prisma.ArtisanSurveyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArtisanSurveyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>[]
+          }
+          delete: {
+            args: Prisma.ArtisanSurveyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          update: {
+            args: Prisma.ArtisanSurveyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          deleteMany: {
+            args: Prisma.ArtisanSurveyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArtisanSurveyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ArtisanSurveyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>[]
+          }
+          upsert: {
+            args: Prisma.ArtisanSurveyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArtisanSurveyPayload>
+          }
+          aggregate: {
+            args: Prisma.ArtisanSurveyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArtisanSurvey>
+          }
+          groupBy: {
+            args: Prisma.ArtisanSurveyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArtisanSurveyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArtisanSurveyCountArgs<ExtArgs>
+            result: $Utils.Optional<ArtisanSurveyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -5550,6 +5640,7 @@ export namespace Prisma {
     verification?: VerificationOmit
     survey?: SurveyOmit
     guestSurvey?: GuestSurveyOmit
+    artisanSurvey?: ArtisanSurveyOmit
   }
 
   /* Types for Logging */
@@ -65553,6 +65644,1124 @@ export namespace Prisma {
 
 
   /**
+   * Model ArtisanSurvey
+   */
+
+  export type AggregateArtisanSurvey = {
+    _count: ArtisanSurveyCountAggregateOutputType | null
+    _min: ArtisanSurveyMinAggregateOutputType | null
+    _max: ArtisanSurveyMaxAggregateOutputType | null
+  }
+
+  export type ArtisanSurveyMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    name: string | null
+    businessName: string | null
+    businessInterview: string | null
+    businessLocation: string | null
+    businessEmail: string | null
+    businessPhone: string | null
+    businessWebsite: string | null
+    businessType: string | null
+    createdAt: Date | null
+  }
+
+  export type ArtisanSurveyMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    name: string | null
+    businessName: string | null
+    businessInterview: string | null
+    businessLocation: string | null
+    businessEmail: string | null
+    businessPhone: string | null
+    businessWebsite: string | null
+    businessType: string | null
+    createdAt: Date | null
+  }
+
+  export type ArtisanSurveyCountAggregateOutputType = {
+    id: number
+    userId: number
+    name: number
+    businessName: number
+    businessInterview: number
+    businessLocation: number
+    businessEmail: number
+    businessPhone: number
+    businessWebsite: number
+    businessType: number
+    productCategories: number
+    principles: number
+    processes: number
+    materials: number
+    socials: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ArtisanSurveyMinAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    businessName?: true
+    businessInterview?: true
+    businessLocation?: true
+    businessEmail?: true
+    businessPhone?: true
+    businessWebsite?: true
+    businessType?: true
+    createdAt?: true
+  }
+
+  export type ArtisanSurveyMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    businessName?: true
+    businessInterview?: true
+    businessLocation?: true
+    businessEmail?: true
+    businessPhone?: true
+    businessWebsite?: true
+    businessType?: true
+    createdAt?: true
+  }
+
+  export type ArtisanSurveyCountAggregateInputType = {
+    id?: true
+    userId?: true
+    name?: true
+    businessName?: true
+    businessInterview?: true
+    businessLocation?: true
+    businessEmail?: true
+    businessPhone?: true
+    businessWebsite?: true
+    businessType?: true
+    productCategories?: true
+    principles?: true
+    processes?: true
+    materials?: true
+    socials?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ArtisanSurveyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArtisanSurvey to aggregate.
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArtisanSurveys to fetch.
+     */
+    orderBy?: ArtisanSurveyOrderByWithRelationInput | ArtisanSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArtisanSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArtisanSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArtisanSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ArtisanSurveys
+    **/
+    _count?: true | ArtisanSurveyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArtisanSurveyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArtisanSurveyMaxAggregateInputType
+  }
+
+  export type GetArtisanSurveyAggregateType<T extends ArtisanSurveyAggregateArgs> = {
+        [P in keyof T & keyof AggregateArtisanSurvey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArtisanSurvey[P]>
+      : GetScalarType<T[P], AggregateArtisanSurvey[P]>
+  }
+
+
+
+
+  export type ArtisanSurveyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArtisanSurveyWhereInput
+    orderBy?: ArtisanSurveyOrderByWithAggregationInput | ArtisanSurveyOrderByWithAggregationInput[]
+    by: ArtisanSurveyScalarFieldEnum[] | ArtisanSurveyScalarFieldEnum
+    having?: ArtisanSurveyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArtisanSurveyCountAggregateInputType | true
+    _min?: ArtisanSurveyMinAggregateInputType
+    _max?: ArtisanSurveyMaxAggregateInputType
+  }
+
+  export type ArtisanSurveyGroupByOutputType = {
+    id: string
+    userId: string
+    name: string
+    businessName: string
+    businessInterview: string
+    businessLocation: string | null
+    businessEmail: string | null
+    businessPhone: string | null
+    businessWebsite: string | null
+    businessType: string
+    productCategories: string[]
+    principles: string[]
+    processes: string[]
+    materials: string[]
+    socials: JsonValue | null
+    createdAt: Date
+    _count: ArtisanSurveyCountAggregateOutputType | null
+    _min: ArtisanSurveyMinAggregateOutputType | null
+    _max: ArtisanSurveyMaxAggregateOutputType | null
+  }
+
+  type GetArtisanSurveyGroupByPayload<T extends ArtisanSurveyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArtisanSurveyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArtisanSurveyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArtisanSurveyGroupByOutputType[P]>
+            : GetScalarType<T[P], ArtisanSurveyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArtisanSurveySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    businessName?: boolean
+    businessInterview?: boolean
+    businessLocation?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    businessWebsite?: boolean
+    businessType?: boolean
+    productCategories?: boolean
+    principles?: boolean
+    processes?: boolean
+    materials?: boolean
+    socials?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["artisanSurvey"]>
+
+  export type ArtisanSurveySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    businessName?: boolean
+    businessInterview?: boolean
+    businessLocation?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    businessWebsite?: boolean
+    businessType?: boolean
+    productCategories?: boolean
+    principles?: boolean
+    processes?: boolean
+    materials?: boolean
+    socials?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["artisanSurvey"]>
+
+  export type ArtisanSurveySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    businessName?: boolean
+    businessInterview?: boolean
+    businessLocation?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    businessWebsite?: boolean
+    businessType?: boolean
+    productCategories?: boolean
+    principles?: boolean
+    processes?: boolean
+    materials?: boolean
+    socials?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["artisanSurvey"]>
+
+  export type ArtisanSurveySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    name?: boolean
+    businessName?: boolean
+    businessInterview?: boolean
+    businessLocation?: boolean
+    businessEmail?: boolean
+    businessPhone?: boolean
+    businessWebsite?: boolean
+    businessType?: boolean
+    productCategories?: boolean
+    principles?: boolean
+    processes?: boolean
+    materials?: boolean
+    socials?: boolean
+    createdAt?: boolean
+  }
+
+  export type ArtisanSurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "businessName" | "businessInterview" | "businessLocation" | "businessEmail" | "businessPhone" | "businessWebsite" | "businessType" | "productCategories" | "principles" | "processes" | "materials" | "socials" | "createdAt", ExtArgs["result"]["artisanSurvey"]>
+
+  export type $ArtisanSurveyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ArtisanSurvey"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      name: string
+      businessName: string
+      businessInterview: string
+      businessLocation: string | null
+      businessEmail: string | null
+      businessPhone: string | null
+      businessWebsite: string | null
+      businessType: string
+      productCategories: string[]
+      principles: string[]
+      processes: string[]
+      materials: string[]
+      socials: Prisma.JsonValue | null
+      createdAt: Date
+    }, ExtArgs["result"]["artisanSurvey"]>
+    composites: {}
+  }
+
+  type ArtisanSurveyGetPayload<S extends boolean | null | undefined | ArtisanSurveyDefaultArgs> = $Result.GetResult<Prisma.$ArtisanSurveyPayload, S>
+
+  type ArtisanSurveyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArtisanSurveyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArtisanSurveyCountAggregateInputType | true
+    }
+
+  export interface ArtisanSurveyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ArtisanSurvey'], meta: { name: 'ArtisanSurvey' } }
+    /**
+     * Find zero or one ArtisanSurvey that matches the filter.
+     * @param {ArtisanSurveyFindUniqueArgs} args - Arguments to find a ArtisanSurvey
+     * @example
+     * // Get one ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArtisanSurveyFindUniqueArgs>(args: SelectSubset<T, ArtisanSurveyFindUniqueArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ArtisanSurvey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArtisanSurveyFindUniqueOrThrowArgs} args - Arguments to find a ArtisanSurvey
+     * @example
+     * // Get one ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArtisanSurveyFindUniqueOrThrowArgs>(args: SelectSubset<T, ArtisanSurveyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArtisanSurvey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyFindFirstArgs} args - Arguments to find a ArtisanSurvey
+     * @example
+     * // Get one ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArtisanSurveyFindFirstArgs>(args?: SelectSubset<T, ArtisanSurveyFindFirstArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArtisanSurvey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyFindFirstOrThrowArgs} args - Arguments to find a ArtisanSurvey
+     * @example
+     * // Get one ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArtisanSurveyFindFirstOrThrowArgs>(args?: SelectSubset<T, ArtisanSurveyFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ArtisanSurveys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ArtisanSurveys
+     * const artisanSurveys = await prisma.artisanSurvey.findMany()
+     * 
+     * // Get first 10 ArtisanSurveys
+     * const artisanSurveys = await prisma.artisanSurvey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const artisanSurveyWithIdOnly = await prisma.artisanSurvey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArtisanSurveyFindManyArgs>(args?: SelectSubset<T, ArtisanSurveyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ArtisanSurvey.
+     * @param {ArtisanSurveyCreateArgs} args - Arguments to create a ArtisanSurvey.
+     * @example
+     * // Create one ArtisanSurvey
+     * const ArtisanSurvey = await prisma.artisanSurvey.create({
+     *   data: {
+     *     // ... data to create a ArtisanSurvey
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArtisanSurveyCreateArgs>(args: SelectSubset<T, ArtisanSurveyCreateArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ArtisanSurveys.
+     * @param {ArtisanSurveyCreateManyArgs} args - Arguments to create many ArtisanSurveys.
+     * @example
+     * // Create many ArtisanSurveys
+     * const artisanSurvey = await prisma.artisanSurvey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArtisanSurveyCreateManyArgs>(args?: SelectSubset<T, ArtisanSurveyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ArtisanSurveys and returns the data saved in the database.
+     * @param {ArtisanSurveyCreateManyAndReturnArgs} args - Arguments to create many ArtisanSurveys.
+     * @example
+     * // Create many ArtisanSurveys
+     * const artisanSurvey = await prisma.artisanSurvey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ArtisanSurveys and only return the `id`
+     * const artisanSurveyWithIdOnly = await prisma.artisanSurvey.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArtisanSurveyCreateManyAndReturnArgs>(args?: SelectSubset<T, ArtisanSurveyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ArtisanSurvey.
+     * @param {ArtisanSurveyDeleteArgs} args - Arguments to delete one ArtisanSurvey.
+     * @example
+     * // Delete one ArtisanSurvey
+     * const ArtisanSurvey = await prisma.artisanSurvey.delete({
+     *   where: {
+     *     // ... filter to delete one ArtisanSurvey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArtisanSurveyDeleteArgs>(args: SelectSubset<T, ArtisanSurveyDeleteArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ArtisanSurvey.
+     * @param {ArtisanSurveyUpdateArgs} args - Arguments to update one ArtisanSurvey.
+     * @example
+     * // Update one ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArtisanSurveyUpdateArgs>(args: SelectSubset<T, ArtisanSurveyUpdateArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ArtisanSurveys.
+     * @param {ArtisanSurveyDeleteManyArgs} args - Arguments to filter ArtisanSurveys to delete.
+     * @example
+     * // Delete a few ArtisanSurveys
+     * const { count } = await prisma.artisanSurvey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArtisanSurveyDeleteManyArgs>(args?: SelectSubset<T, ArtisanSurveyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArtisanSurveys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ArtisanSurveys
+     * const artisanSurvey = await prisma.artisanSurvey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArtisanSurveyUpdateManyArgs>(args: SelectSubset<T, ArtisanSurveyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArtisanSurveys and returns the data updated in the database.
+     * @param {ArtisanSurveyUpdateManyAndReturnArgs} args - Arguments to update many ArtisanSurveys.
+     * @example
+     * // Update many ArtisanSurveys
+     * const artisanSurvey = await prisma.artisanSurvey.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ArtisanSurveys and only return the `id`
+     * const artisanSurveyWithIdOnly = await prisma.artisanSurvey.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ArtisanSurveyUpdateManyAndReturnArgs>(args: SelectSubset<T, ArtisanSurveyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ArtisanSurvey.
+     * @param {ArtisanSurveyUpsertArgs} args - Arguments to update or create a ArtisanSurvey.
+     * @example
+     * // Update or create a ArtisanSurvey
+     * const artisanSurvey = await prisma.artisanSurvey.upsert({
+     *   create: {
+     *     // ... data to create a ArtisanSurvey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ArtisanSurvey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArtisanSurveyUpsertArgs>(args: SelectSubset<T, ArtisanSurveyUpsertArgs<ExtArgs>>): Prisma__ArtisanSurveyClient<$Result.GetResult<Prisma.$ArtisanSurveyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ArtisanSurveys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyCountArgs} args - Arguments to filter ArtisanSurveys to count.
+     * @example
+     * // Count the number of ArtisanSurveys
+     * const count = await prisma.artisanSurvey.count({
+     *   where: {
+     *     // ... the filter for the ArtisanSurveys we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArtisanSurveyCountArgs>(
+      args?: Subset<T, ArtisanSurveyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArtisanSurveyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ArtisanSurvey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArtisanSurveyAggregateArgs>(args: Subset<T, ArtisanSurveyAggregateArgs>): Prisma.PrismaPromise<GetArtisanSurveyAggregateType<T>>
+
+    /**
+     * Group by ArtisanSurvey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArtisanSurveyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArtisanSurveyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArtisanSurveyGroupByArgs['orderBy'] }
+        : { orderBy?: ArtisanSurveyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArtisanSurveyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArtisanSurveyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ArtisanSurvey model
+   */
+  readonly fields: ArtisanSurveyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ArtisanSurvey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArtisanSurveyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ArtisanSurvey model
+   */
+  interface ArtisanSurveyFieldRefs {
+    readonly id: FieldRef<"ArtisanSurvey", 'String'>
+    readonly userId: FieldRef<"ArtisanSurvey", 'String'>
+    readonly name: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessName: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessInterview: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessLocation: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessEmail: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessPhone: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessWebsite: FieldRef<"ArtisanSurvey", 'String'>
+    readonly businessType: FieldRef<"ArtisanSurvey", 'String'>
+    readonly productCategories: FieldRef<"ArtisanSurvey", 'String[]'>
+    readonly principles: FieldRef<"ArtisanSurvey", 'String[]'>
+    readonly processes: FieldRef<"ArtisanSurvey", 'String[]'>
+    readonly materials: FieldRef<"ArtisanSurvey", 'String[]'>
+    readonly socials: FieldRef<"ArtisanSurvey", 'Json'>
+    readonly createdAt: FieldRef<"ArtisanSurvey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ArtisanSurvey findUnique
+   */
+  export type ArtisanSurveyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter, which ArtisanSurvey to fetch.
+     */
+    where: ArtisanSurveyWhereUniqueInput
+  }
+
+  /**
+   * ArtisanSurvey findUniqueOrThrow
+   */
+  export type ArtisanSurveyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter, which ArtisanSurvey to fetch.
+     */
+    where: ArtisanSurveyWhereUniqueInput
+  }
+
+  /**
+   * ArtisanSurvey findFirst
+   */
+  export type ArtisanSurveyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter, which ArtisanSurvey to fetch.
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArtisanSurveys to fetch.
+     */
+    orderBy?: ArtisanSurveyOrderByWithRelationInput | ArtisanSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArtisanSurveys.
+     */
+    cursor?: ArtisanSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArtisanSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArtisanSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArtisanSurveys.
+     */
+    distinct?: ArtisanSurveyScalarFieldEnum | ArtisanSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * ArtisanSurvey findFirstOrThrow
+   */
+  export type ArtisanSurveyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter, which ArtisanSurvey to fetch.
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArtisanSurveys to fetch.
+     */
+    orderBy?: ArtisanSurveyOrderByWithRelationInput | ArtisanSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArtisanSurveys.
+     */
+    cursor?: ArtisanSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArtisanSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArtisanSurveys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArtisanSurveys.
+     */
+    distinct?: ArtisanSurveyScalarFieldEnum | ArtisanSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * ArtisanSurvey findMany
+   */
+  export type ArtisanSurveyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter, which ArtisanSurveys to fetch.
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArtisanSurveys to fetch.
+     */
+    orderBy?: ArtisanSurveyOrderByWithRelationInput | ArtisanSurveyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ArtisanSurveys.
+     */
+    cursor?: ArtisanSurveyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArtisanSurveys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArtisanSurveys.
+     */
+    skip?: number
+    distinct?: ArtisanSurveyScalarFieldEnum | ArtisanSurveyScalarFieldEnum[]
+  }
+
+  /**
+   * ArtisanSurvey create
+   */
+  export type ArtisanSurveyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ArtisanSurvey.
+     */
+    data: XOR<ArtisanSurveyCreateInput, ArtisanSurveyUncheckedCreateInput>
+  }
+
+  /**
+   * ArtisanSurvey createMany
+   */
+  export type ArtisanSurveyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ArtisanSurveys.
+     */
+    data: ArtisanSurveyCreateManyInput | ArtisanSurveyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArtisanSurvey createManyAndReturn
+   */
+  export type ArtisanSurveyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * The data used to create many ArtisanSurveys.
+     */
+    data: ArtisanSurveyCreateManyInput | ArtisanSurveyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArtisanSurvey update
+   */
+  export type ArtisanSurveyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ArtisanSurvey.
+     */
+    data: XOR<ArtisanSurveyUpdateInput, ArtisanSurveyUncheckedUpdateInput>
+    /**
+     * Choose, which ArtisanSurvey to update.
+     */
+    where: ArtisanSurveyWhereUniqueInput
+  }
+
+  /**
+   * ArtisanSurvey updateMany
+   */
+  export type ArtisanSurveyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ArtisanSurveys.
+     */
+    data: XOR<ArtisanSurveyUpdateManyMutationInput, ArtisanSurveyUncheckedUpdateManyInput>
+    /**
+     * Filter which ArtisanSurveys to update
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * Limit how many ArtisanSurveys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArtisanSurvey updateManyAndReturn
+   */
+  export type ArtisanSurveyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * The data used to update ArtisanSurveys.
+     */
+    data: XOR<ArtisanSurveyUpdateManyMutationInput, ArtisanSurveyUncheckedUpdateManyInput>
+    /**
+     * Filter which ArtisanSurveys to update
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * Limit how many ArtisanSurveys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArtisanSurvey upsert
+   */
+  export type ArtisanSurveyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ArtisanSurvey to update in case it exists.
+     */
+    where: ArtisanSurveyWhereUniqueInput
+    /**
+     * In case the ArtisanSurvey found by the `where` argument doesn't exist, create a new ArtisanSurvey with this data.
+     */
+    create: XOR<ArtisanSurveyCreateInput, ArtisanSurveyUncheckedCreateInput>
+    /**
+     * In case the ArtisanSurvey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArtisanSurveyUpdateInput, ArtisanSurveyUncheckedUpdateInput>
+  }
+
+  /**
+   * ArtisanSurvey delete
+   */
+  export type ArtisanSurveyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+    /**
+     * Filter which ArtisanSurvey to delete.
+     */
+    where: ArtisanSurveyWhereUniqueInput
+  }
+
+  /**
+   * ArtisanSurvey deleteMany
+   */
+  export type ArtisanSurveyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArtisanSurveys to delete
+     */
+    where?: ArtisanSurveyWhereInput
+    /**
+     * Limit how many ArtisanSurveys to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArtisanSurvey without action
+   */
+  export type ArtisanSurveyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArtisanSurvey
+     */
+    select?: ArtisanSurveySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArtisanSurvey
+     */
+    omit?: ArtisanSurveyOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -66361,6 +67570,28 @@ export namespace Prisma {
   };
 
   export type GuestSurveyScalarFieldEnum = (typeof GuestSurveyScalarFieldEnum)[keyof typeof GuestSurveyScalarFieldEnum]
+
+
+  export const ArtisanSurveyScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    name: 'name',
+    businessName: 'businessName',
+    businessInterview: 'businessInterview',
+    businessLocation: 'businessLocation',
+    businessEmail: 'businessEmail',
+    businessPhone: 'businessPhone',
+    businessWebsite: 'businessWebsite',
+    businessType: 'businessType',
+    productCategories: 'productCategories',
+    principles: 'principles',
+    processes: 'processes',
+    materials: 'materials',
+    socials: 'socials',
+    createdAt: 'createdAt'
+  };
+
+  export type ArtisanSurveyScalarFieldEnum = (typeof ArtisanSurveyScalarFieldEnum)[keyof typeof ArtisanSurveyScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -71085,6 +72316,113 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"GuestSurvey"> | string
     createdAt?: DateTimeWithAggregatesFilter<"GuestSurvey"> | Date | string
     userId?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
+  }
+
+  export type ArtisanSurveyWhereInput = {
+    AND?: ArtisanSurveyWhereInput | ArtisanSurveyWhereInput[]
+    OR?: ArtisanSurveyWhereInput[]
+    NOT?: ArtisanSurveyWhereInput | ArtisanSurveyWhereInput[]
+    id?: StringFilter<"ArtisanSurvey"> | string
+    userId?: StringFilter<"ArtisanSurvey"> | string
+    name?: StringFilter<"ArtisanSurvey"> | string
+    businessName?: StringFilter<"ArtisanSurvey"> | string
+    businessInterview?: StringFilter<"ArtisanSurvey"> | string
+    businessLocation?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessEmail?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessPhone?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessWebsite?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessType?: StringFilter<"ArtisanSurvey"> | string
+    productCategories?: StringNullableListFilter<"ArtisanSurvey">
+    principles?: StringNullableListFilter<"ArtisanSurvey">
+    processes?: StringNullableListFilter<"ArtisanSurvey">
+    materials?: StringNullableListFilter<"ArtisanSurvey">
+    socials?: JsonNullableFilter<"ArtisanSurvey">
+    createdAt?: DateTimeFilter<"ArtisanSurvey"> | Date | string
+  }
+
+  export type ArtisanSurveyOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    businessName?: SortOrder
+    businessInterview?: SortOrder
+    businessLocation?: SortOrderInput | SortOrder
+    businessEmail?: SortOrderInput | SortOrder
+    businessPhone?: SortOrderInput | SortOrder
+    businessWebsite?: SortOrderInput | SortOrder
+    businessType?: SortOrder
+    productCategories?: SortOrder
+    principles?: SortOrder
+    processes?: SortOrder
+    materials?: SortOrder
+    socials?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArtisanSurveyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ArtisanSurveyWhereInput | ArtisanSurveyWhereInput[]
+    OR?: ArtisanSurveyWhereInput[]
+    NOT?: ArtisanSurveyWhereInput | ArtisanSurveyWhereInput[]
+    userId?: StringFilter<"ArtisanSurvey"> | string
+    name?: StringFilter<"ArtisanSurvey"> | string
+    businessName?: StringFilter<"ArtisanSurvey"> | string
+    businessInterview?: StringFilter<"ArtisanSurvey"> | string
+    businessLocation?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessEmail?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessPhone?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessWebsite?: StringNullableFilter<"ArtisanSurvey"> | string | null
+    businessType?: StringFilter<"ArtisanSurvey"> | string
+    productCategories?: StringNullableListFilter<"ArtisanSurvey">
+    principles?: StringNullableListFilter<"ArtisanSurvey">
+    processes?: StringNullableListFilter<"ArtisanSurvey">
+    materials?: StringNullableListFilter<"ArtisanSurvey">
+    socials?: JsonNullableFilter<"ArtisanSurvey">
+    createdAt?: DateTimeFilter<"ArtisanSurvey"> | Date | string
+  }, "id">
+
+  export type ArtisanSurveyOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    businessName?: SortOrder
+    businessInterview?: SortOrder
+    businessLocation?: SortOrderInput | SortOrder
+    businessEmail?: SortOrderInput | SortOrder
+    businessPhone?: SortOrderInput | SortOrder
+    businessWebsite?: SortOrderInput | SortOrder
+    businessType?: SortOrder
+    productCategories?: SortOrder
+    principles?: SortOrder
+    processes?: SortOrder
+    materials?: SortOrder
+    socials?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ArtisanSurveyCountOrderByAggregateInput
+    _max?: ArtisanSurveyMaxOrderByAggregateInput
+    _min?: ArtisanSurveyMinOrderByAggregateInput
+  }
+
+  export type ArtisanSurveyScalarWhereWithAggregatesInput = {
+    AND?: ArtisanSurveyScalarWhereWithAggregatesInput | ArtisanSurveyScalarWhereWithAggregatesInput[]
+    OR?: ArtisanSurveyScalarWhereWithAggregatesInput[]
+    NOT?: ArtisanSurveyScalarWhereWithAggregatesInput | ArtisanSurveyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    userId?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    name?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    businessName?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    businessInterview?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    businessLocation?: StringNullableWithAggregatesFilter<"ArtisanSurvey"> | string | null
+    businessEmail?: StringNullableWithAggregatesFilter<"ArtisanSurvey"> | string | null
+    businessPhone?: StringNullableWithAggregatesFilter<"ArtisanSurvey"> | string | null
+    businessWebsite?: StringNullableWithAggregatesFilter<"ArtisanSurvey"> | string | null
+    businessType?: StringWithAggregatesFilter<"ArtisanSurvey"> | string
+    productCategories?: StringNullableListFilter<"ArtisanSurvey">
+    principles?: StringNullableListFilter<"ArtisanSurvey">
+    processes?: StringNullableListFilter<"ArtisanSurvey">
+    materials?: StringNullableListFilter<"ArtisanSurvey">
+    socials?: JsonNullableWithAggregatesFilter<"ArtisanSurvey">
+    createdAt?: DateTimeWithAggregatesFilter<"ArtisanSurvey"> | Date | string
   }
 
   export type GeneratedImagesCreateInput = {
@@ -75850,6 +77188,139 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ArtisanSurveyCreateInput = {
+    id?: string
+    userId: string
+    name: string
+    businessName: string
+    businessInterview: string
+    businessLocation?: string | null
+    businessEmail?: string | null
+    businessPhone?: string | null
+    businessWebsite?: string | null
+    businessType: string
+    productCategories?: ArtisanSurveyCreateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyCreateprinciplesInput | string[]
+    processes?: ArtisanSurveyCreateprocessesInput | string[]
+    materials?: ArtisanSurveyCreatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ArtisanSurveyUncheckedCreateInput = {
+    id?: string
+    userId: string
+    name: string
+    businessName: string
+    businessInterview: string
+    businessLocation?: string | null
+    businessEmail?: string | null
+    businessPhone?: string | null
+    businessWebsite?: string | null
+    businessType: string
+    productCategories?: ArtisanSurveyCreateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyCreateprinciplesInput | string[]
+    processes?: ArtisanSurveyCreateprocessesInput | string[]
+    materials?: ArtisanSurveyCreatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ArtisanSurveyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessInterview?: StringFieldUpdateOperationsInput | string
+    businessLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    businessType?: StringFieldUpdateOperationsInput | string
+    productCategories?: ArtisanSurveyUpdateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyUpdateprinciplesInput | string[]
+    processes?: ArtisanSurveyUpdateprocessesInput | string[]
+    materials?: ArtisanSurveyUpdatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArtisanSurveyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessInterview?: StringFieldUpdateOperationsInput | string
+    businessLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    businessType?: StringFieldUpdateOperationsInput | string
+    productCategories?: ArtisanSurveyUpdateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyUpdateprinciplesInput | string[]
+    processes?: ArtisanSurveyUpdateprocessesInput | string[]
+    materials?: ArtisanSurveyUpdatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArtisanSurveyCreateManyInput = {
+    id?: string
+    userId: string
+    name: string
+    businessName: string
+    businessInterview: string
+    businessLocation?: string | null
+    businessEmail?: string | null
+    businessPhone?: string | null
+    businessWebsite?: string | null
+    businessType: string
+    productCategories?: ArtisanSurveyCreateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyCreateprinciplesInput | string[]
+    processes?: ArtisanSurveyCreateprocessesInput | string[]
+    materials?: ArtisanSurveyCreatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ArtisanSurveyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessInterview?: StringFieldUpdateOperationsInput | string
+    businessLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    businessType?: StringFieldUpdateOperationsInput | string
+    productCategories?: ArtisanSurveyUpdateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyUpdateprinciplesInput | string[]
+    processes?: ArtisanSurveyUpdateprocessesInput | string[]
+    materials?: ArtisanSurveyUpdatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArtisanSurveyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    businessName?: StringFieldUpdateOperationsInput | string
+    businessInterview?: StringFieldUpdateOperationsInput | string
+    businessLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    businessEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    businessPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    businessWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    businessType?: StringFieldUpdateOperationsInput | string
+    productCategories?: ArtisanSurveyUpdateproductCategoriesInput | string[]
+    principles?: ArtisanSurveyUpdateprinciplesInput | string[]
+    processes?: ArtisanSurveyUpdateprocessesInput | string[]
+    materials?: ArtisanSurveyUpdatematerialsInput | string[]
+    socials?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -79195,6 +80666,53 @@ export namespace Prisma {
     email?: SortOrder
     createdAt?: SortOrder
     userId?: SortOrder
+  }
+
+  export type ArtisanSurveyCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    businessName?: SortOrder
+    businessInterview?: SortOrder
+    businessLocation?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    businessWebsite?: SortOrder
+    businessType?: SortOrder
+    productCategories?: SortOrder
+    principles?: SortOrder
+    processes?: SortOrder
+    materials?: SortOrder
+    socials?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArtisanSurveyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    businessName?: SortOrder
+    businessInterview?: SortOrder
+    businessLocation?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    businessWebsite?: SortOrder
+    businessType?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArtisanSurveyMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    businessName?: SortOrder
+    businessInterview?: SortOrder
+    businessLocation?: SortOrder
+    businessEmail?: SortOrder
+    businessPhone?: SortOrder
+    businessWebsite?: SortOrder
+    businessType?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutGeneratedImagesInput = {
@@ -83527,6 +85045,42 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGuestSurveysInput, UserUpdateWithoutGuestSurveysInput>, UserUncheckedUpdateWithoutGuestSurveysInput>
+  }
+
+  export type ArtisanSurveyCreateproductCategoriesInput = {
+    set: string[]
+  }
+
+  export type ArtisanSurveyCreateprinciplesInput = {
+    set: string[]
+  }
+
+  export type ArtisanSurveyCreateprocessesInput = {
+    set: string[]
+  }
+
+  export type ArtisanSurveyCreatematerialsInput = {
+    set: string[]
+  }
+
+  export type ArtisanSurveyUpdateproductCategoriesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ArtisanSurveyUpdateprinciplesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ArtisanSurveyUpdateprocessesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ArtisanSurveyUpdatematerialsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {

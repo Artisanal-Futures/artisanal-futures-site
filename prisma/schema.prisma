@@ -133,6 +133,28 @@ model GuestSurvey {
   @@index([userId])
 }
 
+model ArtisanSurvey {
+  id                String   @id @default(cuid())
+  userId            String
+  name              String
+  businessName      String
+  businessInterview String @db.Text
+  businessLocation  String?
+  businessEmail     String?
+  businessPhone     String?
+  businessWebsite   String?
+
+  businessType      String
+  productCategories String[]
+  principles        String[]
+
+  processes         String[]
+  materials         String[]
+
+  socials     Json?
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN

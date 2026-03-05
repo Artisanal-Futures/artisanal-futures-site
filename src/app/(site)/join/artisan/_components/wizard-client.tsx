@@ -1,0 +1,112 @@
+"use client";
+
+import { useState } from "react";
+
+import { AccountDetailsStep } from "./account-details-step";
+import { ArtisanProfileStep } from "./artisan-profile-step";
+import { BusinessInfoStep } from "./business-info-step";
+import { InvitationCodeStep } from "./invitation-code-step";
+import { SignupProgress } from "./signup-progress";
+
+export type SignupFormData = {
+  // Invitation
+  invitationCode: string;
+
+  // Account
+  email: string;
+  password: string;
+  name: string;
+
+  // Business
+  businessName: string;
+  businessInterview: string;
+  businessLocation?: string;
+  businessEmail?: string;
+  businessTelephone?: string;
+  businessType: string[];
+  businessTypeOther?: string;
+  productCategories: string[];
+  productCategoriesOther?: string;
+  principles: string[];
+  principlesOther?: string;
+  commonProcesses: string[];
+  commonProcessesOther?: string;
+  materialsUsed: string[];
+  materialsUsedOther?: string;
+  websiteLink?: string;
+  socialMediaLinks?: string;
+
+  // Artisan profile
+  ownerName: string;
+  ownerBio?: string;
+  publicDescription: string;
+  logoFile?: File | null;
+  ownerPhotoFile?: File | null;
+  logoPhotoUrl?: string;
+  ownerPhotoUrl?: string;
+};
+
+const STEPS = [
+  { id: 1, name: "Invitation", component: InvitationCodeStep },
+  { id: 2, name: "Account", component: AccountDetailsStep },
+  { id: 3, name: "Business", component: BusinessInfoStep },
+  { id: 4, name: "Artisan profile", component: ArtisanProfileStep },
+] as const;
+
+type WizardClientProps = {
+  initialCode?: string;
+};
+
+export function WizardClient({ initialCode }: WizardClientProps) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<Partial<SignupFormData>>({
+    invitationCode: initialCode?.toUpperCase(),
+  });
+
+  const CurrentStepComponent = STEPS[currentStep - 1]?.component ?? null;
+
+  const handleNext = (data: Partial<SignupFormData>) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+
+    if (currentStep < STEPS.length) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* Header */}
+      <header className="border-b bg-white">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-xl font-bold">Create Your Store</h1>
+        </div>
+      </header>
+
+      {/* Progress Indicator */}
+      <div className="border-b bg-white">
+        <div className="container mx-auto px-4 py-6">
+          <SignupProgress currentStep={currentStep} steps={STEPS} />
+        </div>
+      </div>
+
+      {/* Form Content */}
+      <main className="container mx-auto flex-1 px-4 py-8">
+        <div className="mx-auto max-w-2xl">
+          {CurrentStepComponent ? (
+            <CurrentStepComponent
+              formData={formData}
+              onNext={handleNext}
+              onBack={currentStep > 1 ? handleBack : undefined}
+            />
+          ) : null}
+        </div>
+      </main>
+    </div>
+  );
+}
