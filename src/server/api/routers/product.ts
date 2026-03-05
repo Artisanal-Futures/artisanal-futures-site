@@ -1,7 +1,9 @@
 import { type Prisma, type PrismaClient } from "generated/prisma";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
+import { checkUserProductPermissions } from "~/lib/check-user-permissions";
 import { productSchema } from "~/lib/validators/products";
 import {
   adminArtisanProcedure,
@@ -10,35 +12,6 @@ import {
 } from "~/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
-  updateTags: adminArtisanProcedure
-    .input(
-      z.object({
-        productIds: z.array(z.string()),
-        tagType: z.enum([
-          "attributeTags",
-          "materialTags",
-          "environmentalTags",
-          "aiGeneratedTags",
-        ]),
-        tags: z.array(z.string()),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { productIds, tagType, tags } = input;
-      const updatedProducts = await Promise.all(
-        productIds.map(async (id) => {
-          return ctx.db.product.update({
-            where: { id },
-            data: { [tagType]: tags },
-          });
-        }),
-      );
-      return {
-        data: updatedProducts.map(addFullProductImageUrl),
-        message: `${updatedProducts.length} products updated successfully`,
-      };
-    }),
-
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     // Always order by createdAt DESC in the DB query
     const products = await ctx.db.product.findMany({
@@ -62,182 +35,13 @@ export const productRouter = createTRPCRouter({
     return productsWithFullUrls;
   }),
 
-  getAllValid: publicProcedure
-    .input(
-      z
-        .object({
-          page: z.number().default(1),
-          limit: z.number().default(24),
-        })
-        .optional(),
-    )
-    .query(async ({ ctx, input }) => {
-      const page = input?.page ?? 1;
-      const limit = input?.limit ?? 20;
-      const skip = (page - 1) * limit;
-      const [products, totalCount] = await Promise.all([
-        ctx.db.product.findMany({
-          include: { shop: true, categories: true },
-          orderBy: { createdAt: "desc" },
-          skip,
-          take: limit,
-        }),
-        ctx.db.product.count(),
-      ]);
-
-      return {
-        products: products.map(addFullProductImageUrl),
-        totalCount,
-        page,
-        totalPages: Math.ceil(totalCount / limit),
-      };
-    }),
-
-  getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  get: adminArtisanProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const product = await ctx.db.product.findUnique({
       where: { id: input },
       include: { shop: true, categories: true },
     });
     return addFullProductImageUrl(product);
   }),
-
-  getByShopId: publicProcedure
-    .input(
-      z.object({
-        shopId: z.string(),
-        page: z.number().default(1),
-        limit: z.number().default(20),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { shopId, page, limit } = input;
-      const skip = (page - 1) * limit;
-
-      const [products, totalCount] = await Promise.all([
-        ctx.db.product.findMany({
-          where: { shopId },
-          include: { shop: true, categories: true },
-          skip,
-          take: limit,
-          orderBy: { createdAt: "desc" },
-        }),
-        ctx.db.product.count({ where: { shopId } }),
-      ]);
-
-      return {
-        products: products.map(addFullProductImageUrl),
-        totalCount,
-        page,
-        totalPages: Math.ceil(totalCount / limit),
-      };
-    }),
-
-  create: adminArtisanProcedure
-    .input(productSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { categoryIds, tags, ...productData } = input;
-
-      const allCategoryIds = await getCategoriesWithParents(
-        ctx.db,
-        categoryIds,
-      );
-
-      const formattedTags = tags.map((tag) => tag.text);
-
-      const product = await ctx.db.product.create({
-        data: {
-          ...productData,
-          tags: formattedTags,
-          categories: {
-            connect: allCategoryIds.map((id) => ({ id })),
-          },
-        },
-      });
-      return {
-        data: {
-          ...product,
-          tags,
-          categoryIds,
-          shopId: input.shopId,
-        },
-        message: "Product created successfully",
-      };
-    }),
-
-  update: adminArtisanProcedure
-    .input(productSchema.extend({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { id, categoryIds, tags, ...productData } = input;
-
-      const allCategoryIds = await getCategoriesWithParents(
-        ctx.db,
-        categoryIds,
-      );
-
-      const formattedTags = tags.map((tag) => tag.text);
-
-      const product = await ctx.db.product.update({
-        where: { id },
-        data: {
-          ...productData,
-          tags: formattedTags,
-          categories: { set: allCategoryIds.map((id) => ({ id })) },
-        },
-      });
-      return {
-        data: {
-          ...product,
-          tags,
-          categoryIds,
-          shopId: input.shopId,
-        },
-        message: "Product updated successfully",
-      };
-    }),
-
-  delete: adminArtisanProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input }) => {
-      const product = await ctx.db.product.delete({
-        where: { id: input },
-      });
-      return {
-        data: addFullProductImageUrl(product),
-        message: "Product deleted successfully",
-      };
-    }),
-
-  importProducts: publicProcedure
-    .input(z.array(productSchema.extend({ shopProductId: z.string() })))
-    .mutation(async ({ ctx, input }) => {
-      const products = await Promise.all(
-        input.map(async (product) => {
-          const existingProduct = await ctx.db.product.findFirst({
-            where: {
-              shopId: product.shopId,
-              shopProductId: product.shopProductId,
-            },
-          });
-          const { tags, ...productData } = product;
-          const formattedTags = tags.map((tag) => tag.text);
-          if (existingProduct) {
-            return ctx.db.product.update({
-              where: { id: existingProduct.id },
-              data: { ...productData, tags: formattedTags },
-            });
-          }
-
-          return ctx.db.product.create({
-            data: { ...productData, tags: formattedTags },
-          });
-        }),
-      );
-
-      return {
-        data: products.map(addFullProductImageUrl),
-        message: "Products imported successfully",
-      };
-    }),
 
   getAllByCategory: publicProcedure
     .input(
@@ -379,6 +183,38 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
+  importProducts: adminArtisanProcedure
+    .input(z.array(productSchema.extend({ shopProductId: z.string() })))
+    .mutation(async ({ ctx, input }) => {
+      const products = await Promise.all(
+        input.map(async (product) => {
+          const existingProduct = await ctx.db.product.findFirst({
+            where: {
+              shopId: product.shopId,
+              shopProductId: product.shopProductId,
+            },
+          });
+          const { tags, ...productData } = product;
+          const formattedTags = tags.map((tag) => tag.text);
+          if (existingProduct) {
+            return ctx.db.product.update({
+              where: { id: existingProduct.id },
+              data: { ...productData, tags: formattedTags },
+            });
+          }
+
+          return ctx.db.product.create({
+            data: { ...productData, tags: formattedTags },
+          });
+        }),
+      );
+
+      return {
+        data: products.map(addFullProductImageUrl),
+        message: "Products imported successfully",
+      };
+    }),
+
   bulkUpdate: adminArtisanProcedure
     .input(
       z.object({
@@ -438,23 +274,132 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  getAllFeatured: publicProcedure.query(async ({ ctx }) => {
-    // Always order by createdAt DESC in the DB query
-    const products = await ctx.db.product.findMany({
-      where: {
-        tags: {
-          hasSome: ["Featured Fashion", "Featured Food"],
+  create: adminArtisanProcedure
+    .input(productSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { categoryIds, tags, ...productData } = input;
+
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
+
+      const formattedTags = tags.map((tag) => tag.text);
+
+      const product = await ctx.db.product.create({
+        data: {
+          ...productData,
+          tags: formattedTags,
+          categories: { connect: allCategoryIds.map((id) => ({ id })) },
         },
-      },
-      include: { shop: true, categories: true },
-      orderBy: { createdAt: "desc" },
-    });
+      });
+      return {
+        data: {
+          ...product,
+          tags,
+          categoryIds,
+          shopId: input.shopId,
+        },
+        message: "Product created successfully",
+      };
+    }),
 
-    // Map to add full image URLs, but preserve the order from the DB
-    const productsWithFullUrls = products.map(addFullProductImageUrl);
+  update: adminArtisanProcedure
+    .input(productSchema.extend({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const isUserAuthorized = await checkUserProductPermissions(
+        ctx.session,
+        input.id,
+      );
 
-    return productsWithFullUrls;
-  }),
+      if (!isUserAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Product does not belong to current user",
+        });
+      }
+
+      const { id, categoryIds, tags, ...productData } = input;
+
+      const allCategoryIds = await getCategoriesWithParents(
+        ctx.db,
+        categoryIds,
+      );
+
+      const formattedTags = tags.map((tag) => tag.text);
+
+      const product = await ctx.db.product.update({
+        where: { id },
+        data: {
+          ...productData,
+          tags: formattedTags,
+          categories: { set: allCategoryIds.map((id) => ({ id })) },
+        },
+      });
+      return {
+        data: {
+          ...product,
+          tags,
+          categoryIds,
+          shopId: input.shopId,
+        },
+        message: "Product updated successfully",
+      };
+    }),
+
+  // TODO: Need to verify what tags we are actually wanting for each incoming product
+  updateTags: adminArtisanProcedure
+    .input(
+      z.object({
+        productIds: z.array(z.string()),
+        tagType: z.enum([
+          "attributeTags",
+          "materialTags",
+          "environmentalTags",
+          "aiGeneratedTags",
+        ]),
+        tags: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { productIds, tagType, tags } = input;
+      const updatedProducts = await Promise.all(
+        productIds.map(async (id) => {
+          return ctx.db.product.update({
+            where: { id },
+            data: { [tagType]: tags },
+          });
+        }),
+      );
+      return {
+        data: updatedProducts.map(addFullProductImageUrl),
+        message: `${updatedProducts.length} products updated successfully`,
+      };
+    }),
+
+  delete: adminArtisanProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const isUserAuthorized = await checkUserProductPermissions(
+        ctx.session,
+        input,
+      );
+
+      if (!isUserAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Product does not belong to current user",
+        });
+      }
+
+      await ctx.db.product.delete({
+        where: { id: input },
+      });
+      return {
+        data: null,
+        message: "Product deleted successfully",
+      };
+    }),
 });
 
 const getCategoriesWithParents = async (

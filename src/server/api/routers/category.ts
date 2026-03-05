@@ -1,5 +1,4 @@
 import { CategoryType } from "generated/prisma";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
@@ -21,39 +20,46 @@ export const categoryRouter = createTRPCRouter({
   create: adminOnlyProcedure
     .input(categorySchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.category.create({
+      const category = await ctx.db.category.create({
         data: {
           name: input.name,
           parentId: input.parentId,
           type: input.type ?? CategoryType.PRODUCT,
         },
       });
+      return {
+        data: category,
+        message: "Category created successfully",
+      };
     }),
 
   update: adminOnlyProcedure
-    .input(categorySchema)
+    .input(categorySchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (!input.id) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Category ID is required for an update.",
-        });
-      }
-      return ctx.db.category.update({
+      const category = await ctx.db.category.update({
         where: { id: input.id },
         data: {
           name: input.name,
           parentId: input.parentId,
+          type: input.type,
         },
       });
+      return {
+        data: category,
+        message: "Category updated successfully",
+      };
     }),
 
   delete: adminOnlyProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.category.delete({
+      await ctx.db.category.delete({
         where: { id: input.id },
       });
+      return {
+        data: null,
+        message: "Category deleted successfully",
+      };
     }),
 
   getNavigationTree: publicProcedure
@@ -96,6 +102,11 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
+  get: adminOnlyProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    return ctx.db.category.findUnique({
+      where: { id: input },
+    });
+  }),
   getCategoriesWithFeaturedProducts: publicProcedure
     .input(z.object({ type: z.nativeEnum(CategoryType).optional() }).optional())
     .query(async ({ ctx, input }) => {

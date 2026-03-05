@@ -13,10 +13,8 @@ import { toast } from "sonner";
 import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import type { ProductFormData } from "~/lib/validators/products";
 import type { RouterOutputs } from "~/trpc/react";
-import type { ProductWithRelations } from "~/types/product";
 import { cn, slugify } from "~/lib/utils";
 import { productFormSchema } from "~/lib/validators/products";
-import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { useDirtyForm } from "~/hooks/use-dirty-form";
 import { useKeyboardEnter } from "~/hooks/use-keyboard-enter";
@@ -41,14 +39,18 @@ import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 import { FancySwitchFormField, SelectFormField } from "~/components/inputs";
 
 type Props = {
-  initialData: ProductWithRelations | null;
+  initialData: RouterOutputs["product"]["get"];
   shops: RouterOutputs["shop"]["getAll"];
   categories: RouterOutputs["category"]["getAll"];
+  userRole: string;
 };
 
-export function ProductForm({ initialData, shops, categories }: Props) {
-  const { data: session } = authClient.useSession();
-  const userRole = session?.user.role ?? "ARTISAN";
+export function ProductForm({
+  initialData,
+  shops,
+  categories,
+  userRole,
+}: Props) {
   const imageUploader = useUploadFile({
     api: "/api/upload",
     route: "shopImage",
@@ -99,10 +101,10 @@ export function ProductForm({ initialData, shops, categories }: Props) {
     },
     onError: (error) => {
       toast.dismiss();
-      toast.error(error.message ?? "Failed to update product.");
+      toast.error(error.message ?? "Failed to create product.");
     },
     onMutate: () => {
-      toast.loading("Updating product, please wait...");
+      toast.loading("Creating product, please wait...");
     },
   });
 
@@ -156,7 +158,7 @@ export function ProductForm({ initialData, shops, categories }: Props) {
           "";
         if (fileLocation) imageUrl = fileLocation;
       } catch {
-        toast.error("Failed to upload logo.");
+        toast.error("Failed to upload product image.");
         return;
       }
     }

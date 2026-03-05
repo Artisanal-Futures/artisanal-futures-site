@@ -1,13 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "~/components/ui/checkbox";
-import { Badge } from "~/components/ui/badge";
-import { RowImageLink } from "~/components/admin/row-image-link";
-import { ItemDialog } from "../../_components/item-dialog";
-import { DeleteServiceDialog } from "./delete-service-dialog";
-import { ServiceForm } from "./service-form";
+import { PencilIcon } from "lucide-react";
+
 import type { ServiceWithShop } from "~/types/service";
+import { cn } from "~/lib/utils";
+import { Badge } from "~/components/ui/badge";
+import { buttonVariants } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
+import { RowImageLink } from "~/components/admin/row-image-link";
+
+import { DeleteServiceDialog } from "./delete-service-dialog";
 
 export type ServiceColumnEntry = ServiceWithShop & {
   searchableString: string;
@@ -22,7 +26,9 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(!!checked)}
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
         aria-label="Select all"
       />
     ),
@@ -55,7 +61,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
     cell: ({ row }) => (
       <div className="flex flex-col space-y-1">
         <span>{row.original.shop?.name}</span>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-muted-foreground text-xs">
           Shop ID: {row.original.shopId}
         </span>
       </div>
@@ -77,7 +83,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
             </Badge>
           ))
         ) : (
-          <span className="text-xs text-muted-foreground">Uncategorized</span>
+          <span className="text-muted-foreground text-xs">Uncategorized</span>
         )}
       </div>
     ),
@@ -95,28 +101,21 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "isPublic",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={row.original.isPublic ? "default" : "secondary"}>
-        {row.original.isPublic ? "Public" : "Draft"}
-      </Badge>
-    ),
-  },
+
   {
     id: "options",
     header: "Options",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <ItemDialog
-          id={row.original.id}
-          title={`Update ${row.original.name}`}
-          subtitle="Make changes to the service"
-          initialData={row.original}
-          FormComponent={ServiceForm}
-          mode="update"
-        />
+        <Link
+          href={`/admin/services/${row.original.id}`}
+          className={cn(
+            buttonVariants({ variant: "default" }),
+            "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+          )}
+        >
+          <PencilIcon className="mr-1 h-4 w-4" /> Edit
+        </Link>
         <DeleteServiceDialog serviceId={row.original.id} />
       </div>
     ),

@@ -106,15 +106,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "isPublic",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={row.original.isPublic ? "default" : "secondary"}>
-        {row.original.isPublic ? "Public" : "Draft"}
-      </Badge>
-    ),
-  },
+
   {
     id: "options",
     header: "Options",

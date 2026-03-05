@@ -1,9 +1,7 @@
 import { api } from "~/trpc/server";
-import { CategoryForm } from "~/app/admin/categories/_components/category-form";
 
-import { ItemDialog } from "../_components/item-dialog";
 import { TrailHeader } from "../_components/trail-header";
-import { CategoryDataTable } from "./_components/data-table";
+import { CategoryClient } from "./_components/category-client";
 
 export default async function AdminCategoriesPage() {
   const categories = await api.category.getAll();
@@ -16,17 +14,8 @@ export default async function AdminCategoriesPage() {
             <h1>All Categories</h1>
             <p>Manage categories for products and services</p>
           </div>
-
-          <ItemDialog
-            type="Category"
-            title="Create New Category"
-            subtitle="Fill out the form to add a new category."
-            mode="create"
-            FormComponent={CategoryForm}
-            contentClassName="sm:max-w-xl w-full"
-          />
         </div>
-        <CategoryDataTable categories={categories} />
+        <CategoryClient categories={categories} />
       </div>
     </>
   );

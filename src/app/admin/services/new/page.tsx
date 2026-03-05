@@ -1,10 +1,10 @@
 import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
-import { ProductForm } from "../_components/product-form";
+import { ServiceForm } from "../_components/service-form";
 import { TrailHeader } from "../../_components/trail-header";
 
-export default async function NewProductPage() {
+export default async function NewServicePage() {
   const shops = await api.shop.getAll();
   const categories = await api.category.getAll();
   const session = await getSession();
@@ -15,12 +15,12 @@ export default async function NewProductPage() {
     <>
       <TrailHeader
         breadcrumbs={[
-          { label: "Products", href: "/admin/products" },
-          { label: "New Product" },
+          { label: "Services", href: "/admin/services" },
+          { label: "New Service" },
         ]}
       />
 
-      <ProductForm
+      <ServiceForm
         initialData={null}
         shops={shops}
         categories={categories}
@@ -30,5 +30,5 @@ export default async function NewProductPage() {
   );
 }
 export const metadata = {
-  title: "Add Product",
+  title: "Add Service",
 };

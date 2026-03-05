@@ -97,17 +97,13 @@ export function ProductClient({ products, shops }: Props) {
   const addButtonNode = useMemo(
     () => (
       <>
-        {process.env.NODE_ENV === "development" && (
-          <Link
-            href="/admin/products/migrate"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "h-8 text-xs",
-            )}
-          >
-            Migrate Products
-          </Link>
-        )}
+        <Link
+          href="/admin/products/migrate"
+          className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
+        >
+          Migrate Products
+        </Link>
+
         <Link
           href="/admin/products/new"
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}

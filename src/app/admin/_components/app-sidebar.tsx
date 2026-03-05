@@ -70,11 +70,6 @@ const getNavData = (session: Session | null) => {
       url: "/admin/categories",
       icon: IconFolder,
     },
-    {
-      title: "Website Provisions",
-      url: "/admin/websites",
-      icon: IconCode,
-    },
   ];
 
   const navPlatformAdmin:
@@ -86,6 +81,11 @@ const getNavData = (session: Session | null) => {
     | [] =
     session?.user.role === "ADMIN"
       ? [
+          {
+            title: "Website Provisions",
+            url: "/admin/websites",
+            icon: IconCode,
+          },
           {
             title: "Surveys",
             url: "/admin/surveys",
