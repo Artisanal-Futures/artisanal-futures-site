@@ -52,6 +52,8 @@ export const env = createEnv({
     BETTER_AUTH_URL: z.string().url(),
 
     SIMPLEPRESS_HASH_SECRET: z.string().min(1),
+
+    HCAPTCHA_SECRET_KEY: z.string(),
   },
 
   /**
@@ -91,6 +93,11 @@ export const env = createEnv({
     ),
 
     NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
+
+    NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
+    NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
+
+    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: z.string(),
   },
 
   /**
@@ -154,6 +161,12 @@ export const env = createEnv({
 
     NEXT_PUBLIC_STORAGE_BUCKET_NAME:
       process.env.NEXT_PUBLIC_STORAGE_BUCKET_NAME,
+
+    NEXT_PUBLIC_EMAIL_FROM_NOREPLY: process.env.NEXT_PUBLIC_EMAIL_FROM_NOREPLY,
+    NEXT_PUBLIC_EMAIL_FROM_SUPPORT: process.env.NEXT_PUBLIC_EMAIL_FROM_SUPPORT,
+
+    HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
+    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

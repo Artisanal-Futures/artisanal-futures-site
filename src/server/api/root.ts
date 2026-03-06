@@ -2,6 +2,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 import { authRouter } from "./routers/auth";
 import { categoryRouter } from "./routers/category";
+import { contactRouter } from "./routers/contact";
 import { eventRouter } from "./routers/event";
 import { forumRouter } from "./routers/forum";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
@@ -37,6 +38,7 @@ export const appRouter = createTRPCRouter({
   websiteProvision: websiteProvisionRouter,
   onboarding: onboardingRouter,
   event: eventRouter,
+  contact: contactRouter,
 });
 
 // export type definition of API
