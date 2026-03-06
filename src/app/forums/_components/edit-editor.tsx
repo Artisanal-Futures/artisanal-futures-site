@@ -15,7 +15,6 @@ import { PostUpdateValidator } from "~/lib/validators/post";
 import "~/styles/editor.css";
 
 import { useUploadFile } from "@better-upload/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -152,9 +151,7 @@ export const EditEditor: React.FC<Props> = ({
       for (const [, value] of Object.entries(errors)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         value;
-        toastService.error({
-          message: (value as { message: string }).message,
-        });
+        toast.error((value as { message: string }).message);
       }
     }
   }, [errors]);

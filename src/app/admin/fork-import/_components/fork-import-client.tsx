@@ -2,7 +2,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { toastService } from "@dreamwalker-studios/toasts";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
@@ -63,7 +63,7 @@ export function ForkImportClient() {
     onSuccess: (data) => {
       setTableListFromServer(data.tables);
     },
-    onError: (e) => toastService.error(e.message),
+    onError: (e) => toast.error(e.message),
   });
   const compareTable = api.migration.compareForkTable.useMutation({
     onSuccess: (data) => {
@@ -73,22 +73,18 @@ export function ForkImportClient() {
         setCompareResult(data as CompareResultNormal | CompareResultAuth);
       }
     },
-    onError: (e) => toastService.error(e.message),
+    onError: (e) => toast.error(e.message),
   });
   const applyTable = api.migration.applyForkTable.useMutation({
     onSuccess: (result) => {
       const { created, updated, errors } = result;
       if (errors.length > 0) {
-        toastService.error(
+        toast.error(
           `Applied: ${created} created, ${updated} updated. Errors: ${errors.length}`,
         );
-        errors
-          .slice(0, 5)
-          .forEach((e) => toastService.error(`${e.id}: ${e.message}`));
+        errors.slice(0, 5).forEach((e) => toast.error(`${e.id}: ${e.message}`));
       } else {
-        toastService.success(
-          `Applied: ${created} created, ${updated} updated.`,
-        );
+        toast.success(`Applied: ${created} created, ${updated} updated.`);
       }
       setCompareResult(null);
       if (selectedTableKey && parsedData?.[selectedTableKey]) {
@@ -98,7 +94,7 @@ export function ForkImportClient() {
         });
       }
     },
-    onError: (e) => toastService.error(e.message),
+    onError: (e) => toast.error(e.message),
   });
 
   const handleFileLoad = useCallback(
@@ -126,7 +122,7 @@ export function ForkImportClient() {
             { json: raw },
             {
               onSuccess: () => {
-                toastService.success(
+                toast.success(
                   `Loaded ${f.name} (${Object.keys(out).length} tables).`,
                 );
               },
@@ -134,14 +130,12 @@ export function ForkImportClient() {
             },
           );
         } catch (err) {
-          toastService.error(
-            err instanceof Error ? err.message : "Invalid JSON",
-          );
+          toast.error(err instanceof Error ? err.message : "Invalid JSON");
           setIsLoadingFile(false);
         }
       };
       reader.onerror = () => {
-        toastService.error("Failed to read file");
+        toast.error("Failed to read file");
         setIsLoadingFile(false);
       };
       reader.readAsText(f);
@@ -162,7 +156,7 @@ export function ForkImportClient() {
 
   const handleCompare = useCallback(() => {
     if (!selectedTableKey || !parsedData?.[selectedTableKey]) {
-      toastService.error("Select a table first.");
+      toast.error("Select a table first.");
       return;
     }
     setCompareResult(null);

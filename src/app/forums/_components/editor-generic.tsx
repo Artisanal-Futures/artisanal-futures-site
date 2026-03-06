@@ -7,7 +7,6 @@ import type { z } from "zod";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useUploadFile } from "@better-upload/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -162,9 +161,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
       for (const [, value] of Object.entries(errors)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         value;
-        toastService.error({
-          message: (value as { message: string }).message,
-        });
+        toast.error((value as { message: string }).message);
       }
     }
   }, [errors]);
@@ -198,9 +195,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
 
   async function onSubmit(data: FormData) {
     if (!selectedSubreddit) {
-      toastService.error({
-        message: "Please select a community",
-      });
+      toast.error("Please select a community");
       return;
     }
 

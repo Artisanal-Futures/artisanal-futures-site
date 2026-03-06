@@ -4,8 +4,8 @@ import type { CommentVote, ForumComment, User } from "generated/prisma";
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { MessageSquare } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { formatTimeToNow } from "~/lib/utils";
@@ -57,9 +57,7 @@ export const PostComment: FC<Props> = ({
   const postCommentMutation =
     api.forumSubreddit.createSubredditPostComment.useMutation({
       onError: () =>
-        toastService.error({
-          message: "Comment wasn't created successfully. Please try again.",
-        }),
+        toast.error("Comment wasn't created successfully. Please try again."),
       onSuccess: () => {
         router.refresh();
         setIsReplying(false);

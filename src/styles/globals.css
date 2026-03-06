@@ -304,17 +304,31 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
   .site-container {
     @apply container mx-auto px-4 py-12;
   }
-  .site-header {
-    @apply mb-12 text-center;
-  }
-  .site-header h1 {
-    @apply mb-4 text-5xl font-bold tracking-tight;
-  }
-  .site-header p {
-    @apply text-muted-foreground mx-auto text-xl;
-  }
 
   .page-container {
     @apply mx-auto flex h-full w-full max-w-7xl grow flex-col items-stretch p-8;
+  }
+
+  header.site-header {
+    @apply mx-auto w-full max-w-7xl px-4 pt-12 pb-6 sm:px-6 sm:pt-16 sm:pb-8 lg:px-8;
+  }
+
+  header.site-header h1 {
+    @apply text-foreground text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl;
+  }
+  header.site-header p.tagline {
+    @apply text-muted-foreground text-sm font-medium tracking-widest uppercase;
+  }
+
+  header.site-header p.description {
+    @apply text-foreground/70 max-w-2xl text-base leading-relaxed sm:text-lg;
+  }
+
+  header.site-header p.description a:not(.transition-all) {
+    @apply text-primary font-medium underline-offset-2 hover:underline;
+  }
+
+  section.site-section {
+    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
   }
 }

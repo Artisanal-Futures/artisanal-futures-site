@@ -3,20 +3,16 @@ import Link from "next/link";
 export default function JoinCriteriaPage() {
   return (
     <>
-      <header className="mx-auto max-w-7xl px-4 pt-12 pb-6 sm:px-6 sm:pt-16 sm:pb-8 lg:px-8">
+      <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <p className="text-muted-foreground text-sm font-medium tracking-widest uppercase">
-              Join Artisanal Futures
-            </p>
-            <h1 className="text-foreground text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
-              Criteria for Joining Artisanal Futures
-            </h1>
+            <p className="tagline">Join Artisanal Futures</p>
+            <h1>Criteria for Joining Artisanal Futures</h1>
           </div>
         </div>
       </header>
 
-      <section className="page-container prose prose-sm lg:prose-base">
+      <section className="site-section prose prose-sm lg:prose-base">
         <p>
           We are primarily small scale, “mom and pop” enterprises, where the
           workers are the owners. We also welcome large scale worker
@@ -40,7 +36,7 @@ export default function JoinCriteriaPage() {
           <li>
             They have the objective of creating and maintaining sustainable jobs
             and generating wealth, to improve the quality of life of the
-            worker-members, dignify human work, allow workers' democratic
+            worker-members, dignify human work, allow workers&apos; democratic
             self-management and promote community and local development.
           </li>
           <li>
@@ -54,7 +50,7 @@ export default function JoinCriteriaPage() {
             cooperative enterprise are members and vice versa.
           </li>
           <li>
-            The worker-members' relation with their cooperative shall be
+            The worker-members&apos; relation with their cooperative shall be
             considered as different from that of conventional wage-based labor
             and to that of autonomous individual work.
           </li>
@@ -75,7 +71,7 @@ export default function JoinCriteriaPage() {
           <li>
             No corporations like Walmart. That excludes both chain businesses,
             like Chipotle, where the parent company owns each location, and
-            franchise business like McDonald's, where different stores or
+            franchise business like McDonald&apos;s, where different stores or
             branches are owned by separate individuals. Both are not eligible,
             because the workers are not the owners.
           </li>
@@ -83,12 +79,12 @@ export default function JoinCriteriaPage() {
             No corporations pretending to be a co-op. For example, “REI Coop” is
             misusing the word. They are not a worker cooperative. They are just
             a company that offers the consumers a membership, just for discount,
-            like Costco or Sam's club.
+            like Costco or Sam&apos;s club.
           </li>
           <li>
             No criminal enterprise, obviously, but there are gray areas like
             marijuana, which is legal in Michigan but not by federal law.
-            However I don't know of any marijuana companies that are
+            However we don&apos;t know of any marijuana companies that are
             worker-owned.
           </li>
         </ol>

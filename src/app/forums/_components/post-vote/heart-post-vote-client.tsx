@@ -3,9 +3,9 @@
 import type { VoteType } from "generated/prisma";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
 import { Heart } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -49,9 +49,7 @@ export const HeartPostVoteClient = ({
           return;
         }
 
-        return toastService.error({
-          message: "Your heart was not registered. Please try again.",
-        });
+        return toast.error("Your heart was not registered. Please try again.");
       },
       onMutate: () => {
         if (currentVote === "UP") {

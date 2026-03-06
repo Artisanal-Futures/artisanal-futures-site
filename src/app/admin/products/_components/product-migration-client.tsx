@@ -6,7 +6,8 @@
 "use client";
 
 import { useState } from "react";
-import { toastService } from "@dreamwalker-studios/toasts";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import type {
   ShopifyData,
@@ -15,7 +16,6 @@ import type {
 } from "../_validators/types";
 import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
 import {
   Pagination,
@@ -75,12 +75,19 @@ export function DatabaseMigrationClient() {
   const endIndex = startIndex + ROWS_PER_PAGE;
   const currentData = previewData.slice(startIndex, endIndex);
 
-  const { defaultActions } = useDefaultMutationActions({
-    entity: "product",
-  });
+  const apiUtils = api.useUtils();
+  const router = useRouter();
 
-  const productMigration =
-    api.product.importProducts.useMutation(defaultActions);
+  const productMigration = api.product.importProducts.useMutation({
+    onSuccess: () => {
+      toast.success("Products imported successfully");
+      void apiUtils.product.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to import products");
+    },
+  });
 
   const { data: shops } = api.shop.getAll.useQuery();
 
@@ -176,9 +183,9 @@ export function DatabaseMigrationClient() {
       setParsedFields(fields);
       setPreviewData(convertedProducts as unknown as ProductWithRelations[]);
 
-      toastService.success("Products parsed successfully");
+      toast.success("Products parsed successfully");
     } catch (error) {
-      toastService.error(
+      toast.error(
         error instanceof Error ? error.message : "Failed to parse data",
       );
       console.error(error);
@@ -197,9 +204,9 @@ export function DatabaseMigrationClient() {
           tags: product.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
         })),
       );
-      toastService.success("Migration completed successfully");
+      toast.success("Migration completed successfully");
     } catch (error) {
-      toastService.error("Failed to execute migration");
+      toast.error("Failed to execute migration");
       console.error(error);
     } finally {
       setLoading(false);

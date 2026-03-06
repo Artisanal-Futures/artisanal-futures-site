@@ -33,7 +33,8 @@ type FormValues = {
 };
 
 const DEFAULT_MESSAGE_MAX_LENGTH = 180;
-export function DefaultContactForm() {
+
+export function ContactForm() {
   const messageMaxLength = DEFAULT_MESSAGE_MAX_LENGTH;
 
   const schema = contactFormSchema(messageMaxLength);
@@ -135,7 +136,7 @@ export function DefaultContactForm() {
         <InputFormField
           form={form}
           name="name"
-          label="First Name *"
+          label="Name *"
           inputClassName={"mt-2"}
           placeholder="Jane"
           required
@@ -164,6 +165,8 @@ export function DefaultContactForm() {
           form={form}
           name="website"
           label="Website (optional)"
+          inputClassName={"mt-2"}
+          type="url"
           placeholder="Enter your website"
           className="hidden"
         />

@@ -35,6 +35,9 @@ model Event {
   updatedAt DateTime @updatedAt
 }
 
+// Change hero images
+// Add or remove tool access
+
 model Subreddit {
   id          String         @id @default(cuid())
   description String?

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { toast } from "sonner";
 
 import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
@@ -24,16 +24,14 @@ export default function CreateCommunityClient() {
     onError: (err) => {
       if (err instanceof TRPCError) {
         if (err?.code === "CONFLICT")
-          toastService.error({
-            message:
-              "Subreddit already exists. Please choose a different name.",
-          });
+          toast.error(
+            "Subreddit already exists. Please choose a different name.",
+          );
 
         if (err?.code === "BAD_REQUEST") {
-          toastService.error({
-            message:
-              "Invalid subreddit name. Please choose a name between 3 and 21 letters.",
-          });
+          toast.error(
+            "Invalid subreddit name. Please choose a name between 3 and 21 letters.",
+          );
         }
 
         if (err?.code === "UNAUTHORIZED") {
@@ -41,9 +39,7 @@ export default function CreateCommunityClient() {
         }
       }
 
-      toastService.error({
-        message: err.message || "Could not create subreddit.",
-      });
+      toast.error(err.message || "Could not create subreddit.");
     },
     onSuccess: ({ data }) => {
       void router.push(`/forums/r/${data.name}`);

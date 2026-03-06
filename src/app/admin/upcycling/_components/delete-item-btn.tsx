@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { Loader2, Trash } from "lucide-react";
+import { toast } from "sonner";
 
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
@@ -72,11 +72,11 @@ export function DeleteItemBtn({ id }: { id: number }) {
   const { mutate: deleteUpcycling, isPending } =
     api.upcycling.delete.useMutation({
       onSuccess: ({ message }) => {
-        toastService.success({ message });
+        toast.success(message);
         setIsDeleteOpen(false);
       },
       onError: ({ message }) => {
-        toastService.error({ message });
+        toast.error(message);
       },
       onSettled: () => {
         void apiUtils.upcycling.invalidate();

@@ -8,7 +8,7 @@ type Props = { children: React.ReactNode };
 export default async function SiteLayout({ children }: Props) {
   return (
     <HydrateClient>
-      <main className="bg-background min-h-screen">
+      <main className="bg-background flex min-h-screen flex-col">
         <SiteNavbar />
         {children}
         <SiteFooter />

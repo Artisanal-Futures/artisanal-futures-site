@@ -2,10 +2,10 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Toaster } from "@dreamwalker-studios/toasts";
 import NextTopLoader from "nextjs-toploader";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { Toaster } from "~/components/ui/sonner";
 import { Providers } from "~/providers/providers";
 import { ThemeProvider } from "~/providers/theme-provider";
 

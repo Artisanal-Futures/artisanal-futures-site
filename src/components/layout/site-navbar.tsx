@@ -19,7 +19,7 @@ import { HamburgerIcon } from "~/components/hamburger-icon";
 
 const navLinks = [
   { href: "/shops", label: "Shops" },
-  { href: "/product-categories", label: "Products" },
+  { href: "/collections/products", label: "Products" },
   { href: "/service-categories", label: "Services" },
   { href: "/forums", label: "Forums" },
   { href: "/tools", label: "Tools" },

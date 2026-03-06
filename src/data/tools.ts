@@ -29,7 +29,7 @@ export const TOOLS_DATA = [
     url: "/tools/sankofa-sizer",
   },
   {
-    title: "Upcycling AI",
+    title: "UPCY",
     subtitle: "Upcycle your old scraps into new designs",
     type: "Design",
     image: "img/craft_composition.png",

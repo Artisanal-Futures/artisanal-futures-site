@@ -1,18 +1,26 @@
+import { useRouter } from "next/navigation";
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
 import { SingleActionDialog } from "../../_components/single-action-dialog";
 
 type Props = { surveyId: string };
 
 export function DeleteSurveyDialog({ surveyId }: Props) {
-  const { defaultActions } = useDefaultMutationActions({
-    entity: "survey",
+  const router = useRouter();
+  const apiUtils = api.useUtils();
+  const deleteShop = api.survey.delete.useMutation({
+    onSuccess: ({ message }) => {
+      toast.success(message);
+      void apiUtils.survey.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to delete survey.");
+    },
   });
-
-  const deleteShop = api.survey.delete.useMutation(defaultActions);
 
   const onSubmit = () => deleteShop.mutate({ surveyId });
 

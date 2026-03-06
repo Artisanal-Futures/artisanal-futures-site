@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-
-import { toastService } from "@dreamwalker-studios/toasts";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import {
@@ -47,10 +46,10 @@ export function CommentEditButton({ commentId, text }: Props) {
   const router = useRouter();
   const commentEditMutation = api.forum.editComment.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message);
+      toast.success(message);
       setIsEditDialogOpen(false);
     },
-    onError: ({ message }) => toastService.error(message),
+    onError: ({ message }) => toast.error(message),
     onSettled: () => {
       void apiUtils.forum.invalidate();
       void apiUtils.forumSubreddit.invalidate();
@@ -60,10 +59,10 @@ export function CommentEditButton({ commentId, text }: Props) {
 
   const commentDeleteMutation = api.forum.deleteComment.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message);
+      toast.success(message);
       setIsDeleteAlertOpen(false);
     },
-    onError: ({ message }) => toastService.error(message),
+    onError: ({ message }) => toast.error(message),
     onSettled: () => {
       void apiUtils.forum.invalidate();
       void apiUtils.forumSubreddit.invalidate();

@@ -1,9 +1,7 @@
-import { notFound } from "next/navigation";
 import { AccountView } from "@daveyplate/better-auth-ui";
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server";
 
 import { cn } from "~/lib/utils";
-import { api } from "~/trpc/server";
 
 export const dynamicParams = false;
 
@@ -17,16 +15,9 @@ type Props = {
 
 export default async function AccountPage({ params }: Props) {
   const { path } = await params;
-  const business = await api.business.simplifiedGet();
-  if (!business) notFound();
-  const templateStyle =
-    {
-      "dark-trend": "bg-[#424242]",
-      pollen: "py-24 md:py-36",
-    }[business.templateId] ?? "";
 
   return (
-    <div className={cn("py-20", templateStyle)}>
+    <div className={cn("py-20")}>
       <AccountView path={path} className="mx-auto max-w-7xl" classNames={{}} />
     </div>
   );

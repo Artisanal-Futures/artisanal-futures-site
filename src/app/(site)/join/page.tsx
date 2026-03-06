@@ -6,19 +6,15 @@ import { buttonVariants } from "~/components/ui/button";
 export default async function JoinPage() {
   return (
     <>
-      <header className="mx-auto max-w-7xl px-4 pt-12 pb-6 sm:px-6 sm:pt-16 sm:pb-8 lg:px-8">
+      <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <p className="text-muted-foreground text-sm font-medium tracking-widest uppercase">
-              Join Artisanal Futures
-            </p>
-            <h1 className="text-foreground text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
-              Interested in Joining Us?
-            </h1>
+            <p className="tagline">Join Artisanal Futures</p>
+            <h1>Interested in Joining Us?</h1>
           </div>
         </div>
       </header>
-      <section className="page-container prose prose-sm lg:prose-base">
+      <section className="site-section prose prose-sm lg:prose-base mb-6">
         <p>
           Thank you for your interest in the Artisanal Futures platform. We work
           with Detroit&apos;s small “mom and pop” sized businesses, as well as
@@ -101,8 +97,8 @@ export default async function JoinPage() {
           </li>
           <li>
             You are encouraged to participate in the community forum and
-            interact with the platform browsers through other artisans' product
-            offerings.
+            interact with the platform browsers through other artisans&apos;
+            product offerings.
           </li>
         </ol>
 

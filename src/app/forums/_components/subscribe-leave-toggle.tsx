@@ -2,11 +2,10 @@
 
 import { startTransition } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "~/server/better-auth/client";
-
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { toast } from "sonner";
 
+import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
 import { LoadButton } from "~/components/common/load-button";
 
@@ -31,9 +30,7 @@ export const SubscribeLeaveToggle = ({
           void router.push("/sign-in");
         }
 
-        toastService.error({
-          message: "Something went wrong. Please try again.",
-        });
+        toast.error("Something went wrong. Please try again.");
       },
       onSuccess: () => {
         startTransition(() => {
@@ -41,7 +38,7 @@ export const SubscribeLeaveToggle = ({
           // losing client-side browser or React state.
           router.refresh();
         });
-        toastService.success(`You are now subscribed to r/${subredditName}`);
+        toast.success(`You are now subscribed to r/${subredditName}`);
       },
     },
   );
@@ -49,9 +46,7 @@ export const SubscribeLeaveToggle = ({
   const unsubscribeMutation =
     api.forumSubreddit.unsubscribeToSubreddit.useMutation({
       onError: (err) => {
-        toastService.error({
-          message: err?.message ?? "Something went wrong. Please try again.",
-        });
+        toast.error(err?.message ?? "Something went wrong. Please try again.");
       },
       onSuccess: () => {
         startTransition(() => {
@@ -59,7 +54,7 @@ export const SubscribeLeaveToggle = ({
           // losing client-side browser or React state.
           router.refresh();
         });
-        toastService.success(`You are now unsubscribed from/${subredditName}`);
+        toast.success(`You are now unsubscribed from/${subredditName}`);
       },
     });
 

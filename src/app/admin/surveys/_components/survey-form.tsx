@@ -1,21 +1,21 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import type { SurveyFormSchema } from "../_validators/schema";
 import type { Survey } from "~/types/survey";
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 import { Button } from "~/components/ui/button";
 import { Form } from "~/components/ui/form";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { LoadButton } from "~/components/common/load-button";
-import { FancySwitchFormField } from "~/components/inputs";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
+import { LoadButton } from "~/components/common/load-button";
+import { FancySwitchFormField } from "~/components/inputs";
 
 import { surveyFormSchema } from "../_validators/schema";
 
@@ -25,11 +25,8 @@ type Props = {
 };
 
 export function SurveyForm({ initialData, onSuccessCallback }: Props) {
-  const { defaultSuccess, defaultError, defaultSettled } =
-    useDefaultMutationActions({
-      entity: "survey",
-    });
-
+  const router = useRouter();
+  const apiUtils = api.useUtils();
   const { data: shops } = api.shop.getAll.useQuery();
   const { data: users } = api.user.getAll.useQuery();
 
@@ -53,20 +50,26 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
 
   const updateSurvey = api.survey.update.useMutation({
     onSuccess: ({ message }) => {
-      defaultSuccess({ message });
+      toast.success(message);
+      void apiUtils.survey.invalidate();
+      router.refresh();
       onSuccessCallback();
     },
-    onError: defaultError,
-    onSettled: defaultSettled,
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to update survey.");
+    },
   });
 
   const createSurvey = api.survey.create.useMutation({
     onSuccess: ({ message }) => {
-      defaultSuccess({ message });
+      toast.success(message);
+      void apiUtils.survey.invalidate();
+      router.refresh();
       onSuccessCallback();
     },
-    onError: defaultError,
-    onSettled: defaultSettled,
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to create survey.");
+    },
   });
 
   async function onSubmit(data: SurveyFormSchema) {
@@ -91,8 +94,8 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
         <ScrollArea className="h-[60svh]" type="always">
           <div className="grid grid-cols-2 gap-4 p-1">
             {/* Basic Info Section */}
-            <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-              <h3 className="mb-3 text-lg font-medium text-primary">
+            <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
+              <h3 className="text-primary mb-3 text-lg font-medium">
                 Basic Information
               </h3>
               <div className="grid grid-cols-1 gap-3">
@@ -148,8 +151,8 @@ export function SurveyForm({ initialData, onSuccessCallback }: Props) {
             </div>
 
             {/* Form Settings Section */}
-            <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-              <h3 className="mb-3 text-lg font-medium text-primary">
+            <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
+              <h3 className="text-primary mb-3 text-lg font-medium">
                 Form Settings
               </h3>
               <div className="grid grid-cols-1 gap-3">

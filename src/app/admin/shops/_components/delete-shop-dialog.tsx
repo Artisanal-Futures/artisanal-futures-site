@@ -1,22 +1,25 @@
+import { useRouter } from "next/navigation";
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
 import { SingleActionDialog } from "../../_components/single-action-dialog";
 
 type Props = { shopId: string };
 
 export function DeleteShopDialog({ shopId }: Props) {
-  const { defaultSuccess, defaultError, defaultSettled } =
-    useDefaultMutationActions({
-      entity: "shop",
-    });
-
+  const router = useRouter();
+  const apiUtils = api.useUtils();
   const deleteShop = api.shop.delete.useMutation({
-    onSuccess: ({ message }) => defaultSuccess({ message }),
-    onError: defaultError,
-    onSettled: defaultSettled,
+    onSuccess: ({ message }) => {
+      toast.success(message);
+      void apiUtils.shop.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to delete shop.");
+    },
   });
 
   const onSubmit = () => deleteShop.mutate({ shopId });
