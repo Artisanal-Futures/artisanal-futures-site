@@ -5,6 +5,7 @@ import { categoryRouter } from "./routers/category";
 import { contactRouter } from "./routers/contact";
 import { eventRouter } from "./routers/event";
 import { forumRouter } from "./routers/forum";
+import { inviteRouter } from "./routers/invite";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
 import { migrationRouter } from "./routers/migration";
 import { onboardingRouter } from "./routers/onboarding";
@@ -33,6 +34,7 @@ export const appRouter = createTRPCRouter({
   category: categoryRouter,
   forum: forumRouter,
   forumSubreddit: forumSubredditRouter,
+  invite: inviteRouter,
 
   upcycling: upcyclingRouter,
   websiteProvision: websiteProvisionRouter,

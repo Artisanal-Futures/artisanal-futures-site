@@ -23,6 +23,7 @@ import {
   IconShoppingCart,
   IconStar,
   IconTerminal,
+  IconUserPlus,
 } from "@tabler/icons-react";
 import { Building2, Images, Users } from "lucide-react";
 
@@ -109,6 +110,11 @@ const getNavData = (session: Session | null) => {
             title: "Guest Surveys",
             url: "/admin/guest-surveys",
             icon: IconMessageCircle,
+          },
+          {
+            title: "Invites",
+            url: "/admin/invites",
+            icon: IconUserPlus,
           },
         ]
       : [];

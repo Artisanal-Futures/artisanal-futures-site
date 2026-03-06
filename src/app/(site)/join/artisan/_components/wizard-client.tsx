@@ -59,6 +59,8 @@ type WizardClientProps = {
 
 export function WizardClient({ initialCode }: WizardClientProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [didAutoAdvanceFromInvite, setDidAutoAdvanceFromInvite] =
+    useState(false);
   const [formData, setFormData] = useState<Partial<SignupFormData>>({
     invitationCode: initialCode?.toUpperCase(),
   });
@@ -91,11 +93,19 @@ export function WizardClient({ initialCode }: WizardClientProps) {
       {/* Form Content */}
       <section className="container mx-auto flex flex-1 items-center justify-center px-4 py-8 shadow">
         <div className="flex w-full max-w-6xl justify-center">
-          {CurrentStepComponent ? (
+          {currentStep === 1 ? (
+            <InvitationCodeStep
+              formData={formData}
+              onNext={handleNext}
+              onBack={undefined}
+              skipAutoVerify={didAutoAdvanceFromInvite}
+              onAutoAdvanced={() => setDidAutoAdvanceFromInvite(true)}
+            />
+          ) : CurrentStepComponent ? (
             <CurrentStepComponent
               formData={formData}
               onNext={handleNext}
-              onBack={currentStep > 1 ? handleBack : undefined}
+              onBack={handleBack}
             />
           ) : null}
         </div>

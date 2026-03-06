@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Loader2 } from "lucide-react";
 
@@ -19,39 +19,49 @@ import { Input } from "~/components/ui/input";
 type InvitationCodeStepProps = {
   formData: Partial<SignupFormData>;
   onNext: (data: Partial<SignupFormData>) => void;
+  onBack?: () => void;
+  skipAutoVerify?: boolean;
+  onAutoAdvanced?: () => void;
 };
 
 export function InvitationCodeStep({
   formData,
   onNext,
+  skipAutoVerify,
+  onAutoAdvanced,
 }: InvitationCodeStepProps) {
   const [code, setCode] = useState(formData.invitationCode ?? "");
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoVerified, setAutoVerified] = useState(false);
+  const hasAutoAdvancedRef = useRef(false);
 
   // Auto-verify code if it's prefilled from URL
   useEffect(() => {
+    if (skipAutoVerify) return;
+
     const verifyPrefilled = async () => {
       if (!code || autoVerified || code !== formData.invitationCode) {
         return;
       }
+      if (hasAutoAdvancedRef.current) return;
 
       setIsVerifying(true);
       setError(null);
 
       try {
-        const response = await fetch("/api/signup/verify-code", {
+        const response = await fetch("/api/join/verify-code", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ invitationCode: code }),
+          body: JSON.stringify({ invitationCode: code, type: "artisan" }),
         });
 
         const data = (await response.json()) as { error?: string };
 
         if (response.ok) {
+          hasAutoAdvancedRef.current = true;
           setAutoVerified(true);
-          // Code is valid, auto-advance to next step
+          onAutoAdvanced?.();
           onNext({ invitationCode: code });
         } else {
           setError(data.error ?? "Invalid invitation code");
@@ -65,7 +75,7 @@ export function InvitationCodeStep({
     };
 
     void verifyPrefilled();
-  }, [code, formData.invitationCode, autoVerified, onNext]);
+  }, [code, formData.invitationCode, autoVerified, onNext, onAutoAdvanced, skipAutoVerify]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

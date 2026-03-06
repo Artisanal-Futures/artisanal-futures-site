@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 import type { GuestSignupFormData } from "./guest-form-types";
@@ -18,22 +18,31 @@ import { Input } from "~/components/ui/input";
 type GuestInvitationCodeStepProps = {
   formData: Partial<GuestSignupFormData>;
   onNext: (data: Partial<GuestSignupFormData>) => void;
+  onBack?: () => void;
+  skipAutoVerify?: boolean;
+  onAutoAdvanced?: () => void;
 };
 
 export function GuestInvitationCodeStep({
   formData,
   onNext,
+  skipAutoVerify,
+  onAutoAdvanced,
 }: GuestInvitationCodeStepProps) {
   const [code, setCode] = useState(formData.invitationCode ?? "");
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoVerified, setAutoVerified] = useState(false);
+  const hasAutoAdvancedRef = useRef(false);
 
   useEffect(() => {
+    if (skipAutoVerify) return;
+
     const verifyPrefilled = async () => {
       if (!code || autoVerified || code !== formData.invitationCode) {
         return;
       }
+      if (hasAutoAdvancedRef.current) return;
 
       setIsVerifying(true);
       setError(null);
@@ -48,7 +57,9 @@ export function GuestInvitationCodeStep({
         const data = (await response.json()) as { error?: string };
 
         if (response.ok) {
+          hasAutoAdvancedRef.current = true;
           setAutoVerified(true);
+          onAutoAdvanced?.();
           onNext({ invitationCode: code });
         } else {
           setError(data.error ?? "Invalid invitation code");
@@ -62,7 +73,7 @@ export function GuestInvitationCodeStep({
     };
 
     void verifyPrefilled();
-  }, [code, formData.invitationCode, autoVerified, onNext]);
+  }, [code, formData.invitationCode, autoVerified, onNext, onAutoAdvanced, skipAutoVerify]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

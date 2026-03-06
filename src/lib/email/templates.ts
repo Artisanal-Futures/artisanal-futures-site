@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactFormEmail from "~/emails/contact-form";
+import { PlatformInviteEmail } from "~/emails/platform-invite";
 
 import { EMAIL_FROM, sendEmail } from "./send";
 
@@ -34,3 +35,33 @@ export async function sendContactFormSubmission(params: {
     tags: [{ name: "category", value: "contact_form" }],
   });
 }
+
+export async function sendPlatformInviteEmail({
+  to,
+  role,
+  inviteUrl,
+  inviteCode,
+  logoUrl,
+}: {
+  to: string;
+  role: "ARTISAN" | "GUEST";
+  inviteUrl: string;
+  inviteCode: string;
+  logoUrl?: string;
+}) {
+  const label = role === "ARTISAN" ? "Artisan" : "Guest";
+  return sendEmail({
+    from: EMAIL_FROM.NOREPLY,
+    fromName: "Artisanal Futures",
+    to,
+    subject: `You're invited to join Artisanal Futures as a ${label}`,
+    react: PlatformInviteEmail({
+      inviteUrl,
+      inviteCode,
+      role,
+      logoUrl,
+    }),
+    tags: [{ name: "category", value: "platform_invite" }],
+  });
+}
+

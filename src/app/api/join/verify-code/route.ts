@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { db } from "~/server/db";
+
 export async function POST(req: NextRequest) {
   try {
     const { invitationCode, type } = (await req.json()) as {
@@ -8,7 +10,49 @@ export async function POST(req: NextRequest) {
       type: "artisan" | "guest";
     };
 
-    // Check against environment variable
+    const code = invitationCode?.trim().toUpperCase();
+    if (!code) {
+      return NextResponse.json(
+        { error: "Invalid invitation code" },
+        { status: 400 },
+      );
+    }
+
+    const expectedRole = type === "artisan" ? "ARTISAN" : "GUEST";
+
+    // Check PlatformInvite first
+    const invite = await db.platformInvite.findUnique({
+      where: { code },
+    });
+
+    if (invite) {
+      if (invite.used) {
+        return NextResponse.json(
+          { error: "This invitation code has already been used" },
+          { status: 400 },
+        );
+      }
+      if (invite.expiresAt <= new Date()) {
+        return NextResponse.json(
+          { error: "This invitation code has expired" },
+          { status: 400 },
+        );
+      }
+      if (invite.role !== expectedRole) {
+        return NextResponse.json(
+          {
+            error:
+              type === "artisan"
+                ? "This code is for guest invitations only"
+                : "This code is for artisan invitations only",
+          },
+          { status: 400 },
+        );
+      }
+      return NextResponse.json({ valid: true });
+    }
+
+    // Fall back to environment variable
     const validCode =
       type === "artisan" ? process.env.ARTISAN_CODE : process.env.GUEST_CODE;
 
@@ -19,14 +63,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (invitationCode !== validCode) {
+    if (code !== validCode.toUpperCase()) {
       return NextResponse.json(
         { error: "Invalid invitation code" },
         { status: 400 },
       );
     }
 
-    // Code is valid
     return NextResponse.json({ valid: true });
   } catch (error) {
     console.error(error);

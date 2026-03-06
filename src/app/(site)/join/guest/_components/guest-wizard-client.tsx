@@ -23,6 +23,8 @@ type GuestWizardClientProps = {
 
 export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [didAutoAdvanceFromInvite, setDidAutoAdvanceFromInvite] =
+    useState(false);
   const [formData, setFormData] = useState<
     Partial<import("./guest-form-types").GuestSignupFormData>
   >({
@@ -57,11 +59,19 @@ export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
 
       <section className="container mx-auto flex flex-1 items-center justify-center px-4 py-8 shadow">
         <div className="flex w-full max-w-6xl justify-center">
-          {CurrentStepComponent ? (
+          {currentStep === 1 ? (
+            <GuestInvitationCodeStep
+              formData={formData}
+              onNext={handleNext}
+              onBack={undefined}
+              skipAutoVerify={didAutoAdvanceFromInvite}
+              onAutoAdvanced={() => setDidAutoAdvanceFromInvite(true)}
+            />
+          ) : CurrentStepComponent ? (
             <CurrentStepComponent
               formData={formData}
               onNext={handleNext}
-              onBack={currentStep > 1 ? handleBack : undefined}
+              onBack={handleBack}
             />
           ) : null}
         </div>
