@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 import type { SignupFormData } from "./wizard-client";
@@ -96,11 +97,21 @@ export function InvitationCodeStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Welcome! Let&apos;s get started</CardTitle>
         <CardDescription>
-          Enter your invitation code to create your store
+          Enter your invitation code to create your store.{" "}
+          <span>
+            Don&apos;t have a code?{" "}
+            <Link
+              href="/contact"
+              className="text-primary after:bg-primary relative font-semibold after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:transition-all after:duration-200 after:content-[''] hover:after:w-full"
+            >
+              <span>Contact us</span>
+            </Link>{" "}
+            to request access.
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>

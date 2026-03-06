@@ -93,7 +93,7 @@ export function GuestInvitationCodeStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Welcome! Let&apos;s get started</CardTitle>
         <CardDescription>

@@ -48,7 +48,7 @@ export function GuestArtisanInfoStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Where you&apos;re based</CardTitle>
         <CardDescription>

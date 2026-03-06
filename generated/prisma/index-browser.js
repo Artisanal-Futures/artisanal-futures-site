@@ -190,6 +190,19 @@ exports.Prisma.CommentVoteScalarFieldEnum = {
   type: 'type'
 };
 
+exports.Prisma.PlatformInviteScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  email: 'email',
+  code: 'code',
+  role: 'role',
+  used: 'used',
+  usedAt: 'usedAt',
+  usedBy: 'usedBy',
+  createdBy: 'createdBy'
+};
+
 exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -840,6 +853,15 @@ exports.VoteType = exports.$Enums.VoteType = {
   DOWN: 'DOWN'
 };
 
+exports.Role = exports.$Enums.Role = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+  ARTISAN: 'ARTISAN',
+  DRIVER: 'DRIVER',
+  GUEST: 'GUEST',
+  MANAGER: 'MANAGER'
+};
+
 exports.ProductScrapeMethod = exports.$Enums.ProductScrapeMethod = {
   MANUAL: 'MANUAL',
   WORDPRESS: 'WORDPRESS',
@@ -980,15 +1002,6 @@ exports.ProvisionStatus = exports.$Enums.ProvisionStatus = {
   DELETED: 'DELETED'
 };
 
-exports.Role = exports.$Enums.Role = {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-  ARTISAN: 'ARTISAN',
-  DRIVER: 'DRIVER',
-  GUEST: 'GUEST',
-  MANAGER: 'MANAGER'
-};
-
 exports.Prisma.ModelName = {
   Category: 'Category',
   Event: 'Event',
@@ -998,6 +1011,7 @@ exports.Prisma.ModelName = {
   ForumComment: 'ForumComment',
   Vote: 'Vote',
   CommentVote: 'CommentVote',
+  PlatformInvite: 'PlatformInvite',
   Service: 'Service',
   Product: 'Product',
   Shop: 'Shop',

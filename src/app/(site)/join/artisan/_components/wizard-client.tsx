@@ -80,24 +80,17 @@ export function WizardClient({ initialCode }: WizardClientProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold">Create Your Store</h1>
-        </div>
-      </header>
-
+    <div className="flex min-h-[50svh] flex-col bg-gray-50">
       {/* Progress Indicator */}
-      <div className="border-b bg-white">
+      <div className="border-border/50 rounded-t-md border bg-white">
         <div className="container mx-auto px-4 py-6">
           <SignupProgress currentStep={currentStep} steps={STEPS} />
         </div>
       </div>
 
       {/* Form Content */}
-      <main className="container mx-auto flex-1 px-4 py-8">
-        <div className="mx-auto max-w-2xl">
+      <section className="container mx-auto flex flex-1 items-center justify-center px-4 py-8 shadow">
+        <div className="flex w-full max-w-6xl justify-center">
           {CurrentStepComponent ? (
             <CurrentStepComponent
               formData={formData}
@@ -106,7 +99,7 @@ export function WizardClient({ initialCode }: WizardClientProps) {
             />
           ) : null}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

@@ -31,7 +31,9 @@ export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
 
   const CurrentStepComponent = STEPS[currentStep - 1]?.component ?? null;
 
-  const handleNext = (data: Partial<import("./guest-form-types").GuestSignupFormData>) => {
+  const handleNext = (
+    data: Partial<import("./guest-form-types").GuestSignupFormData>,
+  ) => {
     setFormData((prev) => ({ ...prev, ...data }));
 
     if (currentStep < STEPS.length) {
@@ -46,21 +48,15 @@ export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <header className="border-b bg-white">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold">Join as a Guest</h1>
-        </div>
-      </header>
-
-      <div className="border-b bg-white">
+    <div className="flex min-h-[50svh] flex-col bg-gray-50">
+      <div className="border-border/50 rounded-t-md border bg-white">
         <div className="container mx-auto px-4 py-6">
           <GuestSignupProgress currentStep={currentStep} steps={STEPS} />
         </div>
       </div>
 
-      <main className="container mx-auto flex-1 px-4 py-8">
-        <div className="mx-auto max-w-2xl">
+      <section className="container mx-auto flex flex-1 items-center justify-center px-4 py-8 shadow">
+        <div className="flex w-full max-w-6xl justify-center">
           {CurrentStepComponent ? (
             <CurrentStepComponent
               formData={formData}
@@ -69,7 +65,7 @@ export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
             />
           ) : null}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

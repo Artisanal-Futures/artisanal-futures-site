@@ -119,7 +119,7 @@ export function GuestPracticesStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Artisanal practices</CardTitle>
         <CardDescription>

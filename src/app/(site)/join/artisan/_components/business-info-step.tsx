@@ -89,35 +89,31 @@ function CheckboxGroup<TOption extends string>({
       {options.map((option) => (
         <div
           key={option}
-          className="flex items-center space-x-3 rounded-md border border-border p-3 transition-colors hover:bg-accent"
+          className="border-border hover:bg-accent flex items-center space-x-3 rounded-md border p-3 transition-colors"
         >
           <Checkbox
             id={`${idPrefix}-${option}`}
             checked={selected.includes(option)}
-            onCheckedChange={(checked) =>
-              onToggle(option, checked === true)
-            }
+            onCheckedChange={(checked) => onToggle(option, checked === true)}
           />
           <Label
             htmlFor={`${idPrefix}-${option}`}
-            className="cursor-pointer select-none text-sm font-normal"
+            className="cursor-pointer text-sm font-normal select-none"
           >
             {option}
           </Label>
         </div>
       ))}
-      <div className="flex flex-col gap-2 rounded-md border border-border p-3 md:col-span-2">
+      <div className="border-border flex flex-col gap-2 rounded-md border p-3 md:col-span-2">
         <div className="flex items-center space-x-3">
           <Checkbox
             id={`${idPrefix}-other`}
             checked={hasOther}
-            onCheckedChange={(checked) =>
-              onToggle("Other", checked === true)
-            }
+            onCheckedChange={(checked) => onToggle("Other", checked === true)}
           />
           <Label
             htmlFor={`${idPrefix}-other`}
-            className="cursor-pointer select-none text-sm font-normal"
+            className="cursor-pointer text-sm font-normal select-none"
           >
             {otherLabel}
           </Label>
@@ -140,56 +136,52 @@ export function BusinessInfoStep({
   onNext,
   onBack,
 }: BusinessInfoStepProps) {
-  const [businessName, setBusinessName] = useState(
-    formData.businessName ?? ""
-  );
+  const [businessName, setBusinessName] = useState(formData.businessName ?? "");
   const [businessInterview, setBusinessInterview] = useState(
-    formData.businessInterview ?? ""
+    formData.businessInterview ?? "",
   );
   const [businessLocation, setBusinessLocation] = useState(
-    formData.businessLocation ?? ""
+    formData.businessLocation ?? "",
   );
   const [businessEmail, setBusinessEmail] = useState(
-    formData.businessEmail ?? ""
+    formData.businessEmail ?? "",
   );
   const [businessTelephone, setBusinessTelephone] = useState(
-    formData.businessTelephone ?? ""
+    formData.businessTelephone ?? "",
   );
   const [businessType, setBusinessType] = useState<string[]>(
-    formData.businessType ?? []
+    formData.businessType ?? [],
   );
   const [businessTypeOther, setBusinessTypeOther] = useState(
-    formData.businessTypeOther ?? ""
+    formData.businessTypeOther ?? "",
   );
   const [productCategories, setProductCategories] = useState<string[]>(
-    formData.productCategories ?? []
+    formData.productCategories ?? [],
   );
   const [productCategoriesOther, setProductCategoriesOther] = useState(
-    formData.productCategoriesOther ?? ""
+    formData.productCategoriesOther ?? "",
   );
   const [principles, setPrinciples] = useState<string[]>(
-    formData.principles ?? []
+    formData.principles ?? [],
   );
   const [principlesOther, setPrinciplesOther] = useState(
-    formData.principlesOther ?? ""
+    formData.principlesOther ?? "",
   );
   const [commonProcesses, setCommonProcesses] = useState<string[]>(
-    formData.commonProcesses ?? []
+    formData.commonProcesses ?? [],
   );
   const [commonProcessesOther, setCommonProcessesOther] = useState(
-    formData.commonProcessesOther ?? ""
+    formData.commonProcessesOther ?? "",
   );
   const [materialsUsed, setMaterialsUsed] = useState<string[]>(
-    formData.materialsUsed ?? []
+    formData.materialsUsed ?? [],
   );
   const [materialsUsedOther, setMaterialsUsedOther] = useState(
-    formData.materialsUsedOther ?? ""
+    formData.materialsUsedOther ?? "",
   );
-  const [websiteLink, setWebsiteLink] = useState(
-    formData.websiteLink ?? ""
-  );
+  const [websiteLink, setWebsiteLink] = useState(formData.websiteLink ?? "");
   const [socialMediaLinks, setSocialMediaLinks] = useState(
-    formData.socialMediaLinks ?? ""
+    formData.socialMediaLinks ?? "",
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -197,7 +189,7 @@ export function BusinessInfoStep({
     arr: string[],
     item: string,
     checked: boolean,
-    setter: (v: string[]) => void
+    setter: (v: string[]) => void,
   ) => {
     if (checked) {
       setter([...arr, item]);
@@ -241,7 +233,7 @@ export function BusinessInfoStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl">
       <CardHeader>
         <CardTitle>Tell us about your business</CardTitle>
         <CardDescription>
@@ -258,7 +250,10 @@ export function BusinessInfoStep({
           )}
 
           <div>
-            <Label htmlFor="businessName" className="mb-2 block text-sm font-medium">
+            <Label
+              htmlFor="businessName"
+              className="mb-2 block text-sm font-medium"
+            >
               Business Name
             </Label>
             <Input
@@ -362,7 +357,7 @@ export function BusinessInfoStep({
                   productCategories,
                   option,
                   checked,
-                  setProductCategories
+                  setProductCategories,
                 )
               }
               otherValue={productCategoriesOther}
@@ -395,7 +390,7 @@ export function BusinessInfoStep({
                   commonProcesses,
                   option,
                   checked,
-                  setCommonProcesses
+                  setCommonProcesses,
                 )
               }
               otherValue={commonProcessesOther}

@@ -43,16 +43,16 @@ export const SiteFooter = () => {
               About Us
             </Link>
             <Link
-              href="/join/artisan"
+              href="/join"
               className="text-muted-foreground/80 hover:text-foreground"
             >
-              Become an Artisan
+              Interested in Joining?
             </Link>
             <Link
-              href="/join/guest"
+              href="/join/criteria"
               className="text-muted-foreground/80 hover:text-foreground"
             >
-              Become a Guest
+              Artisan Criteria
             </Link>
             <Link
               href="/contact"

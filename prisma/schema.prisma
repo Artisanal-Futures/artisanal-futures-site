@@ -79,6 +79,7 @@ model User {
   votes             Vote[]
   websiteProvision  WebsiteProvision[]
   Depot             Depot[]            @relation("DepotToUser")
+  createdInvites   PlatformInvite[]    @relation("CreatedInvites")
 }
 
 model Verification {

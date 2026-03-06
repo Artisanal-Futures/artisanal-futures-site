@@ -63,7 +63,7 @@ export function AccountDetailsStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Create your account</CardTitle>
         <CardDescription>This will be your login information</CardDescription>

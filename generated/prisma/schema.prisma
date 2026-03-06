@@ -114,6 +114,31 @@ enum VoteType {
   DOWN
 }
 
+model PlatformInvite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  // Who is this for?
+  email String
+  code  String @unique // Used in wizard URL
+
+  // What role will they have?
+  role Role
+
+  // Status
+  used   Boolean   @default(false)
+  usedAt DateTime?
+  usedBy String? // userId who redeemed it
+
+  // Who created this invite
+  createdBy String?
+  creator   User?   @relation("CreatedInvites", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@index([code])
+}
+
 enum ProductScrapeMethod {
   MANUAL
   WORDPRESS
@@ -1073,6 +1098,7 @@ model User {
   votes             Vote[]
   websiteProvision  WebsiteProvision[]
   Depot             Depot[]            @relation("DepotToUser")
+  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
 }
 
 model Verification {

@@ -153,7 +153,7 @@ export function ArtisanProfileStep({
   };
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl">
       <CardHeader>
         <CardTitle>Artisan profile</CardTitle>
         <CardDescription>
