@@ -5,6 +5,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  IconCalendar,
   IconCode,
   IconDashboard,
   IconDatabase,
@@ -41,8 +42,6 @@ import { NavMain } from "~/app/admin/_components/nav-main";
 import { NavSecondary } from "~/app/admin/_components/nav-secondary";
 import { NavUser } from "~/app/admin/_components/nav-user";
 
-import WelcomeNotification from "./welcome-notification";
-
 const getNavData = (session: Session | null) => {
   const navMain = [
     {
@@ -69,6 +68,11 @@ const getNavData = (session: Session | null) => {
       title: "Categories",
       url: "/admin/categories",
       icon: IconFolder,
+    },
+    {
+      title: "Events",
+      url: "/admin/events",
+      icon: IconCalendar,
     },
   ];
 

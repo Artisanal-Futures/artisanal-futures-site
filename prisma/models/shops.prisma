@@ -22,6 +22,7 @@ model Shop {
   products         Product[]
   services         Service[]
   address          ShopAddress?
+  events           Event[]
 
   // Decommissioned Fields
   coverPhoto       String?

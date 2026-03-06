@@ -312,4 +312,8 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
   .site-header p {
     @apply text-muted-foreground mx-auto text-xl;
   }
+
+  .page-container {
+    @apply mx-auto flex h-full w-full max-w-7xl grow flex-col items-stretch p-8;
+  }
 }

@@ -6,14 +6,14 @@ import type EditorJS from "@editorjs/editorjs";
 import type { z } from "zod";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useUploadFile } from "@better-upload/client";
 import { toastService } from "@dreamwalker-studios/toasts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
+import { toast } from "sonner";
 
-import { env } from "~/env";
-import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { cn } from "~/lib/utils";
 import { PostValidator } from "~/lib/validators/post";
 import { api } from "~/trpc/react";
@@ -42,19 +42,13 @@ type Props = {
 };
 
 export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
-  const { uploadFile, uploadedFile } = useFileUpload({
-    route: "post",
-    api: "/api/upload-post",
-    generateThumbnail: false,
+  const imageUploader = useUploadFile({
+    api: "/api/upload",
+    route: "postImage",
+    onError: (error) => {
+      toast.error(error.message ?? "Image upload failed.");
+    },
   });
-
-  const uploadRef = useRef<string | null>(null);
-
-  // useEffect(() => {
-  //   if (uploadedFile?.objectKey) {
-  //     uploadRef.current = uploadedFile.objectKey;
-  //   }
-  // }, [uploadedFile]);
 
   const [selectedSubreddit, setSelectedSubreddit] = useState<string>("");
 
@@ -80,14 +74,13 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
   const createSubredditPost =
     api.forumSubreddit.createSubredditPost.useMutation({
       onError: () =>
-        toastService.error({
-          message: "Your post was not published. Please try again.",
-        }),
+        toast.error("Your post was not published. Please try again."),
+
       onSuccess: () => {
         const newPathname = pathname.split("/").slice(0, -1).join("/");
         router.push(newPathname);
 
-        toastService.success("Your post has been published.");
+        toast.success("Your post has been published.");
 
         void apiUtils.forumSubreddit.invalidate();
         void apiUtils.forum.invalidate();
@@ -129,13 +122,25 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  const res = await uploadFile(file);
+                  let imageUrl: string | undefined = undefined;
+                  const imageFile = file;
+                  if (imageFile instanceof File) {
+                    try {
+                      const response = await imageUploader.upload(imageFile);
+                      const fileLocation =
+                        (response.file.objectInfo.metadata?.pathname as
+                          | string
+                          | undefined) ?? "";
+                      if (fileLocation) imageUrl = fileLocation;
+                    } catch {
+                      toast.error("Failed to upload post image.");
+                      return;
+                    }
+                  }
 
                   return {
                     success: 1,
-                    file: {
-                      url: `${env.NEXT_PUBLIC_STORAGE_URL}/posts/${res}`,
-                    },
+                    file: { url: imageUrl },
                   };
                 },
               },

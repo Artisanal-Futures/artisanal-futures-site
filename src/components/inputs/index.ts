@@ -1,5 +1,6 @@
 export * from "./checkbox-form-field";
 export * from "./combobox-form-field";
+export * from "./date-time-form-field";
 export * from "./fancy-switch-form-field";
 export * from "./image-form-field";
 export * from "./input-form-field";

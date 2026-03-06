@@ -14,34 +14,23 @@ import { PostValidator } from "~/lib/validators/post";
 
 import "~/styles/editor.css";
 
-import { toastService } from "@dreamwalker-studios/toasts";
+import { useUploadFile } from "@better-upload/client";
+import { toast } from "sonner";
 
-import { env } from "~/env";
-import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
 import { api } from "~/trpc/react";
 
 type FormData = z.infer<typeof PostValidator>;
 
-interface EditorProps {
-  subredditId: string;
-}
+type Props = { subredditId: string };
 
-export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
-  const { uploadFile, uploadedFile } = useFileUpload({
-    route: "post",
-    api: "/api/upload-post",
-    generateThumbnail: false,
+export const Editor: React.FC<Props> = ({ subredditId }) => {
+  const imageUploader = useUploadFile({
+    api: "/api/upload",
+    route: "postImage",
+    onError: (error) => {
+      toast.error(error.message ?? "Image upload failed.");
+    },
   });
-
-  const uploadRef = useRef<string | null>(null);
-
-  //TODO: Fix this
-
-  // useEffect(() => {
-  //   if (uploadedFile?.objectKey) {
-  //     uploadRef.current = uploadedFile.objectKey;
-  //   }
-  // }, [uploadedFile]);
 
   const {
     register,
@@ -61,54 +50,22 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const pathname = usePathname();
   const apiUtils = api.useUtils();
+
   const createSubredditPost =
     api.forumSubreddit.createSubredditPost.useMutation({
       onError: () =>
-        toastService.error({
-          message: "Your post was not published. Please try again.",
-        }),
+        toast.error("Your post was not published. Please try again."),
       onSuccess: () => {
-        // turn pathname /r/mycommunity/submit into /r/mycommunity
         const newPathname = pathname.split("/").slice(0, -1).join("/");
         router.push(newPathname);
 
-        toastService.success("Your post has been published.");
+        toast.success("Your post has been published.");
         void apiUtils.forumSubreddit.invalidate();
         void apiUtils.forum.invalidate();
 
         router.refresh();
       },
     });
-
-  // const { mutate: createPost } = useMutation({
-  //   mutationFn: async ({
-  //     title,
-  //     content,
-  //     subredditId,
-  //   }: PostCreationRequest) => {
-  //     const payload: PostCreationRequest = { title, content, subredditId };
-  //     const { data } = await axios.post("/api/subreddit/post/create", payload);
-  //     return data;
-  //   },
-  //   onError: () => {
-  //     return toast({
-  //       title: "Something went wrong.",
-  //       description: "Your post was not published. Please try again.",
-  //       variant: "destructive",
-  //     });
-  //   },
-  //   onSuccess: () => {
-  //     // turn pathname /r/mycommunity/submit into /r/mycommunity
-  //     const newPathname = pathname.split("/").slice(0, -1).join("/");
-  //     router.push(newPathname);
-
-  //     router.refresh();
-
-  //     return toast({
-  //       description: "Your post has been published.",
-  //     });
-  //   },
-  // });
 
   const initializeEditor = useCallback(async () => {
     const EditorJS = (await import("@editorjs/editorjs")).default;
@@ -143,29 +100,26 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  const res = await uploadFile(file);
+                  let imageUrl: string | undefined = undefined;
+                  const imageFile = file;
+                  if (imageFile instanceof File) {
+                    try {
+                      const response = await imageUploader.upload(imageFile);
+                      const fileLocation =
+                        (response.file.objectInfo.metadata?.pathname as
+                          | string
+                          | undefined) ?? "";
+                      if (fileLocation) imageUrl = fileLocation;
+                    } catch {
+                      toast.error("Failed to upload post image.");
+                      return;
+                    }
+                  }
 
                   return {
                     success: 1,
-                    file: {
-                      url: `${env.NEXT_PUBLIC_STORAGE_URL}/posts/${res}`,
-                    },
+                    file: { url: imageUrl },
                   };
-
-                  // Wait for uploadRef to be updated
-                  // return new Promise((resolve) => {
-                  //   const checkUpload = setInterval(() => {
-                  //     if (uploadRef.current) {
-                  //       clearInterval(checkUpload);
-                  //       resolve({
-                  //         success: 1,
-                  //         file: {
-                  //           url: `${env.NEXT_PUBLIC_STORAGE_URL}/posts/${uploadRef.current}`,
-                  //         },
-                  //       });
-                  //     }
-                  //   }, 100);
-                  // });
                 },
               },
             },
@@ -186,9 +140,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
       for (const [, value] of Object.entries(errors)) {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         (value as { message: string }).message;
-        toastService.error({
-          message: (value as { message: string }).message,
-        });
+        toast.error((value as { message: string }).message);
       }
     }
   }, [errors]);

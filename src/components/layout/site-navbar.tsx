@@ -16,7 +16,6 @@ import { Button } from "~/components/ui/button";
 import { navigationMenuTriggerStyle } from "~/components/ui/navigation-menu";
 import { ModeToggle } from "~/components/common/mode-toggle";
 import { HamburgerIcon } from "~/components/hamburger-icon";
-import Container from "~/app/_components/container";
 
 const navLinks = [
   { href: "/shops", label: "Shops" },
@@ -26,7 +25,7 @@ const navLinks = [
   { href: "/tools", label: "Tools" },
 ];
 
-export const Navbar = () => {
+export const SiteNavbar = () => {
   const { theme } = useTheme();
   const { data: sessionData, isPending } = authClient.useSession();
 
@@ -88,75 +87,71 @@ export const Navbar = () => {
   return (
     <>
       <header className="bg-background relative z-20 border-b">
-        <Container>
-          <div className="relative flex h-16 items-center px-4 sm:px-6 lg:px-8">
-            <Link href="/" className="flex items-center gap-x-2 lg:ml-0">
-              <Image
-                className="block h-7 w-auto lg:hidden"
-                src={"/logos/logo-mobile.png"}
-                alt="Artisanal Futures logo"
-                width={20}
-                height={20}
-              />
-              <img
-                className="hidden h-7 w-auto lg:block"
-                src={isDark ? "/logos/logo-dark.png" : "/logos/logo.png"}
-                alt="Artisanal Futures logo"
-              />
-            </Link>
+        <div className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-x-2 lg:ml-0">
+            <Image
+              className="block h-7 w-auto lg:hidden"
+              src={"/logos/logo-mobile.png"}
+              alt="Artisanal Futures logo"
+              width={20}
+              height={20}
+            />
+            <img
+              className="hidden h-7 w-auto lg:block"
+              src={isDark ? "/logos/logo-dark.png" : "/logos/logo.png"}
+              alt="Artisanal Futures logo"
+            />
+          </Link>
 
-            <nav className="mx-6 hidden items-center space-x-2 lg:flex lg:space-x-2">
-              {navLinks.map((route) => {
-                return (
-                  <Link
-                    key={route.href}
-                    href={route.href}
-                    className={cn(
-                      "text-lg font-medium transition-colors hover:text-black lg:text-sm",
-                      pathname === route.href
-                        ? "text-black"
-                        : "text-neutral-500",
-                      navigationMenuTriggerStyle(),
-                    )}
-                  >
-                    {route.label}
-                  </Link>
-                );
-              })}
-            </nav>
+          <nav className="mx-6 hidden items-center space-x-2 lg:flex lg:space-x-2">
+            {navLinks.map((route) => {
+              return (
+                <Link
+                  key={route.href}
+                  href={route.href}
+                  className={cn(
+                    "text-lg font-medium transition-colors hover:text-black lg:text-sm",
+                    pathname === route.href ? "text-black" : "text-neutral-500",
+                    navigationMenuTriggerStyle(),
+                  )}
+                >
+                  {route.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-            <div className="ml-auto flex items-center space-x-6">
-              <ModeToggle />
-              <Link
-                href="/donate"
-                className={cn(
-                  "flex items-center space-x-1 text-sm font-medium transition-colors hover:text-black lg:block",
-                  pathname === "/donate" ? "text-black" : "text-neutral-500",
-                )}
-              >
-                <span className="block lg:hidden" role="img" aria-label="heart">
-                  ❤️
-                </span>
-                <span>Donate</span>
-              </Link>
-              {isPending ? (
-                <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
-              ) : user ? (
-                userMenu
-              ) : (
-                authActions
+          <div className="ml-auto flex items-center space-x-6">
+            <ModeToggle />
+            <Link
+              href="/donate"
+              className={cn(
+                "flex items-center space-x-1 text-sm font-medium transition-colors hover:text-black lg:block",
+                pathname === "/donate" ? "text-black" : "text-neutral-500",
               )}
-            </div>
-            <button
-              type="button"
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-              className="flex touch-manipulation items-center justify-center p-2 md:hidden"
-              onClick={() => setMobileMenuOpen((o) => !o)}
             >
-              <HamburgerIcon open={mobileMenuOpen} />
-            </button>
+              <span className="block lg:hidden" role="img" aria-label="heart">
+                ❤️
+              </span>
+              <span>Donate</span>
+            </Link>
+            {isPending ? (
+              <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
+            ) : user ? (
+              userMenu
+            ) : (
+              authActions
+            )}
           </div>
-        </Container>
+          <button
+            type="button"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            className="flex touch-manipulation items-center justify-center p-2 md:hidden"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+          >
+            <HamburgerIcon open={mobileMenuOpen} />
+          </button>
+        </div>
       </header>
 
       {/* Mobile Menu Overlay - covers navbar (z-[60] > header z-50) */}

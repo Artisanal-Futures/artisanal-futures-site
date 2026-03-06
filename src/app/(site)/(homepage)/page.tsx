@@ -28,7 +28,7 @@ const CARD_DATA = [
 
 export default async function HomePage() {
   return (
-    <>
+    <div className="page-container">
       <Hero />
       <div className="bg-accent dark:border-accent/20 mt-12 grid grid-cols-1 gap-5 rounded-lg p-4 md:grid-cols-3 md:gap-10 dark:border">
         {CARD_DATA.map((item, idx) => (
@@ -82,6 +82,6 @@ export default async function HomePage() {
           </Link>
         </p>
       </div>
-    </>
+    </div>
   );
 }

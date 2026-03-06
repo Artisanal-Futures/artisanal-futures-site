@@ -128,6 +128,20 @@ exports.Prisma.CategoryScalarFieldEnum = {
   type: 'type'
 };
 
+exports.Prisma.EventScalarFieldEnum = {
+  id: 'id',
+  shopId: 'shopId',
+  title: 'title',
+  description: 'description',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  location: 'location',
+  imageUrl: 'imageUrl',
+  callToActionLink: 'callToActionLink',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SubredditScalarFieldEnum = {
   id: 'id',
   description: 'description',
@@ -977,6 +991,7 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   Category: 'Category',
+  Event: 'Event',
   Subreddit: 'Subreddit',
   Subscription: 'Subscription',
   Post: 'Post',
