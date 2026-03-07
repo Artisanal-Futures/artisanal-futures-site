@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import ContactFormEmail from "~/emails/contact-form";
 import { PlatformInviteEmail } from "~/emails/platform-invite";
 
@@ -64,4 +62,3 @@ export async function sendPlatformInviteEmail({
     tags: [{ name: "category", value: "platform_invite" }],
   });
 }
-

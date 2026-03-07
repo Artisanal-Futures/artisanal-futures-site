@@ -1,4 +1,4 @@
-import crypto from "node:crypto";
+import crypto from "crypto";
 
 export function generateSecurePassword(length = 32): string {
   return crypto

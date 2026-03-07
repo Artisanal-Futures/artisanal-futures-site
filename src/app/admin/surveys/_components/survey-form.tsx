@@ -11,11 +11,11 @@ import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Form } from "~/components/ui/form";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 import { LoadButton } from "~/components/common/load-button";
-import { FancySwitchFormField } from "~/components/inputs";
 
 import { surveyFormSchema } from "../_validators/schema";
 

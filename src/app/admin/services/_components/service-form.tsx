@@ -30,12 +30,13 @@ import {
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Form, FormField, FormItem, FormLabel } from "~/components/ui/form";
+import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
-import { FancySwitchFormField, SelectFormField } from "~/components/inputs";
 
 type Props = {
   initialData: RouterOutputs["service"]["get"];

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 "use client";
 
 import type { FC } from "react";
@@ -51,7 +50,7 @@ export const SubredditFeed: FC<Props> = ({ initialSubreddits }) => {
           <li
             key={subreddit.id}
             ref={isLastItem ? ref : undefined}
-            className="overflow-hidden rounded-lg border border-border hover:border-muted-foreground/80"
+            className="border-border hover:border-muted-foreground/80 overflow-hidden rounded-lg border"
           >
             <Link href={`/forums/r/${subreddit.name}`}>
               <div className="bg-background p-6">

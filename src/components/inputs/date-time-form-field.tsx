@@ -1,11 +1,13 @@
 "use client";
 
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import * as React from "react";
 import { format, setHours, setMinutes, setSeconds } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
-import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 import { cn } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
 import {
   FormControl,
   FormDescription,
@@ -14,8 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { Button } from "~/components/ui/button";
-import { Calendar } from "~/components/ui/calendar";
 import { Input } from "~/components/ui/input";
 import {
   Popover,
@@ -115,7 +115,7 @@ function DateTimeFormFieldInner<CurrentForm extends FieldValues>({
   defaultTime,
 }: DateTimeFormFieldInnerProps<CurrentForm>) {
   const [open, setOpen] = React.useState(false);
-  const value = field.value as Date | undefined;
+  const value = field.value;
 
   const dateOnly = value
     ? new Date(value.getFullYear(), value.getMonth(), value.getDate())
@@ -196,7 +196,7 @@ function FieldGroup({
   return (
     <div className="flex flex-row flex-wrap items-end gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium leading-none">{dateLabel}</span>
+        <span className="text-sm leading-none font-medium">{dateLabel}</span>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -222,14 +222,14 @@ function FieldGroup({
         </Popover>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium leading-none">{timeLabel}</span>
+        <span className="text-sm leading-none font-medium">{timeLabel}</span>
         <Input
           type="time"
           step="1"
           disabled={disabled}
           value={timeStr}
           onChange={(e) => onTimeChange(e.target.value || defaultTime)}
-          className="w-32 bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+          className="bg-background w-32 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </div>
     </div>

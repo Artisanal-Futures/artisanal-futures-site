@@ -1,9 +1,8 @@
-import { TRPCError } from "@trpc/server";
 import { createId } from "@paralleldrive/cuid2";
 import { z } from "zod";
 
-import { sendPlatformInviteEmail } from "~/lib/email/templates";
 import { env } from "~/env";
+import { sendPlatformInviteEmail } from "~/lib/email/templates";
 
 import { adminOnlyProcedure, createTRPCRouter } from "../trpc";
 
@@ -22,10 +21,8 @@ export const inviteRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const baseUrl =
-        env.NEXT_PUBLIC_APP_URL ?? env.BETTER_AUTH_URL ?? "https://localhost:3000";
-      const path =
-        input.role === "ARTISAN" ? "/join/artisan" : "/join/guest";
+      const baseUrl = env.BETTER_AUTH_URL ?? "https://localhost:3000";
+      const path = input.role === "ARTISAN" ? "/join/artisan" : "/join/guest";
 
       let code: string;
       let invite: Awaited<ReturnType<typeof ctx.db.platformInvite.create>>;

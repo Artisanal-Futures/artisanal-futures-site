@@ -29,7 +29,8 @@ import {
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Form } from "~/components/ui/form";
-import { InputFormField, SelectFormField } from "~/components/inputs";
+import { InputFormField } from "~/components/inputs/input-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
 
 type Props = {
   initialData: RouterOutputs["category"]["get"];

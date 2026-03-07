@@ -8,10 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import type { HCaptchaHandle } from "~/components/inputs/hcaptcha-form-field";
-import type {
-  ContactFormData,
-  ContactFormValues,
-} from "~/lib/validators/contact";
+import type { ContactFormData } from "~/lib/validators/contact";
 import { contactFormSchema } from "~/lib/validators/contact";
 import { api } from "~/trpc/react";
 import { useDirtyForm } from "~/hooks/use-dirty-form";

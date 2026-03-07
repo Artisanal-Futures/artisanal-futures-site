@@ -45,6 +45,7 @@ function SignUpForm({
         callbackURL: `/auth/callback?code=${code}`,
       });
     } catch (err) {
+      console.error(err);
       setError("Failed to start sign-up. Please try again.");
       setIsLoading(false);
     }
@@ -286,17 +287,17 @@ function SignUpPageContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState(searchParams.get("code") ?? "");
   const [error, setError] = useState("");
-  const [isValidated, setIsValidated] = useState(!!searchParams.get("code"));
+  // const [isValidated, setIsValidated] = useState(!!searchParams.get("code"));
 
   // Validate code before showing auth form
-  const validateCode = () => {
-    if (code === process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
-      setIsValidated(true);
-      setError("");
-    } else {
-      setError("Invalid sign-up code");
-    }
-  };
+  // const validateCode = () => {
+  //   if (code === process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
+  //     setIsValidated(true);
+  //     setError("");
+  //   } else {
+  //     setError("Invalid sign-up code");
+  //   }
+  // };
 
   return (
     <div className="bg-background flex min-h-screen">

@@ -15,12 +15,9 @@ function isValidArtisanCode(
   envCode: string | undefined,
   invite: { role: string; used: boolean; expiresAt: Date } | null,
 ) {
-  if (envCode && code === envCode.toUpperCase()) return true;
+  if (code === envCode?.toUpperCase()) return true;
   return (
-    invite &&
-    invite.role === "ARTISAN" &&
-    !invite.used &&
-    invite.expiresAt > new Date()
+    invite?.role === "ARTISAN" && !invite.used && invite.expiresAt > new Date()
   );
 }
 
@@ -29,12 +26,9 @@ function isValidGuestCode(
   envCode: string | undefined,
   invite: { role: string; used: boolean; expiresAt: Date } | null,
 ) {
-  if (envCode && code === envCode.toUpperCase()) return true;
+  if (code === envCode?.toUpperCase()) return true;
   return (
-    invite &&
-    invite.role === "GUEST" &&
-    !invite.used &&
-    invite.expiresAt > new Date()
+    invite?.role === "GUEST" && !invite.used && invite.expiresAt > new Date()
   );
 }
 

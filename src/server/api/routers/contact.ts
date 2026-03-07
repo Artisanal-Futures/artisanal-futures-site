@@ -5,7 +5,6 @@ import { verifyHCaptcha } from "~/lib/captcha/verify-hcaptcha";
 import { sendContactFormSubmission } from "~/lib/email/templates";
 import { contactSchema } from "~/lib/validators/contact";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
 
 export const contactRouter = createTRPCRouter({
   send: publicProcedure.input(contactSchema).mutation(async ({ input }) => {
@@ -27,7 +26,7 @@ export const contactRouter = createTRPCRouter({
       website,
     } = input;
 
-    if (input.website && input.website.trim() !== "") {
+    if (website && website.trim() !== "") {
       console.log("Bot detected");
       return {
         message: "Email sent successfully",

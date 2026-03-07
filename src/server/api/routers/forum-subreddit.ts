@@ -113,6 +113,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Your post has been published.",
         };
       } catch (e) {
+        console.error(e);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create subreddit",
@@ -678,6 +679,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not fetch posts",
@@ -726,6 +728,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not fetch subreddits",
@@ -744,6 +747,7 @@ export const forumSubredditRouter = createTRPCRouter({
 
       return subreddits;
     } catch (error) {
+      console.error(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not fetch subreddits",

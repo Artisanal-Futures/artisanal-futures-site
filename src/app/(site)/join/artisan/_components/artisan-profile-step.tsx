@@ -146,6 +146,7 @@ export function ArtisanProfileStep({
 
       onboarding.mutate(completeFormData);
     } catch (err) {
+      console.error(err);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);

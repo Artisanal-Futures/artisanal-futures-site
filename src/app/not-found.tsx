@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Store } from "lucide-react";
 
-import { api } from "~/trpc/server";
 import { Button } from "~/components/ui/button";
 import { RefreshButton } from "~/components/refresh-button";
 

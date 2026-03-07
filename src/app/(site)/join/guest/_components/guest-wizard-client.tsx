@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import type { GuestSignupFormData } from "./guest-form-types";
+
 import { GuestAccountDetailsStep } from "./guest-account-details-step";
 import { GuestArtisanInfoStep } from "./guest-artisan-info-step";
 import { GuestInvitationCodeStep } from "./guest-invitation-code-step";
@@ -25,17 +27,13 @@ export function GuestWizardClient({ initialCode }: GuestWizardClientProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [didAutoAdvanceFromInvite, setDidAutoAdvanceFromInvite] =
     useState(false);
-  const [formData, setFormData] = useState<
-    Partial<import("./guest-form-types").GuestSignupFormData>
-  >({
+  const [formData, setFormData] = useState<Partial<GuestSignupFormData>>({
     invitationCode: initialCode?.toUpperCase(),
   });
 
   const CurrentStepComponent = STEPS[currentStep - 1]?.component ?? null;
 
-  const handleNext = (
-    data: Partial<import("./guest-form-types").GuestSignupFormData>,
-  ) => {
+  const handleNext = (data: Partial<GuestSignupFormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
 
     if (currentStep < STEPS.length) {

@@ -9,10 +9,8 @@ import { Button } from "~/components/ui/button";
 export default function DonateButton({
   amount,
   className,
-  variant = "default",
   label = "Donate",
   disabled = false,
-  isSelected = false,
 }: {
   amount: number;
   variant?: VariantProps<typeof buttonVariants>["variant"];

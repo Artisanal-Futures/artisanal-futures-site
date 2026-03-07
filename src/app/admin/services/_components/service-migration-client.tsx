@@ -66,7 +66,7 @@ export function DatabaseMigrationClient() {
     null,
   );
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
+  const [, setSelectedField] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
   >([]);

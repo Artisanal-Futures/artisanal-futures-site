@@ -40,7 +40,6 @@ export const MinimalTiptapFormField = <CurrentForm extends FieldValues>({
   placeholder,
   editorContentClassName,
   output = "json",
-  businessId,
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -61,7 +60,6 @@ export const MinimalTiptapFormField = <CurrentForm extends FieldValues>({
                 className="w-full"
                 editorContentClassName={editorContentClassName}
                 editorClassName="focus:outline-hidden"
-                businessId={businessId}
               />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}

@@ -40,8 +40,8 @@ import { Form, FormLabel } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
-import { SelectFormField } from "~/components/inputs";
 
 type Props = {
   initialData: RouterOutputs["shop"]["get"];

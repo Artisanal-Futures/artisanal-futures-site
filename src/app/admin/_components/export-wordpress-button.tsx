@@ -1,14 +1,8 @@
 "use client";
 
-import { useCallback } from "react";
-import { IconFileExport } from "@tabler/icons-react";
+const FILENAME = "test-export.wxr";
 
-import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
-
-const FILENAME = "community-export.wxr";
-
-function downloadXml(xml: string) {
+export function downloadXml(xml: string) {
   const blob = new Blob([xml], { type: "application/xml" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

@@ -1,4 +1,4 @@
-import { api, HydrateClient } from "~/trpc/server";
+import { api } from "~/trpc/server";
 
 import { TrailHeader } from "../_components/trail-header";
 import { CategoryClient } from "./_components/category-client";
@@ -16,7 +16,6 @@ export default async function AdminCategoriesPage() {
           </div>
         </div>
         <CategoryClient categories={categories} />
-        {/* <CategoryTable /> */}
       </div>
     </>
   );

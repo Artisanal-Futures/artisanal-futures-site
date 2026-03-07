@@ -1,4 +1,4 @@
-import crypto from "node:crypto";
+import crypto from "crypto";
 import type { WebsiteProvision } from "generated/prisma";
 import yaml from "js-yaml";
 

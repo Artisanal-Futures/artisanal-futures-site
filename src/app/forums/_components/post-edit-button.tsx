@@ -45,7 +45,7 @@ export function PostEditButton({ postId, title, content }: Props) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   // const [editedTitle, setEditedTitle] = useState(title)
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent] = useState(content);
   const apiUtils = api.useUtils();
   const router = useRouter();
 

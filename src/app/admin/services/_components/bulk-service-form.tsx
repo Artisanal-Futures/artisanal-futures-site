@@ -127,7 +127,7 @@ export function BulkServiceForm({ serviceIds, onSuccessCallback }: Props) {
           <FormField
             control={form.control}
             name="tags"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Assign Tags</FormLabel>
                 <TagFormField form={form} name="tags" label="" />

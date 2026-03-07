@@ -83,7 +83,7 @@ const router: Router = {
       fileTypes: ["image/*"],
       multipleFiles: true,
       maxFiles: 2,
-      onBeforeUpload: async ({ req, clientMetadata }) => {
+      onBeforeUpload: async ({ clientMetadata }) => {
         const { businessSlug } = clientMetadata as { businessSlug?: string };
 
         return {
@@ -104,7 +104,7 @@ const router: Router = {
     onboardingImage: route({
       fileTypes: ["image/*"],
       multipleFiles: false,
-      onBeforeUpload: async ({ req, file, clientMetadata }) => {
+      onBeforeUpload: async ({ file, clientMetadata }) => {
         const { businessSlug } = clientMetadata as { businessSlug?: string };
 
         return {

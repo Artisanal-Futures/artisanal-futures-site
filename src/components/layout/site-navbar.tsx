@@ -20,9 +20,10 @@ import { HamburgerIcon } from "~/components/hamburger-icon";
 const navLinks = [
   { href: "/shops", label: "Shops" },
   { href: "/collections/products", label: "Products" },
-  { href: "/service-categories", label: "Services" },
+  { href: "/collections/services", label: "Services" },
   { href: "/forums", label: "Forums" },
   { href: "/tools", label: "Tools" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export const SiteNavbar = () => {

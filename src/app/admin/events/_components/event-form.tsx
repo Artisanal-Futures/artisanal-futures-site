@@ -3,18 +3,15 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CategoryType } from "generated/prisma";
 import { useUploadFile } from "@better-upload/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { CategoryFormValues } from "~/lib/validators/category";
 import type { EventFormData } from "~/lib/validators/event";
 import type { RouterOutputs } from "~/trpc/react";
 import { cn, slugify } from "~/lib/utils";
-import { categorySchema } from "~/lib/validators/category";
 import { eventFormSchema } from "~/lib/validators/event";
 import { api } from "~/trpc/react";
 import { useDirtyForm } from "~/hooks/use-dirty-form";
@@ -32,13 +29,11 @@ import {
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Form } from "~/components/ui/form";
+import { DateTimeFormField } from "~/components/inputs/date-time-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
-import {
-  DateTimeFormField,
-  InputFormField,
-  SelectFormField,
-  TextareaFormField,
-} from "~/components/inputs";
+import { InputFormField } from "~/components/inputs/input-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
+import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 type Props = {
   initialData: RouterOutputs["event"]["get"];

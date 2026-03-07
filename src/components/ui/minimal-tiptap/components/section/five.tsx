@@ -8,7 +8,6 @@ import {
   PlusIcon,
   QuoteIcon,
 } from "@radix-ui/react-icons";
-import { Images } from "lucide-react";
 
 import type { FormatAction } from "../../types";
 import type { toggleVariants } from "~/components/ui/toggle";

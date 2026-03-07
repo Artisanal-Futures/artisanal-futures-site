@@ -5,9 +5,7 @@ import { Geist } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { Toaster } from "~/components/ui/sonner";
-import { Providers } from "~/providers/providers";
-import { ThemeProvider } from "~/providers/theme-provider";
+import { SiteProviders } from "~/providers/providers";
 
 export const metadata: Metadata = {
   title: {
@@ -30,15 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Providers>
-            <TRPCReactProvider>
-              <NextTopLoader />
-              {children}
-              <Toaster />
-            </TRPCReactProvider>
-          </Providers>
-        </ThemeProvider>
+        <SiteProviders>
+          <TRPCReactProvider>
+            <NextTopLoader />
+            {children}
+          </TRPCReactProvider>
+        </SiteProviders>
       </body>
     </html>
   );

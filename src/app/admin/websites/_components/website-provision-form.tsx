@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SiteType } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +13,8 @@ import { websiteCreateFormSchema } from "~/lib/validators/website-provision";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Form, FormField } from "~/components/ui/form";
-import { InputFormField, SelectFormField } from "~/components/inputs";
+import { InputFormField } from "~/components/inputs/input-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
 
 type Props = {
   initialData?: {
@@ -43,7 +43,6 @@ const TEMPLATES = [
 export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
   const utils = api.useUtils();
   const router = useRouter();
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
   const form = useForm<WebsiteCreateFormData>({
     resolver: zodResolver(websiteCreateFormSchema),
