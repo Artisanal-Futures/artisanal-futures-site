@@ -287,6 +287,7 @@ function SignUpPageContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState(searchParams.get("code") ?? "");
   const [error, setError] = useState("");
+  const year = new Date().getFullYear();
   // const [isValidated, setIsValidated] = useState(!!searchParams.get("code"));
 
   // Validate code before showing auth form
@@ -301,7 +302,7 @@ function SignUpPageContent() {
 
   return (
     <div className="bg-background flex min-h-screen">
-      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
+      <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
         <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
         <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
           <Link
@@ -309,20 +310,20 @@ function SignUpPageContent() {
             className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
           >
             <Image
-              src="/logo-transparent.png"
-              alt="Crossroads Community Association"
-              width={100}
-              height={100}
+              src="/logos/logo.png"
+              alt="Artisanal Futures"
+              width={300}
+              height={120}
             />
           </Link>
 
           <div className="max-w-md">
             <h1 className="mb-4 text-4xl font-bold text-balance">
-              Join Our Growing Community
+              Join Artisanal Futures
             </h1>
             <p className="text-primary-foreground/80 mb-8 text-lg">
-              Create your account to connect with neighbors, join clubs, and
-              make a difference in District 3.
+              Create your account to connect with other artisans, browse our
+              shops, and stay connected within our artisan community.
             </p>
 
             <div className="space-y-4">
@@ -331,7 +332,8 @@ function SignUpPageContent() {
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <p className="text-primary-foreground/90 text-sm">
-                  Access to 13+ active block clubs and community groups
+                  Access to multiple active shops and community groups within
+                  and around the Detroit area
                 </p>
               </div>
               <div className="flex items-start gap-3">
@@ -339,7 +341,8 @@ function SignUpPageContent() {
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <p className="text-primary-foreground/90 text-sm">
-                  Member events and volunteer opportunities
+                  Access to our community forum and exclusive AI tools for
+                  artisans
                 </p>
               </div>
               <div className="flex items-start gap-3">
@@ -347,24 +350,14 @@ function SignUpPageContent() {
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <p className="text-primary-foreground/90 text-sm">
-                  Resources and support for neighborhood improvement
+                  Resources and support for your artisan business
                 </p>
               </div>
             </div>
           </div>
 
           <div className="text-primary-foreground/60 text-sm">
-            © 2026 Crossroads Community Association. All rights reserved.
-            <span className="text-muted-foreground mx-2">|</span>
-            Site by{" "}
-            <a
-              href="https://artisanalfutures.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground underline"
-            >
-              Artisanal Futures
-            </a>
+            © {year} Artisanal Futures. All rights reserved.
           </div>
         </div>
       </div>
@@ -382,15 +375,13 @@ function SignUpPageContent() {
 
         <div className="flex flex-1 items-center justify-center p-6 md:p-12">
           <div className="w-full max-w-md">
-            <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
-              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-                <span className="text-primary-foreground text-sm font-bold">
-                  CCA
-                </span>
-              </div>
-              <span className="text-foreground text-xl font-bold">
-                Crossroads Community Association
-              </span>
+            <div className="mb-8 flex items-center justify-center lg:hidden">
+              <Image
+                src="/logos/logo.png"
+                alt="Artisanal Futures"
+                width={300}
+                height={120}
+              />
             </div>
 
             <SignUpForm
@@ -415,16 +406,13 @@ function SignUpPageContent() {
         <div className="text-muted-foreground border-t p-4 text-center text-xs">
           By signing up, you agree to our{" "}
           <Link
-            href="/policies/terms-of-service"
+            href="/legal/terms-of-use"
             className="text-primary hover:underline"
           >
-            Terms of Service
+            Terms of Use
           </Link>{" "}
           and{" "}
-          <Link
-            href="/policies/privacy-policy"
-            className="text-primary hover:underline"
-          >
+          <Link href="/legal/privacy" className="text-primary hover:underline">
             Privacy Policy
           </Link>
         </div>
@@ -434,9 +422,10 @@ function SignUpPageContent() {
 }
 
 function SignUpPageFallback() {
+  const year = new Date().getFullYear();
   return (
     <div className="bg-background flex min-h-screen">
-      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
+      <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
         <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
         <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
           <Link
@@ -444,33 +433,23 @@ function SignUpPageFallback() {
             className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
           >
             <Image
-              src="/logo-transparent.png"
-              alt="Crossroads Community Association"
-              width={100}
-              height={100}
+              src="/logos/logo.png"
+              alt="Artisanal Futures"
+              width={300}
+              height={120}
             />
           </Link>
           <div className="max-w-md">
             <h1 className="mb-4 text-4xl font-bold text-balance">
-              Join Our Growing Community
+              Join Artisanal Futures
             </h1>
             <p className="text-primary-foreground/80 mb-8 text-lg">
-              Create your account to connect with neighbors, join clubs, and
-              make a difference in District 3.
+              Create your account to connect with other artisans, browse our
+              shops, and stay connected within our artisan community.
             </p>
           </div>
           <div className="text-primary-foreground/60 text-sm">
-            © 2026 Crossroads Community Association. All rights reserved.
-            <span className="text-muted-foreground mx-2">|</span>
-            Site by{" "}
-            <a
-              href="https://artisanalfutures.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground underline"
-            >
-              Artisanal Futures
-            </a>
+            © {year} Artisanal Futures. All rights reserved.
           </div>
         </div>
       </div>

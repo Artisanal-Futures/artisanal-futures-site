@@ -7,55 +7,41 @@ export const metadata = {
   title: "Sign In",
   description: "Sign in to your Crossroads Community Association account",
 };
-
-export default async function SignInPage() {
+type Props = {
+  searchParams: Promise<{ callbackUrl?: string }>;
+};
+export default async function SignInPage({ searchParams }: Props) {
+  const year = new Date().getFullYear();
+  const { callbackUrl } = await searchParams;
   return (
     <div className="bg-background flex min-h-screen">
-      <div className="bg-primary relative hidden overflow-hidden lg:flex lg:w-1/2">
+      <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
         <div className="absolute inset-0 bg-[url('/image-bench.png')] bg-cover bg-center opacity-20" />
         <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
           <Link
             href="/"
             className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
           >
-            {/* <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-full">
-              <span className="text-primary-foreground text-sm font-bold">
-                CCA
-              </span>
-            </div>
-            <span className="text-xl font-bold">
-              Crossroads Community Association
-            </span> */}
             <Image
-              src="/logo.png"
-              alt="Crossroads Community Association"
-              width={100}
-              height={100}
+              src="/logos/logo.png"
+              alt="Artisanal Futures"
+              width={300}
+              height={120}
             />
           </Link>
 
           <div className="max-w-md">
             <h1 className="mb-4 text-4xl font-bold text-balance">
-              Welcome Back to Your Community
+              Welcome Back to Artisanal Futures
             </h1>
             <p className="text-primary-foreground/80 mb-8 text-lg">
-              Sign in to access your dashboard, manage your membership, and stay
-              connected with your neighbors.
+              Sign in to access your account, browse our shops, and stay
+              connected within our artisan community.
             </p>
           </div>
 
           <div className="text-primary-foreground/60 text-sm">
-            © 2026 Crossroads Community Association. All rights reserved.
-            <span className="text-muted-foreground mx-2">|</span>
-            Site by{" "}
-            <a
-              href="https://artisanalfutures.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground underline"
-            >
-              Artisanal Futures
-            </a>
+            © {year} Artisanal Futures. All rights reserved.
           </div>
         </div>
       </div>
@@ -73,16 +59,20 @@ export default async function SignInPage() {
 
         <div className="flex flex-1 items-center justify-center p-6 md:p-12">
           <div className="w-full max-w-md">
-            <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
-              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-                <Leaf className="text-primary-foreground h-6 w-6" />
-              </div>
-              <span className="text-foreground text-xl font-bold">
-                Crossroads Community Association
-              </span>
+            <div className="mb-8 flex items-center justify-center lg:hidden">
+              <Image
+                src="/logos/logo.png"
+                alt="Artisanal Futures"
+                width={300}
+                height={120}
+              />
             </div>
 
-            <AuthView view="SIGN_IN" />
+            <AuthView
+              view="SIGN_IN"
+              classNames={{ base: "max-w-full" }}
+              redirectTo={callbackUrl}
+            />
 
             <div className="mt-8 hidden text-left lg:block">
               <Link
@@ -99,16 +89,13 @@ export default async function SignInPage() {
         <div className="text-muted-foreground border-t p-4 text-center text-xs">
           By signing in, you agree to our{" "}
           <Link
-            href="/policies/terms-of-service"
+            href="/legal/terms-of-use"
             className="text-primary hover:underline"
           >
-            Terms of Service
+            Terms of Use
           </Link>{" "}
           and{" "}
-          <Link
-            href="/policies/privacy-policy"
-            className="text-primary hover:underline"
-          >
+          <Link href="/legal/privacy" className="text-primary hover:underline">
             Privacy Policy
           </Link>
         </div>
