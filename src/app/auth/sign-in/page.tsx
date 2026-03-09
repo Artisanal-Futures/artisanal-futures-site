@@ -1,7 +1,11 @@
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { AuthView } from "@daveyplate/better-auth-ui";
 import { ArrowLeft } from "lucide-react";
+
+import { setSignupCode } from "~/lib/actions";
+import { auth } from "~/server/better-auth/config";
 
 export const metadata = {
   title: "Sign In",
@@ -13,6 +17,7 @@ type Props = {
 export default async function SignInPage({ searchParams }: Props) {
   const year = new Date().getFullYear();
   const { callbackUrl } = await searchParams;
+
   return (
     <div className="bg-background flex min-h-screen">
       <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">

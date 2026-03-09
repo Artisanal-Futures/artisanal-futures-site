@@ -1,3 +1,5 @@
+export const UPCY_URL: string = "https://generate.dev.artisanalfutures.org/";
+
 export const TOOLS_DATA = [
   // {
   //   title: "Solidarity Pathways (Update In Progress)",
@@ -33,6 +35,6 @@ export const TOOLS_DATA = [
     subtitle: "Upcycle your old scraps into new designs",
     type: "Design",
     image: "img/craft_composition.png",
-    url: "https://generate.dev.artisanalfutures.org/",
+    url: UPCY_URL,
   },
 ];

@@ -57,7 +57,7 @@ export default async function JoinPage() {
 
         <div className="not-prose mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
           <Link
-            href="/join/artisan"
+            href="/auth/join/artisan"
             className={cn(
               buttonVariants({ variant: "default" }),
               "border-primary w-full scale-105 border-2 font-semibold shadow-lg transition-transform hover:scale-110 sm:w-auto",
@@ -66,7 +66,7 @@ export default async function JoinPage() {
             Join as an Artisan
           </Link>
           <Link
-            href="/join/guest"
+            href="/auth/join/guest"
             className={cn(
               buttonVariants({ variant: "outline" }),
               "w-full opacity-80 sm:w-auto",

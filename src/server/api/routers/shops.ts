@@ -201,4 +201,28 @@ export const shopsRouter = createTRPCRouter({
 
       return { data: null, message: "Shop deleted successfully" };
     }),
+
+  getWelcomeShop: adminArtisanProcedure.query(async ({ ctx }) => {
+    const shop = await ctx.db.shop.findFirst({
+      where: { ownerId: ctx.session.user.id },
+      include: { products: true, services: true, websiteProvision: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const survey = await ctx.db.artisanSurvey.findFirst({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const data = {
+      shop,
+
+      completedSurvey: survey ? true : false,
+      hasProducts: (shop?.products?.length ?? 0 > 0) ? true : false,
+      hasServices: (shop?.services?.length ?? 0 > 0) ? true : false,
+      hasHostedWebsite: shop?.websiteProvision ? true : false,
+    };
+
+    return data;
+  }),
 });

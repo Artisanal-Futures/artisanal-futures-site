@@ -100,6 +100,23 @@ function WizardContent() {
           <div className="flex flex-1 items-center justify-center p-6 lg:p-10">
             <InvitationCodeStep />
           </div>
+
+          <div className="text-muted-foreground border-t p-4 text-center text-xs">
+            By creating an account, you agree to our{" "}
+            <Link
+              href="/legal/terms-of-use"
+              className="text-primary hover:underline"
+            >
+              Terms of Use
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/legal/privacy"
+              className="text-primary hover:underline"
+            >
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     );

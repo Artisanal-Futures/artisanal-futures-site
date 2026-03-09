@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthUIProvider } from "@daveyplate/better-auth-ui";
 import { useRouter } from "nextjs-toploader/app";
 
+import { env } from "~/env";
 import { authClient } from "~/server/better-auth/client";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/providers/theme-provider";
@@ -28,12 +29,20 @@ export function SiteProviders({ children }: { children: ReactNode }) {
         }}
         additionalFields={{
           terms: {
-            label: `I agree to CCA's Terms of Service and Privacy Policy`,
+            label: `I agree to Artisanal Futures's Terms of Service and Privacy Policy`,
             type: "boolean", // Defines it as a checkbox
             required: true, // Optional: forces the checkbox to be checked
           },
         }}
         Link={Link}
+        captcha={
+          process.env.NODE_ENV === "production"
+            ? {
+                provider: "hcaptcha",
+                siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+              }
+            : undefined
+        }
       >
         {children}
 

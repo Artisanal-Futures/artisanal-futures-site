@@ -204,7 +204,7 @@ export function InvitationCodeStep() {
         <p className="text-muted-foreground text-sm">
           {"Don't have a code? "}
           <Link
-            href="/contact-us"
+            href="/contact"
             className="text-primary inline-flex items-center gap-1.5 font-medium hover:underline"
           >
             <Mail className="size-3.5" />

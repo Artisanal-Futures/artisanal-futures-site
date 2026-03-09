@@ -22,7 +22,8 @@ export const inviteRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const baseUrl = env.BETTER_AUTH_URL ?? "https://localhost:3000";
-      const path = input.role === "ARTISAN" ? "/join/artisan" : "/join/guest";
+      const path =
+        input.role === "ARTISAN" ? "/auth/join/artisan" : "/auth/join/guest";
 
       let code: string;
       let invite: Awaited<ReturnType<typeof ctx.db.platformInvite.create>>;
