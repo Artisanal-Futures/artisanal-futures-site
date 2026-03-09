@@ -133,7 +133,7 @@ export function DatabaseMigrationClient() {
 
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
-        convertedServices = shopifyData.products.map(
+        convertedServices = shopifyData?.products?.map(
           // Assuming service data is in 'products' array
           (service) =>
             convertToService(
@@ -143,7 +143,7 @@ export function DatabaseMigrationClient() {
         );
       } else if (selectedSource === "SQUARESPACE") {
         const squarespaceData = parsedJson as SquareSpaceData;
-        convertedServices = squarespaceData.items.map(
+        convertedServices = squarespaceData?.items?.map(
           (service) =>
             convertToService(
               service,
@@ -153,7 +153,7 @@ export function DatabaseMigrationClient() {
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressService[];
         convertedServices = await Promise.all(
-          wordpressData.map(
+          wordpressData?.map(
             async (service) =>
               (await convertToService(
                 service,

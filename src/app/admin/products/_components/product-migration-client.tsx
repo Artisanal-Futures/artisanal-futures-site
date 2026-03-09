@@ -14,18 +14,12 @@ import type {
   SquareSpaceData,
   WordPressProduct,
 } from "../_validators/types";
+import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
+import { Label } from "~/components/ui/label";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -43,7 +37,8 @@ import {
 } from "~/components/ui/table";
 import { Textarea } from "~/components/ui/textarea";
 
-import { convertToProduct } from "../_utils/convert-to-product";
+import { mapProducts } from "../_utils/convert-to-product";
+import { ProductPagination } from "../migrate/_components/product-pagination";
 
 const ROWS_PER_PAGE = 10;
 
@@ -55,9 +50,13 @@ const PRODUCT_SOURCES = {
 
 type ProductSource = keyof typeof PRODUCT_SOURCES;
 
-export function DatabaseMigrationClient() {
+export function DatabaseMigrationClient({
+  shops,
+}: {
+  shops: RouterOutputs["shop"]["getAll"];
+}) {
   const [jsonInput, setJsonInput] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const [parsedFields, setParsedFields] = useState<string[]>([]);
   const [previewData, setPreviewData] = useState<ProductWithRelations[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +64,8 @@ export function DatabaseMigrationClient() {
     null,
   );
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
-  // const [selectedField, setSelectedField] = useState<string | null>(null);
+  const [selectedSiteUrl, setSelectedSiteUrl] = useState<string | null>(null);
+
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
   >([]);
@@ -80,16 +80,19 @@ export function DatabaseMigrationClient() {
 
   const productMigration = api.product.importProducts.useMutation({
     onSuccess: () => {
+      toast.dismiss();
       toast.success("Products imported successfully");
       void apiUtils.product.invalidate();
       router.refresh();
     },
     onError: (error) => {
+      toast.dismiss();
       toast.error(error.message ?? "Failed to import products");
     },
+    onMutate: () => {
+      toast.loading("Importing products, please wait...");
+    },
   });
-
-  const { data: shops } = api.shop.getAll.useQuery();
 
   const checkDuplicates = (field: string) => {
     const valueMap = new Map<string, number>();
@@ -130,47 +133,15 @@ export function DatabaseMigrationClient() {
         throw new Error("Please select a shop");
       }
 
-      let convertedProducts: Partial<ProductWithRelations>[] = [];
-
       // Parse JSON for sources
       const parsedJson = JSON.parse(jsonInput);
 
-      if (selectedSource === "SHOPIFY") {
-        const shopifyData = parsedJson as ShopifyData;
-        convertedProducts = await Promise.all(
-          shopifyData.products.map(
-            async (product) =>
-              (await convertToProduct(
-                product,
-                selectedShopId,
-              )) as Partial<ProductWithRelations>,
-          ),
-        );
-      } else if (selectedSource === "SQUARESPACE") {
-        const squarespaceData = parsedJson as SquareSpaceData;
-        convertedProducts = await Promise.all(
-          squarespaceData.items.map(
-            async (product) =>
-              (await convertToProduct(
-                product,
-                selectedShopId,
-              )) as Partial<ProductWithRelations>,
-          ),
-        );
-      } else if (selectedSource === "WORDPRESS") {
-        const wordpressData = parsedJson as WordPressProduct[];
-        convertedProducts = await Promise.all(
-          wordpressData.map(
-            async (product) =>
-              (await convertToProduct(
-                product,
-                selectedShopId,
-              )) as Partial<ProductWithRelations>,
-          ),
-        );
-      }
-
-      console.log(convertedProducts);
+      const convertedProducts = await mapProducts({
+        parsedJson,
+        selectedSource,
+        selectedShopId,
+        selectedSiteUrl: selectedSiteUrl ?? undefined,
+      });
       if (!convertedProducts.length) {
         throw new Error("No products found in the data");
       }
@@ -181,7 +152,7 @@ export function DatabaseMigrationClient() {
       }
       const fields = Object.keys(firstProduct);
       setParsedFields(fields);
-      setPreviewData(convertedProducts as unknown as ProductWithRelations[]);
+      setPreviewData(convertedProducts);
 
       toast.success("Products parsed successfully");
     } catch (error) {
@@ -193,25 +164,18 @@ export function DatabaseMigrationClient() {
   };
 
   const handleMigration = async () => {
-    try {
-      setLoading(true);
-      productMigration.mutate(
-        previewData.map((product) => ({
-          ...product,
-          isFeatured: false,
-          shopId: product.shopId ?? "",
-          shopProductId: product.shopProductId ?? "",
-          tags: product.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
-        })),
-      );
-      toast.success("Migration completed successfully");
-    } catch (error) {
-      toast.error("Failed to execute migration");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    productMigration.mutate(
+      previewData.map((product) => ({
+        ...product,
+        isFeatured: false,
+        shopId: product.shopId ?? "",
+        shopProductId: product.shopProductId ?? "",
+        tags: product.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
+      })),
+    );
   };
+
+  const isPending = productMigration.isPending;
 
   return (
     <div className="mt-6 space-y-12">
@@ -233,7 +197,14 @@ export function DatabaseMigrationClient() {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={setSelectedShopId}>
+          <Select
+            onValueChange={(value) => {
+              setSelectedShopId(value);
+              setSelectedSiteUrl(
+                shops?.find((shop) => shop.id === value)?.website ?? null,
+              );
+            }}
+          >
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select Shop" />
             </SelectTrigger>
@@ -252,8 +223,7 @@ export function DatabaseMigrationClient() {
             <h4 className="mb-2 font-medium">How to get your product data:</h4>
             {selectedSource === "SHOPIFY" ? (
               <ol className="list-decimal space-y-1 pl-4">
-                <li>Go to your Shopify admin panel</li>
-                <li>Navigate to Products {">"} All products</li>
+                <li>Go to your Shopify site</li>
                 <li>
                   Add &quot;/products.json?limit=250&quot; to your shop URL
                 </li>
@@ -261,9 +231,12 @@ export function DatabaseMigrationClient() {
               </ol>
             ) : selectedSource === "SQUARESPACE" ? (
               <ol className="list-decimal space-y-1 pl-4">
-                <li>Go to your Squarespace site</li>
                 <li>
-                  Add &quot;?format=json-pretty&quot; to any collection page URL
+                  Go to your Squarespace site, specifically to the page you sell
+                  products from (i.e. myshop.com/products)
+                </li>
+                <li>
+                  Add &quot;?format=json-pretty&quot; to the products page URL
                 </li>
                 <li>Copy the entire JSON response and paste it below</li>
               </ol>
@@ -285,14 +258,72 @@ export function DatabaseMigrationClient() {
             )}
           </div>
 
-          <Textarea
-            value={jsonInput}
-            onChange={(e) => setJsonInput(e.target.value)}
-            placeholder="Paste product JSON..."
-            className="min-h-[200px]"
-          />
+          <ScrollArea className="h-[500px]" type="always">
+            <Textarea
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              placeholder="Paste product JSON..."
+              className="min-h-[200px]"
+            />
+          </ScrollArea>
+
           <div className="absolute top-2 right-2">
-            <Button onClick={parseJSON}>Parse JSON</Button>
+            <Button onClick={parseJSON}>Format your product data</Button>
+          </div>
+        </div>
+
+        <div className="relative space-y-2">
+          <div className="bg-muted rounded-md p-4 text-sm">
+            <h2 className="mb-2 text-lg font-medium">
+              First, please select your shop and the platform you&apos;re
+              migrating from:
+            </h2>
+
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="shop">Shop</Label>
+                <Select
+                  onValueChange={(value) => {
+                    setSelectedShopId(value);
+                    setSelectedSiteUrl(
+                      shops?.find((shop) => shop.id === value)?.website ?? null,
+                    );
+                  }}
+                >
+                  <SelectTrigger className="w-[200px]" id="shop">
+                    <SelectValue placeholder="Select Shop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shops?.map((shop) => (
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="product-source">
+                  What platform are you migrating from?
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedSource(value as ProductSource)
+                  }
+                >
+                  <SelectTrigger className="w-[200px]" id="product-source">
+                    <SelectValue placeholder="Select Product Source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(PRODUCT_SOURCES).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -302,12 +333,7 @@ export function DatabaseMigrationClient() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Check Duplicates</h3>
-              <Select
-                onValueChange={(value) => {
-                  // setSelectedField(value);
-                  checkDuplicates(value);
-                }}
-              >
+              <Select onValueChange={checkDuplicates}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select field to check" />
                 </SelectTrigger>
@@ -367,56 +393,15 @@ export function DatabaseMigrationClient() {
               </Table>
             </div>
 
-            {totalPages > 1 && (
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        currentPage > 1 &&
-                        setCurrentPage((p) => Math.max(1, p - 1))
-                      }
-                    />
-                  </PaginationItem>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter((page) => {
-                      // Show first page, last page, current page, and pages around current
-                      return (
-                        page === 1 ||
-                        page === totalPages ||
-                        Math.abs(currentPage - page) <= 1
-                      );
-                    })
-                    .map((page, i, arr) => (
-                      <PaginationItem key={page}>
-                        {i > 0 && arr[i - 1] !== page - 1 ? (
-                          <PaginationEllipsis />
-                        ) : null}
-                        <PaginationLink
-                          onClick={() => setCurrentPage(page)}
-                          isActive={currentPage === page}
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        currentPage < totalPages &&
-                        setCurrentPage((p) => Math.min(totalPages, p + 1))
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            )}
+            <ProductPagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+            />
           </div>
 
-          <Button onClick={handleMigration} disabled={loading}>
-            {loading ? "Migrating..." : "Run Migration"}
+          <Button onClick={handleMigration} disabled={isPending}>
+            {isPending ? "Importing..." : "Import Products"}
           </Button>
         </>
       )}

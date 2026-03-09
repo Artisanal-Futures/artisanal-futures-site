@@ -400,6 +400,30 @@ export const productRouter = createTRPCRouter({
         message: "Product deleted successfully",
       };
     }),
+
+  deleteMultiple: adminArtisanProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input }) => {
+      const isAuthorized = await Promise.all(
+        input.map(async (id) => {
+          return checkUserProductPermissions(ctx.session, id);
+        }),
+      ).then((results) =>
+        results.every((isAuthorized: boolean) => isAuthorized),
+      );
+
+      if (!isAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more products do not belong to current user",
+        });
+      }
+
+      await ctx.db.product.deleteMany({
+        where: { id: { in: input } },
+      });
+      return { data: null, message: "Products deleted successfully" };
+    }),
 });
 
 const getCategoriesWithParents = async (

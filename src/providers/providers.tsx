@@ -43,6 +43,9 @@ export function SiteProviders({ children }: { children: ReactNode }) {
               }
             : undefined
         }
+        viewPaths={{
+          SIGN_UP: "join",
+        }}
       >
         {children}
 

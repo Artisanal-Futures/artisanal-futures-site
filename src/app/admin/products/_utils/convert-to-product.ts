@@ -1,26 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  ShopifyData,
   ShopifyProduct,
+  SquareSpaceData,
   SquareSpaceProduct,
   WordPressProduct,
 } from "../_validators/types";
+import type { ProductWithRelations } from "~/types/product";
+
+export type ProductData = ShopifyData | SquareSpaceData | WordPressProduct[];
 
 export async function convertToProduct(
   product: ShopifyProduct | SquareSpaceProduct | WordPressProduct,
   shopId: string,
+  siteUrl?: string,
 ) {
   // Handle Shopify product
   if ("body_html" in product) {
     return {
       shopProductId: product.id.toString(),
       name: product.title,
-      description: product.body_html || "",
+      description: removeHtmlTags(product.body_html),
       priceInCents: product.variants[0]?.price
         ? Math.round(parseFloat(product.variants[0].price) * 100)
         : null,
       currency: "USD", // Shopify typically uses USD
       imageUrl: product.images[0]?.src ?? null,
-      productUrl: `/products/${product.handle}`,
+      productUrl: siteUrl
+        ? `${siteUrl}/products/${product.handle}`
+        : `/products/${product.handle}`,
       attributeTags: [],
       tags: product.tags ?? [],
       materialTags: [],
@@ -55,7 +63,7 @@ export async function convertToProduct(
     return {
       shopProductId: product.id.toString(),
       name: product.title.rendered,
-      description: description,
+      description: removeHtmlTags(description),
       priceInCents: null, // WordPress core doesn't include price
       currency: null,
       imageUrl: imageUrl, // Would need to fetch featured media separately
@@ -76,11 +84,13 @@ export async function convertToProduct(
   return {
     shopProductId: product.id,
     name: product.title,
-    description: product.body ?? product.excerpt ?? "",
+    description: removeHtmlTags(product.body ?? product.excerpt),
     priceInCents: product.structuredContent?.variants?.[0]?.price ?? null,
     currency: product.structuredContent?.priceMoney?.currency ?? null,
     imageUrl: imageUrl,
-    productUrl: product.fullUrl ?? null,
+    productUrl: siteUrl
+      ? `${siteUrl}${product.fullUrl}`
+      : (product.fullUrl ?? null),
     attributeTags: [],
     tags: [],
     materialTags: [],
@@ -90,3 +100,62 @@ export async function convertToProduct(
     shopId,
   };
 }
+
+export async function mapProducts({
+  parsedJson,
+  selectedSource,
+  selectedShopId,
+  selectedSiteUrl,
+}: {
+  parsedJson: ProductData;
+  selectedSource: string;
+  selectedShopId: string;
+  selectedSiteUrl?: string;
+}) {
+  let convertedProducts: Partial<ProductWithRelations>[] = [];
+
+  if (selectedSource === "shopify") {
+    const shopifyData = parsedJson as ShopifyData;
+    convertedProducts = await Promise.all(
+      shopifyData?.products?.map(
+        async (product) =>
+          (await convertToProduct(
+            product,
+            selectedShopId,
+            selectedSiteUrl ?? undefined,
+          )) as Partial<ProductWithRelations>,
+      ),
+    );
+  } else if (selectedSource === "squarespace") {
+    const squarespaceData = parsedJson as SquareSpaceData;
+    convertedProducts = await Promise.all(
+      squarespaceData?.items?.map(
+        async (product) =>
+          (await convertToProduct(
+            product,
+            selectedShopId,
+            selectedSiteUrl ?? undefined,
+          )) as Partial<ProductWithRelations>,
+      ),
+    );
+  } else if (selectedSource === "wordpress") {
+    const wordpressData = parsedJson as WordPressProduct[];
+    convertedProducts = await Promise.all(
+      wordpressData?.map(
+        async (product) =>
+          (await convertToProduct(
+            product,
+            selectedShopId,
+          )) as Partial<ProductWithRelations>,
+      ),
+    );
+  }
+
+  return convertedProducts as ProductWithRelations[];
+}
+
+const removeHtmlTags = (text?: string) => {
+  return !!text?.trim()
+    ? text?.replace(/<[^>]*>/g, "")
+    : "No description available";
+};

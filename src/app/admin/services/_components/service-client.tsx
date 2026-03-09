@@ -18,6 +18,7 @@ import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { BulkServiceFormWrapper } from "./bulk-service-form-wrapper";
+import { DeleteMultipleServicesDialog } from "./delete-multiple-services";
 import { serviceColumns } from "./service-column-structure";
 import { createServiceFilter } from "./service-filters";
 
@@ -65,7 +66,7 @@ export function ServiceClient({ services, shops }: Props) {
 
     return (
       <div className="flex items-center gap-2">
-        <ItemDialog
+        {/* <ItemDialog
           title={`Bulk Edit ${selectedServiceIds.length} Products`}
           subtitle="Apply changes to all selected products."
           FormComponent={BulkServiceFormWrapper}
@@ -81,6 +82,11 @@ export function ServiceClient({ services, shops }: Props) {
           }
           buttonClassName="h-8 text-xs"
           preventCloseOnOutsideClick={true}
+        /> */}
+
+        <DeleteMultipleServicesDialog
+          serviceIds={selectedServiceIds}
+          onSuccessCallback={() => setRowSelection({})}
         />
         <Button
           variant="destructive"
@@ -97,12 +103,12 @@ export function ServiceClient({ services, shops }: Props) {
   const addButtonNode = useMemo(
     () => (
       <>
-        <Link
+        {/* <Link
           href="/admin/services/migrate"
           className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
         >
           Migrate Services
-        </Link>
+        </Link> */}
 
         <Link
           href="/admin/services/new"

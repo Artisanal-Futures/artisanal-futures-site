@@ -66,7 +66,7 @@ export default async function HomePage() {
         ]}
       />
 
-      <div className="mt-4 space-y-4 text-center">
+      <div className="my-16 space-y-4 text-center">
         <h2 className="mt-12 text-3xl font-bold">
           Artisanal Technologies for Generative Justice
         </h2>

@@ -357,6 +357,30 @@ export const serviceRouter = createTRPCRouter({
         message: "Service deleted successfully",
       };
     }),
+
+  deleteMultiple: adminArtisanProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input }) => {
+      const isAuthorized = await Promise.all(
+        input.map(async (id) => {
+          return checkUserServicePermissions(ctx.session, id);
+        }),
+      ).then((results) =>
+        results.every((isAuthorized: boolean) => isAuthorized),
+      );
+
+      if (!isAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more services do not belong to current user",
+        });
+      }
+
+      await ctx.db.service.deleteMany({
+        where: { id: { in: input } },
+      });
+      return { data: null, message: "Services deleted successfully" };
+    }),
 });
 
 const getCategoriesWithParents = async (

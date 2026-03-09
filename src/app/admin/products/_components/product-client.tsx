@@ -18,6 +18,7 @@ import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
+import { DeleteMultipleProductsDialog } from "./delete-multiple-products";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
 
@@ -65,7 +66,7 @@ export function ProductClient({ products, shops }: Props) {
 
     return (
       <div className="flex items-center gap-2">
-        <ItemDialog
+        {/* <ItemDialog
           title={`Bulk Edit ${selectedProductIds.length} Products`}
           subtitle="Apply changes to all selected products."
           FormComponent={BulkProductFormWrapper}
@@ -81,11 +82,17 @@ export function ProductClient({ products, shops }: Props) {
           }
           buttonClassName="h-8 text-xs"
           preventCloseOnOutsideClick={true}
+        /> */}
+
+        <DeleteMultipleProductsDialog
+          productIds={selectedProductIds}
+          onSuccessCallback={() => setRowSelection({})}
         />
+
         <Button
-          variant="destructive"
+          variant="outline"
           onClick={() => setRowSelection({})}
-          className="h-8 bg-red-500 px-2 text-xs lg:px-3"
+          className="h-8 px-2 text-xs lg:px-3"
         >
           <XCircleIcon className="mr-2 h-4 w-4" />
           Cancel
