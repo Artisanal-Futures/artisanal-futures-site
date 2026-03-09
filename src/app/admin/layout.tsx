@@ -22,7 +22,7 @@ export default async function AdminPanelLayout(props: Props) {
     );
   }
 
-  if (session?.user?.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN" && session?.user?.role !== "ARTISAN") {
     redirect(`/unauthorized`);
   }
 

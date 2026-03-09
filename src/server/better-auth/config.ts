@@ -22,6 +22,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
   },
 
   socialProviders: {
@@ -70,34 +71,68 @@ export const auth = betterAuth({
 
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
-      // 1. ENFORCE PASSCODE ON EMAIL/PASSWORD SIGN-UP
+      // 1. ENFORCE PLATFORM INVITE ON EMAIL/PASSWORD SIGN-UP
       if (ctx.path === "/sign-up/email") {
-        const code = (ctx.body as { code: string | undefined })?.code;
+        const body = ctx.body as { code?: string; email?: string };
+        const code = body?.code?.trim().toUpperCase();
+        const email = body?.email?.trim().toLowerCase();
 
-        if (code !== process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
+        if (!code) {
           throw new APIError("UNAUTHORIZED", {
-            message: "Invalid or missing sign-up code",
+            message: "Invalid or missing invitation code",
+          });
+        }
+
+        const invite = await db.platformInvite.findUnique({
+          where: { code },
+        });
+
+        if (!invite) {
+          throw new APIError("UNAUTHORIZED", {
+            message: "Invalid invitation code",
+          });
+        }
+
+        if (invite.used) {
+          throw new APIError("UNAUTHORIZED", {
+            message: "This invitation code has already been used",
+          });
+        }
+
+        if (invite.expiresAt <= new Date()) {
+          throw new APIError("UNAUTHORIZED", {
+            message: "This invitation code has expired",
+          });
+        }
+
+        if (invite.email.toLowerCase() !== email) {
+          throw new APIError("UNAUTHORIZED", {
+            message: "This invitation is for a different email address.",
           });
         }
       }
 
-      // 2. STORE PASSCODE FOR OAUTH FLOWS
+      // 2. STORE INVITE CODE FOR OAUTH FLOWS
       if (ctx.path === "/sign-in/social") {
         const code = ctx.query?.code as string | undefined;
 
         if (code) {
-          // Store validated code in signed cookie for OAuth callback
-          await ctx.setSignedCookie("signup-code", code, ctx.context.secret, {
-            maxAge: 600, // 10 minutes
-            httpOnly: true,
-            sameSite: "lax",
-          });
+          await ctx.setSignedCookie(
+            "signup-code",
+            code.trim().toUpperCase(),
+            ctx.context.secret,
+            {
+              maxAge: 600, // 10 minutes
+              httpOnly: true,
+              sameSite: "lax",
+            },
+          );
         }
       }
     }),
 
     after: createAuthMiddleware(async (ctx) => {
-      // 3. VALIDATE NEW OAUTH USERS HAVE PASSCODE
+      // 3. VALIDATE NEW OAUTH USERS HAVE PLATFORM INVITE
       if (
         ctx.path.startsWith("/callback/discord") ||
         ctx.path.startsWith("/callback/google") ||
@@ -106,7 +141,6 @@ export const auth = betterAuth({
         const user = ctx.context.newSession?.user;
         if (!user) return;
 
-        // Check if this is a NEW user (just created, createdAt within last 5 seconds)
         const existingUser = await db.user.findUnique({
           where: { id: user.id },
           select: { createdAt: true },
@@ -121,16 +155,47 @@ export const auth = betterAuth({
             ctx.context.secret,
           );
 
-          if (code !== process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
-            // Delete the newly created user
+          if (!code) {
             await db.user.delete({ where: { id: user.id } });
             throw new APIError("UNAUTHORIZED", {
               message:
-                "New accounts require a sign-up code. Please visit /auth/sign-up with a valid code.",
+                "New accounts require an invitation code. Please visit the sign-up page with a valid code.",
             });
           }
 
-          // Clear the code cookie after successful sign-up
+          const invite = await db.platformInvite.findUnique({
+            where: { code },
+          });
+
+          if (!invite) {
+            await db.user.delete({ where: { id: user.id } });
+            throw new APIError("UNAUTHORIZED", {
+              message: "Invalid invitation code",
+            });
+          }
+
+          if (invite.used) {
+            await db.user.delete({ where: { id: user.id } });
+            throw new APIError("UNAUTHORIZED", {
+              message: "This invitation code has already been used",
+            });
+          }
+
+          if (invite.expiresAt <= new Date()) {
+            await db.user.delete({ where: { id: user.id } });
+            throw new APIError("UNAUTHORIZED", {
+              message: "This invitation code has expired",
+            });
+          }
+
+          const userEmail = user.email?.trim().toLowerCase();
+          if (invite.email.toLowerCase() !== userEmail) {
+            await db.user.delete({ where: { id: user.id } });
+            throw new APIError("UNAUTHORIZED", {
+              message: "This invitation is for a different email address.",
+            });
+          }
+
           ctx.setCookie("signup-code", "", { maxAge: 0 });
         }
       }

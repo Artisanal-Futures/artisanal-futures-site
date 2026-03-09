@@ -78,7 +78,7 @@ export const onboardingRouter = createTRPCRouter({
             businessEmail: input.businessEmail ?? "",
             businessPhone: input.businessTelephone ?? "",
             businessWebsite: input.websiteLink ?? "",
-            businessType: input.businessType.join(","),
+            businessType: input.businessType ?? "",
             productCategories: input.productCategories ?? [],
             principles: input.principles ?? [],
             processes: input.commonProcesses ?? [],

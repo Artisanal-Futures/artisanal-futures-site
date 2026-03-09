@@ -1,21 +1,24 @@
 import { z } from "zod";
 
-export const artisanOnboardingSchema = z.object({
+const artisanOnboardingSchemaBase = z.object({
   // Invitation
-  invitationCode: z.string(),
+  invitationCode: z.string().min(1, "Invitation code is required"),
 
   // Account
-  email: z.string(),
-  password: z.string(),
-  name: z.string(),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().optional(),
+  name: z.string().min(1, "Please enter your name"),
 
   // Business
-  businessName: z.string(),
-  businessInterview: z.string(),
+  businessName: z.string().min(1, "Please enter your business name"),
+  businessInterview: z
+    .string()
+    .min(1, "Please tell us about your business in the interview field"),
   businessLocation: z.string().optional(),
   businessEmail: z.string().optional(),
   businessTelephone: z.string().optional(),
-  businessType: z.array(z.string()),
+  businessType: z.string().optional(),
   businessTypeOther: z.string().optional(),
   productCategories: z.array(z.string()),
   productCategoriesOther: z.string().optional(),
@@ -29,15 +32,27 @@ export const artisanOnboardingSchema = z.object({
   socialMediaLinks: z.string().optional(),
 
   // Artisan profile
-  ownerName: z.string(),
+  ownerName: z.string().min(1, "Please enter the owner's name"),
   ownerBio: z.string().optional(),
-  publicDescription: z.string(),
+  publicDescription: z
+    .string()
+    .min(1, "Please add a short public description of your business"),
   logoFile: z.instanceof(File).optional().nullable(),
   ownerPhotoFile: z.instanceof(File).optional().nullable(),
   logoPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
   ownerPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
 });
 
+export const artisanOnboardingSchema = artisanOnboardingSchemaBase.refine(
+  (data) =>
+    data.confirmPassword === undefined ||
+    data.password === data.confirmPassword,
+  { message: "Passwords do not match", path: ["confirmPassword"] },
+);
+
+export type SignupFormData = z.infer<typeof artisanOnboardingSchema>;
+
+// API input for onboardGuest (no password/confirmPassword)
 export const guestOnboardingSchema = z.object({
   invitationCode: z.string(),
   name: z.string(),
@@ -47,3 +62,35 @@ export const guestOnboardingSchema = z.object({
   otherPractice: z.string(),
   email: z.string().email(),
 });
+
+// Full form schema for guest signup wizard (includes account fields + refines)
+const guestSignupFormSchemaBase = z.object({
+  invitationCode: z.string().min(1, "Invitation code is required"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().optional(),
+  name: z.string().min(1, "Please enter your name"),
+  country: z.string().min(1, "Please enter your country"),
+  state: z.string().min(1, "Please enter your state or province"),
+  artisanalPractice: z.string().min(1, "Please select your artisanal practice"),
+  otherPractice: z.string().optional(),
+});
+
+export const guestSignupFormSchema = guestSignupFormSchemaBase
+  .refine(
+    (data) =>
+      data.confirmPassword === undefined ||
+      data.password === data.confirmPassword,
+    { message: "Passwords do not match", path: ["confirmPassword"] },
+  )
+  .refine(
+    (data) =>
+      data.artisanalPractice !== "other" ||
+      (data.otherPractice?.trim()?.length ?? 0) > 0,
+    {
+      message: "Please describe your artisanal practice",
+      path: ["otherPractice"],
+    },
+  );
+
+export type GuestSignupFormData = z.infer<typeof guestSignupFormSchema>;

@@ -33,6 +33,7 @@ type Props<CurrentForm extends FieldValues> = {
   autoFocus?: boolean;
   labelClassName?: string;
   inputClassName?: string;
+  autoComplete?: string;
 };
 
 export const InputFormField = <CurrentForm extends FieldValues>({
@@ -54,6 +55,8 @@ export const InputFormField = <CurrentForm extends FieldValues>({
   autoFocus,
   labelClassName,
   inputClassName,
+  autoComplete,
+  type,
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -68,9 +71,11 @@ export const InputFormField = <CurrentForm extends FieldValues>({
             )}
             <FormControl>
               <Input
+                autoComplete={autoComplete}
                 disabled={disabled}
                 className={inputClassName}
                 placeholder={placeholder ?? ""}
+                type={type}
                 {...fieldRest}
                 ref={(el) => {
                   field.ref(el);

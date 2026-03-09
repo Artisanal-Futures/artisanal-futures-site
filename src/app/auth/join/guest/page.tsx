@@ -3,13 +3,13 @@ import Link from "next/link";
 import { env } from "~/env";
 import { getSession } from "~/server/better-auth/server";
 
-import { WizardClient } from "./_components/wizard-client";
+import { GuestWizardClient } from "./_components/guest-wizard-client";
 
 type Props = {
   searchParams: Promise<{ code?: string }>;
 };
 
-export default async function ArtisanSignupPage({ searchParams }: Props) {
+export default async function GuestJoinPage({ searchParams }: Props) {
   const { code } = await searchParams;
   const session = await getSession();
   const isDev = env.NODE_ENV === "development";
@@ -21,7 +21,7 @@ export default async function ArtisanSignupPage({ searchParams }: Props) {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <p className="tagline">Join Artisanal Futures</p>
-              <h1>Become an Artisan</h1>
+              <h1>Become a Guest</h1>
             </div>
           </div>
         </header>
@@ -44,26 +44,11 @@ export default async function ArtisanSignupPage({ searchParams }: Props) {
 
   return (
     <>
-      <header className="site-header">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p className="tagline">Join Artisanal Futures</p>
-            <h1>Become an Artisan</h1>
-            {session && isDev && (
-              <p className="text-muted-foreground text-sm italic">
-                You wouldn&apos;t see this in production
-              </p>
-            )}
-          </div>
-        </div>
-      </header>
-      <section className="site-section">
-        <WizardClient initialCode={code} />
-      </section>
+      <GuestWizardClient initialCode={code} />
     </>
   );
 }
 
 export const metadata = {
-  title: "Become an Artisan",
+  title: "Become a Guest",
 };

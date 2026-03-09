@@ -55,7 +55,7 @@ export const SiteNavbar = () => {
         <Link href="/auth/sign-in">Log in</Link>
       </Button>
       <Button size="sm" asChild>
-        <Link href="/auth/sign-up">Join Us</Link>
+        <Link href="/join">Join Us</Link>
       </Button>
     </div>
   );
@@ -157,7 +157,7 @@ export const SiteNavbar = () => {
 
       {/* Mobile Menu Overlay - covers navbar (z-[60] > header z-50) */}
       <motion.div
-        className="fixed inset-0 z-60 flex flex-col bg-[#1A1E1A] md:hidden"
+        className="fixed inset-0 z-60 flex flex-col bg-[#1a1c1e] md:hidden"
         initial={false}
         animate={{
           opacity: mobileMenuOpen ? 1 : 0,
@@ -184,11 +184,11 @@ export const SiteNavbar = () => {
             className="mb-12 flex shrink-0 items-center justify-center"
           >
             <Image
-              src="/dpc-logo.png"
-              alt="Detroit Pollinator Company"
+              src="/logos/logo-mobile.png"
+              alt="Artisanal Futures logo"
               width={140}
               height={140}
-              className="h-28 w-28 object-contain invert md:h-32 md:w-32"
+              className="h-28 w-28 object-contain md:h-32 md:w-32"
             />
           </Link>
 
@@ -213,11 +213,11 @@ export const SiteNavbar = () => {
                   <Link
                     href={href}
                     onClick={closeMenu}
-                    className={`block rounded-lg px-4 py-2 text-2xl font-light tracking-wide uppercase transition-colors active:bg-white/10 ${
-                      isActive
-                        ? "text-[#5e7747]"
-                        : "text-white hover:text-[#5e7747] active:text-[#5e7747]"
-                    }`}
+                    className={cn(
+                      "block rounded-lg px-4 py-2 text-2xl font-light tracking-wide uppercase transition-colors",
+                      "text-white hover:bg-white/20 hover:text-white active:bg-white/20 active:text-white",
+                      isActive && "bg-white/20 text-white",
+                    )}
                   >
                     {label}
                   </Link>
@@ -241,7 +241,7 @@ export const SiteNavbar = () => {
             <Button
               size="sm"
               asChild
-              className="border-green-500/30 bg-green-500/10 text-green-600 hover:bg-green-500/20 hover:text-green-700"
+              className="border-red-500/30 bg-red-500/10 text-red-600 hover:bg-red-500/20 hover:text-red-700"
               variant="outline"
             >
               <Link href="/donate" onClick={closeMenu}>
