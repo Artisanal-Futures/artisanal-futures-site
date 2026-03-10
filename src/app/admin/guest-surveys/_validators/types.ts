@@ -1,6 +1,5 @@
+import { type GuestSurvey, type User } from "generated/prisma";
 import * as z from "zod";
-
-import { type GuestSurvey, type User } from "@prisma/client";
 
 import type { AdminColumn } from "~/types";
 

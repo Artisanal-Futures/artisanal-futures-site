@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Example {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  providerId            String
+  accountId             String
+  refreshToken          String?
+  accessToken           String?
+  scope                 String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     Boolean            @default(false)
+  image             String?
+  title             String?
+  role              Role               @default(GUEST)
+  createdAt         DateTime           @default(now())
+  username          String?
+  updatedAt         DateTime           @updatedAt
+  accounts          Account[]
+  commentVotes      CommentVote[]
+  forumComments     ForumComment[]
+  generatedImages   GeneratedImages[]
+  generationSurveys GenerationSurvey[]
+  guestSurveys      GuestSurvey[]
+  modifications     Modification[]
+  notifications     Notification[]
+  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
+  posts             Post[]
+  messagingProfile  Profile?
+  sessions          Session[]
+  shops             Shop[]
+  createdSubreddits Subreddit[]        @relation("CreatedBy")
+  subscriptions     Subscription[]
+  trainingDataSet   TrainingDataSet[]
+  upcycleResults    UpcycleResult[]
+  variations        Variation[]
+  votes             Vote[]
+  websiteProvision  WebsiteProvision[]
+  Depot             Depot[]            @relation("DepotToUser")
+}
+
+model Verification {
+  identifier String
+  value      String    @unique
+  expiresAt  DateTime
+  id         String    @id @default(cuid())
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("VerificationToken")
+}
+
+enum Role {
+  USER
+  ADMIN
+  ARTISAN
+  DRIVER
+  GUEST
+  MANAGER
+}

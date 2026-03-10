@@ -1,27 +1,27 @@
-import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { format } from 'date-fns'
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { format } from "date-fns";
 
-import { SubscribeLeaveToggle } from '~/app/forums/_components/subscribe-leave-toggle'
-import { ToFeedButton } from '~/app/forums/_components/to-feed-button'
-import { buttonVariants } from '~/components/ui/button'
-import { getServerAuthSession } from '~/server/auth'
-import { db } from '~/server/db'
+import { getSession } from "~/server/better-auth/server";
+import { db } from "~/server/db";
+import { buttonVariants } from "~/components/ui/button";
+import { SubscribeLeaveToggle } from "~/app/forums/_components/subscribe-leave-toggle";
+import { ToFeedButton } from "~/app/forums/_components/to-feed-button";
 
 export const metadata: Metadata = {
-  title: 'Artisanal Futures Forums',
-}
+  title: "Artisanal Futures Forums",
+};
 
 export default async function CreateLayout({
   children,
   slug,
 }: {
-  children: ReactNode
-  slug?: string
+  children: ReactNode;
+  slug?: string;
 }) {
-  const session = await getServerAuthSession()
+  const session = await getSession();
 
   // Return default state when no slug is present
   if (!slug) {
@@ -34,7 +34,7 @@ export default async function CreateLayout({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   const subreddit = await db.subreddit.findFirst({
@@ -47,7 +47,7 @@ export default async function CreateLayout({
         },
       },
     },
-  })
+  });
 
   const subscription = !session?.user
     ? undefined
@@ -60,11 +60,11 @@ export default async function CreateLayout({
             id: session.user.id,
           },
         },
-      })
+      });
 
-  const isSubscribed = !!subscription
+  const isSubscribed = !!subscription;
 
-  if (!subreddit) return notFound()
+  if (!subreddit) return notFound();
 
   const memberCount = await db.subscription.count({
     where: {
@@ -72,7 +72,7 @@ export default async function CreateLayout({
         name: slug,
       },
     },
-  })
+  });
 
   return (
     <div className="mx-auto h-full max-w-7xl sm:container">
@@ -87,12 +87,12 @@ export default async function CreateLayout({
             <div className="px-6 py-4">
               <p className="py-3 font-semibold">About r/{subreddit.name}</p>
             </div>
-            <div className="divide-y divide-gray-100 bg-background px-6 py-4 text-sm leading-6">
+            <div className="bg-background divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
               <div className="flex justify-between gap-x-4 py-3">
                 <span className="text-gray-500">Created</span>
                 <span className="text-gray-700">
                   <time dateTime={subreddit.createdAt.toDateString()}>
-                    {format(subreddit.createdAt, 'MMMM d, yyyy')}
+                    {format(subreddit.createdAt, "MMMM d, yyyy")}
                   </time>
                 </span>
               </div>
@@ -119,8 +119,8 @@ export default async function CreateLayout({
               ) : null}
               <Link
                 className={buttonVariants({
-                  variant: 'outline',
-                  className: 'mb-6 w-full',
+                  variant: "outline",
+                  className: "mb-6 w-full",
                 })}
                 href={`/forums/r/${slug}/submit`}
               >
@@ -131,5 +131,5 @@ export default async function CreateLayout({
         </div>
       </div>
     </div>
-  )
+  );
 }

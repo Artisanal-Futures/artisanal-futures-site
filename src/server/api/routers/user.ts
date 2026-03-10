@@ -1,18 +1,16 @@
-import {
-  adminProcedure,
-  createTRPCRouter,
-  elevatedProcedure,
-  protectedProcedure,
-} from "~/server/api/trpc";
-import { uploadImage } from "~/utils/forum/cloudinary";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { TRPCError } from "@trpc/server";
-
 import { updateAccountSchema } from "~/lib/validators/account";
+import {
+  adminArtisanProcedure,
+  adminOnlyProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
 
 export const userRouter = createTRPCRouter({
-  getAll: elevatedProcedure.query(async ({ ctx }) => {
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany();
 
     if (ctx.session.user.role !== "ADMIN") {
@@ -22,7 +20,7 @@ export const userRouter = createTRPCRouter({
     return users;
   }),
 
-  get: adminProcedure
+  get: adminOnlyProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({
@@ -37,7 +35,7 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  delete: adminProcedure
+  delete: adminOnlyProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const user = await ctx.db.user.delete({
@@ -115,12 +113,6 @@ export const userRouter = createTRPCRouter({
     .query(async ({}) => {
       const gemoji = (await import("gemoji")).gemoji;
       return gemoji;
-    }),
-
-  uploadForumImage: protectedProcedure
-    .input(z.any())
-    .mutation(async ({ input: file }) => {
-      return uploadImage(file as File);
     }),
 
   update: protectedProcedure

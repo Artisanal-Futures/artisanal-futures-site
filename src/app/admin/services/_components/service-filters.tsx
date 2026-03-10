@@ -1,8 +1,8 @@
 "use client";
 
-import { type FilterOption } from "~/components/tables/advanced-data-table";
 import { type ServiceWithShop } from "~/types/service";
 import { type Shop } from "~/types/shop";
+import { type FilterOption } from "~/components/tables/advanced-data-table";
 
 /**
  * @description Creates a list of filter configurations for the services data table.
@@ -12,7 +12,7 @@ import { type Shop } from "~/types/shop";
  */
 export function createServiceFilter(
   services: ServiceWithShop[],
-  shops: Shop[],
+  shops: { id: string; name: string }[],
 ): FilterOption[] {
   // Create a filter for shops, allowing admins to see services from a specific shop.
   const shopFilter: FilterOption = {

@@ -1,4 +1,4 @@
-import { CategoryType } from "@prisma/client";
+import { CategoryType } from "generated/prisma";
 
 type CategoryData = {
   name: string;

@@ -6,10 +6,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import { toastService } from "@dreamwalker-studios/toasts";
-
-// Note: You will need to create these types for your service data sources
 import type {
   ShopifyData,
   SquareSpaceData,
@@ -17,7 +16,7 @@ import type {
 } from "../_validators/types";
 import type { ServiceWithShop } from "~/types/service";
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
+// Note: You will need to create these types for your service data sources
 import { Button } from "~/components/ui/button";
 import {
   Pagination,
@@ -67,7 +66,7 @@ export function DatabaseMigrationClient() {
     null,
   );
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
+  const [, setSelectedField] = useState<string | null>(null);
   const [duplicates, setDuplicates] = useState<
     { field: string; values: string[]; count: number }[]
   >([]);
@@ -77,13 +76,18 @@ export function DatabaseMigrationClient() {
   const endIndex = startIndex + ROWS_PER_PAGE;
   const currentData = previewData.slice(startIndex, endIndex);
 
-  const { defaultActions } = useDefaultMutationActions({
-    entity: "service", 
+  const apiUtils = api.useUtils();
+  const router = useRouter();
+  const serviceMigration = api.service.importServices.useMutation({
+    onSuccess: () => {
+      toast.success("Services imported successfully");
+      void apiUtils.service.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to import services");
+    },
   });
-
-  const serviceMigration =
-    api.service.importServices.useMutation(defaultActions); 
-
   const { data: shops } = api.shop.getAll.useQuery();
 
   const checkDuplicates = (field: string) => {
@@ -129,20 +133,27 @@ export function DatabaseMigrationClient() {
 
       if (selectedSource === "SHOPIFY") {
         const shopifyData = parsedJson as ShopifyData;
-        convertedServices = shopifyData.products.map( // Assuming service data is in 'products' array
+        convertedServices = shopifyData?.products?.map(
+          // Assuming service data is in 'products' array
           (service) =>
-            convertToService(service, selectedShopId) as Partial<ServiceWithShop>,
+            convertToService(
+              service,
+              selectedShopId,
+            ) as Partial<ServiceWithShop>,
         );
       } else if (selectedSource === "SQUARESPACE") {
         const squarespaceData = parsedJson as SquareSpaceData;
-        convertedServices = squarespaceData.items.map(
+        convertedServices = squarespaceData?.items?.map(
           (service) =>
-            convertToService(service, selectedShopId) as Partial<ServiceWithShop>,
+            convertToService(
+              service,
+              selectedShopId,
+            ) as Partial<ServiceWithShop>,
         );
       } else if (selectedSource === "WORDPRESS") {
         const wordpressData = parsedJson as WordPressService[];
         convertedServices = await Promise.all(
-          wordpressData.map(
+          wordpressData?.map(
             async (service) =>
               (await convertToService(
                 service,
@@ -155,7 +166,7 @@ export function DatabaseMigrationClient() {
       if (!convertedServices.length) {
         throw new Error("No services found in the data");
       }
-      
+
       const firstService = convertedServices[0];
       if (!firstService) {
         throw new Error("No services found in the data");
@@ -164,9 +175,9 @@ export function DatabaseMigrationClient() {
       setParsedFields(fields);
       setPreviewData(convertedServices as unknown as ServiceWithShop[]);
 
-      toastService.success("Services parsed successfully");
+      toast.success("Services parsed successfully");
     } catch (error) {
-      toastService.error(
+      toast.error(
         error instanceof Error ? error.message : "Failed to parse data",
       );
       console.error(error);
@@ -180,11 +191,12 @@ export function DatabaseMigrationClient() {
         previewData.map((service) => ({
           ...service,
           shopId: service.shopId ?? "",
+          tags: service.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
         })),
       );
-      toastService.success("Migration completed successfully");
+      toast.success("Migration completed successfully");
     } catch (error) {
-      toastService.error("Failed to execute migration");
+      toast.error("Failed to execute migration");
       console.error(error);
     } finally {
       setLoading(false);
@@ -226,7 +238,7 @@ export function DatabaseMigrationClient() {
         </div>
 
         <div className="relative space-y-2">
-          <div className="rounded-md bg-muted p-4 text-sm">
+          <div className="bg-muted rounded-md p-4 text-sm">
             <h4 className="mb-2 font-medium">How to get your service data:</h4>
             <p>Please select a service source to see instructions</p>
           </div>
@@ -237,7 +249,7 @@ export function DatabaseMigrationClient() {
             placeholder="Paste service JSON..."
             className="min-h-[200px]"
           />
-          <div className="absolute right-2 top-2">
+          <div className="absolute top-2 right-2">
             <Button onClick={parseJSON}>Parse JSON</Button>
           </div>
         </div>
@@ -283,7 +295,7 @@ export function DatabaseMigrationClient() {
 
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Data Preview</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Total rows: {previewData.length}
               </p>
             </div>

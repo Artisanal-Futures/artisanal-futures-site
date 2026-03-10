@@ -1,0 +1,14 @@
+model Event {
+  id               String    @id @default(cuid())
+  shopId           String
+  description      String
+  startDate        DateTime
+  endDate          DateTime?
+  location         String?
+  imageUrl         String?
+  callToActionLink String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  title            String
+  shop             Shop      @relation(fields: [shopId], references: [id])
+}

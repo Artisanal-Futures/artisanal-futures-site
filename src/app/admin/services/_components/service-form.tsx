@@ -1,205 +1,426 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { toastService } from "@dreamwalker-studios/toasts";
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUploadFile } from "@better-upload/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import type { ServiceWithShop } from "~/types/service";
-import { useFileUpload } from "~/lib/file-upload/hooks/use-file-upload";
+import type { OptionType } from "~/components/inputs/multi-select-form-field";
+import type { ServiceFormData } from "~/lib/validators/services";
+import type { RouterOutputs } from "~/trpc/react";
+import { cn, slugify } from "~/lib/utils";
+import { serviceFormSchema } from "~/lib/validators/services";
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
-import { Button } from "~/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "~/components/ui/form";
+import { useDirtyForm } from "~/hooks/use-dirty-form";
+import { useKeyboardEnter } from "~/hooks/use-keyboard-enter";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { LoadButton } from "~/components/common/load-button";
-import { ImageFormField } from "~/components/inputs/image-form-field";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Form, FormField, FormItem, FormLabel } from "~/components/ui/form";
+import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
+import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
+import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TagFormField } from "~/components/inputs/tag-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
-import { Switch } from "~/components/ui/switch";
-import { MultiSelectFormField, type OptionType } from "~/components/inputs/multi-select-form-field";
-
-const serviceFormSchema = z.object({
-  name: z.string().min(1, "Name is required."),
-  description: z.string().min(1, "Description is required."),
-  priceInCents: z.coerce.number().optional().nullable(),
-  currency: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  tags: z.array(z.object({ id: z.string(), text: z.string() })),
-  attributeTags: z.array(z.string()),
-  aiGeneratedTags: z.array(z.string()),
-  shopId: z.string().min(1, "Shop selection is required."),
-  durationInMinutes: z.coerce.number().optional().nullable(),
-  locationType: z.string().optional().nullable(),
-  isPublic: z.boolean().default(false),
-  image: z.any().optional(),
-  categoryIds: z.array(z.string()).optional(),
-});
-
-type ServiceForm = z.infer<typeof serviceFormSchema>;
 
 type Props = {
-  initialData: ServiceWithShop | null;
-  onSuccessCallback?: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  initialData: RouterOutputs["service"]["get"];
+  shops: RouterOutputs["shop"]["getAll"];
+  categories: RouterOutputs["category"]["getAll"];
+  userRole: string;
 };
 
-export function ServiceForm({ initialData, onSuccessCallback, dialogRef }: Props) {
-  const { uploadFile, isUploading } = useFileUpload({
-    route: "services",
-    api: "/api/upload-service",
-    generateThumbnail: false,
-  });
-
-  const utils = api.useUtils();
-  const { defaultSuccess, defaultError, defaultSettled } =
-    useDefaultMutationActions({ entity: "service" });
-
-  const { data: shops } = api.shop.getAll.useQuery();
-  const { data: categories } = api.category.getAll.useQuery();
-
-  const form = useForm<ServiceForm>({
-    resolver: zodResolver(serviceFormSchema),
-    defaultValues: {
-      name: initialData?.name ?? "",
-      description: initialData?.description ?? "",
-      priceInCents: initialData?.priceInCents ?? 0,
-      currency: initialData?.currency ?? "USD",
-      tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
-      attributeTags: initialData?.attributeTags ?? [],
-      aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
-      shopId: initialData?.shopId ?? "",
-      imageUrl: initialData?.imageUrl ?? "",
-      durationInMinutes: initialData?.durationInMinutes ?? 0,
-      locationType: initialData?.locationType ?? "",
-      isPublic: initialData?.isPublic ?? false,
-      categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
+export function ServiceForm({
+  initialData,
+  shops,
+  categories,
+  userRole,
+}: Props) {
+  const imageUploader = useUploadFile({
+    api: "/api/upload",
+    route: "shopImage",
+    onError: (error) => {
+      toast.error(error.message ?? "Image upload failed.");
     },
+  });
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const router = useRouter();
+  const apiUtils = api.useUtils();
+
+  const defaultValues: ServiceFormData = {
+    name: initialData?.name ?? "",
+    description: initialData?.description ?? "",
+    priceInCents: initialData?.priceInCents ?? 0,
+    currency: initialData?.currency ?? "USD",
+    tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
+    attributeTags: initialData?.attributeTags ?? [],
+    aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
+    shopId: initialData?.shopId ?? "",
+    imageUrl: initialData?.imageUrl ?? "",
+    durationInMinutes: initialData?.durationInMinutes ?? 0,
+    locationType: initialData?.locationType ?? "",
+    isFeatured: initialData?.isFeatured ?? false,
+    categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
+    serviceUrl: initialData?.serviceUrl ?? "",
+
+    imageFile: null,
+  };
+  const form = useForm<ServiceFormData>({
+    resolver: zodResolver(serviceFormSchema),
+    defaultValues,
   });
 
   const createService = api.service.create.useMutation({
-    onSuccess: ({ message }: { message: string }) => {
-      defaultSuccess({ message });
-      onSuccessCallback?.();
+    onSuccess: ({ message, data }) => {
+      toast.dismiss();
+      toast.success(message);
+      handleReset(data);
+      void apiUtils.service.invalidate();
+      router.push(`/admin/services/${data.id}`);
     },
-    onError: defaultError,
-    onSettled: defaultSettled,
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message ?? "Failed to create service.");
+    },
+    onMutate: () => {
+      toast.loading("Creating service, please wait...");
+    },
   });
 
   const updateService = api.service.update.useMutation({
-    onSuccess: async ({ message }: { message: string }) => {
-      defaultSuccess({ message });
-      await utils.service.getAll.invalidate();
-      onSuccessCallback?.();
+    onSuccess: ({ message, data }) => {
+      toast.dismiss();
+      toast.success(message);
+      handleReset(data);
+      void apiUtils.service.invalidate();
+      router.refresh();
     },
-    onError: defaultError,
-    onSettled: defaultSettled,
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message ?? "Failed to update service.");
+    },
+    onMutate: () => {
+      toast.loading("Updating service, please wait...");
+    },
   });
 
-  async function onSubmit(data: ServiceForm) {
-    let imageUrl: string | null = initialData?.imageUrl ?? null;
-    if (data.image) {
-      imageUrl = await uploadFile(data.image as File);
-      if (!imageUrl) {
-        toastService.error("Error uploading image");
+  const deleteService = api.service.delete.useMutation({
+    onSuccess: ({ message }) => {
+      toast.dismiss();
+      toast.success(message);
+      void apiUtils.service.invalidate();
+      router.push("/admin/services");
+    },
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message ?? "Failed to delete service.");
+    },
+    onMutate: () => {
+      toast.loading("Deleting service, please wait...");
+    },
+  });
+
+  const handleSubmit = async (data: ServiceFormData) => {
+    const businessName =
+      shops?.find((shop) => shop.id === data.shopId)?.name ?? "";
+    const businessSlug = slugify(businessName);
+
+    let imageUrl: string | undefined = data.imageUrl ?? undefined;
+    const imageFile = data.imageFile;
+    if (imageFile instanceof File) {
+      try {
+        const response = await imageUploader.upload(imageFile, {
+          metadata: { businessSlug },
+        });
+        const fileLocation =
+          (response.file.objectInfo.metadata?.pathname as string | undefined) ??
+          "";
+        if (fileLocation) imageUrl = fileLocation;
+      } catch {
+        toast.error("Failed to upload service image.");
         return;
       }
     }
-    const submissionData = {
-      ...data,
-      imageUrl,
-      tags: data.tags.map((tag) => tag.text),
-      categoryIds: data.categoryIds,
-    };
-    if (!initialData) {
-      createService.mutate(submissionData);
-    } else {
-      updateService.mutate({ ...submissionData, id: initialData.id });
-    }
-  }
 
-  const isLoading = createService.isPending || updateService.isPending || isUploading;
+    if (!initialData) {
+      createService.mutate({ ...data, imageUrl });
+    } else {
+      updateService.mutate({
+        ...data,
+        id: initialData.id,
+        imageUrl,
+      });
+    }
+  };
+
+  const handleReset = (data?: ServiceFormData) => {
+    if (data)
+      form.reset({
+        ...data,
+        imageFile: null,
+      });
+    else form.reset(defaultValues);
+
+    if (imageFileInputRef.current) imageFileInputRef.current.value = "";
+  };
+
+  const isPending =
+    createService.isPending ||
+    updateService.isPending ||
+    imageUploader.isPending;
 
   const categoryOptions: OptionType[] =
     categories
-      ?.filter(cat => cat.type === 'SERVICE')
+      ?.filter((cat) => cat.type === "SERVICE")
       .map((cat) => ({
         value: cat.id,
-        label: `${cat.parent ? `${cat.parent.name} / ` : ''}${cat.name}`,
+        label: `${cat.parent ? `${cat.parent.name} / ` : ""}${cat.name}`,
       })) ?? [];
 
+  const isDirty = form.formState.isDirty;
+
+  useDirtyForm(isDirty);
+  useKeyboardEnter(form, handleSubmit);
   return (
-    <Form {...form}>
-      <form
-        onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
-        onKeyDown={(e) => { if (e.key === "Enter") e.preventDefault(); }}
-        className="h-full space-y-8"
-      >
-        <div className="h-[50svh] overflow-y-auto p-1">
-          <div className="flex flex-col gap-4 md:grid md:grid-cols-6">
-            <div className="col-span-2 flex flex-col gap-4">
-              <InputFormField form={form} name="name" label="Service name" placeholder="e.g., Pottery Workshop" />
-              <ImageFormField form={form} name="image" label="Service image" currentImageUrl={initialData?.imageUrl ?? ""} />
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Select Shop</label>
-                <Select onValueChange={(value) => form.setValue("shopId", value)} defaultValue={initialData?.shopId ?? undefined}>
-                  <SelectTrigger><SelectValue placeholder="Select a shop" /></SelectTrigger>
-                  <SelectContent>
-                    {shops?.map((shop) => ( <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem> ))}
-                  </SelectContent>
-                </Select>
+    <>
+      <Form {...form}>
+        <form
+          ref={formRef}
+          onSubmit={(e) => void form.handleSubmit(handleSubmit)(e)}
+          className="min-h-screen"
+        >
+          <div className={cn("admin-form-toolbar", isDirty ? "dirty" : "")}>
+            <div className="toolbar-info">
+              <Button variant="ghost" size="sm" asChild className="shrink-0">
+                <Link href="/admin/services">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Link>
+              </Button>
+              <div className="bg-border hidden h-6 w-px shrink-0 sm:block" />
+              <div className="hidden min-w-0 items-center gap-2 sm:flex">
+                <h1 className="text-base font-medium">
+                  {initialData
+                    ? form.watch("name") || "Edit Service"
+                    : "New Service"}
+                </h1>
+
+                <span
+                  className={`admin-status-badge ${
+                    isDirty ? "isDirty" : "isPublished"
+                  }`}
+                >
+                  {isDirty ? "Unsaved Changes" : "Saved"}
+                </span>
               </div>
             </div>
-            <div className="col-span-4 flex flex-col gap-4">
-              <FormField
-                control={form.control}
-                name="categoryIds"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categories</FormLabel>
-                    <MultiSelectFormField
-                      options={categoryOptions}
-                      selected={field.value ?? []}
-                      onChange={field.onChange}
-                      placeholder="Select service categories..."
-                    />
-                  </FormItem>
+
+            <div className="toolbar-actions">
+              {initialData && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={isPending}
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete</span>
+                </Button>
+              )}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isPending || !isDirty}
+                onClick={() => form.reset()}
+                className="hidden md:inline-flex"
+              >
+                Reset
+              </Button>
+
+              <Button type="submit" size="sm" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <span className="saving-indicator" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    <span className="hidden sm:inline">Save changes</span>
+                    <span className="sm:hidden">Save</span>
+                  </>
                 )}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <InputFormField form={form} name="priceInCents" label="Price (in cents)" type="number" />
-                <InputFormField form={form} name="durationInMinutes" label="Duration (minutes)" type="number" />
-              </div>
-              <InputFormField form={form} name="locationType" label="Location Type" placeholder="e.g., Online, In-Person" />
-              <TextareaFormField form={form} name="description" label="Description" />
-              <TagFormField form={form} name="tags" label="Tags" />
-              <FormField
-                control={form.control}
-                name="isPublic"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5"><FormLabel>Public Visibility</FormLabel></div>
-                    <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                  </FormItem>
-                )}
-              />
+              </Button>
             </div>
           </div>
-        </div>
-        <div className="flex h-auto justify-end gap-2">
-          <Button variant="outline" onClick={onSuccessCallback} type="button">Cancel</Button>
-          <LoadButton isLoading={isLoading} loadingText={initialData ? "Updating..." : "Creating..."} type="submit">
-            {initialData ? "Update service" : "Create service"}
-          </LoadButton>
-        </div>
-      </form>
-    </Form>
+          <div className="admin-container space-y-6">
+            <div className="flex flex-col gap-4 md:grid md:grid-cols-6">
+              <div className="col-span-2 flex flex-col gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Service Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <InputFormField
+                      form={form}
+                      name="name"
+                      label="Service name *"
+                      placeholder="e.g., Pottery Workshop"
+                    />
+                    <ImageUploadFormField
+                      form={form}
+                      name="imageFile"
+                      label="Service image"
+                      description="Upload your service image here!"
+                      disabled={isPending}
+                      existingPreviewUrl={initialData?.imageUrl ?? undefined}
+                      inputRef={imageFileInputRef}
+                    />
+
+                    <SelectFormField
+                      form={form}
+                      name="shopId"
+                      label="Select Shop *"
+                      values={shops?.map((shop) => ({
+                        label: shop.name,
+                        value: shop.id,
+                      }))}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="col-span-4 flex flex-col gap-4">
+                {userRole === "ADMIN" && (
+                  <Card>
+                    <CardContent>
+                      <FancySwitchFormField
+                        form={form}
+                        name="isFeatured"
+                        label="Featured"
+                        description="(ADMIN) Make this be a featured service on the services page."
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Service Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="categoryIds"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Categories</FormLabel>
+                          <MultiSelectFormField
+                            options={categoryOptions}
+                            selected={field.value ?? []}
+                            onChange={field.onChange}
+                            placeholder="Select service categories..."
+                          />
+                        </FormItem>
+                      )}
+                    />
+                    <InputFormField
+                      form={form}
+                      name="serviceUrl"
+                      label="Service URL"
+                      placeholder="e.g., https://www.example.com/service/123"
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <InputFormField
+                        form={form}
+                        name="priceInCents"
+                        label="Price (in cents)"
+                        type="number"
+                        placeholder="1000"
+                      />
+                      <InputFormField
+                        form={form}
+                        name="durationInMinutes"
+                        label="Duration (minutes)"
+                        type="number"
+                        placeholder="60"
+                      />
+                    </div>
+                    <InputFormField
+                      form={form}
+                      name="locationType"
+                      label="Location Type"
+                      placeholder="e.g., Online, In-Person"
+                    />
+                    <TextareaFormField
+                      form={form}
+                      name="description"
+                      label="Service Description *"
+                      placeholder="e.g. This is a description of my service."
+                    />
+                    <TagFormField
+                      form={form}
+                      name="tags"
+                      label="Tags"
+                      placeholder="e.g. Tag1, Tag2, Tag3 (separate with commas)"
+                      description="Tags are used to categorize your service. Separate with commas."
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </form>
+      </Form>
+
+      {/* Delete Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete service</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{form.watch("name")}&quot;?
+              This action cannot be undone. This will permanently delete the
+              service and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteService.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                deleteService.mutate(initialData?.id ?? "");
+              }}
+              disabled={deleteService.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteService.isPending ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

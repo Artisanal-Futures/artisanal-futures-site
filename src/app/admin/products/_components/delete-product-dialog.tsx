@@ -1,26 +1,28 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
 import { SingleActionDialog } from "../../_components/single-action-dialog";
 
 type Props = { productId: string };
 
 export function DeleteProductDialog(props: Props) {
-  const { defaultError, defaultSettled } = useDefaultMutationActions({
-    entity: "product",
-  });
+  const router = useRouter();
+  const apiUtils = api.useUtils();
 
   const deleteProduct = api.product.delete.useMutation({
     onSuccess: () => {
       toast.success("Product deleted successfully.");
-      defaultSettled();
+      void apiUtils.product.invalidate();
+      router.refresh();
     },
-    onError: defaultError, 
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to delete product.");
+    },
   });
 
   const onSubmit = () => deleteProduct.mutate(props.productId);

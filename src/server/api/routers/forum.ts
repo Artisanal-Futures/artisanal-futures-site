@@ -1,11 +1,11 @@
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import { TRPCError } from "@trpc/server";
 
 export const forumRouter = createTRPCRouter({
   getPostComments: publicProcedure
@@ -212,6 +212,7 @@ export const forumRouter = createTRPCRouter({
           message: "Vote created successfully",
         };
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to post vote",

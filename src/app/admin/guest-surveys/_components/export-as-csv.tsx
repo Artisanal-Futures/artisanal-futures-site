@@ -1,6 +1,6 @@
 "use client";
 
-import { type GuestSurvey } from "@prisma/client";
+import { type GuestSurvey } from "generated/prisma";
 
 import { Button } from "~/components/ui/button";
 

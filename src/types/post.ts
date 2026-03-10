@@ -1,16 +1,22 @@
-import type { ForumComment, Post, Subreddit, User, Vote } from '@prisma/client'
+import type {
+  ForumComment,
+  Post,
+  Subreddit,
+  User,
+  Vote,
+} from "generated/prisma";
 
 export type ExtendedPost = Post & {
-  subreddit: Subreddit
-  votes: Vote[]
-  author: User
-  comments: ForumComment[]
-}
+  subreddit: Subreddit;
+  votes: Vote[];
+  author: User;
+  comments: ForumComment[];
+};
 
 export type ExtendedSubreddit = Subreddit & {
-  Creator?: User
+  Creator?: User;
   _count: {
-    posts: number
-    subscribers: number
-  }
-}
+    posts: number;
+    subscribers: number;
+  };
+};

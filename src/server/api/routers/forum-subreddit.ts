@@ -1,12 +1,12 @@
+import type { Vote } from "generated/prisma";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { z } from "zod";
-
-import type { Vote } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
 
 // const CACHE_AFTER_UPVOTES = 1;
 
@@ -113,6 +113,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Your post has been published.",
         };
       } catch (e) {
+        console.error(e);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create subreddit",
@@ -154,7 +155,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been unsubscribed from this subreddit.",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -202,7 +203,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been subscribed to this subreddit.",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -358,7 +359,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "",
         };
       } catch (error) {
-        error;
+        console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -678,6 +679,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not fetch posts",
@@ -726,6 +728,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not fetch subreddits",
@@ -744,6 +747,7 @@ export const forumSubredditRouter = createTRPCRouter({
 
       return subreddits;
     } catch (error) {
+      console.error(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not fetch subreddits",

@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { cn } from "~/utils/styles";
+
+import { cn } from "~/lib/utils";
 
 const Logo = ({ className }: { className: string }) => {
   return (

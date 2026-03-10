@@ -1,6 +1,6 @@
 "use client";
 
-import type { GuestSurvey } from "@prisma/client";
+import type { GuestSurvey } from "generated/prisma";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -32,25 +32,25 @@ export function ViewGuestSurveyDialog({ item }: Props) {
           <div className="space-y-6 p-4">
             <div className="space-y-2">
               <h3 className="font-medium">User Information</h3>
-              <p className="text-sm text-muted-foreground">Name: {item.name}</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">Name: {item.name}</p>
+              <p className="text-muted-foreground text-sm">
                 Email: {item.email}
               </p>
             </div>
 
             <div className="space-y-2">
               <h3 className="font-medium">Location</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Country: {item.country}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 State: {item.state}
               </p>
             </div>
 
             <div className="space-y-2">
               <h3 className="font-medium">Artisanal Practice</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {item.artisanalPractice}
               </p>
             </div>
@@ -58,7 +58,7 @@ export function ViewGuestSurveyDialog({ item }: Props) {
             {item.otherPractice && (
               <div className="space-y-2">
                 <h3 className="font-medium">Other Practice</h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {item.otherPractice}
                 </p>
               </div>
@@ -66,7 +66,7 @@ export function ViewGuestSurveyDialog({ item }: Props) {
 
             <div className="space-y-2">
               <h3 className="font-medium">Metadata</h3>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 <p>ID: {item.id}</p>
                 <p>Created At: {item.createdAt.toLocaleString()}</p>
               </div>

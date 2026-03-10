@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
 
+import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
@@ -39,10 +40,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-import { RouterOutputs } from "~/trpc/react";
-
 type Service = RouterOutputs["service"]["getAll"][number];
-type Store = RouterOutputs["shop"]["getAllValid"][number];
+type Store = RouterOutputs["shop"]["getAllPublic"][number];
 
 // Define explicit interfaces to ensure type safety
 interface ServiceData {
@@ -60,37 +59,39 @@ export function TagServicesButton() {
   const [open, setOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedStore, setSelectedStore] = useState<string>("");
-  const [tagType, setTagType] = useState<"attributeTags" | "tags">("attributeTags");
+  const [tagType, setTagType] = useState<"attributeTags" | "tags">(
+    "attributeTags",
+  );
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
 
   const { data: servicesData = [] } = api.service.getAll.useQuery();
-  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
-  
+  const { data: storesData = [] } = api.shop.getAllPublic.useQuery();
+
   // Type guard functions - fix the type predicate issue
   const isValidService = (item: Service): item is Service & ServiceData => {
-    if (typeof item !== 'object' || item === null) return false;
-    
+    if (typeof item !== "object" || item === null) return false;
+
     const obj = item as Record<string, unknown>;
     return (
-      'id' in obj &&
-      'name' in obj &&
-      'shopId' in obj &&
-      typeof obj.id === 'string' &&
-      typeof obj.name === 'string' &&
-      typeof obj.shopId === 'string'
+      "id" in obj &&
+      "name" in obj &&
+      "shopId" in obj &&
+      typeof obj.id === "string" &&
+      typeof obj.name === "string" &&
+      typeof obj.shopId === "string"
     );
   };
 
   const isValidStore = (item: Store): item is Store & StoreData => {
-    if (typeof item !== 'object' || item === null) return false;
-    
+    if (typeof item !== "object" || item === null) return false;
+
     const obj = item as Record<string, unknown>;
     return (
-      'id' in obj &&
-      'name' in obj &&
-      typeof obj.id === 'string' &&
-      typeof obj.name === 'string'
+      "id" in obj &&
+      "name" in obj &&
+      typeof obj.id === "string" &&
+      typeof obj.name === "string"
     );
   };
 
@@ -98,19 +99,17 @@ export function TagServicesButton() {
   const services: ServiceData[] = servicesData
     .filter((item): item is NonNullable<typeof item> => item !== null)
     .filter(isValidService)
-    .map(service => ({
+    .map((service) => ({
       id: service.id,
       name: service.name,
-      shopId: service.shopId
+      shopId: service.shopId,
     }));
-  
-  const stores: StoreData[] = storesData
-    .filter(isValidStore)
-    .map(store => ({
-      id: store.id,
-      name: store.name
-    }));
-  
+
+  const stores: StoreData[] = storesData.filter(isValidStore).map((store) => ({
+    id: store.id,
+    name: store.name,
+  }));
+
   const updateTagsMutation = api.service.updateTags.useMutation({
     onSuccess: (result) => {
       toast.success(result.message);
@@ -299,7 +298,9 @@ export function TagServicesButton() {
           <Button
             onClick={handleSubmit}
             disabled={
-              selectedServices.length === 0 || selectedTags.length === 0 || updateTagsMutation.isPending
+              selectedServices.length === 0 ||
+              selectedTags.length === 0 ||
+              updateTagsMutation.isPending
             }
           >
             {updateTagsMutation.isPending ? "Applying..." : "Apply Tags"}

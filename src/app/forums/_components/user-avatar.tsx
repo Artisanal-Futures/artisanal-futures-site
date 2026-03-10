@@ -1,7 +1,6 @@
-import Image from "next/image";
-
-import type { User } from "@prisma/client";
 import type { AvatarProps } from "@radix-ui/react-avatar";
+import type { User } from "generated/prisma";
+import Image from "next/image";
 
 import { env } from "~/env";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";

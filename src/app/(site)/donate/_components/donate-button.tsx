@@ -1,20 +1,19 @@
 "use client";
 
-import { cn } from "~/utils/styles";
+import type { VariantProps } from "class-variance-authority";
 
-import type { ButtonProps } from "~/components/ui/button";
+import type { buttonVariants } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 
 export default function DonateButton({
   amount,
   className,
-  variant = "default",
   label = "Donate",
   disabled = false,
-  isSelected = false,
 }: {
   amount: number;
-  variant?: ButtonProps["variant"];
+  variant?: VariantProps<typeof buttonVariants>["variant"];
   className?: string;
   label?: string;
   disabled?: boolean;

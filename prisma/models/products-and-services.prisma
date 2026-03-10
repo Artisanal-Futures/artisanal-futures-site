@@ -1,0 +1,54 @@
+model Service {
+  id                String     @id @default(cuid())
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  durationInMinutes Int?
+  locationType      String?
+  tags              String[]
+  attributeTags     String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  isPublic          Boolean    @default(false)
+  shopId            String?
+  isFeatured        Boolean    @default(false)
+  serviceUrl        String?
+  shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[] @relation("CategoryToService")
+}
+
+model Product {
+  id                String              @id @default(cuid())
+  shopProductId     String?
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  productUrl        String?
+  attributeTags     String[]
+  materialTags      String[]
+  environmentalTags String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  scrapeMethod      ProductScrapeMethod @default(MANUAL)
+  shopId            String?
+  tags              String[]
+  isPublic          Boolean             @default(false)
+  isFeatured        Boolean             @default(false)
+  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[]          @relation("CategoryToProduct")
+
+  @@unique([shopId, shopProductId])
+}
+
+enum ProductScrapeMethod {
+  MANUAL
+  WORDPRESS
+  SHOPIFY
+  SQUARESPACE
+}

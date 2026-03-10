@@ -3,13 +3,13 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { PencilIcon, XCircleIcon } from "lucide-react";
-
 import {
   type PaginationState,
   type RowSelectionState,
 } from "@tanstack/react-table";
+import { PencilIcon, XCircleIcon } from "lucide-react";
 
+import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
@@ -19,13 +19,13 @@ import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ItemDialog } from "../../_components/item-dialog";
 import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
+import { DeleteMultipleProductsDialog } from "./delete-multiple-products";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
-import { ProjectForm } from "./product-form";
 
 type Props = {
   products: ProductWithRelations[];
-  shops: Shop[];
+  shops: RouterOutputs["shop"]["getAll"];
 };
 
 export function ProductClient({ products, shops }: Props) {
@@ -62,14 +62,12 @@ export function ProductClient({ products, shops }: Props) {
     }));
   }, [products]);
 
-  console.log(enhancedProducts);
-
   const toolbarActionsNode = useMemo(() => {
     if (selectedProductIds.length === 0) return null;
 
     return (
       <div className="flex items-center gap-2">
-        <ItemDialog
+        {/* <ItemDialog
           title={`Bulk Edit ${selectedProductIds.length} Products`}
           subtitle="Apply changes to all selected products."
           FormComponent={BulkProductFormWrapper}
@@ -85,11 +83,17 @@ export function ProductClient({ products, shops }: Props) {
           }
           buttonClassName="h-8 text-xs"
           preventCloseOnOutsideClick={true}
+        /> */}
+
+        <DeleteMultipleProductsDialog
+          productIds={selectedProductIds}
+          onSuccessCallback={() => setRowSelection({})}
         />
+
         <Button
-          variant="destructive"
+          variant="outline"
           onClick={() => setRowSelection({})}
-          className="h-8 bg-red-500 px-2 text-xs lg:px-3"
+          className="h-8 px-2 text-xs lg:px-3"
         >
           <XCircleIcon className="mr-2 h-4 w-4" />
           Cancel
@@ -101,24 +105,19 @@ export function ProductClient({ products, shops }: Props) {
   const addButtonNode = useMemo(
     () => (
       <>
-        {process.env.NODE_ENV === "development" && (
-          <Link
-            href="/admin/products/migrate"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "h-8 text-xs",
-            )}
-          >
-            Migrate Products
-          </Link>
-        )}
-        <ItemDialog
-          title="Create project"
-          subtitle="Create a new project"
-          FormComponent={ProjectForm}
-          type="project"
-          mode="create"
-        />
+        <Link
+          href="/admin/products/migrate"
+          className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
+        >
+          Migrate Products
+        </Link>
+
+        <Link
+          href="/admin/products/new"
+          className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
+        >
+          New Product
+        </Link>
       </>
     ),
     [],

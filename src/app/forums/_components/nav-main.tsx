@@ -1,6 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
 import { ChevronRight, Home, Sparkles, Users } from "lucide-react";
 
 import {
@@ -44,10 +45,10 @@ export function NavMain({
             tooltip="Forums"
             className="text-base font-light"
           >
-            <a href="/forums">
+            <Link href="/forums">
               <Home />
               <span>Home</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
@@ -56,10 +57,10 @@ export function NavMain({
             tooltip="New"
             className="text-base font-light"
           >
-            <a href="/forums/new">
+            <Link href="/forums/new">
               <Sparkles />
               <span>New</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
 
@@ -112,10 +113,10 @@ export function NavMain({
           tooltip="Communities"
           className="text-base font-light"
         >
-          <a href="/forums/communities">
+          <Link href="/forums/communities">
             <Users />
             <span>Communities</span>
-          </a>
+          </Link>
         </SidebarMenuButton>
       </SidebarMenu>
     </SidebarGroup>

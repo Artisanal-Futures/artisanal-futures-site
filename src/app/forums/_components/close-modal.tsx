@@ -10,7 +10,7 @@ export const CloseModal = () => {
 
   return (
     <Button
-      variant="subtle"
+      variant="ghost"
       className="h-6 w-6 rounded-md p-0"
       onClick={() => router.back()}
     >

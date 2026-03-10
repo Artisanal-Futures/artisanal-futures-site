@@ -1,21 +1,23 @@
-import { notFound, redirect } from 'next/navigation'
+import { notFound, redirect } from "next/navigation";
 
-import { Button } from '~/components/ui/button'
-import { getServerAuthSession } from '~/server/auth'
-import { db } from '~/server/db'
-import { api } from '~/trpc/server'
-import { EditorGeneric } from '../_components/editor-generic'
-import CreateLayout from './_components/create-layout'
+import { getSession } from "~/server/better-auth/server";
+import { db } from "~/server/db";
+import { api } from "~/trpc/server";
+import { Button } from "~/components/ui/button";
+
+import { EditorGeneric } from "../_components/editor-generic";
+import CreateLayout from "./_components/create-layout";
 
 interface CreatePostPageProps {
-  searchParams: { slug?: string }
+  searchParams: Promise<{ slug?: string }>;
 }
 
 const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
-  const session = await getServerAuthSession()
+  const { slug } = await searchParams;
+  const session = await getSession();
 
   if (!session) {
-    redirect('/auth/sign-in?callbackUrl=/forums/create')
+    redirect("/auth/sign-in?callbackUrl=/forums/create");
   }
 
   // Fetch all available subreddits
@@ -28,51 +30,51 @@ const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
       },
     },
     orderBy: {
-      name: 'asc',
+      name: "asc",
     },
     select: {
       id: true,
       name: true,
     },
-  })
+  });
 
   const personalSubreddit =
-    await api.forumSubreddit.findOrCreatePersonalSubreddit()
+    await api.forumSubreddit.findOrCreatePersonalSubreddit();
 
-  if (!subreddits.length && !personalSubreddit) return notFound()
+  if (!subreddits.length && !personalSubreddit) return notFound();
 
   return (
-    <CreateLayout slug={searchParams?.slug}>
+    <CreateLayout slug={slug}>
       <div className="flex flex-col items-start gap-6 p-6">
         {/* heading */}
-        <div className="w-full border-b border-border pb-4">
+        <div className="border-border w-full border-b pb-4">
           <div className="flex flex-wrap items-baseline">
-            <h3 className="text-2xl font-semibold text-foreground dark:text-white">
+            <h3 className="text-foreground text-2xl font-semibold dark:text-white">
               Create Post
             </h3>
-            <p className="ml-2 text-sm text-muted-foreground dark:text-gray-400">
+            <p className="text-muted-foreground ml-2 text-sm dark:text-gray-400">
               Share your thoughts with the community
             </p>
           </div>
         </div>
 
         {/* form */}
-        <div className="w-full rounded-lg bg-card p-6 shadow-sm dark:bg-gray-800/50">
+        <div className="bg-card w-full rounded-lg p-6 shadow-sm dark:bg-gray-800/50">
           <EditorGeneric subreddits={[personalSubreddit, ...subreddits]} />
 
           <div className="mt-6 flex w-full justify-end">
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 w-full"
               form="subreddit-post-form"
             >
               Post
             </Button>
           </div>
         </div>
-      </div>{' '}
+      </div>{" "}
     </CreateLayout>
-  )
-}
+  );
+};
 
-export default CreatePostPage
+export default CreatePostPage;

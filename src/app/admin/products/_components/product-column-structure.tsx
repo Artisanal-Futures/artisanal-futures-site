@@ -1,15 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
+import { PencilIcon } from "lucide-react";
 
 import type { ProductWithRelations } from "~/types/product";
+import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
+import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { RowImageLink } from "~/components/admin/row-image-link";
 
-import { ItemDialog } from "../../_components/item-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
-import { ProjectForm } from "./product-form";
 
 export type ProductColumnEntry = ProductWithRelations & {
   searchableString: string;
@@ -52,7 +54,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
           hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
-        <span className="sr-only text-xs text-muted-foreground">
+        <span className="text-muted-foreground sr-only text-xs">
           {row.original.searchableString}
         </span>
       </>
@@ -64,7 +66,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     cell: ({ row }) => (
       <div className="flex flex-col space-y-1">
         <span>{row.original.shop?.name}</span>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-muted-foreground text-xs">
           Shop ID: {row.original.shopId}
         </span>
       </div>
@@ -86,7 +88,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
             </Badge>
           ))
         ) : (
-          <span className="text-xs text-muted-foreground">Uncategorized</span>
+          <span className="text-muted-foreground text-xs">Uncategorized</span>
         )}
       </div>
     ),
@@ -104,28 +106,21 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "isPublic",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant={row.original.isPublic ? "default" : "secondary"}>
-        {row.original.isPublic ? "Public" : "Draft"}
-      </Badge>
-    ),
-  },
+
   {
     id: "options",
     header: "Options",
     cell: ({ row }) => (
       <div className="flex gap-2">
-        <ItemDialog
-          id={row.original.id}
-          title={`Update ${row.original.name}`}
-          subtitle="Make changes to the product"
-          initialData={row.original}
-          FormComponent={ProjectForm}
-          mode="update"
-        />
+        <Link
+          href={`/admin/products/${row.original.id}`}
+          className={cn(
+            buttonVariants({ variant: "default" }),
+            "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+          )}
+        >
+          <PencilIcon className="mr-1 h-4 w-4" /> Edit
+        </Link>
         <DeleteProductDialog productId={row.original.id} />
       </div>
     ),

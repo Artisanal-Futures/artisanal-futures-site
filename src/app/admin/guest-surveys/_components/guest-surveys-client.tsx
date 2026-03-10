@@ -1,6 +1,6 @@
 "use client";
 
-import type { GuestSurvey } from "@prisma/client";
+import type { GuestSurvey } from "generated/prisma";
 
 import type { GuestSurveyColumn } from "../_validators/types";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";

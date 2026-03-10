@@ -1,13 +1,12 @@
 "use client";
 
+import type { CommentVote } from "generated/prisma";
 import type { FC } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
-
-import type { CommentVote } from "@prisma/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -51,9 +50,7 @@ export const CommentVotes: FC<Props> = ({
           return;
         }
 
-        toastService.error({
-          message: "Your vote was not registered. Please try again.",
-        });
+        toast.error("Your vote was not registered. Please try again.");
       },
       onMutate: ({ voteType }) => {
         if (currentVote?.type === voteType) {
@@ -84,14 +81,14 @@ export const CommentVotes: FC<Props> = ({
         aria-label="upvote"
       >
         <ArrowBigUp
-          className={cn("h-5 w-5 text-muted-foreground", {
+          className={cn("text-muted-foreground h-5 w-5", {
             "fill-emerald-500 text-emerald-500": currentVote?.type === "UP",
           })}
         />
       </Button>
 
       {/* score */}
-      <p className="px-1 py-2 text-center text-xs font-medium text-foreground">
+      <p className="text-foreground px-1 py-2 text-center text-xs font-medium">
         {votesAmt}
       </p>
 
@@ -108,7 +105,7 @@ export const CommentVotes: FC<Props> = ({
         aria-label="downvote"
       >
         <ArrowBigDown
-          className={cn("h-5 w-5 text-muted-foreground", {
+          className={cn("text-muted-foreground h-5 w-5", {
             "fill-red-500 text-red-500": currentVote?.type === "DOWN",
           })}
         />

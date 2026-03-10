@@ -10,9 +10,9 @@ type Props = {
 };
 export const HomePageCard = ({ link, title, icon, description }: Props) => (
   <Link href={link}>
-    <Card className="transition-all duration-200 hover:scale-[1.02] hover:bg-background/50 hover:shadow-lg dark:border-accent/20 dark:bg-background/50 dark:hover:border-accent/30 dark:hover:bg-background/75">
+    <Card className="hover:bg-background/50 dark:border-accent/20 dark:bg-background/50 dark:hover:border-accent/30 dark:hover:bg-background/75 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/80">
+        <CardTitle className="text-muted-foreground dark:text-muted-foreground/80 text-sm font-medium">
           {description}
         </CardTitle>
         <div className="text-muted-foreground/70 dark:text-muted-foreground/60">
@@ -20,7 +20,7 @@ export const HomePageCard = ({ link, title, icon, description }: Props) => (
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-foreground dark:text-foreground/90">
+        <div className="text-foreground dark:text-foreground/90 text-2xl font-bold">
           {title}
         </div>
       </CardContent>

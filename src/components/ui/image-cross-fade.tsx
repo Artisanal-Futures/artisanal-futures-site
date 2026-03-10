@@ -1,7 +1,9 @@
-import Image, { type ImageProps } from "next/image";
+import type { ImageProps } from "next/image";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import wait from "waait";
-import { cn } from "~/utils/styles";
+
+import { cn } from "~/lib/utils";
 
 interface ImageCrossFadeProps extends ImageProps {
   src: string;
@@ -45,7 +47,7 @@ const ImageCrossFade = ({
           className={cn(
             `transition-opacity duration-1000`,
             loaded ? "opacity-100" : "opacity-0",
-            className
+            className,
           )}
         />
       )}
