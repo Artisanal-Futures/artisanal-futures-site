@@ -6135,15 +6135,15 @@ export namespace Prisma {
    */
 
   export type ShopCountOutputType = {
+    events: number
     products: number
     services: number
-    events: number
   }
 
   export type ShopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    events?: boolean | ShopCountOutputTypeCountEventsArgs
     products?: boolean | ShopCountOutputTypeCountProductsArgs
     services?: boolean | ShopCountOutputTypeCountServicesArgs
-    events?: boolean | ShopCountOutputTypeCountEventsArgs
   }
 
   // Custom InputTypes
@@ -6160,6 +6160,13 @@ export namespace Prisma {
   /**
    * ShopCountOutputType without action
    */
+  export type ShopCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
+  }
+
+  /**
+   * ShopCountOutputType without action
+   */
   export type ShopCountOutputTypeCountProductsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductWhereInput
   }
@@ -6169,13 +6176,6 @@ export namespace Prisma {
    */
   export type ShopCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceWhereInput
-  }
-
-  /**
-   * ShopCountOutputType without action
-   */
-  export type ShopCountOutputTypeCountEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: EventWhereInput
   }
 
 
@@ -6652,12 +6652,12 @@ export namespace Prisma {
 
   export type UpcycleResultCountOutputType = {
     questions: number
-    trainingModel: number
+    checkpointsUsed: number
   }
 
   export type UpcycleResultCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questions?: boolean | UpcycleResultCountOutputTypeCountQuestionsArgs
-    trainingModel?: boolean | UpcycleResultCountOutputTypeCountTrainingModelArgs
+    checkpointsUsed?: boolean | UpcycleResultCountOutputTypeCountCheckpointsUsedArgs
   }
 
   // Custom InputTypes
@@ -6681,7 +6681,7 @@ export namespace Prisma {
   /**
    * UpcycleResultCountOutputType without action
    */
-  export type UpcycleResultCountOutputTypeCountTrainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UpcycleResultCountOutputTypeCountCheckpointsUsedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TrainingModelWhereInput
   }
 
@@ -6691,11 +6691,11 @@ export namespace Prisma {
    */
 
   export type TrainingDataSetCountOutputType = {
-    trainingImage: number
+    images: number
   }
 
   export type TrainingDataSetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainingImage?: boolean | TrainingDataSetCountOutputTypeCountTrainingImageArgs
+    images?: boolean | TrainingDataSetCountOutputTypeCountImagesArgs
   }
 
   // Custom InputTypes
@@ -6712,7 +6712,7 @@ export namespace Prisma {
   /**
    * TrainingDataSetCountOutputType without action
    */
-  export type TrainingDataSetCountOutputTypeCountTrainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingDataSetCountOutputTypeCountImagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TrainingImageWhereInput
   }
 
@@ -6722,17 +6722,17 @@ export namespace Prisma {
    */
 
   export type TrainingModelCountOutputType = {
-    trainingDataSet: number
-    trainingImage: number
-    trainingJob: number
-    upcycleResult: number
+    trainingDataSets: number
+    imageUrls: number
+    jobs: number
+    upcycleResults: number
   }
 
   export type TrainingModelCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainingDataSet?: boolean | TrainingModelCountOutputTypeCountTrainingDataSetArgs
-    trainingImage?: boolean | TrainingModelCountOutputTypeCountTrainingImageArgs
-    trainingJob?: boolean | TrainingModelCountOutputTypeCountTrainingJobArgs
-    upcycleResult?: boolean | TrainingModelCountOutputTypeCountUpcycleResultArgs
+    trainingDataSets?: boolean | TrainingModelCountOutputTypeCountTrainingDataSetsArgs
+    imageUrls?: boolean | TrainingModelCountOutputTypeCountImageUrlsArgs
+    jobs?: boolean | TrainingModelCountOutputTypeCountJobsArgs
+    upcycleResults?: boolean | TrainingModelCountOutputTypeCountUpcycleResultsArgs
   }
 
   // Custom InputTypes
@@ -6749,28 +6749,28 @@ export namespace Prisma {
   /**
    * TrainingModelCountOutputType without action
    */
-  export type TrainingModelCountOutputTypeCountTrainingDataSetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModelCountOutputTypeCountTrainingDataSetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TrainingDataSetWhereInput
   }
 
   /**
    * TrainingModelCountOutputType without action
    */
-  export type TrainingModelCountOutputTypeCountTrainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModelCountOutputTypeCountImageUrlsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TrainingImageWhereInput
   }
 
   /**
    * TrainingModelCountOutputType without action
    */
-  export type TrainingModelCountOutputTypeCountTrainingJobArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModelCountOutputTypeCountJobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TrainingJobWhereInput
   }
 
   /**
    * TrainingModelCountOutputType without action
    */
-  export type TrainingModelCountOutputTypeCountUpcycleResultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModelCountOutputTypeCountUpcycleResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UpcycleResultWhereInput
   }
 
@@ -6788,6 +6788,7 @@ export namespace Prisma {
     guestSurveys: number
     modifications: number
     notifications: number
+    createdInvites: number
     posts: number
     sessions: number
     shops: number
@@ -6799,7 +6800,6 @@ export namespace Prisma {
     votes: number
     websiteProvision: number
     Depot: number
-    createdInvites: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6811,6 +6811,7 @@ export namespace Prisma {
     guestSurveys?: boolean | UserCountOutputTypeCountGuestSurveysArgs
     modifications?: boolean | UserCountOutputTypeCountModificationsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    createdInvites?: boolean | UserCountOutputTypeCountCreatedInvitesArgs
     posts?: boolean | UserCountOutputTypeCountPostsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     shops?: boolean | UserCountOutputTypeCountShopsArgs
@@ -6822,7 +6823,6 @@ export namespace Prisma {
     votes?: boolean | UserCountOutputTypeCountVotesArgs
     websiteProvision?: boolean | UserCountOutputTypeCountWebsiteProvisionArgs
     Depot?: boolean | UserCountOutputTypeCountDepotArgs
-    createdInvites?: boolean | UserCountOutputTypeCountCreatedInvitesArgs
   }
 
   // Custom InputTypes
@@ -6890,6 +6890,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PlatformInviteWhereInput
   }
 
   /**
@@ -6967,13 +6974,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDepotArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DepotWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountCreatedInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PlatformInviteWhereInput
   }
 
 
@@ -8144,7 +8144,6 @@ export namespace Prisma {
   export type EventMinAggregateOutputType = {
     id: string | null
     shopId: string | null
-    title: string | null
     description: string | null
     startDate: Date | null
     endDate: Date | null
@@ -8153,12 +8152,12 @@ export namespace Prisma {
     callToActionLink: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    title: string | null
   }
 
   export type EventMaxAggregateOutputType = {
     id: string | null
     shopId: string | null
-    title: string | null
     description: string | null
     startDate: Date | null
     endDate: Date | null
@@ -8167,12 +8166,12 @@ export namespace Prisma {
     callToActionLink: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    title: string | null
   }
 
   export type EventCountAggregateOutputType = {
     id: number
     shopId: number
-    title: number
     description: number
     startDate: number
     endDate: number
@@ -8181,6 +8180,7 @@ export namespace Prisma {
     callToActionLink: number
     createdAt: number
     updatedAt: number
+    title: number
     _all: number
   }
 
@@ -8188,7 +8188,6 @@ export namespace Prisma {
   export type EventMinAggregateInputType = {
     id?: true
     shopId?: true
-    title?: true
     description?: true
     startDate?: true
     endDate?: true
@@ -8197,12 +8196,12 @@ export namespace Prisma {
     callToActionLink?: true
     createdAt?: true
     updatedAt?: true
+    title?: true
   }
 
   export type EventMaxAggregateInputType = {
     id?: true
     shopId?: true
-    title?: true
     description?: true
     startDate?: true
     endDate?: true
@@ -8211,12 +8210,12 @@ export namespace Prisma {
     callToActionLink?: true
     createdAt?: true
     updatedAt?: true
+    title?: true
   }
 
   export type EventCountAggregateInputType = {
     id?: true
     shopId?: true
-    title?: true
     description?: true
     startDate?: true
     endDate?: true
@@ -8225,6 +8224,7 @@ export namespace Prisma {
     callToActionLink?: true
     createdAt?: true
     updatedAt?: true
+    title?: true
     _all?: true
   }
 
@@ -8303,7 +8303,6 @@ export namespace Prisma {
   export type EventGroupByOutputType = {
     id: string
     shopId: string
-    title: string
     description: string
     startDate: Date
     endDate: Date | null
@@ -8312,6 +8311,7 @@ export namespace Prisma {
     callToActionLink: string | null
     createdAt: Date
     updatedAt: Date
+    title: string
     _count: EventCountAggregateOutputType | null
     _min: EventMinAggregateOutputType | null
     _max: EventMaxAggregateOutputType | null
@@ -8334,7 +8334,6 @@ export namespace Prisma {
   export type EventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     shopId?: boolean
-    title?: boolean
     description?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -8343,13 +8342,13 @@ export namespace Prisma {
     callToActionLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    title?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
   export type EventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     shopId?: boolean
-    title?: boolean
     description?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -8358,13 +8357,13 @@ export namespace Prisma {
     callToActionLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    title?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
   export type EventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     shopId?: boolean
-    title?: boolean
     description?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -8373,13 +8372,13 @@ export namespace Prisma {
     callToActionLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    title?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
   export type EventSelectScalar = {
     id?: boolean
     shopId?: boolean
-    title?: boolean
     description?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -8388,9 +8387,10 @@ export namespace Prisma {
     callToActionLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    title?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "title" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "callToActionLink" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "callToActionLink" | "createdAt" | "updatedAt" | "title", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopDefaultArgs<ExtArgs>
   }
@@ -8409,7 +8409,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       shopId: string
-      title: string
       description: string
       startDate: Date
       endDate: Date | null
@@ -8418,6 +8417,7 @@ export namespace Prisma {
       callToActionLink: string | null
       createdAt: Date
       updatedAt: Date
+      title: string
     }, ExtArgs["result"]["event"]>
     composites: {}
   }
@@ -8844,7 +8844,6 @@ export namespace Prisma {
   interface EventFieldRefs {
     readonly id: FieldRef<"Event", 'String'>
     readonly shopId: FieldRef<"Event", 'String'>
-    readonly title: FieldRef<"Event", 'String'>
     readonly description: FieldRef<"Event", 'String'>
     readonly startDate: FieldRef<"Event", 'DateTime'>
     readonly endDate: FieldRef<"Event", 'DateTime'>
@@ -8853,6 +8852,7 @@ export namespace Prisma {
     readonly callToActionLink: FieldRef<"Event", 'String'>
     readonly createdAt: FieldRef<"Event", 'DateTime'>
     readonly updatedAt: FieldRef<"Event", 'DateTime'>
+    readonly title: FieldRef<"Event", 'String'>
   }
     
 
@@ -19617,108 +19617,108 @@ export namespace Prisma {
 
   export type ShopMinAggregateOutputType = {
     id: string | null
+    ownerName: string | null
+    bio: string | null
+    description: string | null
+    ownerPhoto: string | null
+    logoPhoto: string | null
+    coverPhoto: string | null
+    phone: string | null
+    email: string | null
+    website: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     name: string | null
-    ownerName: string | null
-    ownerPhoto: string | null
-    bio: string | null
-    description: string | null
-    logoPhoto: string | null
-    phone: string | null
-    email: string | null
-    website: string | null
-    coverPhoto: string | null
   }
 
   export type ShopMaxAggregateOutputType = {
     id: string | null
+    ownerName: string | null
+    bio: string | null
+    description: string | null
+    ownerPhoto: string | null
+    logoPhoto: string | null
+    coverPhoto: string | null
+    phone: string | null
+    email: string | null
+    website: string | null
     ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     name: string | null
-    ownerName: string | null
-    ownerPhoto: string | null
-    bio: string | null
-    description: string | null
-    logoPhoto: string | null
-    phone: string | null
-    email: string | null
-    website: string | null
-    coverPhoto: string | null
   }
 
   export type ShopCountAggregateOutputType = {
     id: number
-    ownerId: number
-    createdAt: number
-    updatedAt: number
-    name: number
     ownerName: number
-    ownerPhoto: number
     bio: number
     description: number
+    ownerPhoto: number
     logoPhoto: number
+    coverPhoto: number
     phone: number
     email: number
     website: number
+    ownerId: number
+    createdAt: number
+    updatedAt: number
     attributeTags: number
-    coverPhoto: number
+    name: number
     _all: number
   }
 
 
   export type ShopMinAggregateInputType = {
     id?: true
+    ownerName?: true
+    bio?: true
+    description?: true
+    ownerPhoto?: true
+    logoPhoto?: true
+    coverPhoto?: true
+    phone?: true
+    email?: true
+    website?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
     name?: true
-    ownerName?: true
-    ownerPhoto?: true
-    bio?: true
-    description?: true
-    logoPhoto?: true
-    phone?: true
-    email?: true
-    website?: true
-    coverPhoto?: true
   }
 
   export type ShopMaxAggregateInputType = {
     id?: true
+    ownerName?: true
+    bio?: true
+    description?: true
+    ownerPhoto?: true
+    logoPhoto?: true
+    coverPhoto?: true
+    phone?: true
+    email?: true
+    website?: true
     ownerId?: true
     createdAt?: true
     updatedAt?: true
     name?: true
-    ownerName?: true
-    ownerPhoto?: true
-    bio?: true
-    description?: true
-    logoPhoto?: true
-    phone?: true
-    email?: true
-    website?: true
-    coverPhoto?: true
   }
 
   export type ShopCountAggregateInputType = {
     id?: true
-    ownerId?: true
-    createdAt?: true
-    updatedAt?: true
-    name?: true
     ownerName?: true
-    ownerPhoto?: true
     bio?: true
     description?: true
+    ownerPhoto?: true
     logoPhoto?: true
+    coverPhoto?: true
     phone?: true
     email?: true
     website?: true
+    ownerId?: true
+    createdAt?: true
+    updatedAt?: true
     attributeTags?: true
-    coverPhoto?: true
+    name?: true
     _all?: true
   }
 
@@ -19796,20 +19796,20 @@ export namespace Prisma {
 
   export type ShopGroupByOutputType = {
     id: string
-    ownerId: string
-    createdAt: Date
-    updatedAt: Date
-    name: string
     ownerName: string
-    ownerPhoto: string | null
     bio: string | null
     description: string | null
+    ownerPhoto: string | null
     logoPhoto: string | null
+    coverPhoto: string | null
     phone: string | null
     email: string | null
     website: string | null
+    ownerId: string
+    createdAt: Date
+    updatedAt: Date
     attributeTags: string[]
-    coverPhoto: string | null
+    name: string
     _count: ShopCountAggregateOutputType | null
     _min: ShopMinAggregateOutputType | null
     _max: ShopMaxAggregateOutputType | null
@@ -19831,93 +19831,93 @@ export namespace Prisma {
 
   export type ShopSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    name?: boolean
     ownerName?: boolean
-    ownerPhoto?: boolean
     bio?: boolean
     description?: boolean
+    ownerPhoto?: boolean
     logoPhoto?: boolean
+    coverPhoto?: boolean
     phone?: boolean
     email?: boolean
     website?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     attributeTags?: boolean
-    coverPhoto?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
-    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    name?: boolean
+    events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
     services?: boolean | Shop$servicesArgs<ExtArgs>
+    owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
-    events?: boolean | Shop$eventsArgs<ExtArgs>
+    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
   export type ShopSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    name?: boolean
     ownerName?: boolean
-    ownerPhoto?: boolean
     bio?: boolean
     description?: boolean
+    ownerPhoto?: boolean
     logoPhoto?: boolean
+    coverPhoto?: boolean
     phone?: boolean
     email?: boolean
     website?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     attributeTags?: boolean
-    coverPhoto?: boolean
+    name?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
   export type ShopSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    name?: boolean
     ownerName?: boolean
-    ownerPhoto?: boolean
     bio?: boolean
     description?: boolean
+    ownerPhoto?: boolean
     logoPhoto?: boolean
+    coverPhoto?: boolean
     phone?: boolean
     email?: boolean
     website?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     attributeTags?: boolean
-    coverPhoto?: boolean
+    name?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
   export type ShopSelectScalar = {
     id?: boolean
-    ownerId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    name?: boolean
     ownerName?: boolean
-    ownerPhoto?: boolean
     bio?: boolean
     description?: boolean
+    ownerPhoto?: boolean
     logoPhoto?: boolean
+    coverPhoto?: boolean
     phone?: boolean
     email?: boolean
     website?: boolean
+    ownerId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     attributeTags?: boolean
-    coverPhoto?: boolean
+    name?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerId" | "createdAt" | "updatedAt" | "name" | "ownerName" | "ownerPhoto" | "bio" | "description" | "logoPhoto" | "phone" | "email" | "website" | "attributeTags" | "coverPhoto", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
-    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
     services?: boolean | Shop$servicesArgs<ExtArgs>
+    owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
-    events?: boolean | Shop$eventsArgs<ExtArgs>
+    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19930,29 +19930,29 @@ export namespace Prisma {
   export type $ShopPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Shop"
     objects: {
-      owner: Prisma.$UserPayload<ExtArgs>
-      websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
+      events: Prisma.$EventPayload<ExtArgs>[]
       products: Prisma.$ProductPayload<ExtArgs>[]
       services: Prisma.$ServicePayload<ExtArgs>[]
+      owner: Prisma.$UserPayload<ExtArgs>
       address: Prisma.$ShopAddressPayload<ExtArgs> | null
-      events: Prisma.$EventPayload<ExtArgs>[]
+      websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      ownerId: string
-      createdAt: Date
-      updatedAt: Date
-      name: string
       ownerName: string
-      ownerPhoto: string | null
       bio: string | null
       description: string | null
+      ownerPhoto: string | null
       logoPhoto: string | null
+      coverPhoto: string | null
       phone: string | null
       email: string | null
       website: string | null
+      ownerId: string
+      createdAt: Date
+      updatedAt: Date
       attributeTags: string[]
-      coverPhoto: string | null
+      name: string
     }, ExtArgs["result"]["shop"]>
     composites: {}
   }
@@ -20347,12 +20347,12 @@ export namespace Prisma {
    */
   export interface Prisma__ShopClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    events<T extends Shop$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     products<T extends Shop$productsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     services<T extends Shop$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Shop$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     address<T extends Shop$addressArgs<ExtArgs> = {}>(args?: Subset<T, Shop$addressArgs<ExtArgs>>): Prisma__ShopAddressClient<$Result.GetResult<Prisma.$ShopAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    events<T extends Shop$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20383,20 +20383,20 @@ export namespace Prisma {
    */
   interface ShopFieldRefs {
     readonly id: FieldRef<"Shop", 'String'>
-    readonly ownerId: FieldRef<"Shop", 'String'>
-    readonly createdAt: FieldRef<"Shop", 'DateTime'>
-    readonly updatedAt: FieldRef<"Shop", 'DateTime'>
-    readonly name: FieldRef<"Shop", 'String'>
     readonly ownerName: FieldRef<"Shop", 'String'>
-    readonly ownerPhoto: FieldRef<"Shop", 'String'>
     readonly bio: FieldRef<"Shop", 'String'>
     readonly description: FieldRef<"Shop", 'String'>
+    readonly ownerPhoto: FieldRef<"Shop", 'String'>
     readonly logoPhoto: FieldRef<"Shop", 'String'>
+    readonly coverPhoto: FieldRef<"Shop", 'String'>
     readonly phone: FieldRef<"Shop", 'String'>
     readonly email: FieldRef<"Shop", 'String'>
     readonly website: FieldRef<"Shop", 'String'>
+    readonly ownerId: FieldRef<"Shop", 'String'>
+    readonly createdAt: FieldRef<"Shop", 'DateTime'>
+    readonly updatedAt: FieldRef<"Shop", 'DateTime'>
     readonly attributeTags: FieldRef<"Shop", 'String[]'>
-    readonly coverPhoto: FieldRef<"Shop", 'String'>
+    readonly name: FieldRef<"Shop", 'String'>
   }
     
 
@@ -20793,22 +20793,27 @@ export namespace Prisma {
   }
 
   /**
-   * Shop.websiteProvision
+   * Shop.events
    */
-  export type Shop$websiteProvisionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Shop$eventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the WebsiteProvision
+     * Select specific fields to fetch from the Event
      */
-    select?: WebsiteProvisionSelect<ExtArgs> | null
+    select?: EventSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the WebsiteProvision
+     * Omit specific fields from the Event
      */
-    omit?: WebsiteProvisionOmit<ExtArgs> | null
+    omit?: EventOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: WebsiteProvisionInclude<ExtArgs> | null
-    where?: WebsiteProvisionWhereInput
+    include?: EventInclude<ExtArgs> | null
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    cursor?: EventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
   }
 
   /**
@@ -20879,27 +20884,22 @@ export namespace Prisma {
   }
 
   /**
-   * Shop.events
+   * Shop.websiteProvision
    */
-  export type Shop$eventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Shop$websiteProvisionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Event
+     * Select specific fields to fetch from the WebsiteProvision
      */
-    select?: EventSelect<ExtArgs> | null
+    select?: WebsiteProvisionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Event
+     * Omit specific fields from the WebsiteProvision
      */
-    omit?: EventOmit<ExtArgs> | null
+    omit?: WebsiteProvisionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: EventInclude<ExtArgs> | null
-    where?: EventWhereInput
-    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
-    cursor?: EventWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+    include?: WebsiteProvisionInclude<ExtArgs> | null
+    where?: WebsiteProvisionWhereInput
   }
 
   /**
@@ -43620,8 +43620,6 @@ export namespace Prisma {
 
   export type SurveyMinAggregateOutputType = {
     id: string | null
-    ownerId: string | null
-    shopId: string | null
     processes: string | null
     materials: string | null
     principles: string | null
@@ -43632,20 +43630,20 @@ export namespace Prisma {
     privateForm: boolean | null
     supplyChain: boolean | null
     messagingOptIn: boolean | null
+    ownerId: string | null
+    shopId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
     businessType: string | null
     country: string | null
     email: string | null
     experience: string | null
     practice: string | null
     state: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type SurveyMaxAggregateOutputType = {
     id: string | null
-    ownerId: string | null
-    shopId: string | null
     processes: string | null
     materials: string | null
     principles: string | null
@@ -43656,20 +43654,20 @@ export namespace Prisma {
     privateForm: boolean | null
     supplyChain: boolean | null
     messagingOptIn: boolean | null
+    ownerId: string | null
+    shopId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
     businessType: string | null
     country: string | null
     email: string | null
     experience: string | null
     practice: string | null
     state: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
   }
 
   export type SurveyCountAggregateOutputType = {
     id: number
-    ownerId: number
-    shopId: number
     processes: number
     materials: number
     principles: number
@@ -43680,22 +43678,22 @@ export namespace Prisma {
     privateForm: number
     supplyChain: number
     messagingOptIn: number
+    ownerId: number
+    shopId: number
+    createdAt: number
+    updatedAt: number
     businessType: number
     country: number
     email: number
     experience: number
     practice: number
     state: number
-    createdAt: number
-    updatedAt: number
     _all: number
   }
 
 
   export type SurveyMinAggregateInputType = {
     id?: true
-    ownerId?: true
-    shopId?: true
     processes?: true
     materials?: true
     principles?: true
@@ -43706,20 +43704,20 @@ export namespace Prisma {
     privateForm?: true
     supplyChain?: true
     messagingOptIn?: true
+    ownerId?: true
+    shopId?: true
+    createdAt?: true
+    updatedAt?: true
     businessType?: true
     country?: true
     email?: true
     experience?: true
     practice?: true
     state?: true
-    createdAt?: true
-    updatedAt?: true
   }
 
   export type SurveyMaxAggregateInputType = {
     id?: true
-    ownerId?: true
-    shopId?: true
     processes?: true
     materials?: true
     principles?: true
@@ -43730,20 +43728,20 @@ export namespace Prisma {
     privateForm?: true
     supplyChain?: true
     messagingOptIn?: true
+    ownerId?: true
+    shopId?: true
+    createdAt?: true
+    updatedAt?: true
     businessType?: true
     country?: true
     email?: true
     experience?: true
     practice?: true
     state?: true
-    createdAt?: true
-    updatedAt?: true
   }
 
   export type SurveyCountAggregateInputType = {
     id?: true
-    ownerId?: true
-    shopId?: true
     processes?: true
     materials?: true
     principles?: true
@@ -43754,14 +43752,16 @@ export namespace Prisma {
     privateForm?: true
     supplyChain?: true
     messagingOptIn?: true
+    ownerId?: true
+    shopId?: true
+    createdAt?: true
+    updatedAt?: true
     businessType?: true
     country?: true
     email?: true
     experience?: true
     practice?: true
     state?: true
-    createdAt?: true
-    updatedAt?: true
     _all?: true
   }
 
@@ -43839,8 +43839,6 @@ export namespace Prisma {
 
   export type SurveyGroupByOutputType = {
     id: string
-    ownerId: string | null
-    shopId: string
     processes: string | null
     materials: string | null
     principles: string | null
@@ -43851,14 +43849,16 @@ export namespace Prisma {
     privateForm: boolean
     supplyChain: boolean
     messagingOptIn: boolean
+    ownerId: string | null
+    shopId: string
+    createdAt: Date
+    updatedAt: Date
     businessType: string | null
     country: string | null
     email: string | null
     experience: string | null
     practice: string | null
     state: string | null
-    createdAt: Date
-    updatedAt: Date
     _count: SurveyCountAggregateOutputType | null
     _min: SurveyMinAggregateOutputType | null
     _max: SurveyMaxAggregateOutputType | null
@@ -43880,8 +43880,6 @@ export namespace Prisma {
 
   export type SurveySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    shopId?: boolean
     processes?: boolean
     materials?: boolean
     principles?: boolean
@@ -43892,20 +43890,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: boolean
+    shopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     businessType?: boolean
     country?: boolean
     email?: boolean
     experience?: boolean
     practice?: boolean
     state?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["survey"]>
 
   export type SurveySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    shopId?: boolean
     processes?: boolean
     materials?: boolean
     principles?: boolean
@@ -43916,20 +43914,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: boolean
+    shopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     businessType?: boolean
     country?: boolean
     email?: boolean
     experience?: boolean
     practice?: boolean
     state?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["survey"]>
 
   export type SurveySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    ownerId?: boolean
-    shopId?: boolean
     processes?: boolean
     materials?: boolean
     principles?: boolean
@@ -43940,20 +43938,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: boolean
+    shopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     businessType?: boolean
     country?: boolean
     email?: boolean
     experience?: boolean
     practice?: boolean
     state?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
   }, ExtArgs["result"]["survey"]>
 
   export type SurveySelectScalar = {
     id?: boolean
-    ownerId?: boolean
-    shopId?: boolean
     processes?: boolean
     materials?: boolean
     principles?: boolean
@@ -43964,25 +43962,25 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: boolean
+    shopId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     businessType?: boolean
     country?: boolean
     email?: boolean
     experience?: boolean
     practice?: boolean
     state?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
   }
 
-  export type SurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerId" | "shopId" | "processes" | "materials" | "principles" | "description" | "unmoderatedForm" | "moderatedForm" | "hiddenForm" | "privateForm" | "supplyChain" | "messagingOptIn" | "businessType" | "country" | "email" | "experience" | "practice" | "state" | "createdAt" | "updatedAt", ExtArgs["result"]["survey"]>
+  export type SurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "processes" | "materials" | "principles" | "description" | "unmoderatedForm" | "moderatedForm" | "hiddenForm" | "privateForm" | "supplyChain" | "messagingOptIn" | "ownerId" | "shopId" | "createdAt" | "updatedAt" | "businessType" | "country" | "email" | "experience" | "practice" | "state", ExtArgs["result"]["survey"]>
 
   export type $SurveyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Survey"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      ownerId: string | null
-      shopId: string
       processes: string | null
       materials: string | null
       principles: string | null
@@ -43993,14 +43991,16 @@ export namespace Prisma {
       privateForm: boolean
       supplyChain: boolean
       messagingOptIn: boolean
+      ownerId: string | null
+      shopId: string
+      createdAt: Date
+      updatedAt: Date
       businessType: string | null
       country: string | null
       email: string | null
       experience: string | null
       practice: string | null
       state: string | null
-      createdAt: Date
-      updatedAt: Date
     }, ExtArgs["result"]["survey"]>
     composites: {}
   }
@@ -44425,8 +44425,6 @@ export namespace Prisma {
    */
   interface SurveyFieldRefs {
     readonly id: FieldRef<"Survey", 'String'>
-    readonly ownerId: FieldRef<"Survey", 'String'>
-    readonly shopId: FieldRef<"Survey", 'String'>
     readonly processes: FieldRef<"Survey", 'String'>
     readonly materials: FieldRef<"Survey", 'String'>
     readonly principles: FieldRef<"Survey", 'String'>
@@ -44437,14 +44435,16 @@ export namespace Prisma {
     readonly privateForm: FieldRef<"Survey", 'Boolean'>
     readonly supplyChain: FieldRef<"Survey", 'Boolean'>
     readonly messagingOptIn: FieldRef<"Survey", 'Boolean'>
+    readonly ownerId: FieldRef<"Survey", 'String'>
+    readonly shopId: FieldRef<"Survey", 'String'>
+    readonly createdAt: FieldRef<"Survey", 'DateTime'>
+    readonly updatedAt: FieldRef<"Survey", 'DateTime'>
     readonly businessType: FieldRef<"Survey", 'String'>
     readonly country: FieldRef<"Survey", 'String'>
     readonly email: FieldRef<"Survey", 'String'>
     readonly experience: FieldRef<"Survey", 'String'>
     readonly practice: FieldRef<"Survey", 'String'>
     readonly state: FieldRef<"Survey", 'String'>
-    readonly createdAt: FieldRef<"Survey", 'DateTime'>
-    readonly updatedAt: FieldRef<"Survey", 'DateTime'>
   }
     
 
@@ -44824,37 +44824,37 @@ export namespace Prisma {
   export type GuestSurveyMinAggregateOutputType = {
     id: string | null
     name: string | null
-    email: string | null
     country: string | null
     state: string | null
     artisanalPractice: string | null
     otherPractice: string | null
-    userId: string | null
+    email: string | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type GuestSurveyMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    email: string | null
     country: string | null
     state: string | null
     artisanalPractice: string | null
     otherPractice: string | null
-    userId: string | null
+    email: string | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type GuestSurveyCountAggregateOutputType = {
     id: number
     name: number
-    email: number
     country: number
     state: number
     artisanalPractice: number
     otherPractice: number
-    userId: number
+    email: number
     createdAt: number
+    userId: number
     _all: number
   }
 
@@ -44862,37 +44862,37 @@ export namespace Prisma {
   export type GuestSurveyMinAggregateInputType = {
     id?: true
     name?: true
-    email?: true
     country?: true
     state?: true
     artisanalPractice?: true
     otherPractice?: true
-    userId?: true
+    email?: true
     createdAt?: true
+    userId?: true
   }
 
   export type GuestSurveyMaxAggregateInputType = {
     id?: true
     name?: true
-    email?: true
     country?: true
     state?: true
     artisanalPractice?: true
     otherPractice?: true
-    userId?: true
+    email?: true
     createdAt?: true
+    userId?: true
   }
 
   export type GuestSurveyCountAggregateInputType = {
     id?: true
     name?: true
-    email?: true
     country?: true
     state?: true
     artisanalPractice?: true
     otherPractice?: true
-    userId?: true
+    email?: true
     createdAt?: true
+    userId?: true
     _all?: true
   }
 
@@ -44971,13 +44971,13 @@ export namespace Prisma {
   export type GuestSurveyGroupByOutputType = {
     id: string
     name: string
-    email: string
     country: string | null
     state: string | null
     artisanalPractice: string | null
     otherPractice: string | null
-    userId: string | null
+    email: string
     createdAt: Date
+    userId: string | null
     _count: GuestSurveyCountAggregateOutputType | null
     _min: GuestSurveyMinAggregateOutputType | null
     _max: GuestSurveyMaxAggregateOutputType | null
@@ -45000,55 +45000,55 @@ export namespace Prisma {
   export type GuestSurveySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     country?: boolean
     state?: boolean
     artisanalPractice?: boolean
     otherPractice?: boolean
-    userId?: boolean
+    email?: boolean
     createdAt?: boolean
+    userId?: boolean
     user?: boolean | GuestSurvey$userArgs<ExtArgs>
   }, ExtArgs["result"]["guestSurvey"]>
 
   export type GuestSurveySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     country?: boolean
     state?: boolean
     artisanalPractice?: boolean
     otherPractice?: boolean
-    userId?: boolean
+    email?: boolean
     createdAt?: boolean
+    userId?: boolean
     user?: boolean | GuestSurvey$userArgs<ExtArgs>
   }, ExtArgs["result"]["guestSurvey"]>
 
   export type GuestSurveySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    email?: boolean
     country?: boolean
     state?: boolean
     artisanalPractice?: boolean
     otherPractice?: boolean
-    userId?: boolean
+    email?: boolean
     createdAt?: boolean
+    userId?: boolean
     user?: boolean | GuestSurvey$userArgs<ExtArgs>
   }, ExtArgs["result"]["guestSurvey"]>
 
   export type GuestSurveySelectScalar = {
     id?: boolean
     name?: boolean
-    email?: boolean
     country?: boolean
     state?: boolean
     artisanalPractice?: boolean
     otherPractice?: boolean
-    userId?: boolean
+    email?: boolean
     createdAt?: boolean
+    userId?: boolean
   }
 
-  export type GuestSurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "country" | "state" | "artisanalPractice" | "otherPractice" | "userId" | "createdAt", ExtArgs["result"]["guestSurvey"]>
+  export type GuestSurveyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "country" | "state" | "artisanalPractice" | "otherPractice" | "email" | "createdAt" | "userId", ExtArgs["result"]["guestSurvey"]>
   export type GuestSurveyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | GuestSurvey$userArgs<ExtArgs>
   }
@@ -45067,13 +45067,13 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      email: string
       country: string | null
       state: string | null
       artisanalPractice: string | null
       otherPractice: string | null
-      userId: string | null
+      email: string
       createdAt: Date
+      userId: string | null
     }, ExtArgs["result"]["guestSurvey"]>
     composites: {}
   }
@@ -45500,13 +45500,13 @@ export namespace Prisma {
   interface GuestSurveyFieldRefs {
     readonly id: FieldRef<"GuestSurvey", 'String'>
     readonly name: FieldRef<"GuestSurvey", 'String'>
-    readonly email: FieldRef<"GuestSurvey", 'String'>
     readonly country: FieldRef<"GuestSurvey", 'String'>
     readonly state: FieldRef<"GuestSurvey", 'String'>
     readonly artisanalPractice: FieldRef<"GuestSurvey", 'String'>
     readonly otherPractice: FieldRef<"GuestSurvey", 'String'>
-    readonly userId: FieldRef<"GuestSurvey", 'String'>
+    readonly email: FieldRef<"GuestSurvey", 'String'>
     readonly createdAt: FieldRef<"GuestSurvey", 'DateTime'>
+    readonly userId: FieldRef<"GuestSurvey", 'String'>
   }
     
 
@@ -51696,7 +51696,7 @@ export namespace Prisma {
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    trainingModel?: boolean | UpcycleResult$trainingModelArgs<ExtArgs>
+    checkpointsUsed?: boolean | UpcycleResult$checkpointsUsedArgs<ExtArgs>
     _count?: boolean | UpcycleResultCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upcycleResult"]>
 
@@ -51815,7 +51815,7 @@ export namespace Prisma {
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    trainingModel?: boolean | UpcycleResult$trainingModelArgs<ExtArgs>
+    checkpointsUsed?: boolean | UpcycleResult$checkpointsUsedArgs<ExtArgs>
     _count?: boolean | UpcycleResultCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UpcycleResultIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -51831,7 +51831,7 @@ export namespace Prisma {
       questions: Prisma.$UpcycleQuestionPayload<ExtArgs>[]
       rating: Prisma.$UpcycleRatingPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
-      trainingModel: Prisma.$TrainingModelPayload<ExtArgs>[]
+      checkpointsUsed: Prisma.$TrainingModelPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -52264,7 +52264,7 @@ export namespace Prisma {
     questions<T extends UpcycleResult$questionsArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rating<T extends UpcycleResult$ratingArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$ratingArgs<ExtArgs>>): Prisma__UpcycleRatingClient<$Result.GetResult<Prisma.$UpcycleRatingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    trainingModel<T extends UpcycleResult$trainingModelArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$trainingModelArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    checkpointsUsed<T extends UpcycleResult$checkpointsUsedArgs<ExtArgs> = {}>(args?: Subset<T, UpcycleResult$checkpointsUsedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -52766,9 +52766,9 @@ export namespace Prisma {
   }
 
   /**
-   * UpcycleResult.trainingModel
+   * UpcycleResult.checkpointsUsed
    */
-  export type UpcycleResult$trainingModelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UpcycleResult$checkpointsUsedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingModel
      */
@@ -57314,7 +57314,7 @@ export namespace Prisma {
     triggerWord?: boolean
     trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    trainingImage?: boolean | TrainingDataSet$trainingImageArgs<ExtArgs>
+    images?: boolean | TrainingDataSet$imagesArgs<ExtArgs>
     _count?: boolean | TrainingDataSetCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingDataSet"]>
 
@@ -57365,7 +57365,7 @@ export namespace Prisma {
   export type TrainingDataSetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     trainingModel?: boolean | TrainingDataSet$trainingModelArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
-    trainingImage?: boolean | TrainingDataSet$trainingImageArgs<ExtArgs>
+    images?: boolean | TrainingDataSet$imagesArgs<ExtArgs>
     _count?: boolean | TrainingDataSetCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TrainingDataSetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -57382,7 +57382,7 @@ export namespace Prisma {
     objects: {
       trainingModel: Prisma.$TrainingModelPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
-      trainingImage: Prisma.$TrainingImagePayload<ExtArgs>[]
+      images: Prisma.$TrainingImagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -57791,7 +57791,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     trainingModel<T extends TrainingDataSet$trainingModelArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$trainingModelArgs<ExtArgs>>): Prisma__TrainingModelClient<$Result.GetResult<Prisma.$TrainingModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    trainingImage<T extends TrainingDataSet$trainingImageArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$trainingImageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    images<T extends TrainingDataSet$imagesArgs<ExtArgs> = {}>(args?: Subset<T, TrainingDataSet$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -58246,9 +58246,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingDataSet.trainingImage
+   * TrainingDataSet.images
    */
-  export type TrainingDataSet$trainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingDataSet$imagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingImage
      */
@@ -60861,10 +60861,10 @@ export namespace Prisma {
     tags?: boolean
     title?: boolean
     visibility?: boolean
-    trainingDataSet?: boolean | TrainingModel$trainingDataSetArgs<ExtArgs>
-    trainingImage?: boolean | TrainingModel$trainingImageArgs<ExtArgs>
-    trainingJob?: boolean | TrainingModel$trainingJobArgs<ExtArgs>
-    upcycleResult?: boolean | TrainingModel$upcycleResultArgs<ExtArgs>
+    trainingDataSets?: boolean | TrainingModel$trainingDataSetsArgs<ExtArgs>
+    imageUrls?: boolean | TrainingModel$imageUrlsArgs<ExtArgs>
+    jobs?: boolean | TrainingModel$jobsArgs<ExtArgs>
+    upcycleResults?: boolean | TrainingModel$upcycleResultsArgs<ExtArgs>
     _count?: boolean | TrainingModelCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainingModel"]>
 
@@ -60939,10 +60939,10 @@ export namespace Prisma {
 
   export type TrainingModelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "triggerWord" | "status" | "weightsUrl" | "log" | "zipFileUrl" | "createdAt" | "updatedAt" | "trainingSettings" | "trainingDetails" | "error" | "referenceId" | "versionId" | "loraType" | "trainingSubject" | "description" | "tags" | "title" | "visibility", ExtArgs["result"]["trainingModel"]>
   export type TrainingModelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainingDataSet?: boolean | TrainingModel$trainingDataSetArgs<ExtArgs>
-    trainingImage?: boolean | TrainingModel$trainingImageArgs<ExtArgs>
-    trainingJob?: boolean | TrainingModel$trainingJobArgs<ExtArgs>
-    upcycleResult?: boolean | TrainingModel$upcycleResultArgs<ExtArgs>
+    trainingDataSets?: boolean | TrainingModel$trainingDataSetsArgs<ExtArgs>
+    imageUrls?: boolean | TrainingModel$imageUrlsArgs<ExtArgs>
+    jobs?: boolean | TrainingModel$jobsArgs<ExtArgs>
+    upcycleResults?: boolean | TrainingModel$upcycleResultsArgs<ExtArgs>
     _count?: boolean | TrainingModelCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TrainingModelIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -60951,10 +60951,10 @@ export namespace Prisma {
   export type $TrainingModelPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TrainingModel"
     objects: {
-      trainingDataSet: Prisma.$TrainingDataSetPayload<ExtArgs>[]
-      trainingImage: Prisma.$TrainingImagePayload<ExtArgs>[]
-      trainingJob: Prisma.$TrainingJobPayload<ExtArgs>[]
-      upcycleResult: Prisma.$UpcycleResultPayload<ExtArgs>[]
+      trainingDataSets: Prisma.$TrainingDataSetPayload<ExtArgs>[]
+      imageUrls: Prisma.$TrainingImagePayload<ExtArgs>[]
+      jobs: Prisma.$TrainingJobPayload<ExtArgs>[]
+      upcycleResults: Prisma.$UpcycleResultPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -61371,10 +61371,10 @@ export namespace Prisma {
    */
   export interface Prisma__TrainingModelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    trainingDataSet<T extends TrainingModel$trainingDataSetArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingDataSetArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingDataSetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    trainingImage<T extends TrainingModel$trainingImageArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingImageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    trainingJob<T extends TrainingModel$trainingJobArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingJobArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    upcycleResult<T extends TrainingModel$upcycleResultArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$upcycleResultArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    trainingDataSets<T extends TrainingModel$trainingDataSetsArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$trainingDataSetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingDataSetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    imageUrls<T extends TrainingModel$imageUrlsArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$imageUrlsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    jobs<T extends TrainingModel$jobsArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$jobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainingJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    upcycleResults<T extends TrainingModel$upcycleResultsArgs<ExtArgs> = {}>(args?: Subset<T, TrainingModel$upcycleResultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UpcycleResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -61812,9 +61812,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingModel.trainingDataSet
+   * TrainingModel.trainingDataSets
    */
-  export type TrainingModel$trainingDataSetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModel$trainingDataSetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingDataSet
      */
@@ -61836,9 +61836,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingModel.trainingImage
+   * TrainingModel.imageUrls
    */
-  export type TrainingModel$trainingImageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModel$imageUrlsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingImage
      */
@@ -61860,9 +61860,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingModel.trainingJob
+   * TrainingModel.jobs
    */
-  export type TrainingModel$trainingJobArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModel$jobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the TrainingJob
      */
@@ -61884,9 +61884,9 @@ export namespace Prisma {
   }
 
   /**
-   * TrainingModel.upcycleResult
+   * TrainingModel.upcycleResults
    */
-  export type TrainingModel$upcycleResultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type TrainingModel$upcycleResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the UpcycleResult
      */
@@ -66810,6 +66810,7 @@ export namespace Prisma {
     guestSurveys?: boolean | User$guestSurveysArgs<ExtArgs>
     modifications?: boolean | User$modificationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    createdInvites?: boolean | User$createdInvitesArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
     messagingProfile?: boolean | User$messagingProfileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -66822,7 +66823,6 @@ export namespace Prisma {
     votes?: boolean | User$votesArgs<ExtArgs>
     websiteProvision?: boolean | User$websiteProvisionArgs<ExtArgs>
     Depot?: boolean | User$DepotArgs<ExtArgs>
-    createdInvites?: boolean | User$createdInvitesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -66875,6 +66875,7 @@ export namespace Prisma {
     guestSurveys?: boolean | User$guestSurveysArgs<ExtArgs>
     modifications?: boolean | User$modificationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    createdInvites?: boolean | User$createdInvitesArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
     messagingProfile?: boolean | User$messagingProfileArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -66887,7 +66888,6 @@ export namespace Prisma {
     votes?: boolean | User$votesArgs<ExtArgs>
     websiteProvision?: boolean | User$websiteProvisionArgs<ExtArgs>
     Depot?: boolean | User$DepotArgs<ExtArgs>
-    createdInvites?: boolean | User$createdInvitesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -66904,6 +66904,7 @@ export namespace Prisma {
       guestSurveys: Prisma.$GuestSurveyPayload<ExtArgs>[]
       modifications: Prisma.$ModificationPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      createdInvites: Prisma.$PlatformInvitePayload<ExtArgs>[]
       posts: Prisma.$PostPayload<ExtArgs>[]
       messagingProfile: Prisma.$ProfilePayload<ExtArgs> | null
       sessions: Prisma.$SessionPayload<ExtArgs>[]
@@ -66916,7 +66917,6 @@ export namespace Prisma {
       votes: Prisma.$VotePayload<ExtArgs>[]
       websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs>[]
       Depot: Prisma.$DepotPayload<ExtArgs>[]
-      createdInvites: Prisma.$PlatformInvitePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -67331,6 +67331,7 @@ export namespace Prisma {
     guestSurveys<T extends User$guestSurveysArgs<ExtArgs> = {}>(args?: Subset<T, User$guestSurveysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GuestSurveyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     modifications<T extends User$modificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$modificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ModificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdInvites<T extends User$createdInvitesArgs<ExtArgs> = {}>(args?: Subset<T, User$createdInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     posts<T extends User$postsArgs<ExtArgs> = {}>(args?: Subset<T, User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messagingProfile<T extends User$messagingProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$messagingProfileArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -67343,7 +67344,6 @@ export namespace Prisma {
     votes<T extends User$votesArgs<ExtArgs> = {}>(args?: Subset<T, User$votesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     websiteProvision<T extends User$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, User$websiteProvisionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Depot<T extends User$DepotArgs<ExtArgs> = {}>(args?: Subset<T, User$DepotArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    createdInvites<T extends User$createdInvitesArgs<ExtArgs> = {}>(args?: Subset<T, User$createdInvitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -67963,6 +67963,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.createdInvites
+   */
+  export type User$createdInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlatformInvite
+     */
+    select?: PlatformInviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlatformInvite
+     */
+    omit?: PlatformInviteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlatformInviteInclude<ExtArgs> | null
+    where?: PlatformInviteWhereInput
+    orderBy?: PlatformInviteOrderByWithRelationInput | PlatformInviteOrderByWithRelationInput[]
+    cursor?: PlatformInviteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PlatformInviteScalarFieldEnum | PlatformInviteScalarFieldEnum[]
+  }
+
+  /**
    * User.posts
    */
   export type User$postsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -68243,30 +68267,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DepotScalarFieldEnum | DepotScalarFieldEnum[]
-  }
-
-  /**
-   * User.createdInvites
-   */
-  export type User$createdInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PlatformInvite
-     */
-    select?: PlatformInviteSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PlatformInvite
-     */
-    omit?: PlatformInviteOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PlatformInviteInclude<ExtArgs> | null
-    where?: PlatformInviteWhereInput
-    orderBy?: PlatformInviteOrderByWithRelationInput | PlatformInviteOrderByWithRelationInput[]
-    cursor?: PlatformInviteWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PlatformInviteScalarFieldEnum | PlatformInviteScalarFieldEnum[]
   }
 
   /**
@@ -69323,7 +69323,6 @@ export namespace Prisma {
   export const EventScalarFieldEnum: {
     id: 'id',
     shopId: 'shopId',
-    title: 'title',
     description: 'description',
     startDate: 'startDate',
     endDate: 'endDate',
@@ -69331,7 +69330,8 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     callToActionLink: 'callToActionLink',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    title: 'title'
   };
 
   export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
@@ -69469,20 +69469,20 @@ export namespace Prisma {
 
   export const ShopScalarFieldEnum: {
     id: 'id',
-    ownerId: 'ownerId',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    name: 'name',
     ownerName: 'ownerName',
-    ownerPhoto: 'ownerPhoto',
     bio: 'bio',
     description: 'description',
+    ownerPhoto: 'ownerPhoto',
     logoPhoto: 'logoPhoto',
+    coverPhoto: 'coverPhoto',
     phone: 'phone',
     email: 'email',
     website: 'website',
+    ownerId: 'ownerId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     attributeTags: 'attributeTags',
-    coverPhoto: 'coverPhoto'
+    name: 'name'
   };
 
   export type ShopScalarFieldEnum = (typeof ShopScalarFieldEnum)[keyof typeof ShopScalarFieldEnum]
@@ -69773,8 +69773,6 @@ export namespace Prisma {
 
   export const SurveyScalarFieldEnum: {
     id: 'id',
-    ownerId: 'ownerId',
-    shopId: 'shopId',
     processes: 'processes',
     materials: 'materials',
     principles: 'principles',
@@ -69785,14 +69783,16 @@ export namespace Prisma {
     privateForm: 'privateForm',
     supplyChain: 'supplyChain',
     messagingOptIn: 'messagingOptIn',
+    ownerId: 'ownerId',
+    shopId: 'shopId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     businessType: 'businessType',
     country: 'country',
     email: 'email',
     experience: 'experience',
     practice: 'practice',
-    state: 'state',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    state: 'state'
   };
 
   export type SurveyScalarFieldEnum = (typeof SurveyScalarFieldEnum)[keyof typeof SurveyScalarFieldEnum]
@@ -69801,13 +69801,13 @@ export namespace Prisma {
   export const GuestSurveyScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    email: 'email',
     country: 'country',
     state: 'state',
     artisanalPractice: 'artisanalPractice',
     otherPractice: 'otherPractice',
-    userId: 'userId',
-    createdAt: 'createdAt'
+    email: 'email',
+    createdAt: 'createdAt',
+    userId: 'userId'
   };
 
   export type GuestSurveyScalarFieldEnum = (typeof GuestSurveyScalarFieldEnum)[keyof typeof GuestSurveyScalarFieldEnum]
@@ -70654,7 +70654,6 @@ export namespace Prisma {
     NOT?: EventWhereInput | EventWhereInput[]
     id?: StringFilter<"Event"> | string
     shopId?: StringFilter<"Event"> | string
-    title?: StringFilter<"Event"> | string
     description?: StringFilter<"Event"> | string
     startDate?: DateTimeFilter<"Event"> | Date | string
     endDate?: DateTimeNullableFilter<"Event"> | Date | string | null
@@ -70663,13 +70662,13 @@ export namespace Prisma {
     callToActionLink?: StringNullableFilter<"Event"> | string | null
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
+    title?: StringFilter<"Event"> | string
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
   }
 
   export type EventOrderByWithRelationInput = {
     id?: SortOrder
     shopId?: SortOrder
-    title?: SortOrder
     description?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrderInput | SortOrder
@@ -70678,6 +70677,7 @@ export namespace Prisma {
     callToActionLink?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    title?: SortOrder
     shop?: ShopOrderByWithRelationInput
   }
 
@@ -70687,7 +70687,6 @@ export namespace Prisma {
     OR?: EventWhereInput[]
     NOT?: EventWhereInput | EventWhereInput[]
     shopId?: StringFilter<"Event"> | string
-    title?: StringFilter<"Event"> | string
     description?: StringFilter<"Event"> | string
     startDate?: DateTimeFilter<"Event"> | Date | string
     endDate?: DateTimeNullableFilter<"Event"> | Date | string | null
@@ -70696,13 +70695,13 @@ export namespace Prisma {
     callToActionLink?: StringNullableFilter<"Event"> | string | null
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
+    title?: StringFilter<"Event"> | string
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
   }, "id">
 
   export type EventOrderByWithAggregationInput = {
     id?: SortOrder
     shopId?: SortOrder
-    title?: SortOrder
     description?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrderInput | SortOrder
@@ -70711,6 +70710,7 @@ export namespace Prisma {
     callToActionLink?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    title?: SortOrder
     _count?: EventCountOrderByAggregateInput
     _max?: EventMaxOrderByAggregateInput
     _min?: EventMinOrderByAggregateInput
@@ -70722,7 +70722,6 @@ export namespace Prisma {
     NOT?: EventScalarWhereWithAggregatesInput | EventScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Event"> | string
     shopId?: StringWithAggregatesFilter<"Event"> | string
-    title?: StringWithAggregatesFilter<"Event"> | string
     description?: StringWithAggregatesFilter<"Event"> | string
     startDate?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     endDate?: DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
@@ -70731,6 +70730,7 @@ export namespace Prisma {
     callToActionLink?: StringNullableWithAggregatesFilter<"Event"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
+    title?: StringWithAggregatesFilter<"Event"> | string
   }
 
   export type SubredditWhereInput = {
@@ -71438,50 +71438,50 @@ export namespace Prisma {
     OR?: ShopWhereInput[]
     NOT?: ShopWhereInput | ShopWhereInput[]
     id?: StringFilter<"Shop"> | string
-    ownerId?: StringFilter<"Shop"> | string
-    createdAt?: DateTimeFilter<"Shop"> | Date | string
-    updatedAt?: DateTimeFilter<"Shop"> | Date | string
-    name?: StringFilter<"Shop"> | string
     ownerName?: StringFilter<"Shop"> | string
-    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     bio?: StringNullableFilter<"Shop"> | string | null
     description?: StringNullableFilter<"Shop"> | string | null
+    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
+    coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
     email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
+    ownerId?: StringFilter<"Shop"> | string
+    createdAt?: DateTimeFilter<"Shop"> | Date | string
+    updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
-    coverPhoto?: StringNullableFilter<"Shop"> | string | null
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
-    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    name?: StringFilter<"Shop"> | string
+    events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
+    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
-    events?: EventListRelationFilter
+    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
   }
 
   export type ShopOrderByWithRelationInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    name?: SortOrder
     ownerName?: SortOrder
-    ownerPhoto?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    ownerPhoto?: SortOrderInput | SortOrder
     logoPhoto?: SortOrderInput | SortOrder
+    coverPhoto?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     attributeTags?: SortOrder
-    coverPhoto?: SortOrderInput | SortOrder
-    owner?: UserOrderByWithRelationInput
-    websiteProvision?: WebsiteProvisionOrderByWithRelationInput
+    name?: SortOrder
+    events?: EventOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
     services?: ServiceOrderByRelationAggregateInput
+    owner?: UserOrderByWithRelationInput
     address?: ShopAddressOrderByWithRelationInput
-    events?: EventOrderByRelationAggregateInput
+    websiteProvision?: WebsiteProvisionOrderByWithRelationInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -71489,44 +71489,44 @@ export namespace Prisma {
     AND?: ShopWhereInput | ShopWhereInput[]
     OR?: ShopWhereInput[]
     NOT?: ShopWhereInput | ShopWhereInput[]
-    ownerId?: StringFilter<"Shop"> | string
-    createdAt?: DateTimeFilter<"Shop"> | Date | string
-    updatedAt?: DateTimeFilter<"Shop"> | Date | string
-    name?: StringFilter<"Shop"> | string
     ownerName?: StringFilter<"Shop"> | string
-    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     bio?: StringNullableFilter<"Shop"> | string | null
     description?: StringNullableFilter<"Shop"> | string | null
+    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
+    coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
     email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
+    ownerId?: StringFilter<"Shop"> | string
+    createdAt?: DateTimeFilter<"Shop"> | Date | string
+    updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
-    coverPhoto?: StringNullableFilter<"Shop"> | string | null
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
-    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    name?: StringFilter<"Shop"> | string
+    events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
+    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
-    events?: EventListRelationFilter
+    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
   }, "id">
 
   export type ShopOrderByWithAggregationInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    name?: SortOrder
     ownerName?: SortOrder
-    ownerPhoto?: SortOrderInput | SortOrder
     bio?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    ownerPhoto?: SortOrderInput | SortOrder
     logoPhoto?: SortOrderInput | SortOrder
+    coverPhoto?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     website?: SortOrderInput | SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     attributeTags?: SortOrder
-    coverPhoto?: SortOrderInput | SortOrder
+    name?: SortOrder
     _count?: ShopCountOrderByAggregateInput
     _max?: ShopMaxOrderByAggregateInput
     _min?: ShopMinOrderByAggregateInput
@@ -71537,20 +71537,20 @@ export namespace Prisma {
     OR?: ShopScalarWhereWithAggregatesInput[]
     NOT?: ShopScalarWhereWithAggregatesInput | ShopScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Shop"> | string
-    ownerId?: StringWithAggregatesFilter<"Shop"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
-    name?: StringWithAggregatesFilter<"Shop"> | string
     ownerName?: StringWithAggregatesFilter<"Shop"> | string
-    ownerPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     bio?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     description?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    ownerPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     logoPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    coverPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     email?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     website?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    ownerId?: StringWithAggregatesFilter<"Shop"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
-    coverPhoto?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    name?: StringWithAggregatesFilter<"Shop"> | string
   }
 
   export type ShopAddressWhereInput = {
@@ -73138,8 +73138,6 @@ export namespace Prisma {
     OR?: SurveyWhereInput[]
     NOT?: SurveyWhereInput | SurveyWhereInput[]
     id?: StringFilter<"Survey"> | string
-    ownerId?: StringNullableFilter<"Survey"> | string | null
-    shopId?: StringFilter<"Survey"> | string
     processes?: StringNullableFilter<"Survey"> | string | null
     materials?: StringNullableFilter<"Survey"> | string | null
     principles?: StringNullableFilter<"Survey"> | string | null
@@ -73150,20 +73148,20 @@ export namespace Prisma {
     privateForm?: BoolFilter<"Survey"> | boolean
     supplyChain?: BoolFilter<"Survey"> | boolean
     messagingOptIn?: BoolFilter<"Survey"> | boolean
+    ownerId?: StringNullableFilter<"Survey"> | string | null
+    shopId?: StringFilter<"Survey"> | string
+    createdAt?: DateTimeFilter<"Survey"> | Date | string
+    updatedAt?: DateTimeFilter<"Survey"> | Date | string
     businessType?: StringNullableFilter<"Survey"> | string | null
     country?: StringNullableFilter<"Survey"> | string | null
     email?: StringNullableFilter<"Survey"> | string | null
     experience?: StringNullableFilter<"Survey"> | string | null
     practice?: StringNullableFilter<"Survey"> | string | null
     state?: StringNullableFilter<"Survey"> | string | null
-    createdAt?: DateTimeFilter<"Survey"> | Date | string
-    updatedAt?: DateTimeFilter<"Survey"> | Date | string
   }
 
   export type SurveyOrderByWithRelationInput = {
     id?: SortOrder
-    ownerId?: SortOrderInput | SortOrder
-    shopId?: SortOrder
     processes?: SortOrderInput | SortOrder
     materials?: SortOrderInput | SortOrder
     principles?: SortOrderInput | SortOrder
@@ -73174,14 +73172,16 @@ export namespace Prisma {
     privateForm?: SortOrder
     supplyChain?: SortOrder
     messagingOptIn?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
+    shopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     businessType?: SortOrderInput | SortOrder
     country?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     experience?: SortOrderInput | SortOrder
     practice?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type SurveyWhereUniqueInput = Prisma.AtLeast<{
@@ -73189,8 +73189,6 @@ export namespace Prisma {
     AND?: SurveyWhereInput | SurveyWhereInput[]
     OR?: SurveyWhereInput[]
     NOT?: SurveyWhereInput | SurveyWhereInput[]
-    ownerId?: StringNullableFilter<"Survey"> | string | null
-    shopId?: StringFilter<"Survey"> | string
     processes?: StringNullableFilter<"Survey"> | string | null
     materials?: StringNullableFilter<"Survey"> | string | null
     principles?: StringNullableFilter<"Survey"> | string | null
@@ -73201,20 +73199,20 @@ export namespace Prisma {
     privateForm?: BoolFilter<"Survey"> | boolean
     supplyChain?: BoolFilter<"Survey"> | boolean
     messagingOptIn?: BoolFilter<"Survey"> | boolean
+    ownerId?: StringNullableFilter<"Survey"> | string | null
+    shopId?: StringFilter<"Survey"> | string
+    createdAt?: DateTimeFilter<"Survey"> | Date | string
+    updatedAt?: DateTimeFilter<"Survey"> | Date | string
     businessType?: StringNullableFilter<"Survey"> | string | null
     country?: StringNullableFilter<"Survey"> | string | null
     email?: StringNullableFilter<"Survey"> | string | null
     experience?: StringNullableFilter<"Survey"> | string | null
     practice?: StringNullableFilter<"Survey"> | string | null
     state?: StringNullableFilter<"Survey"> | string | null
-    createdAt?: DateTimeFilter<"Survey"> | Date | string
-    updatedAt?: DateTimeFilter<"Survey"> | Date | string
   }, "id">
 
   export type SurveyOrderByWithAggregationInput = {
     id?: SortOrder
-    ownerId?: SortOrderInput | SortOrder
-    shopId?: SortOrder
     processes?: SortOrderInput | SortOrder
     materials?: SortOrderInput | SortOrder
     principles?: SortOrderInput | SortOrder
@@ -73225,14 +73223,16 @@ export namespace Prisma {
     privateForm?: SortOrder
     supplyChain?: SortOrder
     messagingOptIn?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
+    shopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     businessType?: SortOrderInput | SortOrder
     country?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     experience?: SortOrderInput | SortOrder
     practice?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
     _count?: SurveyCountOrderByAggregateInput
     _max?: SurveyMaxOrderByAggregateInput
     _min?: SurveyMinOrderByAggregateInput
@@ -73243,8 +73243,6 @@ export namespace Prisma {
     OR?: SurveyScalarWhereWithAggregatesInput[]
     NOT?: SurveyScalarWhereWithAggregatesInput | SurveyScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Survey"> | string
-    ownerId?: StringNullableWithAggregatesFilter<"Survey"> | string | null
-    shopId?: StringWithAggregatesFilter<"Survey"> | string
     processes?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     materials?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     principles?: StringNullableWithAggregatesFilter<"Survey"> | string | null
@@ -73255,14 +73253,16 @@ export namespace Prisma {
     privateForm?: BoolWithAggregatesFilter<"Survey"> | boolean
     supplyChain?: BoolWithAggregatesFilter<"Survey"> | boolean
     messagingOptIn?: BoolWithAggregatesFilter<"Survey"> | boolean
+    ownerId?: StringNullableWithAggregatesFilter<"Survey"> | string | null
+    shopId?: StringWithAggregatesFilter<"Survey"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Survey"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Survey"> | Date | string
     businessType?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     country?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     email?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     experience?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     practice?: StringNullableWithAggregatesFilter<"Survey"> | string | null
     state?: StringNullableWithAggregatesFilter<"Survey"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"Survey"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Survey"> | Date | string
   }
 
   export type GuestSurveyWhereInput = {
@@ -73271,26 +73271,26 @@ export namespace Prisma {
     NOT?: GuestSurveyWhereInput | GuestSurveyWhereInput[]
     id?: StringFilter<"GuestSurvey"> | string
     name?: StringFilter<"GuestSurvey"> | string
-    email?: StringFilter<"GuestSurvey"> | string
     country?: StringNullableFilter<"GuestSurvey"> | string | null
     state?: StringNullableFilter<"GuestSurvey"> | string | null
     artisanalPractice?: StringNullableFilter<"GuestSurvey"> | string | null
     otherPractice?: StringNullableFilter<"GuestSurvey"> | string | null
-    userId?: StringNullableFilter<"GuestSurvey"> | string | null
+    email?: StringFilter<"GuestSurvey"> | string
     createdAt?: DateTimeFilter<"GuestSurvey"> | Date | string
+    userId?: StringNullableFilter<"GuestSurvey"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type GuestSurveyOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     country?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     artisanalPractice?: SortOrderInput | SortOrder
     otherPractice?: SortOrderInput | SortOrder
-    userId?: SortOrderInput | SortOrder
+    email?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -73300,26 +73300,26 @@ export namespace Prisma {
     OR?: GuestSurveyWhereInput[]
     NOT?: GuestSurveyWhereInput | GuestSurveyWhereInput[]
     name?: StringFilter<"GuestSurvey"> | string
-    email?: StringFilter<"GuestSurvey"> | string
     country?: StringNullableFilter<"GuestSurvey"> | string | null
     state?: StringNullableFilter<"GuestSurvey"> | string | null
     artisanalPractice?: StringNullableFilter<"GuestSurvey"> | string | null
     otherPractice?: StringNullableFilter<"GuestSurvey"> | string | null
-    userId?: StringNullableFilter<"GuestSurvey"> | string | null
+    email?: StringFilter<"GuestSurvey"> | string
     createdAt?: DateTimeFilter<"GuestSurvey"> | Date | string
+    userId?: StringNullableFilter<"GuestSurvey"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type GuestSurveyOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     country?: SortOrderInput | SortOrder
     state?: SortOrderInput | SortOrder
     artisanalPractice?: SortOrderInput | SortOrder
     otherPractice?: SortOrderInput | SortOrder
-    userId?: SortOrderInput | SortOrder
+    email?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrderInput | SortOrder
     _count?: GuestSurveyCountOrderByAggregateInput
     _max?: GuestSurveyMaxOrderByAggregateInput
     _min?: GuestSurveyMinOrderByAggregateInput
@@ -73331,13 +73331,13 @@ export namespace Prisma {
     NOT?: GuestSurveyScalarWhereWithAggregatesInput | GuestSurveyScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"GuestSurvey"> | string
     name?: StringWithAggregatesFilter<"GuestSurvey"> | string
-    email?: StringWithAggregatesFilter<"GuestSurvey"> | string
     country?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
     state?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
     artisanalPractice?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
     otherPractice?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
-    userId?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
+    email?: StringWithAggregatesFilter<"GuestSurvey"> | string
     createdAt?: DateTimeWithAggregatesFilter<"GuestSurvey"> | Date | string
+    userId?: StringNullableWithAggregatesFilter<"GuestSurvey"> | string | null
   }
 
   export type ArtisanSurveyWhereInput = {
@@ -73722,7 +73722,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    trainingModel?: TrainingModelListRelationFilter
+    checkpointsUsed?: TrainingModelListRelationFilter
   }
 
   export type UpcycleResultOrderByWithRelationInput = {
@@ -73762,7 +73762,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionOrderByRelationAggregateInput
     rating?: UpcycleRatingOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
-    trainingModel?: TrainingModelOrderByRelationAggregateInput
+    checkpointsUsed?: TrainingModelOrderByRelationAggregateInput
   }
 
   export type UpcycleResultWhereUniqueInput = Prisma.AtLeast<{
@@ -73805,7 +73805,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    trainingModel?: TrainingModelListRelationFilter
+    checkpointsUsed?: TrainingModelListRelationFilter
   }, "id" | "trackingId">
 
   export type UpcycleResultOrderByWithAggregationInput = {
@@ -74174,7 +74174,7 @@ export namespace Prisma {
     triggerWord?: StringFilter<"TrainingDataSet"> | string
     trainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    trainingImage?: TrainingImageListRelationFilter
+    images?: TrainingImageListRelationFilter
   }
 
   export type TrainingDataSetOrderByWithRelationInput = {
@@ -74190,7 +74190,7 @@ export namespace Prisma {
     triggerWord?: SortOrder
     trainingModel?: TrainingModelOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
-    trainingImage?: TrainingImageOrderByRelationAggregateInput
+    images?: TrainingImageOrderByRelationAggregateInput
   }
 
   export type TrainingDataSetWhereUniqueInput = Prisma.AtLeast<{
@@ -74209,7 +74209,7 @@ export namespace Prisma {
     triggerWord?: StringFilter<"TrainingDataSet"> | string
     trainingModel?: XOR<TrainingModelNullableScalarRelationFilter, TrainingModelWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    trainingImage?: TrainingImageListRelationFilter
+    images?: TrainingImageListRelationFilter
   }, "id">
 
   export type TrainingDataSetOrderByWithAggregationInput = {
@@ -74436,10 +74436,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"TrainingModel">
     title?: StringNullableFilter<"TrainingModel"> | string | null
     visibility?: EnumTrainingVisibilityFilter<"TrainingModel"> | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetListRelationFilter
-    trainingImage?: TrainingImageListRelationFilter
-    trainingJob?: TrainingJobListRelationFilter
-    upcycleResult?: UpcycleResultListRelationFilter
+    trainingDataSets?: TrainingDataSetListRelationFilter
+    imageUrls?: TrainingImageListRelationFilter
+    jobs?: TrainingJobListRelationFilter
+    upcycleResults?: UpcycleResultListRelationFilter
   }
 
   export type TrainingModelOrderByWithRelationInput = {
@@ -74463,10 +74463,10 @@ export namespace Prisma {
     tags?: SortOrder
     title?: SortOrderInput | SortOrder
     visibility?: SortOrder
-    trainingDataSet?: TrainingDataSetOrderByRelationAggregateInput
-    trainingImage?: TrainingImageOrderByRelationAggregateInput
-    trainingJob?: TrainingJobOrderByRelationAggregateInput
-    upcycleResult?: UpcycleResultOrderByRelationAggregateInput
+    trainingDataSets?: TrainingDataSetOrderByRelationAggregateInput
+    imageUrls?: TrainingImageOrderByRelationAggregateInput
+    jobs?: TrainingJobOrderByRelationAggregateInput
+    upcycleResults?: UpcycleResultOrderByRelationAggregateInput
   }
 
   export type TrainingModelWhereUniqueInput = Prisma.AtLeast<{
@@ -74493,10 +74493,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"TrainingModel">
     title?: StringNullableFilter<"TrainingModel"> | string | null
     visibility?: EnumTrainingVisibilityFilter<"TrainingModel"> | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetListRelationFilter
-    trainingImage?: TrainingImageListRelationFilter
-    trainingJob?: TrainingJobListRelationFilter
-    upcycleResult?: UpcycleResultListRelationFilter
+    trainingDataSets?: TrainingDataSetListRelationFilter
+    imageUrls?: TrainingImageListRelationFilter
+    jobs?: TrainingJobListRelationFilter
+    upcycleResults?: UpcycleResultListRelationFilter
   }, "id">
 
   export type TrainingModelOrderByWithAggregationInput = {
@@ -74989,6 +74989,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyListRelationFilter
     modifications?: ModificationListRelationFilter
     notifications?: NotificationListRelationFilter
+    createdInvites?: PlatformInviteListRelationFilter
     posts?: PostListRelationFilter
     messagingProfile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
@@ -75001,7 +75002,6 @@ export namespace Prisma {
     votes?: VoteListRelationFilter
     websiteProvision?: WebsiteProvisionListRelationFilter
     Depot?: DepotListRelationFilter
-    createdInvites?: PlatformInviteListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -75023,6 +75023,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyOrderByRelationAggregateInput
     modifications?: ModificationOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
+    createdInvites?: PlatformInviteOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
     messagingProfile?: ProfileOrderByWithRelationInput
     sessions?: SessionOrderByRelationAggregateInput
@@ -75035,7 +75036,6 @@ export namespace Prisma {
     votes?: VoteOrderByRelationAggregateInput
     websiteProvision?: WebsiteProvisionOrderByRelationAggregateInput
     Depot?: DepotOrderByRelationAggregateInput
-    createdInvites?: PlatformInviteOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -75060,6 +75060,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyListRelationFilter
     modifications?: ModificationListRelationFilter
     notifications?: NotificationListRelationFilter
+    createdInvites?: PlatformInviteListRelationFilter
     posts?: PostListRelationFilter
     messagingProfile?: XOR<ProfileNullableScalarRelationFilter, ProfileWhereInput> | null
     sessions?: SessionListRelationFilter
@@ -75072,7 +75073,6 @@ export namespace Prisma {
     votes?: VoteListRelationFilter
     websiteProvision?: WebsiteProvisionListRelationFilter
     Depot?: DepotListRelationFilter
-    createdInvites?: PlatformInviteListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -75226,7 +75226,6 @@ export namespace Prisma {
 
   export type EventCreateInput = {
     id?: string
-    title: string
     description: string
     startDate: Date | string
     endDate?: Date | string | null
@@ -75235,13 +75234,13 @@ export namespace Prisma {
     callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    title: string
     shop: ShopCreateNestedOneWithoutEventsInput
   }
 
   export type EventUncheckedCreateInput = {
     id?: string
     shopId: string
-    title: string
     description: string
     startDate: Date | string
     endDate?: Date | string | null
@@ -75250,11 +75249,11 @@ export namespace Prisma {
     callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    title: string
   }
 
   export type EventUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -75263,13 +75262,13 @@ export namespace Prisma {
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
     shop?: ShopUpdateOneRequiredWithoutEventsNestedInput
   }
 
   export type EventUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     shopId?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -75278,12 +75277,12 @@ export namespace Prisma {
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
   }
 
   export type EventCreateManyInput = {
     id?: string
     shopId: string
-    title: string
     description: string
     startDate: Date | string
     endDate?: Date | string | null
@@ -75292,11 +75291,11 @@ export namespace Prisma {
     callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    title: string
   }
 
   export type EventUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -75305,12 +75304,12 @@ export namespace Prisma {
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
   }
 
   export type EventUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     shopId?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -75319,6 +75318,7 @@ export namespace Prisma {
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
   }
 
   export type SubredditCreateInput = {
@@ -76062,147 +76062,147 @@ export namespace Prisma {
 
   export type ShopCreateInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    events?: EventCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    events?: EventUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
+    name: string
   }
 
   export type ShopUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
   }
 
   export type ShopUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
   }
 
   export type ShopAddressCreateInput = {
@@ -77884,8 +77884,6 @@ export namespace Prisma {
 
   export type SurveyCreateInput = {
     id?: string
-    ownerId?: string | null
-    shopId: string
     processes?: string | null
     materials?: string | null
     principles?: string | null
@@ -77896,20 +77894,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: string | null
+    shopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     businessType?: string | null
     country?: string | null
     email?: string | null
     experience?: string | null
     practice?: string | null
     state?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type SurveyUncheckedCreateInput = {
     id?: string
-    ownerId?: string | null
-    shopId: string
     processes?: string | null
     materials?: string | null
     principles?: string | null
@@ -77920,20 +77918,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: string | null
+    shopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     businessType?: string | null
     country?: string | null
     email?: string | null
     experience?: string | null
     practice?: string | null
     state?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type SurveyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     processes?: NullableStringFieldUpdateOperationsInput | string | null
     materials?: NullableStringFieldUpdateOperationsInput | string | null
     principles?: NullableStringFieldUpdateOperationsInput | string | null
@@ -77944,20 +77942,20 @@ export namespace Prisma {
     privateForm?: BoolFieldUpdateOperationsInput | boolean
     supplyChain?: BoolFieldUpdateOperationsInput | boolean
     messagingOptIn?: BoolFieldUpdateOperationsInput | boolean
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     businessType?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     experience?: NullableStringFieldUpdateOperationsInput | string | null
     practice?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SurveyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     processes?: NullableStringFieldUpdateOperationsInput | string | null
     materials?: NullableStringFieldUpdateOperationsInput | string | null
     principles?: NullableStringFieldUpdateOperationsInput | string | null
@@ -77968,20 +77966,20 @@ export namespace Prisma {
     privateForm?: BoolFieldUpdateOperationsInput | boolean
     supplyChain?: BoolFieldUpdateOperationsInput | boolean
     messagingOptIn?: BoolFieldUpdateOperationsInput | boolean
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     businessType?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     experience?: NullableStringFieldUpdateOperationsInput | string | null
     practice?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SurveyCreateManyInput = {
     id?: string
-    ownerId?: string | null
-    shopId: string
     processes?: string | null
     materials?: string | null
     principles?: string | null
@@ -77992,20 +77990,20 @@ export namespace Prisma {
     privateForm?: boolean
     supplyChain?: boolean
     messagingOptIn?: boolean
+    ownerId?: string | null
+    shopId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     businessType?: string | null
     country?: string | null
     email?: string | null
     experience?: string | null
     practice?: string | null
     state?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
   }
 
   export type SurveyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     processes?: NullableStringFieldUpdateOperationsInput | string | null
     materials?: NullableStringFieldUpdateOperationsInput | string | null
     principles?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78016,20 +78014,20 @@ export namespace Prisma {
     privateForm?: BoolFieldUpdateOperationsInput | boolean
     supplyChain?: BoolFieldUpdateOperationsInput | boolean
     messagingOptIn?: BoolFieldUpdateOperationsInput | boolean
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     businessType?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     experience?: NullableStringFieldUpdateOperationsInput | string | null
     practice?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SurveyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     processes?: NullableStringFieldUpdateOperationsInput | string | null
     materials?: NullableStringFieldUpdateOperationsInput | string | null
     principles?: NullableStringFieldUpdateOperationsInput | string | null
@@ -78040,24 +78038,26 @@ export namespace Prisma {
     privateForm?: BoolFieldUpdateOperationsInput | boolean
     supplyChain?: BoolFieldUpdateOperationsInput | boolean
     messagingOptIn?: BoolFieldUpdateOperationsInput | boolean
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     businessType?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     experience?: NullableStringFieldUpdateOperationsInput | string | null
     practice?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuestSurveyCreateInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
+    email: string
     createdAt?: Date | string
     user?: UserCreateNestedOneWithoutGuestSurveysInput
   }
@@ -78065,23 +78065,23 @@ export namespace Prisma {
   export type GuestSurveyUncheckedCreateInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
-    userId?: string | null
+    email: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type GuestSurveyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneWithoutGuestSurveysNestedInput
   }
@@ -78089,48 +78089,48 @@ export namespace Prisma {
   export type GuestSurveyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GuestSurveyCreateManyInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
-    userId?: string | null
+    email: string
     createdAt?: Date | string
+    userId?: string | null
   }
 
   export type GuestSurveyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuestSurveyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ArtisanSurveyCreateInput = {
@@ -78543,7 +78543,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultUncheckedCreateInput = {
@@ -78582,7 +78582,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultUpdateInput = {
@@ -78621,7 +78621,7 @@ export namespace Prisma {
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateInput = {
@@ -78660,7 +78660,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultCreateManyInput = {
@@ -78978,7 +78978,7 @@ export namespace Prisma {
   }
 
   export type GenerationJobCreateInput = {
-    id: string
+    id?: string
     userId: string
     type: string
     status: string
@@ -78987,11 +78987,11 @@ export namespace Prisma {
     output?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
   }
 
   export type GenerationJobUncheckedCreateInput = {
-    id: string
+    id?: string
     userId: string
     type: string
     status: string
@@ -79000,7 +79000,7 @@ export namespace Prisma {
     output?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
   }
 
   export type GenerationJobUpdateInput = {
@@ -79030,7 +79030,7 @@ export namespace Prisma {
   }
 
   export type GenerationJobCreateManyInput = {
-    id: string
+    id?: string
     userId: string
     type: string
     status: string
@@ -79039,7 +79039,7 @@ export namespace Prisma {
     output?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
   }
 
   export type GenerationJobUpdateManyMutationInput = {
@@ -79069,31 +79069,31 @@ export namespace Prisma {
   }
 
   export type TrainingDataSetCreateInput = {
-    id: string
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetsInput
     user: UserCreateNestedOneWithoutTrainingDataSetInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    images?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     userId: string
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    images?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUpdateInput = {
@@ -79105,9 +79105,9 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetsNestedInput
     user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    images?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateInput = {
@@ -79121,16 +79121,16 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    images?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetCreateManyInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     userId: string
     setType?: $Enums.LoraType
@@ -79162,29 +79162,29 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateInput = {
-    id: string
+    id?: string
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     isRegularization?: boolean
     autoCaptionUpdatedAt?: Date | string | null
     userCaptionUpdatedAt?: Date | string | null
-    trainingDataSet?: TrainingDataSetCreateNestedOneWithoutTrainingImageInput
-    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingImageInput
+    trainingDataSet?: TrainingDataSetCreateNestedOneWithoutImagesInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutImageUrlsInput
   }
 
   export type TrainingImageUncheckedCreateInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     trainingDataSetId?: string | null
@@ -79205,8 +79205,8 @@ export namespace Prisma {
     isRegularization?: BoolFieldUpdateOperationsInput | boolean
     autoCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainingDataSet?: TrainingDataSetUpdateOneWithoutTrainingImageNestedInput
-    trainingModel?: TrainingModelUpdateOneWithoutTrainingImageNestedInput
+    trainingDataSet?: TrainingDataSetUpdateOneWithoutImagesNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutImageUrlsNestedInput
   }
 
   export type TrainingImageUncheckedUpdateInput = {
@@ -79226,13 +79226,13 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateManyInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     trainingDataSetId?: string | null
@@ -79272,21 +79272,21 @@ export namespace Prisma {
   }
 
   export type TrainingJobCreateInput = {
-    id: string
+    id?: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
     type?: $Enums.TrainingJobType
-    trainingModel: TrainingModelCreateNestedOneWithoutTrainingJobInput
+    trainingModel: TrainingModelCreateNestedOneWithoutJobsInput
   }
 
   export type TrainingJobUncheckedCreateInput = {
-    id: string
+    id?: string
     trainingModelId: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
@@ -79301,7 +79301,7 @@ export namespace Prisma {
     error?: NullableStringFieldUpdateOperationsInput | string | null
     referenceId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTrainingJobTypeFieldUpdateOperationsInput | $Enums.TrainingJobType
-    trainingModel?: TrainingModelUpdateOneRequiredWithoutTrainingJobNestedInput
+    trainingModel?: TrainingModelUpdateOneRequiredWithoutJobsNestedInput
   }
 
   export type TrainingJobUncheckedUpdateInput = {
@@ -79316,10 +79316,10 @@ export namespace Prisma {
   }
 
   export type TrainingJobCreateManyInput = {
-    id: string
+    id?: string
     trainingModelId: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
@@ -79348,7 +79348,7 @@ export namespace Prisma {
   }
 
   export type TrainingModelCreateInput = {
-    id: string
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -79356,7 +79356,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -79368,14 +79368,14 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultCreateNestedManyWithoutCheckpointsUsedInput
   }
 
   export type TrainingModelUncheckedCreateInput = {
-    id: string
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -79383,7 +79383,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -79395,10 +79395,10 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutCheckpointsUsedInput
   }
 
   export type TrainingModelUpdateInput = {
@@ -79422,10 +79422,10 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
   export type TrainingModelUncheckedUpdateInput = {
@@ -79449,14 +79449,14 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
   export type TrainingModelCreateManyInput = {
-    id: string
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -79464,7 +79464,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -80036,6 +80036,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -80048,7 +80049,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -80070,6 +80070,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -80082,7 +80083,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUpdateInput = {
@@ -80104,6 +80104,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -80116,7 +80117,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -80138,6 +80138,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -80150,7 +80151,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -80429,7 +80429,6 @@ export namespace Prisma {
   export type EventCountOrderByAggregateInput = {
     id?: SortOrder
     shopId?: SortOrder
-    title?: SortOrder
     description?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -80438,12 +80437,12 @@ export namespace Prisma {
     callToActionLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    title?: SortOrder
   }
 
   export type EventMaxOrderByAggregateInput = {
     id?: SortOrder
     shopId?: SortOrder
-    title?: SortOrder
     description?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -80452,12 +80451,12 @@ export namespace Prisma {
     callToActionLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    title?: SortOrder
   }
 
   export type EventMinOrderByAggregateInput = {
     id?: SortOrder
     shopId?: SortOrder
-    title?: SortOrder
     description?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -80466,6 +80465,7 @@ export namespace Prisma {
     callToActionLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    title?: SortOrder
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -81058,9 +81058,10 @@ export namespace Prisma {
     _max?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
   }
 
-  export type WebsiteProvisionNullableScalarRelationFilter = {
-    is?: WebsiteProvisionWhereInput | null
-    isNot?: WebsiteProvisionWhereInput | null
+  export type EventListRelationFilter = {
+    every?: EventWhereInput
+    some?: EventWhereInput
+    none?: EventWhereInput
   }
 
   export type ShopAddressNullableScalarRelationFilter = {
@@ -81068,10 +81069,9 @@ export namespace Prisma {
     isNot?: ShopAddressWhereInput | null
   }
 
-  export type EventListRelationFilter = {
-    every?: EventWhereInput
-    some?: EventWhereInput
-    none?: EventWhereInput
+  export type WebsiteProvisionNullableScalarRelationFilter = {
+    is?: WebsiteProvisionWhereInput | null
+    isNot?: WebsiteProvisionWhereInput | null
   }
 
   export type EventOrderByRelationAggregateInput = {
@@ -81080,54 +81080,54 @@ export namespace Prisma {
 
   export type ShopCountOrderByAggregateInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    name?: SortOrder
     ownerName?: SortOrder
-    ownerPhoto?: SortOrder
     bio?: SortOrder
     description?: SortOrder
+    ownerPhoto?: SortOrder
     logoPhoto?: SortOrder
+    coverPhoto?: SortOrder
     phone?: SortOrder
     email?: SortOrder
     website?: SortOrder
+    ownerId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     attributeTags?: SortOrder
-    coverPhoto?: SortOrder
+    name?: SortOrder
   }
 
   export type ShopMaxOrderByAggregateInput = {
     id?: SortOrder
+    ownerName?: SortOrder
+    bio?: SortOrder
+    description?: SortOrder
+    ownerPhoto?: SortOrder
+    logoPhoto?: SortOrder
+    coverPhoto?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    website?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     name?: SortOrder
-    ownerName?: SortOrder
-    ownerPhoto?: SortOrder
-    bio?: SortOrder
-    description?: SortOrder
-    logoPhoto?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
-    website?: SortOrder
-    coverPhoto?: SortOrder
   }
 
   export type ShopMinOrderByAggregateInput = {
     id?: SortOrder
+    ownerName?: SortOrder
+    bio?: SortOrder
+    description?: SortOrder
+    ownerPhoto?: SortOrder
+    logoPhoto?: SortOrder
+    coverPhoto?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    website?: SortOrder
     ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     name?: SortOrder
-    ownerName?: SortOrder
-    ownerPhoto?: SortOrder
-    bio?: SortOrder
-    description?: SortOrder
-    logoPhoto?: SortOrder
-    phone?: SortOrder
-    email?: SortOrder
-    website?: SortOrder
-    coverPhoto?: SortOrder
   }
 
   export type ShopAddressCountOrderByAggregateInput = {
@@ -82350,8 +82350,6 @@ export namespace Prisma {
 
   export type SurveyCountOrderByAggregateInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    shopId?: SortOrder
     processes?: SortOrder
     materials?: SortOrder
     principles?: SortOrder
@@ -82362,20 +82360,20 @@ export namespace Prisma {
     privateForm?: SortOrder
     supplyChain?: SortOrder
     messagingOptIn?: SortOrder
+    ownerId?: SortOrder
+    shopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     businessType?: SortOrder
     country?: SortOrder
     email?: SortOrder
     experience?: SortOrder
     practice?: SortOrder
     state?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type SurveyMaxOrderByAggregateInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    shopId?: SortOrder
     processes?: SortOrder
     materials?: SortOrder
     principles?: SortOrder
@@ -82386,20 +82384,20 @@ export namespace Prisma {
     privateForm?: SortOrder
     supplyChain?: SortOrder
     messagingOptIn?: SortOrder
+    ownerId?: SortOrder
+    shopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     businessType?: SortOrder
     country?: SortOrder
     email?: SortOrder
     experience?: SortOrder
     practice?: SortOrder
     state?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type SurveyMinOrderByAggregateInput = {
     id?: SortOrder
-    ownerId?: SortOrder
-    shopId?: SortOrder
     processes?: SortOrder
     materials?: SortOrder
     principles?: SortOrder
@@ -82410,50 +82408,52 @@ export namespace Prisma {
     privateForm?: SortOrder
     supplyChain?: SortOrder
     messagingOptIn?: SortOrder
+    ownerId?: SortOrder
+    shopId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     businessType?: SortOrder
     country?: SortOrder
     email?: SortOrder
     experience?: SortOrder
     practice?: SortOrder
     state?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type GuestSurveyCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     country?: SortOrder
     state?: SortOrder
     artisanalPractice?: SortOrder
     otherPractice?: SortOrder
-    userId?: SortOrder
+    email?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type GuestSurveyMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     country?: SortOrder
     state?: SortOrder
     artisanalPractice?: SortOrder
     otherPractice?: SortOrder
-    userId?: SortOrder
+    email?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type GuestSurveyMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    email?: SortOrder
     country?: SortOrder
     state?: SortOrder
     artisanalPractice?: SortOrder
     otherPractice?: SortOrder
-    userId?: SortOrder
+    email?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type ArtisanSurveyCountOrderByAggregateInput = {
@@ -83590,6 +83590,12 @@ export namespace Prisma {
     none?: NotificationWhereInput
   }
 
+  export type PlatformInviteListRelationFilter = {
+    every?: PlatformInviteWhereInput
+    some?: PlatformInviteWhereInput
+    none?: PlatformInviteWhereInput
+  }
+
   export type SessionListRelationFilter = {
     every?: SessionWhereInput
     some?: SessionWhereInput
@@ -83626,12 +83632,6 @@ export namespace Prisma {
     none?: DepotWhereInput
   }
 
-  export type PlatformInviteListRelationFilter = {
-    every?: PlatformInviteWhereInput
-    some?: PlatformInviteWhereInput
-    none?: PlatformInviteWhereInput
-  }
-
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -83656,6 +83656,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type PlatformInviteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type SessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -83677,10 +83681,6 @@ export namespace Prisma {
   }
 
   export type DepotOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type PlatformInviteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -84566,16 +84566,11 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type UserCreateNestedOneWithoutShopsInput = {
-    create?: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutShopsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type WebsiteProvisionCreateNestedOneWithoutShopInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    connect?: WebsiteProvisionWhereUniqueInput
+  export type EventCreateNestedManyWithoutShopInput = {
+    create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
+    createMany?: EventCreateManyShopInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
   }
 
   export type ProductCreateNestedManyWithoutShopInput = {
@@ -84592,23 +84587,29 @@ export namespace Prisma {
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
   }
 
+  export type UserCreateNestedOneWithoutShopsInput = {
+    create?: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutShopsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ShopAddressCreateNestedOneWithoutShopInput = {
     create?: XOR<ShopAddressCreateWithoutShopInput, ShopAddressUncheckedCreateWithoutShopInput>
     connectOrCreate?: ShopAddressCreateOrConnectWithoutShopInput
     connect?: ShopAddressWhereUniqueInput
   }
 
-  export type EventCreateNestedManyWithoutShopInput = {
+  export type WebsiteProvisionCreateNestedOneWithoutShopInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
+    connect?: WebsiteProvisionWhereUniqueInput
+  }
+
+  export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
     createMany?: EventCreateManyShopInputEnvelope
     connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
-  }
-
-  export type WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    connect?: WebsiteProvisionWhereUniqueInput
   }
 
   export type ProductUncheckedCreateNestedManyWithoutShopInput = {
@@ -84631,11 +84632,10 @@ export namespace Prisma {
     connect?: ShopAddressWhereUniqueInput
   }
 
-  export type EventUncheckedCreateNestedManyWithoutShopInput = {
-    create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
-    connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
-    createMany?: EventCreateManyShopInputEnvelope
-    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  export type WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
+    connect?: WebsiteProvisionWhereUniqueInput
   }
 
   export type ShopUpdateattributeTagsInput = {
@@ -84643,22 +84643,18 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type UserUpdateOneRequiredWithoutShopsNestedInput = {
-    create?: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutShopsInput
-    upsert?: UserUpsertWithoutShopsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutShopsInput, UserUpdateWithoutShopsInput>, UserUncheckedUpdateWithoutShopsInput>
-  }
-
-  export type WebsiteProvisionUpdateOneWithoutShopNestedInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    upsert?: WebsiteProvisionUpsertWithoutShopInput
-    disconnect?: WebsiteProvisionWhereInput | boolean
-    delete?: WebsiteProvisionWhereInput | boolean
-    connect?: WebsiteProvisionWhereUniqueInput
-    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
+  export type EventUpdateManyWithoutShopNestedInput = {
+    create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutShopInput | EventUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: EventCreateManyShopInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutShopInput | EventUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutShopInput | EventUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
   export type ProductUpdateManyWithoutShopNestedInput = {
@@ -84689,6 +84685,14 @@ export namespace Prisma {
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
+  export type UserUpdateOneRequiredWithoutShopsNestedInput = {
+    create?: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutShopsInput
+    upsert?: UserUpsertWithoutShopsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutShopsInput, UserUpdateWithoutShopsInput>, UserUncheckedUpdateWithoutShopsInput>
+  }
+
   export type ShopAddressUpdateOneWithoutShopNestedInput = {
     create?: XOR<ShopAddressCreateWithoutShopInput, ShopAddressUncheckedCreateWithoutShopInput>
     connectOrCreate?: ShopAddressCreateOrConnectWithoutShopInput
@@ -84699,7 +84703,17 @@ export namespace Prisma {
     update?: XOR<XOR<ShopAddressUpdateToOneWithWhereWithoutShopInput, ShopAddressUpdateWithoutShopInput>, ShopAddressUncheckedUpdateWithoutShopInput>
   }
 
-  export type EventUpdateManyWithoutShopNestedInput = {
+  export type WebsiteProvisionUpdateOneWithoutShopNestedInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
+    upsert?: WebsiteProvisionUpsertWithoutShopInput
+    disconnect?: WebsiteProvisionWhereInput | boolean
+    delete?: WebsiteProvisionWhereInput | boolean
+    connect?: WebsiteProvisionWhereUniqueInput
+    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
+  }
+
+  export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
     upsert?: EventUpsertWithWhereUniqueWithoutShopInput | EventUpsertWithWhereUniqueWithoutShopInput[]
@@ -84711,16 +84725,6 @@ export namespace Prisma {
     update?: EventUpdateWithWhereUniqueWithoutShopInput | EventUpdateWithWhereUniqueWithoutShopInput[]
     updateMany?: EventUpdateManyWithWhereWithoutShopInput | EventUpdateManyWithWhereWithoutShopInput[]
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
-  }
-
-  export type WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    upsert?: WebsiteProvisionUpsertWithoutShopInput
-    disconnect?: WebsiteProvisionWhereInput | boolean
-    delete?: WebsiteProvisionWhereInput | boolean
-    connect?: WebsiteProvisionWhereUniqueInput
-    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
   }
 
   export type ProductUncheckedUpdateManyWithoutShopNestedInput = {
@@ -84761,18 +84765,14 @@ export namespace Prisma {
     update?: XOR<XOR<ShopAddressUpdateToOneWithWhereWithoutShopInput, ShopAddressUpdateWithoutShopInput>, ShopAddressUncheckedUpdateWithoutShopInput>
   }
 
-  export type EventUncheckedUpdateManyWithoutShopNestedInput = {
-    create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
-    connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
-    upsert?: EventUpsertWithWhereUniqueWithoutShopInput | EventUpsertWithWhereUniqueWithoutShopInput[]
-    createMany?: EventCreateManyShopInputEnvelope
-    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
-    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
-    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
-    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
-    update?: EventUpdateWithWhereUniqueWithoutShopInput | EventUpdateWithWhereUniqueWithoutShopInput[]
-    updateMany?: EventUpdateManyWithWhereWithoutShopInput | EventUpdateManyWithWhereWithoutShopInput[]
-    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  export type WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
+    upsert?: WebsiteProvisionUpsertWithoutShopInput
+    disconnect?: WebsiteProvisionWhereInput | boolean
+    delete?: WebsiteProvisionWhereInput | boolean
+    connect?: WebsiteProvisionWhereUniqueInput
+    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
   }
 
   export type ShopCreateNestedOneWithoutAddressInput = {
@@ -86806,9 +86806,9 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type TrainingModelCreateNestedManyWithoutUpcycleResultInput = {
-    create?: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput> | TrainingModelCreateWithoutUpcycleResultInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultInput[]
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultInput | TrainingModelCreateOrConnectWithoutUpcycleResultInput[]
+  export type TrainingModelCreateNestedManyWithoutUpcycleResultsInput = {
+    create?: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput> | TrainingModelCreateWithoutUpcycleResultsInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultsInput[]
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultsInput | TrainingModelCreateOrConnectWithoutUpcycleResultsInput[]
     connect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
   }
 
@@ -86825,9 +86825,9 @@ export namespace Prisma {
     connect?: UpcycleRatingWhereUniqueInput
   }
 
-  export type TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput = {
-    create?: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput> | TrainingModelCreateWithoutUpcycleResultInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultInput[]
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultInput | TrainingModelCreateOrConnectWithoutUpcycleResultInput[]
+  export type TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput = {
+    create?: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput> | TrainingModelCreateWithoutUpcycleResultsInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultsInput[]
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultsInput | TrainingModelCreateOrConnectWithoutUpcycleResultsInput[]
     connect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
   }
 
@@ -86884,16 +86884,16 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUpcycleResultsInput, UserUpdateWithoutUpcycleResultsInput>, UserUncheckedUpdateWithoutUpcycleResultsInput>
   }
 
-  export type TrainingModelUpdateManyWithoutUpcycleResultNestedInput = {
-    create?: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput> | TrainingModelCreateWithoutUpcycleResultInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultInput[]
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultInput | TrainingModelCreateOrConnectWithoutUpcycleResultInput[]
-    upsert?: TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultInput | TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultInput[]
+  export type TrainingModelUpdateManyWithoutUpcycleResultsNestedInput = {
+    create?: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput> | TrainingModelCreateWithoutUpcycleResultsInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultsInput[]
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultsInput | TrainingModelCreateOrConnectWithoutUpcycleResultsInput[]
+    upsert?: TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultsInput | TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultsInput[]
     set?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     disconnect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     delete?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     connect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
-    update?: TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultInput | TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultInput[]
-    updateMany?: TrainingModelUpdateManyWithWhereWithoutUpcycleResultInput | TrainingModelUpdateManyWithWhereWithoutUpcycleResultInput[]
+    update?: TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultsInput | TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultsInput[]
+    updateMany?: TrainingModelUpdateManyWithWhereWithoutUpcycleResultsInput | TrainingModelUpdateManyWithWhereWithoutUpcycleResultsInput[]
     deleteMany?: TrainingModelScalarWhereInput | TrainingModelScalarWhereInput[]
   }
 
@@ -86921,16 +86921,16 @@ export namespace Prisma {
     update?: XOR<XOR<UpcycleRatingUpdateToOneWithWhereWithoutUpcycleResultInput, UpcycleRatingUpdateWithoutUpcycleResultInput>, UpcycleRatingUncheckedUpdateWithoutUpcycleResultInput>
   }
 
-  export type TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput = {
-    create?: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput> | TrainingModelCreateWithoutUpcycleResultInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultInput[]
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultInput | TrainingModelCreateOrConnectWithoutUpcycleResultInput[]
-    upsert?: TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultInput | TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultInput[]
+  export type TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput = {
+    create?: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput> | TrainingModelCreateWithoutUpcycleResultsInput[] | TrainingModelUncheckedCreateWithoutUpcycleResultsInput[]
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutUpcycleResultsInput | TrainingModelCreateOrConnectWithoutUpcycleResultsInput[]
+    upsert?: TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultsInput | TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultsInput[]
     set?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     disconnect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     delete?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
     connect?: TrainingModelWhereUniqueInput | TrainingModelWhereUniqueInput[]
-    update?: TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultInput | TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultInput[]
-    updateMany?: TrainingModelUpdateManyWithWhereWithoutUpcycleResultInput | TrainingModelUpdateManyWithWhereWithoutUpcycleResultInput[]
+    update?: TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultsInput | TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultsInput[]
+    updateMany?: TrainingModelUpdateManyWithWhereWithoutUpcycleResultsInput | TrainingModelUpdateManyWithWhereWithoutUpcycleResultsInput[]
     deleteMany?: TrainingModelScalarWhereInput | TrainingModelScalarWhereInput[]
   }
 
@@ -86988,9 +86988,9 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type TrainingModelCreateNestedOneWithoutTrainingDataSetInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingDataSetInput, TrainingModelUncheckedCreateWithoutTrainingDataSetInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingDataSetInput
+  export type TrainingModelCreateNestedOneWithoutTrainingDataSetsInput = {
+    create?: XOR<TrainingModelCreateWithoutTrainingDataSetsInput, TrainingModelUncheckedCreateWithoutTrainingDataSetsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingDataSetsInput
     connect?: TrainingModelWhereUniqueInput
   }
 
@@ -87023,14 +87023,14 @@ export namespace Prisma {
     set?: $Enums.LoraType
   }
 
-  export type TrainingModelUpdateOneWithoutTrainingDataSetNestedInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingDataSetInput, TrainingModelUncheckedCreateWithoutTrainingDataSetInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingDataSetInput
-    upsert?: TrainingModelUpsertWithoutTrainingDataSetInput
+  export type TrainingModelUpdateOneWithoutTrainingDataSetsNestedInput = {
+    create?: XOR<TrainingModelCreateWithoutTrainingDataSetsInput, TrainingModelUncheckedCreateWithoutTrainingDataSetsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingDataSetsInput
+    upsert?: TrainingModelUpsertWithoutTrainingDataSetsInput
     disconnect?: TrainingModelWhereInput | boolean
     delete?: TrainingModelWhereInput | boolean
     connect?: TrainingModelWhereUniqueInput
-    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutTrainingDataSetInput, TrainingModelUpdateWithoutTrainingDataSetInput>, TrainingModelUncheckedUpdateWithoutTrainingDataSetInput>
+    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutTrainingDataSetsInput, TrainingModelUpdateWithoutTrainingDataSetsInput>, TrainingModelUncheckedUpdateWithoutTrainingDataSetsInput>
   }
 
   export type UserUpdateOneRequiredWithoutTrainingDataSetNestedInput = {
@@ -87069,41 +87069,41 @@ export namespace Prisma {
     deleteMany?: TrainingImageScalarWhereInput | TrainingImageScalarWhereInput[]
   }
 
-  export type TrainingDataSetCreateNestedOneWithoutTrainingImageInput = {
-    create?: XOR<TrainingDataSetCreateWithoutTrainingImageInput, TrainingDataSetUncheckedCreateWithoutTrainingImageInput>
-    connectOrCreate?: TrainingDataSetCreateOrConnectWithoutTrainingImageInput
+  export type TrainingDataSetCreateNestedOneWithoutImagesInput = {
+    create?: XOR<TrainingDataSetCreateWithoutImagesInput, TrainingDataSetUncheckedCreateWithoutImagesInput>
+    connectOrCreate?: TrainingDataSetCreateOrConnectWithoutImagesInput
     connect?: TrainingDataSetWhereUniqueInput
   }
 
-  export type TrainingModelCreateNestedOneWithoutTrainingImageInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingImageInput, TrainingModelUncheckedCreateWithoutTrainingImageInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingImageInput
+  export type TrainingModelCreateNestedOneWithoutImageUrlsInput = {
+    create?: XOR<TrainingModelCreateWithoutImageUrlsInput, TrainingModelUncheckedCreateWithoutImageUrlsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutImageUrlsInput
     connect?: TrainingModelWhereUniqueInput
   }
 
-  export type TrainingDataSetUpdateOneWithoutTrainingImageNestedInput = {
-    create?: XOR<TrainingDataSetCreateWithoutTrainingImageInput, TrainingDataSetUncheckedCreateWithoutTrainingImageInput>
-    connectOrCreate?: TrainingDataSetCreateOrConnectWithoutTrainingImageInput
-    upsert?: TrainingDataSetUpsertWithoutTrainingImageInput
+  export type TrainingDataSetUpdateOneWithoutImagesNestedInput = {
+    create?: XOR<TrainingDataSetCreateWithoutImagesInput, TrainingDataSetUncheckedCreateWithoutImagesInput>
+    connectOrCreate?: TrainingDataSetCreateOrConnectWithoutImagesInput
+    upsert?: TrainingDataSetUpsertWithoutImagesInput
     disconnect?: TrainingDataSetWhereInput | boolean
     delete?: TrainingDataSetWhereInput | boolean
     connect?: TrainingDataSetWhereUniqueInput
-    update?: XOR<XOR<TrainingDataSetUpdateToOneWithWhereWithoutTrainingImageInput, TrainingDataSetUpdateWithoutTrainingImageInput>, TrainingDataSetUncheckedUpdateWithoutTrainingImageInput>
+    update?: XOR<XOR<TrainingDataSetUpdateToOneWithWhereWithoutImagesInput, TrainingDataSetUpdateWithoutImagesInput>, TrainingDataSetUncheckedUpdateWithoutImagesInput>
   }
 
-  export type TrainingModelUpdateOneWithoutTrainingImageNestedInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingImageInput, TrainingModelUncheckedCreateWithoutTrainingImageInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingImageInput
-    upsert?: TrainingModelUpsertWithoutTrainingImageInput
+  export type TrainingModelUpdateOneWithoutImageUrlsNestedInput = {
+    create?: XOR<TrainingModelCreateWithoutImageUrlsInput, TrainingModelUncheckedCreateWithoutImageUrlsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutImageUrlsInput
+    upsert?: TrainingModelUpsertWithoutImageUrlsInput
     disconnect?: TrainingModelWhereInput | boolean
     delete?: TrainingModelWhereInput | boolean
     connect?: TrainingModelWhereUniqueInput
-    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutTrainingImageInput, TrainingModelUpdateWithoutTrainingImageInput>, TrainingModelUncheckedUpdateWithoutTrainingImageInput>
+    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutImageUrlsInput, TrainingModelUpdateWithoutImageUrlsInput>, TrainingModelUncheckedUpdateWithoutImageUrlsInput>
   }
 
-  export type TrainingModelCreateNestedOneWithoutTrainingJobInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingJobInput, TrainingModelUncheckedCreateWithoutTrainingJobInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingJobInput
+  export type TrainingModelCreateNestedOneWithoutJobsInput = {
+    create?: XOR<TrainingModelCreateWithoutJobsInput, TrainingModelUncheckedCreateWithoutJobsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutJobsInput
     connect?: TrainingModelWhereUniqueInput
   }
 
@@ -87111,12 +87111,12 @@ export namespace Prisma {
     set?: $Enums.TrainingJobType
   }
 
-  export type TrainingModelUpdateOneRequiredWithoutTrainingJobNestedInput = {
-    create?: XOR<TrainingModelCreateWithoutTrainingJobInput, TrainingModelUncheckedCreateWithoutTrainingJobInput>
-    connectOrCreate?: TrainingModelCreateOrConnectWithoutTrainingJobInput
-    upsert?: TrainingModelUpsertWithoutTrainingJobInput
+  export type TrainingModelUpdateOneRequiredWithoutJobsNestedInput = {
+    create?: XOR<TrainingModelCreateWithoutJobsInput, TrainingModelUncheckedCreateWithoutJobsInput>
+    connectOrCreate?: TrainingModelCreateOrConnectWithoutJobsInput
+    upsert?: TrainingModelUpsertWithoutJobsInput
     connect?: TrainingModelWhereUniqueInput
-    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutTrainingJobInput, TrainingModelUpdateWithoutTrainingJobInput>, TrainingModelUncheckedUpdateWithoutTrainingJobInput>
+    update?: XOR<XOR<TrainingModelUpdateToOneWithWhereWithoutJobsInput, TrainingModelUpdateWithoutJobsInput>, TrainingModelUncheckedUpdateWithoutJobsInput>
   }
 
   export type TrainingModelCreatetagsInput = {
@@ -87144,9 +87144,9 @@ export namespace Prisma {
     connect?: TrainingJobWhereUniqueInput | TrainingJobWhereUniqueInput[]
   }
 
-  export type UpcycleResultCreateNestedManyWithoutTrainingModelInput = {
-    create?: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput> | UpcycleResultCreateWithoutTrainingModelInput[] | UpcycleResultUncheckedCreateWithoutTrainingModelInput[]
-    connectOrCreate?: UpcycleResultCreateOrConnectWithoutTrainingModelInput | UpcycleResultCreateOrConnectWithoutTrainingModelInput[]
+  export type UpcycleResultCreateNestedManyWithoutCheckpointsUsedInput = {
+    create?: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput> | UpcycleResultCreateWithoutCheckpointsUsedInput[] | UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput[]
+    connectOrCreate?: UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput | UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput[]
     connect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
   }
 
@@ -87171,9 +87171,9 @@ export namespace Prisma {
     connect?: TrainingJobWhereUniqueInput | TrainingJobWhereUniqueInput[]
   }
 
-  export type UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput = {
-    create?: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput> | UpcycleResultCreateWithoutTrainingModelInput[] | UpcycleResultUncheckedCreateWithoutTrainingModelInput[]
-    connectOrCreate?: UpcycleResultCreateOrConnectWithoutTrainingModelInput | UpcycleResultCreateOrConnectWithoutTrainingModelInput[]
+  export type UpcycleResultUncheckedCreateNestedManyWithoutCheckpointsUsedInput = {
+    create?: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput> | UpcycleResultCreateWithoutCheckpointsUsedInput[] | UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput[]
+    connectOrCreate?: UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput | UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput[]
     connect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
   }
 
@@ -87228,16 +87228,16 @@ export namespace Prisma {
     deleteMany?: TrainingJobScalarWhereInput | TrainingJobScalarWhereInput[]
   }
 
-  export type UpcycleResultUpdateManyWithoutTrainingModelNestedInput = {
-    create?: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput> | UpcycleResultCreateWithoutTrainingModelInput[] | UpcycleResultUncheckedCreateWithoutTrainingModelInput[]
-    connectOrCreate?: UpcycleResultCreateOrConnectWithoutTrainingModelInput | UpcycleResultCreateOrConnectWithoutTrainingModelInput[]
-    upsert?: UpcycleResultUpsertWithWhereUniqueWithoutTrainingModelInput | UpcycleResultUpsertWithWhereUniqueWithoutTrainingModelInput[]
+  export type UpcycleResultUpdateManyWithoutCheckpointsUsedNestedInput = {
+    create?: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput> | UpcycleResultCreateWithoutCheckpointsUsedInput[] | UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput[]
+    connectOrCreate?: UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput | UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput[]
+    upsert?: UpcycleResultUpsertWithWhereUniqueWithoutCheckpointsUsedInput | UpcycleResultUpsertWithWhereUniqueWithoutCheckpointsUsedInput[]
     set?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     disconnect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     delete?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     connect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
-    update?: UpcycleResultUpdateWithWhereUniqueWithoutTrainingModelInput | UpcycleResultUpdateWithWhereUniqueWithoutTrainingModelInput[]
-    updateMany?: UpcycleResultUpdateManyWithWhereWithoutTrainingModelInput | UpcycleResultUpdateManyWithWhereWithoutTrainingModelInput[]
+    update?: UpcycleResultUpdateWithWhereUniqueWithoutCheckpointsUsedInput | UpcycleResultUpdateWithWhereUniqueWithoutCheckpointsUsedInput[]
+    updateMany?: UpcycleResultUpdateManyWithWhereWithoutCheckpointsUsedInput | UpcycleResultUpdateManyWithWhereWithoutCheckpointsUsedInput[]
     deleteMany?: UpcycleResultScalarWhereInput | UpcycleResultScalarWhereInput[]
   }
 
@@ -87283,16 +87283,16 @@ export namespace Prisma {
     deleteMany?: TrainingJobScalarWhereInput | TrainingJobScalarWhereInput[]
   }
 
-  export type UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput = {
-    create?: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput> | UpcycleResultCreateWithoutTrainingModelInput[] | UpcycleResultUncheckedCreateWithoutTrainingModelInput[]
-    connectOrCreate?: UpcycleResultCreateOrConnectWithoutTrainingModelInput | UpcycleResultCreateOrConnectWithoutTrainingModelInput[]
-    upsert?: UpcycleResultUpsertWithWhereUniqueWithoutTrainingModelInput | UpcycleResultUpsertWithWhereUniqueWithoutTrainingModelInput[]
+  export type UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedNestedInput = {
+    create?: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput> | UpcycleResultCreateWithoutCheckpointsUsedInput[] | UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput[]
+    connectOrCreate?: UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput | UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput[]
+    upsert?: UpcycleResultUpsertWithWhereUniqueWithoutCheckpointsUsedInput | UpcycleResultUpsertWithWhereUniqueWithoutCheckpointsUsedInput[]
     set?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     disconnect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     delete?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
     connect?: UpcycleResultWhereUniqueInput | UpcycleResultWhereUniqueInput[]
-    update?: UpcycleResultUpdateWithWhereUniqueWithoutTrainingModelInput | UpcycleResultUpdateWithWhereUniqueWithoutTrainingModelInput[]
-    updateMany?: UpcycleResultUpdateManyWithWhereWithoutTrainingModelInput | UpcycleResultUpdateManyWithWhereWithoutTrainingModelInput[]
+    update?: UpcycleResultUpdateWithWhereUniqueWithoutCheckpointsUsedInput | UpcycleResultUpdateWithWhereUniqueWithoutCheckpointsUsedInput[]
+    updateMany?: UpcycleResultUpdateManyWithWhereWithoutCheckpointsUsedInput | UpcycleResultUpdateManyWithWhereWithoutCheckpointsUsedInput[]
     deleteMany?: UpcycleResultScalarWhereInput | UpcycleResultScalarWhereInput[]
   }
 
@@ -87420,6 +87420,13 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
+  export type PlatformInviteCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
+    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
+    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+  }
+
   export type PostCreateNestedManyWithoutAuthorInput = {
     create?: XOR<PostCreateWithoutAuthorInput, PostUncheckedCreateWithoutAuthorInput> | PostCreateWithoutAuthorInput[] | PostUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: PostCreateOrConnectWithoutAuthorInput | PostCreateOrConnectWithoutAuthorInput[]
@@ -87502,13 +87509,6 @@ export namespace Prisma {
     connect?: DepotWhereUniqueInput | DepotWhereUniqueInput[]
   }
 
-  export type PlatformInviteCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
-    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
-    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-  }
-
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -87563,6 +87563,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
+    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
+    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
   }
 
   export type PostUncheckedCreateNestedManyWithoutAuthorInput = {
@@ -87645,13 +87652,6 @@ export namespace Prisma {
     create?: XOR<DepotCreateWithoutUserInput, DepotUncheckedCreateWithoutUserInput> | DepotCreateWithoutUserInput[] | DepotUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DepotCreateOrConnectWithoutUserInput | DepotCreateOrConnectWithoutUserInput[]
     connect?: DepotWhereUniqueInput | DepotWhereUniqueInput[]
-  }
-
-  export type PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
-    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
-    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -87764,6 +87764,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type PlatformInviteUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
+    upsert?: PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput | PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
+    set?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    disconnect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    delete?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    update?: PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput | PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: PlatformInviteUpdateManyWithWhereWithoutCreatorInput | PlatformInviteUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
   }
 
   export type PostUpdateManyWithoutAuthorNestedInput = {
@@ -87929,20 +87943,6 @@ export namespace Prisma {
     deleteMany?: DepotScalarWhereInput | DepotScalarWhereInput[]
   }
 
-  export type PlatformInviteUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
-    upsert?: PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput | PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput[]
-    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
-    set?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    disconnect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    delete?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    update?: PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput | PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput[]
-    updateMany?: PlatformInviteUpdateManyWithWhereWithoutCreatorInput | PlatformInviteUpdateManyWithWhereWithoutCreatorInput[]
-    deleteMany?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
-  }
-
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -88053,6 +88053,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
+    upsert?: PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput | PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
+    set?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    disconnect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    delete?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
+    update?: PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput | PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: PlatformInviteUpdateManyWithWhereWithoutCreatorInput | PlatformInviteUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
   }
 
   export type PostUncheckedUpdateManyWithoutAuthorNestedInput = {
@@ -88216,20 +88230,6 @@ export namespace Prisma {
     update?: DepotUpdateWithWhereUniqueWithoutUserInput | DepotUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: DepotUpdateManyWithWhereWithoutUserInput | DepotUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: DepotScalarWhereInput | DepotScalarWhereInput[]
-  }
-
-  export type PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput> | PlatformInviteCreateWithoutCreatorInput[] | PlatformInviteUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: PlatformInviteCreateOrConnectWithoutCreatorInput | PlatformInviteCreateOrConnectWithoutCreatorInput[]
-    upsert?: PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput | PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput[]
-    createMany?: PlatformInviteCreateManyCreatorInputEnvelope
-    set?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    disconnect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    delete?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    connect?: PlatformInviteWhereUniqueInput | PlatformInviteWhereUniqueInput[]
-    update?: PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput | PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput[]
-    updateMany?: PlatformInviteUpdateManyWithWhereWithoutCreatorInput | PlatformInviteUpdateManyWithWhereWithoutCreatorInput[]
-    deleteMany?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -89163,46 +89163,46 @@ export namespace Prisma {
 
   export type ShopCreateWithoutEventsInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    name: string
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -89223,46 +89223,46 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -89316,6 +89316,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -89327,7 +89328,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutCreatedSubredditsInput = {
@@ -89349,6 +89349,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -89360,7 +89361,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutCreatedSubredditsInput = {
@@ -89445,6 +89445,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -89456,7 +89457,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedSubredditsInput = {
@@ -89478,6 +89478,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -89489,7 +89490,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type SubscriptionUpsertWithWhereUniqueWithoutSubredditInput = {
@@ -89562,6 +89562,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -89573,7 +89574,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -89595,6 +89595,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -89606,7 +89607,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -89677,6 +89677,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -89688,7 +89689,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -89710,6 +89710,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -89721,7 +89722,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type ForumCommentCreateWithoutPostInput = {
@@ -89777,6 +89777,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     shops?: ShopCreateNestedManyWithoutOwnerInput
@@ -89788,7 +89789,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -89810,6 +89810,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     shops?: ShopUncheckedCreateNestedManyWithoutOwnerInput
@@ -89821,7 +89822,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -89936,6 +89936,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     shops?: ShopUpdateManyWithoutOwnerNestedInput
@@ -89947,7 +89948,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -89969,6 +89969,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     shops?: ShopUncheckedUpdateManyWithoutOwnerNestedInput
@@ -89980,7 +89981,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type SubredditUpsertWithoutPostsInput = {
@@ -90079,6 +90079,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -90091,7 +90092,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutForumCommentsInput = {
@@ -90112,6 +90112,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -90124,7 +90125,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutForumCommentsInput = {
@@ -90276,6 +90276,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -90288,7 +90289,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutForumCommentsInput = {
@@ -90309,6 +90309,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -90321,7 +90322,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type PostUpsertWithoutCommentsInput = {
@@ -90454,6 +90454,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -90465,7 +90466,6 @@ export namespace Prisma {
     variations?: VariationCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutVotesInput = {
@@ -90487,6 +90487,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -90498,7 +90499,6 @@ export namespace Prisma {
     variations?: VariationUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutVotesInput = {
@@ -90569,6 +90569,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -90580,7 +90581,6 @@ export namespace Prisma {
     variations?: VariationUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVotesInput = {
@@ -90602,6 +90602,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -90613,7 +90614,6 @@ export namespace Prisma {
     variations?: VariationUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type ForumCommentCreateWithoutVotesInput = {
@@ -90663,6 +90663,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -90675,7 +90676,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutCommentVotesInput = {
@@ -90696,6 +90696,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -90708,7 +90709,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutCommentVotesInput = {
@@ -90780,6 +90780,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -90792,7 +90793,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentVotesInput = {
@@ -90813,6 +90813,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -90825,7 +90826,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutCreatedInvitesInput = {
@@ -90978,46 +90978,46 @@ export namespace Prisma {
 
   export type ShopCreateWithoutServicesInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
-    products?: ProductCreateNestedManyWithoutShopInput
-    address?: ShopAddressCreateNestedOneWithoutShopInput
+    name: string
     events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -91061,46 +91061,46 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
-    products?: ProductUpdateManyWithoutShopNestedInput
-    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
     events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -91121,46 +91121,46 @@ export namespace Prisma {
 
   export type ShopCreateWithoutProductsInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
-    services?: ServiceCreateNestedManyWithoutShopInput
-    address?: ShopAddressCreateNestedOneWithoutShopInput
+    name: string
     events?: EventCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -91204,46 +91204,46 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
-    services?: ServiceUpdateManyWithoutShopNestedInput
-    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
     events?: EventUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -91262,154 +91262,40 @@ export namespace Prisma {
     data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutProductsInput>
   }
 
-  export type UserCreateWithoutShopsInput = {
+  export type EventCreateWithoutShopInput = {
     id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: boolean
-    image?: string | null
-    title?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    username?: string | null
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    commentVotes?: CommentVoteCreateNestedManyWithoutUserInput
-    forumComments?: ForumCommentCreateNestedManyWithoutAuthorInput
-    generatedImages?: GeneratedImagesCreateNestedManyWithoutUserInput
-    generationSurveys?: GenerationSurveyCreateNestedManyWithoutUserInput
-    guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
-    modifications?: ModificationCreateNestedManyWithoutUserInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    posts?: PostCreateNestedManyWithoutAuthorInput
-    messagingProfile?: ProfileCreateNestedOneWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    createdSubreddits?: SubredditCreateNestedManyWithoutCreatorInput
-    subscriptions?: SubscriptionCreateNestedManyWithoutUserInput
-    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutUserInput
-    upcycleResults?: UpcycleResultCreateNestedManyWithoutUserInput
-    variations?: VariationCreateNestedManyWithoutUserInput
-    votes?: VoteCreateNestedManyWithoutUserInput
-    websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
-    Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
-  }
-
-  export type UserUncheckedCreateWithoutShopsInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: boolean
-    image?: string | null
-    title?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    username?: string | null
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    commentVotes?: CommentVoteUncheckedCreateNestedManyWithoutUserInput
-    forumComments?: ForumCommentUncheckedCreateNestedManyWithoutAuthorInput
-    generatedImages?: GeneratedImagesUncheckedCreateNestedManyWithoutUserInput
-    generationSurveys?: GenerationSurveyUncheckedCreateNestedManyWithoutUserInput
-    guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
-    modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
-    messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    createdSubreddits?: SubredditUncheckedCreateNestedManyWithoutCreatorInput
-    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutUserInput
-    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutUserInput
-    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutUserInput
-    variations?: VariationUncheckedCreateNestedManyWithoutUserInput
-    votes?: VoteUncheckedCreateNestedManyWithoutUserInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
-    Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
-  }
-
-  export type UserCreateOrConnectWithoutShopsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
-  }
-
-  export type WebsiteProvisionCreateWithoutShopInput = {
-    id?: string
+    description: string
+    startDate: Date | string
+    endDate?: Date | string | null
+    location?: string | null
+    imageUrl?: string | null
+    callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    framework: $Enums.Framework
-    siteType: $Enums.SiteType
-    status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
-    customDomain?: string | null
-    subdomain?: string | null
-    businessName: string
-    businessTagline?: string | null
-    contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
-    coolifyProjectUuid?: string | null
-    coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    coolifyDatabaseUuid?: string | null
-    coolifyServiceUuid?: string | null
-    adminPasswordEncrypted?: string | null
-    adminUser?: string | null
-    user: UserCreateNestedOneWithoutWebsiteProvisionInput
+    title: string
   }
 
-  export type WebsiteProvisionUncheckedCreateWithoutShopInput = {
+  export type EventUncheckedCreateWithoutShopInput = {
     id?: string
+    description: string
+    startDate: Date | string
+    endDate?: Date | string | null
+    location?: string | null
+    imageUrl?: string | null
+    callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    userId: string
-    framework: $Enums.Framework
-    siteType: $Enums.SiteType
-    status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
-    customDomain?: string | null
-    subdomain?: string | null
-    businessName: string
-    businessTagline?: string | null
-    contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
-    coolifyProjectUuid?: string | null
-    coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    coolifyDatabaseUuid?: string | null
-    coolifyServiceUuid?: string | null
-    adminPasswordEncrypted?: string | null
-    adminUser?: string | null
+    title: string
   }
 
-  export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
-    where: WebsiteProvisionWhereUniqueInput
-    create: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+  export type EventCreateOrConnectWithoutShopInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput>
+  }
+
+  export type EventCreateManyShopInputEnvelope = {
+    data: EventCreateManyShopInput | EventCreateManyShopInput[]
+    skipDuplicates?: boolean
   }
 
   export type ProductCreateWithoutShopInput = {
@@ -91516,6 +91402,77 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutShopsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: boolean
+    image?: string | null
+    title?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    username?: string | null
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    commentVotes?: CommentVoteCreateNestedManyWithoutUserInput
+    forumComments?: ForumCommentCreateNestedManyWithoutAuthorInput
+    generatedImages?: GeneratedImagesCreateNestedManyWithoutUserInput
+    generationSurveys?: GenerationSurveyCreateNestedManyWithoutUserInput
+    guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
+    modifications?: ModificationCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
+    posts?: PostCreateNestedManyWithoutAuthorInput
+    messagingProfile?: ProfileCreateNestedOneWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdSubreddits?: SubredditCreateNestedManyWithoutCreatorInput
+    subscriptions?: SubscriptionCreateNestedManyWithoutUserInput
+    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutUserInput
+    upcycleResults?: UpcycleResultCreateNestedManyWithoutUserInput
+    variations?: VariationCreateNestedManyWithoutUserInput
+    votes?: VoteCreateNestedManyWithoutUserInput
+    websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
+    Depot?: DepotCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutShopsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: boolean
+    image?: string | null
+    title?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    username?: string | null
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    commentVotes?: CommentVoteUncheckedCreateNestedManyWithoutUserInput
+    forumComments?: ForumCommentUncheckedCreateNestedManyWithoutAuthorInput
+    generatedImages?: GeneratedImagesUncheckedCreateNestedManyWithoutUserInput
+    generationSurveys?: GenerationSurveyUncheckedCreateNestedManyWithoutUserInput
+    guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
+    modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
+    posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
+    messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdSubreddits?: SubredditUncheckedCreateNestedManyWithoutCreatorInput
+    subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutUserInput
+    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutUserInput
+    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutUserInput
+    variations?: VariationUncheckedCreateNestedManyWithoutUserInput
+    votes?: VoteUncheckedCreateNestedManyWithoutUserInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
+    Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutShopsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutShopsInput, UserUncheckedCreateWithoutShopsInput>
+  }
+
   export type ShopAddressCreateWithoutShopInput = {
     id?: string
     address?: string | null
@@ -91543,40 +91500,148 @@ export namespace Prisma {
     create: XOR<ShopAddressCreateWithoutShopInput, ShopAddressUncheckedCreateWithoutShopInput>
   }
 
-  export type EventCreateWithoutShopInput = {
+  export type WebsiteProvisionCreateWithoutShopInput = {
     id?: string
-    title: string
-    description: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    location?: string | null
-    imageUrl?: string | null
-    callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    framework: $Enums.Framework
+    siteType: $Enums.SiteType
+    status?: $Enums.ProvisionStatus
+    hasCustomDomain?: boolean
+    customDomain?: string | null
+    subdomain?: string | null
+    businessName: string
+    businessTagline?: string | null
+    contactEmail: string
+    contactPhone?: string | null
+    businessAddress?: NullableJsonNullValueInput | InputJsonValue
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    coolifyProjectUuid?: string | null
+    coolifyServerUuid?: string | null
+    deploymentUrl?: string | null
+    lastDeploymentAt?: Date | string | null
+    lastHealthCheck?: Date | string | null
+    healthCheckStatus?: string | null
+    config: JsonNullValueInput | InputJsonValue
+    cpuLimit?: string | null
+    memoryLimit?: string | null
+    errorMessage?: string | null
+    deploymentLogs?: string | null
+    notes?: string | null
+    isTest?: boolean
+    deletedAt?: Date | string | null
+    coolifyDatabaseUuid?: string | null
+    coolifyServiceUuid?: string | null
+    adminPasswordEncrypted?: string | null
+    adminUser?: string | null
+    user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
 
-  export type EventUncheckedCreateWithoutShopInput = {
+  export type WebsiteProvisionUncheckedCreateWithoutShopInput = {
     id?: string
-    title: string
-    description: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    location?: string | null
-    imageUrl?: string | null
-    callToActionLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: string
+    framework: $Enums.Framework
+    siteType: $Enums.SiteType
+    status?: $Enums.ProvisionStatus
+    hasCustomDomain?: boolean
+    customDomain?: string | null
+    subdomain?: string | null
+    businessName: string
+    businessTagline?: string | null
+    contactEmail: string
+    contactPhone?: string | null
+    businessAddress?: NullableJsonNullValueInput | InputJsonValue
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    coolifyProjectUuid?: string | null
+    coolifyServerUuid?: string | null
+    deploymentUrl?: string | null
+    lastDeploymentAt?: Date | string | null
+    lastHealthCheck?: Date | string | null
+    healthCheckStatus?: string | null
+    config: JsonNullValueInput | InputJsonValue
+    cpuLimit?: string | null
+    memoryLimit?: string | null
+    errorMessage?: string | null
+    deploymentLogs?: string | null
+    notes?: string | null
+    isTest?: boolean
+    deletedAt?: Date | string | null
+    coolifyDatabaseUuid?: string | null
+    coolifyServiceUuid?: string | null
+    adminPasswordEncrypted?: string | null
+    adminUser?: string | null
   }
 
-  export type EventCreateOrConnectWithoutShopInput = {
+  export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
+    where: WebsiteProvisionWhereUniqueInput
+    create: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+  }
+
+  export type EventUpsertWithWhereUniqueWithoutShopInput = {
     where: EventWhereUniqueInput
+    update: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
     create: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput>
   }
 
-  export type EventCreateManyShopInputEnvelope = {
-    data: EventCreateManyShopInput | EventCreateManyShopInput[]
-    skipDuplicates?: boolean
+  export type EventUpdateWithWhereUniqueWithoutShopInput = {
+    where: EventWhereUniqueInput
+    data: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
+  }
+
+  export type EventUpdateManyWithWhereWithoutShopInput = {
+    where: EventScalarWhereInput
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutShopInput>
+  }
+
+  export type EventScalarWhereInput = {
+    AND?: EventScalarWhereInput | EventScalarWhereInput[]
+    OR?: EventScalarWhereInput[]
+    NOT?: EventScalarWhereInput | EventScalarWhereInput[]
+    id?: StringFilter<"Event"> | string
+    shopId?: StringFilter<"Event"> | string
+    description?: StringFilter<"Event"> | string
+    startDate?: DateTimeFilter<"Event"> | Date | string
+    endDate?: DateTimeNullableFilter<"Event"> | Date | string | null
+    location?: StringNullableFilter<"Event"> | string | null
+    imageUrl?: StringNullableFilter<"Event"> | string | null
+    callToActionLink?: StringNullableFilter<"Event"> | string | null
+    createdAt?: DateTimeFilter<"Event"> | Date | string
+    updatedAt?: DateTimeFilter<"Event"> | Date | string
+    title?: StringFilter<"Event"> | string
+  }
+
+  export type ProductUpsertWithWhereUniqueWithoutShopInput = {
+    where: ProductWhereUniqueInput
+    update: XOR<ProductUpdateWithoutShopInput, ProductUncheckedUpdateWithoutShopInput>
+    create: XOR<ProductCreateWithoutShopInput, ProductUncheckedCreateWithoutShopInput>
+  }
+
+  export type ProductUpdateWithWhereUniqueWithoutShopInput = {
+    where: ProductWhereUniqueInput
+    data: XOR<ProductUpdateWithoutShopInput, ProductUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ProductUpdateManyWithWhereWithoutShopInput = {
+    where: ProductScalarWhereInput
+    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutShopInput>
+  }
+
+  export type ServiceUpsertWithWhereUniqueWithoutShopInput = {
+    where: ServiceWhereUniqueInput
+    update: XOR<ServiceUpdateWithoutShopInput, ServiceUncheckedUpdateWithoutShopInput>
+    create: XOR<ServiceCreateWithoutShopInput, ServiceUncheckedCreateWithoutShopInput>
+  }
+
+  export type ServiceUpdateWithWhereUniqueWithoutShopInput = {
+    where: ServiceWhereUniqueInput
+    data: XOR<ServiceUpdateWithoutShopInput, ServiceUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ServiceUpdateManyWithWhereWithoutShopInput = {
+    where: ServiceScalarWhereInput
+    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutShopInput>
   }
 
   export type UserUpsertWithoutShopsInput = {
@@ -91609,6 +91674,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -91620,7 +91686,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShopsInput = {
@@ -91642,6 +91707,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -91653,7 +91719,39 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type ShopAddressUpsertWithoutShopInput = {
+    update: XOR<ShopAddressUpdateWithoutShopInput, ShopAddressUncheckedUpdateWithoutShopInput>
+    create: XOR<ShopAddressCreateWithoutShopInput, ShopAddressUncheckedCreateWithoutShopInput>
+    where?: ShopAddressWhereInput
+  }
+
+  export type ShopAddressUpdateToOneWithWhereWithoutShopInput = {
+    where?: ShopAddressWhereInput
+    data: XOR<ShopAddressUpdateWithoutShopInput, ShopAddressUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ShopAddressUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    additional?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zip?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    street?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ShopAddressUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    additional?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    zip?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    street?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUpsertWithoutShopInput = {
@@ -91741,146 +91839,48 @@ export namespace Prisma {
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type ProductUpsertWithWhereUniqueWithoutShopInput = {
-    where: ProductWhereUniqueInput
-    update: XOR<ProductUpdateWithoutShopInput, ProductUncheckedUpdateWithoutShopInput>
-    create: XOR<ProductCreateWithoutShopInput, ProductUncheckedCreateWithoutShopInput>
-  }
-
-  export type ProductUpdateWithWhereUniqueWithoutShopInput = {
-    where: ProductWhereUniqueInput
-    data: XOR<ProductUpdateWithoutShopInput, ProductUncheckedUpdateWithoutShopInput>
-  }
-
-  export type ProductUpdateManyWithWhereWithoutShopInput = {
-    where: ProductScalarWhereInput
-    data: XOR<ProductUpdateManyMutationInput, ProductUncheckedUpdateManyWithoutShopInput>
-  }
-
-  export type ServiceUpsertWithWhereUniqueWithoutShopInput = {
-    where: ServiceWhereUniqueInput
-    update: XOR<ServiceUpdateWithoutShopInput, ServiceUncheckedUpdateWithoutShopInput>
-    create: XOR<ServiceCreateWithoutShopInput, ServiceUncheckedCreateWithoutShopInput>
-  }
-
-  export type ServiceUpdateWithWhereUniqueWithoutShopInput = {
-    where: ServiceWhereUniqueInput
-    data: XOR<ServiceUpdateWithoutShopInput, ServiceUncheckedUpdateWithoutShopInput>
-  }
-
-  export type ServiceUpdateManyWithWhereWithoutShopInput = {
-    where: ServiceScalarWhereInput
-    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyWithoutShopInput>
-  }
-
-  export type ShopAddressUpsertWithoutShopInput = {
-    update: XOR<ShopAddressUpdateWithoutShopInput, ShopAddressUncheckedUpdateWithoutShopInput>
-    create: XOR<ShopAddressCreateWithoutShopInput, ShopAddressUncheckedCreateWithoutShopInput>
-    where?: ShopAddressWhereInput
-  }
-
-  export type ShopAddressUpdateToOneWithWhereWithoutShopInput = {
-    where?: ShopAddressWhereInput
-    data: XOR<ShopAddressUpdateWithoutShopInput, ShopAddressUncheckedUpdateWithoutShopInput>
-  }
-
-  export type ShopAddressUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    additional?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zip?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    street?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type ShopAddressUncheckedUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    additional?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    zip?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: NullableStringFieldUpdateOperationsInput | string | null
-    street?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type EventUpsertWithWhereUniqueWithoutShopInput = {
-    where: EventWhereUniqueInput
-    update: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
-    create: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput>
-  }
-
-  export type EventUpdateWithWhereUniqueWithoutShopInput = {
-    where: EventWhereUniqueInput
-    data: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
-  }
-
-  export type EventUpdateManyWithWhereWithoutShopInput = {
-    where: EventScalarWhereInput
-    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutShopInput>
-  }
-
-  export type EventScalarWhereInput = {
-    AND?: EventScalarWhereInput | EventScalarWhereInput[]
-    OR?: EventScalarWhereInput[]
-    NOT?: EventScalarWhereInput | EventScalarWhereInput[]
-    id?: StringFilter<"Event"> | string
-    shopId?: StringFilter<"Event"> | string
-    title?: StringFilter<"Event"> | string
-    description?: StringFilter<"Event"> | string
-    startDate?: DateTimeFilter<"Event"> | Date | string
-    endDate?: DateTimeNullableFilter<"Event"> | Date | string | null
-    location?: StringNullableFilter<"Event"> | string | null
-    imageUrl?: StringNullableFilter<"Event"> | string | null
-    callToActionLink?: StringNullableFilter<"Event"> | string | null
-    createdAt?: DateTimeFilter<"Event"> | Date | string
-    updatedAt?: DateTimeFilter<"Event"> | Date | string
-  }
-
   export type ShopCreateWithoutAddressInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
-    events?: EventCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -91901,46 +91901,46 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutAddressInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
-    events?: EventUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ConversationCreateWithoutMemberOneInput = {
@@ -92691,6 +92691,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     shops?: ShopCreateNestedManyWithoutOwnerInput
@@ -92702,7 +92703,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutMessagingProfileInput = {
@@ -92724,6 +92724,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     shops?: ShopUncheckedCreateNestedManyWithoutOwnerInput
@@ -92735,7 +92736,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutMessagingProfileInput = {
@@ -92903,6 +92903,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     shops?: ShopUpdateManyWithoutOwnerNestedInput
@@ -92914,7 +92915,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMessagingProfileInput = {
@@ -92936,6 +92936,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     shops?: ShopUncheckedUpdateManyWithoutOwnerNestedInput
@@ -92947,7 +92948,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type ServerUpsertWithWhereUniqueWithoutProfileInput = {
@@ -93697,6 +93697,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -93708,7 +93709,6 @@ export namespace Prisma {
     variations?: VariationCreateNestedManyWithoutUserInput
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutDepotInput = {
@@ -93730,6 +93730,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -93741,7 +93742,6 @@ export namespace Prisma {
     variations?: VariationUncheckedCreateNestedManyWithoutUserInput
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutDepotInput = {
@@ -96882,6 +96882,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -96894,7 +96895,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutGuestSurveysInput = {
@@ -96915,6 +96915,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -96927,7 +96928,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutGuestSurveysInput = {
@@ -96964,6 +96964,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -96976,7 +96977,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGuestSurveysInput = {
@@ -96997,6 +96997,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97009,7 +97010,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutGeneratedImagesInput = {
@@ -97030,6 +97030,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -97042,7 +97043,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutGeneratedImagesInput = {
@@ -97063,6 +97063,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -97075,7 +97076,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutGeneratedImagesInput = {
@@ -97112,6 +97112,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -97124,7 +97125,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGeneratedImagesInput = {
@@ -97145,6 +97145,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97157,7 +97158,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutGenerationSurveysInput = {
@@ -97178,6 +97178,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -97190,7 +97191,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutGenerationSurveysInput = {
@@ -97211,6 +97211,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -97223,7 +97224,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutGenerationSurveysInput = {
@@ -97260,6 +97260,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -97272,7 +97273,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGenerationSurveysInput = {
@@ -97293,6 +97293,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97305,7 +97306,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutVariationsInput = {
@@ -97327,6 +97327,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -97338,7 +97339,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutVariationsInput = {
@@ -97360,6 +97360,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -97371,7 +97372,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutVariationsInput = {
@@ -97409,6 +97409,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -97420,7 +97421,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVariationsInput = {
@@ -97442,6 +97442,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97453,7 +97454,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutModificationsInput = {
@@ -97474,6 +97474,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyCreateNestedManyWithoutUserInput
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -97486,7 +97487,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutModificationsInput = {
@@ -97507,6 +97507,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedCreateNestedManyWithoutUserInput
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -97519,7 +97520,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutModificationsInput = {
@@ -97556,6 +97556,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUpdateManyWithoutUserNestedInput
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -97568,7 +97569,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModificationsInput = {
@@ -97589,6 +97589,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedUpdateManyWithoutUserNestedInput
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97601,7 +97602,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UpcycleQuestionCreateWithoutUpcycleResultInput = {
@@ -97670,6 +97670,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -97681,7 +97682,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutUpcycleResultsInput = {
@@ -97703,6 +97703,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -97714,7 +97715,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutUpcycleResultsInput = {
@@ -97722,8 +97722,8 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutUpcycleResultsInput, UserUncheckedCreateWithoutUpcycleResultsInput>
   }
 
-  export type TrainingModelCreateWithoutUpcycleResultInput = {
-    id: string
+  export type TrainingModelCreateWithoutUpcycleResultsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -97731,7 +97731,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -97743,13 +97743,13 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobCreateNestedManyWithoutTrainingModelInput
   }
 
-  export type TrainingModelUncheckedCreateWithoutUpcycleResultInput = {
-    id: string
+  export type TrainingModelUncheckedCreateWithoutUpcycleResultsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -97757,7 +97757,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -97769,14 +97769,14 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
   }
 
-  export type TrainingModelCreateOrConnectWithoutUpcycleResultInput = {
+  export type TrainingModelCreateOrConnectWithoutUpcycleResultsInput = {
     where: TrainingModelWhereUniqueInput
-    create: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput>
+    create: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput>
   }
 
   export type UpcycleQuestionUpsertWithWhereUniqueWithoutUpcycleResultInput = {
@@ -97864,6 +97864,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -97875,7 +97876,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUpcycleResultsInput = {
@@ -97897,6 +97897,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -97908,23 +97909,22 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
-  export type TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultInput = {
+  export type TrainingModelUpsertWithWhereUniqueWithoutUpcycleResultsInput = {
     where: TrainingModelWhereUniqueInput
-    update: XOR<TrainingModelUpdateWithoutUpcycleResultInput, TrainingModelUncheckedUpdateWithoutUpcycleResultInput>
-    create: XOR<TrainingModelCreateWithoutUpcycleResultInput, TrainingModelUncheckedCreateWithoutUpcycleResultInput>
+    update: XOR<TrainingModelUpdateWithoutUpcycleResultsInput, TrainingModelUncheckedUpdateWithoutUpcycleResultsInput>
+    create: XOR<TrainingModelCreateWithoutUpcycleResultsInput, TrainingModelUncheckedCreateWithoutUpcycleResultsInput>
   }
 
-  export type TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultInput = {
+  export type TrainingModelUpdateWithWhereUniqueWithoutUpcycleResultsInput = {
     where: TrainingModelWhereUniqueInput
-    data: XOR<TrainingModelUpdateWithoutUpcycleResultInput, TrainingModelUncheckedUpdateWithoutUpcycleResultInput>
+    data: XOR<TrainingModelUpdateWithoutUpcycleResultsInput, TrainingModelUncheckedUpdateWithoutUpcycleResultsInput>
   }
 
-  export type TrainingModelUpdateManyWithWhereWithoutUpcycleResultInput = {
+  export type TrainingModelUpdateManyWithWhereWithoutUpcycleResultsInput = {
     where: TrainingModelScalarWhereInput
-    data: XOR<TrainingModelUpdateManyMutationInput, TrainingModelUncheckedUpdateManyWithoutUpcycleResultInput>
+    data: XOR<TrainingModelUpdateManyMutationInput, TrainingModelUncheckedUpdateManyWithoutUpcycleResultsInput>
   }
 
   export type TrainingModelScalarWhereInput = {
@@ -97988,7 +97988,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutQuestionsInput = {
@@ -98026,7 +98026,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutQuestionsInput = {
@@ -98080,7 +98080,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutQuestionsInput = {
@@ -98118,7 +98118,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -98139,6 +98139,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyCreateNestedManyWithoutUserInput
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -98151,7 +98152,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -98172,6 +98172,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedCreateNestedManyWithoutUserInput
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -98184,7 +98185,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -98221,6 +98221,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUpdateManyWithoutUserNestedInput
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -98233,7 +98234,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -98254,6 +98254,7 @@ export namespace Prisma {
     generationSurveys?: GenerationSurveyUncheckedUpdateManyWithoutUserNestedInput
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -98266,7 +98267,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UpcycleResultCreateWithoutRatingInput = {
@@ -98304,7 +98304,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
-    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutRatingInput = {
@@ -98342,7 +98342,7 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
-    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutRatingInput = {
@@ -98396,7 +98396,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
-    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutRatingInput = {
@@ -98434,11 +98434,11 @@ export namespace Prisma {
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
-    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
 
-  export type TrainingModelCreateWithoutTrainingDataSetInput = {
-    id: string
+  export type TrainingModelCreateWithoutTrainingDataSetsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -98446,7 +98446,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -98458,13 +98458,13 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelUncheckedCreateWithoutTrainingDataSetInput = {
-    id: string
+  export type TrainingModelUncheckedCreateWithoutTrainingDataSetsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -98472,7 +98472,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -98484,14 +98484,14 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelCreateOrConnectWithoutTrainingDataSetInput = {
+  export type TrainingModelCreateOrConnectWithoutTrainingDataSetsInput = {
     where: TrainingModelWhereUniqueInput
-    create: XOR<TrainingModelCreateWithoutTrainingDataSetInput, TrainingModelUncheckedCreateWithoutTrainingDataSetInput>
+    create: XOR<TrainingModelCreateWithoutTrainingDataSetsInput, TrainingModelUncheckedCreateWithoutTrainingDataSetsInput>
   }
 
   export type UserCreateWithoutTrainingDataSetInput = {
@@ -98513,6 +98513,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -98524,7 +98525,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutTrainingDataSetInput = {
@@ -98546,6 +98546,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -98557,7 +98558,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutTrainingDataSetInput = {
@@ -98566,28 +98566,28 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateWithoutTrainingDataSetInput = {
-    id: string
+    id?: string
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     isRegularization?: boolean
     autoCaptionUpdatedAt?: Date | string | null
     userCaptionUpdatedAt?: Date | string | null
-    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingImageInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutImageUrlsInput
   }
 
   export type TrainingImageUncheckedCreateWithoutTrainingDataSetInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     isRegularization?: boolean
@@ -98605,18 +98605,18 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TrainingModelUpsertWithoutTrainingDataSetInput = {
-    update: XOR<TrainingModelUpdateWithoutTrainingDataSetInput, TrainingModelUncheckedUpdateWithoutTrainingDataSetInput>
-    create: XOR<TrainingModelCreateWithoutTrainingDataSetInput, TrainingModelUncheckedCreateWithoutTrainingDataSetInput>
+  export type TrainingModelUpsertWithoutTrainingDataSetsInput = {
+    update: XOR<TrainingModelUpdateWithoutTrainingDataSetsInput, TrainingModelUncheckedUpdateWithoutTrainingDataSetsInput>
+    create: XOR<TrainingModelCreateWithoutTrainingDataSetsInput, TrainingModelUncheckedCreateWithoutTrainingDataSetsInput>
     where?: TrainingModelWhereInput
   }
 
-  export type TrainingModelUpdateToOneWithWhereWithoutTrainingDataSetInput = {
+  export type TrainingModelUpdateToOneWithWhereWithoutTrainingDataSetsInput = {
     where?: TrainingModelWhereInput
-    data: XOR<TrainingModelUpdateWithoutTrainingDataSetInput, TrainingModelUncheckedUpdateWithoutTrainingDataSetInput>
+    data: XOR<TrainingModelUpdateWithoutTrainingDataSetsInput, TrainingModelUncheckedUpdateWithoutTrainingDataSetsInput>
   }
 
-  export type TrainingModelUpdateWithoutTrainingDataSetInput = {
+  export type TrainingModelUpdateWithoutTrainingDataSetsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -98637,12 +98637,12 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
-  export type TrainingModelUncheckedUpdateWithoutTrainingDataSetInput = {
+  export type TrainingModelUncheckedUpdateWithoutTrainingDataSetsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -98663,9 +98663,9 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
   export type UserUpsertWithoutTrainingDataSetInput = {
@@ -98698,6 +98698,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -98709,7 +98710,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTrainingDataSetInput = {
@@ -98731,6 +98731,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -98742,7 +98743,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type TrainingImageUpsertWithWhereUniqueWithoutTrainingDataSetInput = {
@@ -98780,39 +98780,39 @@ export namespace Prisma {
     userCaptionUpdatedAt?: DateTimeNullableFilter<"TrainingImage"> | Date | string | null
   }
 
-  export type TrainingDataSetCreateWithoutTrainingImageInput = {
-    id: string
+  export type TrainingDataSetCreateWithoutImagesInput = {
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetsInput
     user: UserCreateNestedOneWithoutTrainingDataSetInput
   }
 
-  export type TrainingDataSetUncheckedCreateWithoutTrainingImageInput = {
-    id: string
+  export type TrainingDataSetUncheckedCreateWithoutImagesInput = {
+    id?: string
     trainingModelId?: string | null
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     userId: string
     setType?: $Enums.LoraType
     triggerWord?: string
   }
 
-  export type TrainingDataSetCreateOrConnectWithoutTrainingImageInput = {
+  export type TrainingDataSetCreateOrConnectWithoutImagesInput = {
     where: TrainingDataSetWhereUniqueInput
-    create: XOR<TrainingDataSetCreateWithoutTrainingImageInput, TrainingDataSetUncheckedCreateWithoutTrainingImageInput>
+    create: XOR<TrainingDataSetCreateWithoutImagesInput, TrainingDataSetUncheckedCreateWithoutImagesInput>
   }
 
-  export type TrainingModelCreateWithoutTrainingImageInput = {
-    id: string
+  export type TrainingModelCreateWithoutImageUrlsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -98820,7 +98820,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -98832,13 +98832,13 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelUncheckedCreateWithoutTrainingImageInput = {
-    id: string
+  export type TrainingModelUncheckedCreateWithoutImageUrlsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -98846,7 +98846,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -98858,28 +98858,28 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingJob?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
+    jobs?: TrainingJobUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelCreateOrConnectWithoutTrainingImageInput = {
+  export type TrainingModelCreateOrConnectWithoutImageUrlsInput = {
     where: TrainingModelWhereUniqueInput
-    create: XOR<TrainingModelCreateWithoutTrainingImageInput, TrainingModelUncheckedCreateWithoutTrainingImageInput>
+    create: XOR<TrainingModelCreateWithoutImageUrlsInput, TrainingModelUncheckedCreateWithoutImageUrlsInput>
   }
 
-  export type TrainingDataSetUpsertWithoutTrainingImageInput = {
-    update: XOR<TrainingDataSetUpdateWithoutTrainingImageInput, TrainingDataSetUncheckedUpdateWithoutTrainingImageInput>
-    create: XOR<TrainingDataSetCreateWithoutTrainingImageInput, TrainingDataSetUncheckedCreateWithoutTrainingImageInput>
+  export type TrainingDataSetUpsertWithoutImagesInput = {
+    update: XOR<TrainingDataSetUpdateWithoutImagesInput, TrainingDataSetUncheckedUpdateWithoutImagesInput>
+    create: XOR<TrainingDataSetCreateWithoutImagesInput, TrainingDataSetUncheckedCreateWithoutImagesInput>
     where?: TrainingDataSetWhereInput
   }
 
-  export type TrainingDataSetUpdateToOneWithWhereWithoutTrainingImageInput = {
+  export type TrainingDataSetUpdateToOneWithWhereWithoutImagesInput = {
     where?: TrainingDataSetWhereInput
-    data: XOR<TrainingDataSetUpdateWithoutTrainingImageInput, TrainingDataSetUncheckedUpdateWithoutTrainingImageInput>
+    data: XOR<TrainingDataSetUpdateWithoutImagesInput, TrainingDataSetUncheckedUpdateWithoutImagesInput>
   }
 
-  export type TrainingDataSetUpdateWithoutTrainingImageInput = {
+  export type TrainingDataSetUpdateWithoutImagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -98888,11 +98888,11 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetsNestedInput
     user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
   }
 
-  export type TrainingDataSetUncheckedUpdateWithoutTrainingImageInput = {
+  export type TrainingDataSetUncheckedUpdateWithoutImagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     trainingModelId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
@@ -98905,18 +98905,18 @@ export namespace Prisma {
     triggerWord?: StringFieldUpdateOperationsInput | string
   }
 
-  export type TrainingModelUpsertWithoutTrainingImageInput = {
-    update: XOR<TrainingModelUpdateWithoutTrainingImageInput, TrainingModelUncheckedUpdateWithoutTrainingImageInput>
-    create: XOR<TrainingModelCreateWithoutTrainingImageInput, TrainingModelUncheckedCreateWithoutTrainingImageInput>
+  export type TrainingModelUpsertWithoutImageUrlsInput = {
+    update: XOR<TrainingModelUpdateWithoutImageUrlsInput, TrainingModelUncheckedUpdateWithoutImageUrlsInput>
+    create: XOR<TrainingModelCreateWithoutImageUrlsInput, TrainingModelUncheckedCreateWithoutImageUrlsInput>
     where?: TrainingModelWhereInput
   }
 
-  export type TrainingModelUpdateToOneWithWhereWithoutTrainingImageInput = {
+  export type TrainingModelUpdateToOneWithWhereWithoutImageUrlsInput = {
     where?: TrainingModelWhereInput
-    data: XOR<TrainingModelUpdateWithoutTrainingImageInput, TrainingModelUncheckedUpdateWithoutTrainingImageInput>
+    data: XOR<TrainingModelUpdateWithoutImageUrlsInput, TrainingModelUncheckedUpdateWithoutImageUrlsInput>
   }
 
-  export type TrainingModelUpdateWithoutTrainingImageInput = {
+  export type TrainingModelUpdateWithoutImageUrlsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -98937,12 +98937,12 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
-  export type TrainingModelUncheckedUpdateWithoutTrainingImageInput = {
+  export type TrainingModelUncheckedUpdateWithoutImageUrlsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -98963,13 +98963,13 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
-  export type TrainingModelCreateWithoutTrainingJobInput = {
-    id: string
+  export type TrainingModelCreateWithoutJobsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -98977,7 +98977,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -98989,13 +98989,13 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelUncheckedCreateWithoutTrainingJobInput = {
-    id: string
+  export type TrainingModelUncheckedCreateWithoutJobsInput = {
+    id?: string
     userId: string
     triggerWord: string
     status?: $Enums.status
@@ -99003,7 +99003,7 @@ export namespace Prisma {
     log?: NullableJsonNullValueInput | InputJsonValue
     zipFileUrl?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     trainingSettings?: NullableJsonNullValueInput | InputJsonValue
     trainingDetails?: NullableJsonNullValueInput | InputJsonValue
     error?: string | null
@@ -99015,28 +99015,28 @@ export namespace Prisma {
     tags?: TrainingModelCreatetagsInput | string[]
     title?: string | null
     visibility?: $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
-    upcycleResult?: UpcycleResultUncheckedCreateNestedManyWithoutTrainingModelInput
+    trainingDataSets?: TrainingDataSetUncheckedCreateNestedManyWithoutTrainingModelInput
+    imageUrls?: TrainingImageUncheckedCreateNestedManyWithoutTrainingModelInput
+    upcycleResults?: UpcycleResultUncheckedCreateNestedManyWithoutCheckpointsUsedInput
   }
 
-  export type TrainingModelCreateOrConnectWithoutTrainingJobInput = {
+  export type TrainingModelCreateOrConnectWithoutJobsInput = {
     where: TrainingModelWhereUniqueInput
-    create: XOR<TrainingModelCreateWithoutTrainingJobInput, TrainingModelUncheckedCreateWithoutTrainingJobInput>
+    create: XOR<TrainingModelCreateWithoutJobsInput, TrainingModelUncheckedCreateWithoutJobsInput>
   }
 
-  export type TrainingModelUpsertWithoutTrainingJobInput = {
-    update: XOR<TrainingModelUpdateWithoutTrainingJobInput, TrainingModelUncheckedUpdateWithoutTrainingJobInput>
-    create: XOR<TrainingModelCreateWithoutTrainingJobInput, TrainingModelUncheckedCreateWithoutTrainingJobInput>
+  export type TrainingModelUpsertWithoutJobsInput = {
+    update: XOR<TrainingModelUpdateWithoutJobsInput, TrainingModelUncheckedUpdateWithoutJobsInput>
+    create: XOR<TrainingModelCreateWithoutJobsInput, TrainingModelUncheckedCreateWithoutJobsInput>
     where?: TrainingModelWhereInput
   }
 
-  export type TrainingModelUpdateToOneWithWhereWithoutTrainingJobInput = {
+  export type TrainingModelUpdateToOneWithWhereWithoutJobsInput = {
     where?: TrainingModelWhereInput
-    data: XOR<TrainingModelUpdateWithoutTrainingJobInput, TrainingModelUncheckedUpdateWithoutTrainingJobInput>
+    data: XOR<TrainingModelUpdateWithoutJobsInput, TrainingModelUncheckedUpdateWithoutJobsInput>
   }
 
-  export type TrainingModelUpdateWithoutTrainingJobInput = {
+  export type TrainingModelUpdateWithoutJobsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -99057,12 +99057,12 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
-  export type TrainingModelUncheckedUpdateWithoutTrainingJobInput = {
+  export type TrainingModelUncheckedUpdateWithoutJobsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -99083,35 +99083,35 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
-    upcycleResult?: UpcycleResultUncheckedUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
+    upcycleResults?: UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedNestedInput
   }
 
   export type TrainingDataSetCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
     user: UserCreateNestedOneWithoutTrainingDataSetInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    images?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     userId: string
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    images?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetCreateOrConnectWithoutTrainingModelInput = {
@@ -99125,27 +99125,27 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     isRegularization?: boolean
     autoCaptionUpdatedAt?: Date | string | null
     userCaptionUpdatedAt?: Date | string | null
-    trainingDataSet?: TrainingDataSetCreateNestedOneWithoutTrainingImageInput
+    trainingDataSet?: TrainingDataSetCreateNestedOneWithoutImagesInput
   }
 
   export type TrainingImageUncheckedCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     trainingDataSetId?: string | null
@@ -99165,9 +99165,9 @@ export namespace Prisma {
   }
 
   export type TrainingJobCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
@@ -99175,9 +99175,9 @@ export namespace Prisma {
   }
 
   export type TrainingJobUncheckedCreateWithoutTrainingModelInput = {
-    id: string
+    id?: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
@@ -99194,7 +99194,7 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UpcycleResultCreateWithoutTrainingModelInput = {
+  export type UpcycleResultCreateWithoutCheckpointsUsedInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -99232,7 +99232,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutUpcycleResultsInput
   }
 
-  export type UpcycleResultUncheckedCreateWithoutTrainingModelInput = {
+  export type UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -99270,9 +99270,9 @@ export namespace Prisma {
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
   }
 
-  export type UpcycleResultCreateOrConnectWithoutTrainingModelInput = {
+  export type UpcycleResultCreateOrConnectWithoutCheckpointsUsedInput = {
     where: UpcycleResultWhereUniqueInput
-    create: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput>
+    create: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput>
   }
 
   export type TrainingDataSetUpsertWithWhereUniqueWithoutTrainingModelInput = {
@@ -99353,20 +99353,20 @@ export namespace Prisma {
     type?: EnumTrainingJobTypeFilter<"TrainingJob"> | $Enums.TrainingJobType
   }
 
-  export type UpcycleResultUpsertWithWhereUniqueWithoutTrainingModelInput = {
+  export type UpcycleResultUpsertWithWhereUniqueWithoutCheckpointsUsedInput = {
     where: UpcycleResultWhereUniqueInput
-    update: XOR<UpcycleResultUpdateWithoutTrainingModelInput, UpcycleResultUncheckedUpdateWithoutTrainingModelInput>
-    create: XOR<UpcycleResultCreateWithoutTrainingModelInput, UpcycleResultUncheckedCreateWithoutTrainingModelInput>
+    update: XOR<UpcycleResultUpdateWithoutCheckpointsUsedInput, UpcycleResultUncheckedUpdateWithoutCheckpointsUsedInput>
+    create: XOR<UpcycleResultCreateWithoutCheckpointsUsedInput, UpcycleResultUncheckedCreateWithoutCheckpointsUsedInput>
   }
 
-  export type UpcycleResultUpdateWithWhereUniqueWithoutTrainingModelInput = {
+  export type UpcycleResultUpdateWithWhereUniqueWithoutCheckpointsUsedInput = {
     where: UpcycleResultWhereUniqueInput
-    data: XOR<UpcycleResultUpdateWithoutTrainingModelInput, UpcycleResultUncheckedUpdateWithoutTrainingModelInput>
+    data: XOR<UpcycleResultUpdateWithoutCheckpointsUsedInput, UpcycleResultUncheckedUpdateWithoutCheckpointsUsedInput>
   }
 
-  export type UpcycleResultUpdateManyWithWhereWithoutTrainingModelInput = {
+  export type UpcycleResultUpdateManyWithWhereWithoutCheckpointsUsedInput = {
     where: UpcycleResultScalarWhereInput
-    data: XOR<UpcycleResultUpdateManyMutationInput, UpcycleResultUncheckedUpdateManyWithoutTrainingModelInput>
+    data: XOR<UpcycleResultUpdateManyMutationInput, UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedInput>
   }
 
   export type UpcycleResultScalarWhereInput = {
@@ -99410,46 +99410,46 @@ export namespace Prisma {
 
   export type ShopCreateWithoutWebsiteProvisionInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    owner: UserCreateNestedOneWithoutShopsInput
+    name: string
+    events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    events?: EventCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
     id?: string
-    ownerId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -99476,6 +99476,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -99487,7 +99488,6 @@ export namespace Prisma {
     variations?: VariationCreateNestedManyWithoutUserInput
     votes?: VoteCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -99509,6 +99509,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -99520,7 +99521,6 @@ export namespace Prisma {
     variations?: VariationUncheckedCreateNestedManyWithoutUserInput
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -99541,46 +99541,46 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutWebsiteProvisionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    events?: EventUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -99613,6 +99613,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -99624,7 +99625,6 @@ export namespace Prisma {
     variations?: VariationUpdateManyWithoutUserNestedInput
     votes?: VoteUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -99646,6 +99646,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -99657,7 +99658,6 @@ export namespace Prisma {
     variations?: VariationUncheckedUpdateManyWithoutUserNestedInput
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -99678,6 +99678,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -99690,7 +99691,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -99711,6 +99711,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -99723,7 +99724,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -99760,6 +99760,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -99772,7 +99773,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -99793,6 +99793,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -99805,7 +99806,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -99827,6 +99827,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyCreateNestedManyWithoutUserInput
     modifications?: ModificationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileCreateNestedOneWithoutUserInput
     shops?: ShopCreateNestedManyWithoutOwnerInput
@@ -99838,7 +99839,6 @@ export namespace Prisma {
     votes?: VoteCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionCreateNestedManyWithoutUserInput
     Depot?: DepotCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -99860,6 +99860,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedCreateNestedManyWithoutUserInput
     modifications?: ModificationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutAuthorInput
     messagingProfile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     shops?: ShopUncheckedCreateNestedManyWithoutOwnerInput
@@ -99871,7 +99872,6 @@ export namespace Prisma {
     votes?: VoteUncheckedCreateNestedManyWithoutUserInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedManyWithoutUserInput
     Depot?: DepotUncheckedCreateNestedManyWithoutUserInput
-    createdInvites?: PlatformInviteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -99909,6 +99909,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     shops?: ShopUpdateManyWithoutOwnerNestedInput
@@ -99920,7 +99921,6 @@ export namespace Prisma {
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
     Depot?: DepotUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -99942,6 +99942,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     shops?: ShopUncheckedUpdateManyWithoutOwnerNestedInput
@@ -99953,7 +99954,6 @@ export namespace Prisma {
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
     Depot?: DepotUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -100101,22 +100101,22 @@ export namespace Prisma {
   export type GuestSurveyCreateWithoutUserInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
+    email: string
     createdAt?: Date | string
   }
 
   export type GuestSurveyUncheckedCreateWithoutUserInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
+    email: string
     createdAt?: Date | string
   }
 
@@ -100187,6 +100187,40 @@ export namespace Prisma {
 
   export type NotificationCreateManyUserInputEnvelope = {
     data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PlatformInviteCreateWithoutCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    expiresAt: Date | string
+    email: string
+    code: string
+    role: $Enums.Role
+    used?: boolean
+    usedAt?: Date | string | null
+    usedBy?: string | null
+  }
+
+  export type PlatformInviteUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    expiresAt: Date | string
+    email: string
+    code: string
+    role: $Enums.Role
+    used?: boolean
+    usedAt?: Date | string | null
+    usedBy?: string | null
+  }
+
+  export type PlatformInviteCreateOrConnectWithoutCreatorInput = {
+    where: PlatformInviteWhereUniqueInput
+    create: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PlatformInviteCreateManyCreatorInputEnvelope = {
+    data: PlatformInviteCreateManyCreatorInput | PlatformInviteCreateManyCreatorInput[]
     skipDuplicates?: boolean
   }
 
@@ -100285,46 +100319,46 @@ export namespace Prisma {
 
   export type ShopCreateWithoutOwnerInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    events?: EventCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    name: string
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -100388,29 +100422,29 @@ export namespace Prisma {
   }
 
   export type TrainingDataSetCreateWithoutUserInput = {
-    id: string
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetInput
-    trainingImage?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
+    trainingModel?: TrainingModelCreateNestedOneWithoutTrainingDataSetsInput
+    images?: TrainingImageCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetUncheckedCreateWithoutUserInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
-    trainingImage?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
+    images?: TrainingImageUncheckedCreateNestedManyWithoutTrainingDataSetInput
   }
 
   export type TrainingDataSetCreateOrConnectWithoutUserInput = {
@@ -100458,7 +100492,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
-    trainingModel?: TrainingModelCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultUncheckedCreateWithoutUserInput = {
@@ -100496,7 +100530,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
-    trainingModel?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultInput
+    checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
 
   export type UpcycleResultCreateOrConnectWithoutUserInput = {
@@ -100674,40 +100708,6 @@ export namespace Prisma {
     create: XOR<DepotCreateWithoutUserInput, DepotUncheckedCreateWithoutUserInput>
   }
 
-  export type PlatformInviteCreateWithoutCreatorInput = {
-    id?: string
-    createdAt?: Date | string
-    expiresAt: Date | string
-    email: string
-    code: string
-    role: $Enums.Role
-    used?: boolean
-    usedAt?: Date | string | null
-    usedBy?: string | null
-  }
-
-  export type PlatformInviteUncheckedCreateWithoutCreatorInput = {
-    id?: string
-    createdAt?: Date | string
-    expiresAt: Date | string
-    email: string
-    code: string
-    role: $Enums.Role
-    used?: boolean
-    usedAt?: Date | string | null
-    usedBy?: string | null
-  }
-
-  export type PlatformInviteCreateOrConnectWithoutCreatorInput = {
-    where: PlatformInviteWhereUniqueInput
-    create: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput>
-  }
-
-  export type PlatformInviteCreateManyCreatorInputEnvelope = {
-    data: PlatformInviteCreateManyCreatorInput | PlatformInviteCreateManyCreatorInput[]
-    skipDuplicates?: boolean
-  }
-
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -100851,13 +100851,13 @@ export namespace Prisma {
     NOT?: GuestSurveyScalarWhereInput | GuestSurveyScalarWhereInput[]
     id?: StringFilter<"GuestSurvey"> | string
     name?: StringFilter<"GuestSurvey"> | string
-    email?: StringFilter<"GuestSurvey"> | string
     country?: StringNullableFilter<"GuestSurvey"> | string | null
     state?: StringNullableFilter<"GuestSurvey"> | string | null
     artisanalPractice?: StringNullableFilter<"GuestSurvey"> | string | null
     otherPractice?: StringNullableFilter<"GuestSurvey"> | string | null
-    userId?: StringNullableFilter<"GuestSurvey"> | string | null
+    email?: StringFilter<"GuestSurvey"> | string
     createdAt?: DateTimeFilter<"GuestSurvey"> | Date | string
+    userId?: StringNullableFilter<"GuestSurvey"> | string | null
   }
 
   export type ModificationUpsertWithWhereUniqueWithoutUserInput = {
@@ -100918,6 +100918,38 @@ export namespace Prisma {
     resourceType?: EnumResourceTypeFilter<"Notification"> | $Enums.ResourceType
     read?: BoolFilter<"Notification"> | boolean
     userId?: StringFilter<"Notification"> | string
+  }
+
+  export type PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: PlatformInviteWhereUniqueInput
+    update: XOR<PlatformInviteUpdateWithoutCreatorInput, PlatformInviteUncheckedUpdateWithoutCreatorInput>
+    create: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: PlatformInviteWhereUniqueInput
+    data: XOR<PlatformInviteUpdateWithoutCreatorInput, PlatformInviteUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type PlatformInviteUpdateManyWithWhereWithoutCreatorInput = {
+    where: PlatformInviteScalarWhereInput
+    data: XOR<PlatformInviteUpdateManyMutationInput, PlatformInviteUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type PlatformInviteScalarWhereInput = {
+    AND?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
+    OR?: PlatformInviteScalarWhereInput[]
+    NOT?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
+    id?: StringFilter<"PlatformInvite"> | string
+    createdAt?: DateTimeFilter<"PlatformInvite"> | Date | string
+    expiresAt?: DateTimeFilter<"PlatformInvite"> | Date | string
+    email?: StringFilter<"PlatformInvite"> | string
+    code?: StringFilter<"PlatformInvite"> | string
+    role?: EnumRoleFilter<"PlatformInvite"> | $Enums.Role
+    used?: BoolFilter<"PlatformInvite"> | boolean
+    usedAt?: DateTimeNullableFilter<"PlatformInvite"> | Date | string | null
+    usedBy?: StringNullableFilter<"PlatformInvite"> | string | null
+    createdBy?: StringNullableFilter<"PlatformInvite"> | string | null
   }
 
   export type PostUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -101024,20 +101056,20 @@ export namespace Prisma {
     OR?: ShopScalarWhereInput[]
     NOT?: ShopScalarWhereInput | ShopScalarWhereInput[]
     id?: StringFilter<"Shop"> | string
-    ownerId?: StringFilter<"Shop"> | string
-    createdAt?: DateTimeFilter<"Shop"> | Date | string
-    updatedAt?: DateTimeFilter<"Shop"> | Date | string
-    name?: StringFilter<"Shop"> | string
     ownerName?: StringFilter<"Shop"> | string
-    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     bio?: StringNullableFilter<"Shop"> | string | null
     description?: StringNullableFilter<"Shop"> | string | null
+    ownerPhoto?: StringNullableFilter<"Shop"> | string | null
     logoPhoto?: StringNullableFilter<"Shop"> | string | null
+    coverPhoto?: StringNullableFilter<"Shop"> | string | null
     phone?: StringNullableFilter<"Shop"> | string | null
     email?: StringNullableFilter<"Shop"> | string | null
     website?: StringNullableFilter<"Shop"> | string | null
+    ownerId?: StringFilter<"Shop"> | string
+    createdAt?: DateTimeFilter<"Shop"> | Date | string
+    updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
-    coverPhoto?: StringNullableFilter<"Shop"> | string | null
+    name?: StringFilter<"Shop"> | string
   }
 
   export type SubredditUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -101244,38 +101276,6 @@ export namespace Prisma {
     magicCode?: StringFilter<"Depot"> | string
     createdAt?: DateTimeFilter<"Depot"> | Date | string
     updatedAt?: DateTimeFilter<"Depot"> | Date | string
-  }
-
-  export type PlatformInviteUpsertWithWhereUniqueWithoutCreatorInput = {
-    where: PlatformInviteWhereUniqueInput
-    update: XOR<PlatformInviteUpdateWithoutCreatorInput, PlatformInviteUncheckedUpdateWithoutCreatorInput>
-    create: XOR<PlatformInviteCreateWithoutCreatorInput, PlatformInviteUncheckedCreateWithoutCreatorInput>
-  }
-
-  export type PlatformInviteUpdateWithWhereUniqueWithoutCreatorInput = {
-    where: PlatformInviteWhereUniqueInput
-    data: XOR<PlatformInviteUpdateWithoutCreatorInput, PlatformInviteUncheckedUpdateWithoutCreatorInput>
-  }
-
-  export type PlatformInviteUpdateManyWithWhereWithoutCreatorInput = {
-    where: PlatformInviteScalarWhereInput
-    data: XOR<PlatformInviteUpdateManyMutationInput, PlatformInviteUncheckedUpdateManyWithoutCreatorInput>
-  }
-
-  export type PlatformInviteScalarWhereInput = {
-    AND?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
-    OR?: PlatformInviteScalarWhereInput[]
-    NOT?: PlatformInviteScalarWhereInput | PlatformInviteScalarWhereInput[]
-    id?: StringFilter<"PlatformInvite"> | string
-    createdAt?: DateTimeFilter<"PlatformInvite"> | Date | string
-    expiresAt?: DateTimeFilter<"PlatformInvite"> | Date | string
-    email?: StringFilter<"PlatformInvite"> | string
-    code?: StringFilter<"PlatformInvite"> | string
-    role?: EnumRoleFilter<"PlatformInvite"> | $Enums.Role
-    used?: BoolFilter<"PlatformInvite"> | boolean
-    usedAt?: DateTimeNullableFilter<"PlatformInvite"> | Date | string | null
-    usedBy?: StringNullableFilter<"PlatformInvite"> | string | null
-    createdBy?: StringNullableFilter<"PlatformInvite"> | string | null
   }
 
   export type CategoryCreateManyParentInput = {
@@ -101668,6 +101668,19 @@ export namespace Prisma {
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   }
 
+  export type EventCreateManyShopInput = {
+    id?: string
+    description: string
+    startDate: Date | string
+    endDate?: Date | string | null
+    location?: string | null
+    imageUrl?: string | null
+    callToActionLink?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    title: string
+  }
+
   export type ProductCreateManyShopInput = {
     id?: string
     shopProductId?: string | null
@@ -101708,17 +101721,43 @@ export namespace Prisma {
     serviceUrl?: string | null
   }
 
-  export type EventCreateManyShopInput = {
-    id?: string
-    title: string
-    description: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    location?: string | null
-    imageUrl?: string | null
-    callToActionLink?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type EventUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type EventUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type EventUncheckedUpdateManyWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    title?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProductUpdateWithoutShopInput = {
@@ -101843,45 +101882,6 @@ export namespace Prisma {
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type EventUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type EventUncheckedUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type EventUncheckedUpdateManyWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ConversationCreateManyMemberOneInput = {
@@ -102601,6 +102601,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUpdateManyWithoutUserNestedInput
     modifications?: ModificationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -102612,7 +102613,6 @@ export namespace Prisma {
     variations?: VariationUpdateManyWithoutUserNestedInput
     votes?: VoteUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDepotInput = {
@@ -102634,6 +102634,7 @@ export namespace Prisma {
     guestSurveys?: GuestSurveyUncheckedUpdateManyWithoutUserNestedInput
     modifications?: ModificationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutAuthorNestedInput
     messagingProfile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -102645,7 +102646,6 @@ export namespace Prisma {
     variations?: VariationUncheckedUpdateManyWithoutUserNestedInput
     votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateManyWithoutUserNestedInput
-    createdInvites?: PlatformInviteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutDepotInput = {
@@ -103161,7 +103161,7 @@ export namespace Prisma {
     llmResponse?: StringFieldUpdateOperationsInput | string
   }
 
-  export type TrainingModelUpdateWithoutUpcycleResultInput = {
+  export type TrainingModelUpdateWithoutUpcycleResultsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -103182,12 +103182,12 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUpdateManyWithoutTrainingModelNestedInput
   }
 
-  export type TrainingModelUncheckedUpdateWithoutUpcycleResultInput = {
+  export type TrainingModelUncheckedUpdateWithoutUpcycleResultsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -103208,12 +103208,12 @@ export namespace Prisma {
     tags?: TrainingModelUpdatetagsInput | string[]
     title?: NullableStringFieldUpdateOperationsInput | string | null
     visibility?: EnumTrainingVisibilityFieldUpdateOperationsInput | $Enums.TrainingVisibility
-    trainingDataSet?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
-    trainingJob?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
+    trainingDataSets?: TrainingDataSetUncheckedUpdateManyWithoutTrainingModelNestedInput
+    imageUrls?: TrainingImageUncheckedUpdateManyWithoutTrainingModelNestedInput
+    jobs?: TrainingJobUncheckedUpdateManyWithoutTrainingModelNestedInput
   }
 
-  export type TrainingModelUncheckedUpdateManyWithoutUpcycleResultInput = {
+  export type TrainingModelUncheckedUpdateManyWithoutUpcycleResultsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     triggerWord?: StringFieldUpdateOperationsInput | string
@@ -103237,13 +103237,13 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateManyTrainingDataSetInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     isRegularization?: boolean
@@ -103263,7 +103263,7 @@ export namespace Prisma {
     isRegularization?: BoolFieldUpdateOperationsInput | boolean
     autoCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainingModel?: TrainingModelUpdateOneWithoutTrainingImageNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutImageUrlsNestedInput
   }
 
   export type TrainingImageUncheckedUpdateWithoutTrainingDataSetInput = {
@@ -103297,11 +103297,11 @@ export namespace Prisma {
   }
 
   export type TrainingDataSetCreateManyTrainingModelInput = {
-    id: string
+    id?: string
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     userId: string
     setType?: $Enums.LoraType
@@ -103309,12 +103309,12 @@ export namespace Prisma {
   }
 
   export type TrainingImageCreateManyTrainingModelInput = {
-    id: string
+    id?: string
     imageUrl: string
     userCaption?: string | null
     autoCaption?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     referenceId?: string | null
     imageType?: $Enums.LoraType
     trainingDataSetId?: string | null
@@ -103324,9 +103324,9 @@ export namespace Prisma {
   }
 
   export type TrainingJobCreateManyTrainingModelInput = {
-    id: string
+    id?: string
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     status?: $Enums.status
     error?: string | null
     referenceId?: string | null
@@ -103343,7 +103343,7 @@ export namespace Prisma {
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutTrainingDataSetNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    images?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateWithoutTrainingModelInput = {
@@ -103356,7 +103356,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    images?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateManyWithoutTrainingModelInput = {
@@ -103383,7 +103383,7 @@ export namespace Prisma {
     isRegularization?: BoolFieldUpdateOperationsInput | boolean
     autoCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userCaptionUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainingDataSet?: TrainingDataSetUpdateOneWithoutTrainingImageNestedInput
+    trainingDataSet?: TrainingDataSetUpdateOneWithoutImagesNestedInput
   }
 
   export type TrainingImageUncheckedUpdateWithoutTrainingModelInput = {
@@ -103446,7 +103446,7 @@ export namespace Prisma {
     type?: EnumTrainingJobTypeFieldUpdateOperationsInput | $Enums.TrainingJobType
   }
 
-  export type UpcycleResultUpdateWithoutTrainingModelInput = {
+  export type UpcycleResultUpdateWithoutCheckpointsUsedInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103484,7 +103484,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
   }
 
-  export type UpcycleResultUncheckedUpdateWithoutTrainingModelInput = {
+  export type UpcycleResultUncheckedUpdateWithoutCheckpointsUsedInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103522,7 +103522,7 @@ export namespace Prisma {
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
   }
 
-  export type UpcycleResultUncheckedUpdateManyWithoutTrainingModelInput = {
+  export type UpcycleResultUncheckedUpdateManyWithoutCheckpointsUsedInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -103605,11 +103605,11 @@ export namespace Prisma {
   export type GuestSurveyCreateManyUserInput = {
     id?: string
     name?: string
-    email: string
     country?: string | null
     state?: string | null
     artisanalPractice?: string | null
     otherPractice?: string | null
+    email: string
     createdAt?: Date | string
   }
 
@@ -103633,6 +103633,18 @@ export namespace Prisma {
     read?: boolean
   }
 
+  export type PlatformInviteCreateManyCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    expiresAt: Date | string
+    email: string
+    code: string
+    role: $Enums.Role
+    used?: boolean
+    usedAt?: Date | string | null
+    usedBy?: string | null
+  }
+
   export type PostCreateManyAuthorInput = {
     title: string
     createdAt?: Date | string
@@ -103654,19 +103666,19 @@ export namespace Prisma {
 
   export type ShopCreateManyOwnerInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    name: string
     ownerName: string
-    ownerPhoto?: string | null
     bio?: string | null
     description?: string | null
+    ownerPhoto?: string | null
     logoPhoto?: string | null
+    coverPhoto?: string | null
     phone?: string | null
     email?: string | null
     website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
-    coverPhoto?: string | null
+    name: string
   }
 
   export type SubredditCreateManyCreatorInput = {
@@ -103683,12 +103695,12 @@ export namespace Prisma {
   }
 
   export type TrainingDataSetCreateManyUserInput = {
-    id: string
+    id?: string
     trainingModelId?: string | null
     name?: string | null
     description?: string | null
     createdAt?: Date | string
-    updatedAt: Date | string
+    updatedAt?: Date | string
     tags?: TrainingDataSetCreatetagsInput | string[]
     setType?: $Enums.LoraType
     triggerWord?: string
@@ -103777,18 +103789,6 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
-  }
-
-  export type PlatformInviteCreateManyCreatorInput = {
-    id?: string
-    createdAt?: Date | string
-    expiresAt: Date | string
-    email: string
-    code: string
-    role: $Enums.Role
-    used?: boolean
-    usedAt?: Date | string | null
-    usedBy?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -103930,33 +103930,33 @@ export namespace Prisma {
   export type GuestSurveyUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuestSurveyUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GuestSurveyUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
     state?: NullableStringFieldUpdateOperationsInput | string | null
     artisanalPractice?: NullableStringFieldUpdateOperationsInput | string | null
     otherPractice?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -104018,6 +104018,42 @@ export namespace Prisma {
     resourceId?: StringFieldUpdateOperationsInput | string
     resourceType?: EnumResourceTypeFieldUpdateOperationsInput | $Enums.ResourceType
     read?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PlatformInviteUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PlatformInviteUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PlatformInviteUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PostUpdateWithoutAuthorInput = {
@@ -104083,63 +104119,63 @@ export namespace Prisma {
 
   export type ShopUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    events?: EventUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
-    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
-    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
   }
 
   export type SubredditUpdateWithoutCreatorInput = {
@@ -104194,8 +104230,8 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetNestedInput
-    trainingImage?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
+    trainingModel?: TrainingModelUpdateOneWithoutTrainingDataSetsNestedInput
+    images?: TrainingImageUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateWithoutUserInput = {
@@ -104208,7 +104244,7 @@ export namespace Prisma {
     tags?: TrainingDataSetUpdatetagsInput | string[]
     setType?: EnumLoraTypeFieldUpdateOperationsInput | $Enums.LoraType
     triggerWord?: StringFieldUpdateOperationsInput | string
-    trainingImage?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
+    images?: TrainingImageUncheckedUpdateManyWithoutTrainingDataSetNestedInput
   }
 
   export type TrainingDataSetUncheckedUpdateManyWithoutUserInput = {
@@ -104258,7 +104294,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
-    trainingModel?: TrainingModelUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateWithoutUserInput = {
@@ -104296,7 +104332,7 @@ export namespace Prisma {
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
-    trainingModel?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultNestedInput
+    checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
 
   export type UpcycleResultUncheckedUpdateManyWithoutUserInput = {
@@ -104521,42 +104557,6 @@ export namespace Prisma {
     magicCode?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PlatformInviteUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    email?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    used?: BoolFieldUpdateOperationsInput | boolean
-    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type PlatformInviteUncheckedUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    email?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    used?: BoolFieldUpdateOperationsInput | boolean
-    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type PlatformInviteUncheckedUpdateManyWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    email?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    used?: BoolFieldUpdateOperationsInput | boolean
-    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    usedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

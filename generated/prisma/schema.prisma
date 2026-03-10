@@ -15,24 +15,18 @@ enum CategoryType {
 }
 
 model Event {
-  id String @id @default(cuid())
-
-  shopId String
-  shop   Shop   @relation(fields: [shopId], references: [id])
-
-  title       String
-  description String @db.Text
-
-  startDate DateTime
-  endDate   DateTime?
-  location  String?
-
-  imageUrl String?
-
+  id               String    @id @default(cuid())
+  shopId           String
+  description      String
+  startDate        DateTime
+  endDate          DateTime?
+  location         String?
+  imageUrl         String?
   callToActionLink String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  title            String
+  shop             Shop      @relation(fields: [shopId], references: [id])
 }
 
 model Subreddit {
@@ -115,35 +109,20 @@ enum VoteType {
 }
 
 model PlatformInvite {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
   expiresAt DateTime
-
-  // Who is this for?
-  email String
-  code  String @unique // Used in wizard URL
-
-  // What role will they have?
-  role Role
-
-  // Status
-  used   Boolean   @default(false)
-  usedAt DateTime?
-  usedBy String? // userId who redeemed it
-
-  // Who created this invite
+  email     String
+  code      String    @unique
+  role      Role
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
   createdBy String?
-  creator   User?   @relation("CreatedInvites", fields: [createdBy], references: [id], onDelete: SetNull)
+  creator   User?     @relation("CreatedInvites", fields: [createdBy], references: [id])
 
   @@index([email])
   @@index([code])
-}
-
-enum ProductScrapeMethod {
-  MANUAL
-  WORDPRESS
-  SHOPIFY
-  SQUARESPACE
 }
 
 model Service {
@@ -194,34 +173,35 @@ model Product {
   @@unique([shopId, shopProductId])
 }
 
+enum ProductScrapeMethod {
+  MANUAL
+  WORDPRESS
+  SHOPIFY
+  SQUARESPACE
+}
+
 model Shop {
-  id      String @id @default(cuid())
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-
+  id               String            @id @default(cuid())
+  ownerName        String
+  bio              String?
+  description      String?
+  ownerPhoto       String?
+  logoPhoto        String?
+  coverPhoto       String?
+  phone            String?
+  email            String?
+  website          String?
+  ownerId          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  attributeTags    String[]
+  name             String
+  events           Event[]
+  products         Product[]
+  services         Service[]
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  address          ShopAddress?
   websiteProvision WebsiteProvision?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Public Information
-  name          String
-  ownerName     String
-  ownerPhoto    String?
-  bio           String? // Bio is of the shop owner. Since this is a platform for artisans, we want to show off the artisans here.
-  description   String? // This is the description of the shop itself. What does the owner want to share with site visitors?
-  logoPhoto     String?
-  phone         String?
-  email         String?
-  website       String?
-  attributeTags String[]
-  products      Product[]
-  services      Service[]
-  address       ShopAddress?
-  events        Event[]
-
-  // Decommissioned Fields
-  coverPhoto String?
 }
 
 model ShopAddress {
@@ -609,76 +589,64 @@ enum JobType {
 }
 
 model Survey {
-  id String @id @default(cuid())
-
-  ownerId String?
-  shopId  String
-
+  id              String   @id @default(cuid())
   processes       String?
   materials       String?
   principles      String?
   description     String?
-  unmoderatedForm Boolean @default(false)
-  moderatedForm   Boolean @default(false)
-  hiddenForm      Boolean @default(false)
-  privateForm     Boolean @default(false)
-  supplyChain     Boolean @default(false)
-  messagingOptIn  Boolean @default(false)
-
-  businessType String?
-  country      String?
-  email        String?
-  experience   String?
-  practice     String?
-  state        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  unmoderatedForm Boolean  @default(false)
+  moderatedForm   Boolean  @default(false)
+  hiddenForm      Boolean  @default(false)
+  privateForm     Boolean  @default(false)
+  supplyChain     Boolean  @default(false)
+  messagingOptIn  Boolean  @default(false)
+  ownerId         String?
+  shopId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  businessType    String?
+  country         String?
+  email           String?
+  experience      String?
+  practice        String?
+  state           String?
 
   @@index([ownerId])
 }
 
 model GuestSurvey {
-  id                String  @id @default(cuid())
-  name              String  @default("Guest")
-  email             String
+  id                String   @id @default(cuid())
+  name              String   @default("Guest")
   country           String?
   state             String?
   artisanalPractice String?
   otherPractice     String?
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
+  email             String
+  createdAt         DateTime @default(now())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
-// Newest version of the survey given to new artisans.
 model ArtisanSurvey {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   userId            String
   name              String
   businessName      String
-  businessInterview String  @db.Text
+  businessInterview String
   businessLocation  String?
   businessEmail     String?
   businessPhone     String?
   businessWebsite   String?
-
   businessType      String
   productCategories String[]
   principles        String[]
-
-  processes String[]
-  materials String[]
-
-  socials   Json?
-  createdAt DateTime @default(now())
+  processes         String[]
+  materials         String[]
+  socials           Json?
+  createdAt         DateTime @default(now())
 }
-
-// These are for the v0.1.0 of UPCY. Currently not in use.
 
 model GeneratedImages {
   id           String @id @default(cuid())
@@ -764,7 +732,7 @@ model UpcycleResult {
   questions                 UpcycleQuestion[]
   rating                    UpcycleRating?
   user                      User              @relation(fields: [userId], references: [id])
-  trainingModel             TrainingModel[]   @relation("TrainingModelToUpcycleResult")
+  checkpointsUsed           TrainingModel[]   @relation("TrainingModelToUpcycleResult")
 }
 
 model UpcycleQuestion {
@@ -836,6 +804,92 @@ enum UpcycleThumb {
   NEUTRAL
 }
 
+model GenerationJob {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TrainingDataSet {
+  id              String          @id @default(cuid())
+  trainingModelId String?
+  name            String?
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  tags            String[]
+  userId          String
+  setType         LoraType        @default(UNKNOWN)
+  triggerWord     String          @default("TOK")
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  images          TrainingImage[]
+}
+
+model TrainingImage {
+  id                   String           @id @default(cuid())
+  trainingModelId      String?
+  imageUrl             String
+  userCaption          String?
+  autoCaption          String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  referenceId          String?
+  imageType            LoraType         @default(UNKNOWN)
+  trainingDataSetId    String?
+  isRegularization     Boolean          @default(false)
+  autoCaptionUpdatedAt DateTime?
+  userCaptionUpdatedAt DateTime?
+  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
+  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
+}
+
+model TrainingJob {
+  id              String          @id @default(cuid())
+  trainingModelId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  status          status          @default(QUEUED)
+  error           String?
+  referenceId     String?
+  type            TrainingJobType @default(GENERIC_JOB)
+  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
+}
+
+model TrainingModel {
+  id               String             @id @default(cuid())
+  userId           String
+  triggerWord      String
+  status           status             @default(QUEUED)
+  weightsUrl       String
+  log              Json?
+  zipFileUrl       String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  trainingSettings Json?
+  trainingDetails  Json?
+  error            String?
+  referenceId      String?
+  versionId        String?
+  loraType         LoraType           @default(SUBJECT)
+  trainingSubject  String             @default("Unknown Object")
+  description      String?
+  tags             String[]
+  title            String?
+  visibility       TrainingVisibility @default(PRIVATE)
+  trainingDataSets TrainingDataSet[]
+  imageUrls        TrainingImage[]
+  jobs             TrainingJob[]
+  upcycleResults   UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+}
+
 enum LoraType {
   SUBJECT
   STYLE
@@ -854,120 +908,6 @@ enum TrainingJobType {
 enum TrainingVisibility {
   PUBLIC
   PRIVATE
-}
-
-model GenerationJob {
-  id          String   @id
-  userId      String
-  type        String
-  status      String
-  replicateId String?
-  input       Json
-  output      Json?
-  error       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-}
-
-model TrainingDataSet {
-  id              String          @id
-  trainingModelId String?
-  name            String?
-  description     String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime
-  tags            String[]
-  userId          String
-  setType         LoraType        @default(UNKNOWN)
-  triggerWord     String          @default("TOK")
-  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
-  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  trainingImage   TrainingImage[]
-}
-
-model TrainingImage {
-  id                   String           @id
-  trainingModelId      String?
-  imageUrl             String
-  userCaption          String?
-  autoCaption          String?
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime
-  referenceId          String?
-  imageType            LoraType         @default(UNKNOWN)
-  trainingDataSetId    String?
-  isRegularization     Boolean          @default(false)
-  autoCaptionUpdatedAt DateTime?
-  userCaptionUpdatedAt DateTime?
-  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
-  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
-}
-
-model TrainingJob {
-  id              String          @id
-  trainingModelId String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime
-  status          status          @default(QUEUED)
-  error           String?
-  referenceId     String?
-  type            TrainingJobType @default(GENERIC_JOB)
-  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
-}
-
-model TrainingModel {
-  id               String             @id
-  userId           String
-  triggerWord      String
-  status           status             @default(QUEUED)
-  weightsUrl       String
-  log              Json?
-  zipFileUrl       String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime
-  trainingSettings Json?
-  trainingDetails  Json?
-  error            String?
-  referenceId      String?
-  versionId        String?
-  loraType         LoraType           @default(SUBJECT)
-  trainingSubject  String             @default("Unknown Object")
-  description      String?
-  tags             String[]
-  title            String?
-  visibility       TrainingVisibility @default(PRIVATE)
-  trainingDataSet  TrainingDataSet[]
-  trainingImage    TrainingImage[]
-  trainingJob      TrainingJob[]
-  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
-}
-
-enum ProvisionStatus {
-  PENDING
-  PROVISIONING
-  BUILDING
-  DEPLOYING
-  ACTIVE
-  FAILED
-  SUSPENDED
-  DELETING
-  DELETED
-}
-
-enum SiteType {
-  ECOMMERCE
-  BLOG
-  PORTFOLIO
-  LANDING_PAGE
-  BUSINESS
-  CUSTOM
-}
-
-enum Framework {
-  WORDPRESS
-  NEXTJS
-  GHOST
-  STRAPI
 }
 
 model WebsiteProvision {
@@ -1015,6 +955,34 @@ model WebsiteProvision {
   @@index([status])
   @@index([subdomain])
   @@index([userId])
+}
+
+enum ProvisionStatus {
+  PENDING
+  PROVISIONING
+  BUILDING
+  DEPLOYING
+  ACTIVE
+  FAILED
+  SUSPENDED
+  DELETING
+  DELETED
+}
+
+enum SiteType {
+  ECOMMERCE
+  BLOG
+  PORTFOLIO
+  LANDING_PAGE
+  BUSINESS
+  CUSTOM
+}
+
+enum Framework {
+  WORDPRESS
+  NEXTJS
+  GHOST
+  STRAPI
 }
 
 generator client {
@@ -1086,6 +1054,7 @@ model User {
   guestSurveys      GuestSurvey[]
   modifications     Modification[]
   notifications     Notification[]
+  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
   posts             Post[]
   messagingProfile  Profile?
   sessions          Session[]
@@ -1098,7 +1067,6 @@ model User {
   votes             Vote[]
   websiteProvision  WebsiteProvision[]
   Depot             Depot[]            @relation("DepotToUser")
-  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
 }
 
 model Verification {

@@ -1,26 +1,5 @@
-enum LoraType {
-  SUBJECT
-  STYLE
-  MULTI_CONCEPT
-  REGULARIZATION
-  UNKNOWN
-  SINGLE_CONCEPT
-}
-
-
-enum TrainingJobType {
-  CAPTION_IMAGE
-  TRAIN_MODEL
-  GENERIC_JOB
-}
-
-enum TrainingVisibility {
-  PUBLIC
-  PRIVATE
-}
-
 model GenerationJob {
-  id          String   @id
+  id          String   @id @default(cuid())
   userId      String
   type        String
   status      String
@@ -29,33 +8,33 @@ model GenerationJob {
   output      Json?
   error       String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model TrainingDataSet {
-  id              String          @id
+  id              String          @id @default(cuid())
   trainingModelId String?
   name            String?
   description     String?
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime        @updatedAt
   tags            String[]
   userId          String
   setType         LoraType        @default(UNKNOWN)
   triggerWord     String          @default("TOK")
   trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
   user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  trainingImage   TrainingImage[]
+  images          TrainingImage[]
 }
 
 model TrainingImage {
-  id                   String           @id
+  id                   String           @id @default(cuid())
   trainingModelId      String?
   imageUrl             String
   userCaption          String?
   autoCaption          String?
   createdAt            DateTime         @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime         @updatedAt
   referenceId          String?
   imageType            LoraType         @default(UNKNOWN)
   trainingDataSetId    String?
@@ -67,10 +46,10 @@ model TrainingImage {
 }
 
 model TrainingJob {
-  id              String          @id
+  id              String          @id @default(cuid())
   trainingModelId String
   createdAt       DateTime        @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime        @updatedAt
   status          status          @default(QUEUED)
   error           String?
   referenceId     String?
@@ -79,7 +58,7 @@ model TrainingJob {
 }
 
 model TrainingModel {
-  id               String             @id
+  id               String             @id @default(cuid())
   userId           String
   triggerWord      String
   status           status             @default(QUEUED)
@@ -87,7 +66,7 @@ model TrainingModel {
   log              Json?
   zipFileUrl       String?
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime           @updatedAt
   trainingSettings Json?
   trainingDetails  Json?
   error            String?
@@ -99,11 +78,28 @@ model TrainingModel {
   tags             String[]
   title            String?
   visibility       TrainingVisibility @default(PRIVATE)
-  trainingDataSet  TrainingDataSet[]
-  trainingImage    TrainingImage[]
-  trainingJob      TrainingJob[]
-  upcycleResult    UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+  trainingDataSets TrainingDataSet[]
+  imageUrls        TrainingImage[]
+  jobs             TrainingJob[]
+  upcycleResults   UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
 }
 
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
 
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
 
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}

@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 "use client";
 
-import type { ReactNode } from "react";
+import { AuthUIProvider, type ProviderIcon } from "@daveyplate/better-auth-ui";
+import { auth0 } from "better-auth/plugins";
 import Link from "next/link";
-import { AuthUIProvider } from "@daveyplate/better-auth-ui";
 import { useRouter } from "nextjs-toploader/app";
+import type { ReactNode } from "react";
 
-import { env } from "~/env";
-import { authClient } from "~/server/better-auth/client";
+import { IconBrandAuth0 } from "@tabler/icons-react";
 import { Toaster } from "~/components/ui/sonner";
+import { env } from "~/env";
 import { ThemeProvider } from "~/providers/theme-provider";
+import { authClient } from "~/server/better-auth/client";
 
 export function SiteProviders({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -26,6 +28,15 @@ export function SiteProviders({ children }: { children: ReactNode }) {
         }}
         social={{
           providers: ["discord", "google"],
+        }}
+        genericOAuth={{
+          providers: [
+            {
+              provider: "auth0",
+              name: "Auth0",
+              icon: IconBrandAuth0,
+            },
+          ],
         }}
         additionalFields={{
           terms: {

@@ -1,31 +1,25 @@
 model Shop {
   id               String            @id @default(cuid())
-  ownerId          String
-  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-
-  websiteProvision WebsiteProvision?
-
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-
-  // Public Information
-  name             String
   ownerName        String
+  bio              String?
+  description      String?
   ownerPhoto       String?
-  bio              String?   // Bio is of the shop owner. Since this is a platform for artisans, we want to show off the artisans here.
-  description      String?   // This is the description of the shop itself. What does the owner want to share with site visitors?
   logoPhoto        String?
+  coverPhoto       String?
   phone            String?
   email            String?
   website          String?
+  ownerId          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   attributeTags    String[]
+  name             String
+  events           Event[]
   products         Product[]
   services         Service[]
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address          ShopAddress?
-  events           Event[]
-
-  // Decommissioned Fields
-  coverPhoto       String?
+  websiteProvision WebsiteProvision?
 }
 
 model ShopAddress {

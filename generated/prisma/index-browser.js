@@ -131,7 +131,6 @@ exports.Prisma.CategoryScalarFieldEnum = {
 exports.Prisma.EventScalarFieldEnum = {
   id: 'id',
   shopId: 'shopId',
-  title: 'title',
   description: 'description',
   startDate: 'startDate',
   endDate: 'endDate',
@@ -139,7 +138,8 @@ exports.Prisma.EventScalarFieldEnum = {
   imageUrl: 'imageUrl',
   callToActionLink: 'callToActionLink',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  title: 'title'
 };
 
 exports.Prisma.SubredditScalarFieldEnum = {
@@ -247,20 +247,20 @@ exports.Prisma.ProductScalarFieldEnum = {
 
 exports.Prisma.ShopScalarFieldEnum = {
   id: 'id',
-  ownerId: 'ownerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name',
   ownerName: 'ownerName',
-  ownerPhoto: 'ownerPhoto',
   bio: 'bio',
   description: 'description',
+  ownerPhoto: 'ownerPhoto',
   logoPhoto: 'logoPhoto',
+  coverPhoto: 'coverPhoto',
   phone: 'phone',
   email: 'email',
   website: 'website',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   attributeTags: 'attributeTags',
-  coverPhoto: 'coverPhoto'
+  name: 'name'
 };
 
 exports.Prisma.ShopAddressScalarFieldEnum = {
@@ -491,8 +491,6 @@ exports.Prisma.OptimizedStopScalarFieldEnum = {
 
 exports.Prisma.SurveyScalarFieldEnum = {
   id: 'id',
-  ownerId: 'ownerId',
-  shopId: 'shopId',
   processes: 'processes',
   materials: 'materials',
   principles: 'principles',
@@ -503,26 +501,28 @@ exports.Prisma.SurveyScalarFieldEnum = {
   privateForm: 'privateForm',
   supplyChain: 'supplyChain',
   messagingOptIn: 'messagingOptIn',
+  ownerId: 'ownerId',
+  shopId: 'shopId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   businessType: 'businessType',
   country: 'country',
   email: 'email',
   experience: 'experience',
   practice: 'practice',
-  state: 'state',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  state: 'state'
 };
 
 exports.Prisma.GuestSurveyScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  email: 'email',
   country: 'country',
   state: 'state',
   artisanalPractice: 'artisanalPractice',
   otherPractice: 'otherPractice',
-  userId: 'userId',
-  createdAt: 'createdAt'
+  email: 'email',
+  createdAt: 'createdAt',
+  userId: 'userId'
 };
 
 exports.Prisma.ArtisanSurveyScalarFieldEnum = {

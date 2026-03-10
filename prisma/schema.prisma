@@ -67,6 +67,7 @@ model User {
   guestSurveys      GuestSurvey[]
   modifications     Modification[]
   notifications     Notification[]
+  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
   posts             Post[]
   messagingProfile  Profile?
   sessions          Session[]
@@ -79,7 +80,6 @@ model User {
   votes             Vote[]
   websiteProvision  WebsiteProvision[]
   Depot             Depot[]            @relation("DepotToUser")
-  createdInvites   PlatformInvite[]    @relation("CreatedInvites")
 }
 
 model Verification {
@@ -92,7 +92,6 @@ model Verification {
 
   @@map("VerificationToken")
 }
-
 
 enum Role {
   USER

@@ -71,6 +71,8 @@ export const auth = betterAuth({
           clientId: env.AUTH0_CLIENT_ID,
           clientSecret: env.AUTH0_CLIENT_SECRET,
           domain: env.AUTH0_ISSUER.replace("https://", ""),
+          redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/auth0`,
+          disableImplicitSignUp: true,
         }),
       ],
     }),

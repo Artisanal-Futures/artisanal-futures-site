@@ -1,11 +1,3 @@
-enum ProductScrapeMethod {
-  MANUAL
-  WORDPRESS
-  SHOPIFY
-  SQUARESPACE
-}
-
-
 model Service {
   id                String     @id @default(cuid())
   name              String
@@ -54,5 +46,9 @@ model Product {
   @@unique([shopId, shopProductId])
 }
 
-
-
+enum ProductScrapeMethod {
+  MANUAL
+  WORDPRESS
+  SHOPIFY
+  SQUARESPACE
+}

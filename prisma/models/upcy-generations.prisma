@@ -35,7 +35,7 @@ model UpcycleResult {
   questions                 UpcycleQuestion[]
   rating                    UpcycleRating?
   user                      User              @relation(fields: [userId], references: [id])
-  trainingModel             TrainingModel[]   @relation("TrainingModelToUpcycleResult")
+  checkpointsUsed           TrainingModel[]   @relation("TrainingModelToUpcycleResult")
 }
 
 model UpcycleQuestion {
