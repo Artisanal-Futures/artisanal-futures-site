@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { PencilIcon, XCircleIcon } from "lucide-react";
 
+import type { RouterOutputs } from "~/trpc/react";
 import type { ServiceWithShop } from "~/types/service";
 import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
@@ -24,7 +25,7 @@ import { createServiceFilter } from "./service-filters";
 
 type Props = {
   services: ServiceWithShop[];
-  shops: Shop[];
+  shops: RouterOutputs["shop"]["getAll"];
 };
 
 export function ServiceClient({ services, shops }: Props) {

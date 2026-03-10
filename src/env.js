@@ -72,6 +72,8 @@ export const env = createEnv({
     NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
     NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
     NEXT_PUBLIC_HCAPTCHA_SITE_KEY: z.string(),
+
+    NEXT_PUBLIC_HELP_DOCS_URL: z.string(),
   },
 
   /**
@@ -126,6 +128,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
     NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED:
       process.env.NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED,
+
+    NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

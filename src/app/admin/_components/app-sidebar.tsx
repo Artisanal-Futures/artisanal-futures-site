@@ -11,6 +11,7 @@ import {
   IconDatabase,
   IconDeviceMobileMessage,
   IconFolder,
+  IconGlobe,
   IconHeartHandshake,
   IconHelp,
   IconMail,
@@ -19,10 +20,12 @@ import {
   IconPackage,
   IconSettings,
   IconShoppingCart,
+  IconSparkles,
   IconUserPlus,
 } from "@tabler/icons-react";
 
 import type { Session } from "~/server/better-auth/config";
+import { env } from "~/env";
 import {
   Sidebar,
   SidebarContent,
@@ -43,11 +46,7 @@ const getNavData = (session: Session | null) => {
       url: "/admin/dashboard",
       icon: IconDashboard,
     },
-    {
-      title: "Shops",
-      url: "/admin/shops",
-      icon: IconShoppingCart,
-    },
+
     {
       title: "Products",
       url: "/admin/products",
@@ -59,14 +58,14 @@ const getNavData = (session: Session | null) => {
       icon: IconHeartHandshake,
     },
     {
-      title: "Categories",
-      url: "/admin/categories",
-      icon: IconFolder,
-    },
-    {
       title: "Events",
       url: "/admin/events",
       icon: IconCalendar,
+    },
+    {
+      title: "Website",
+      url: "/admin/website",
+      icon: IconGlobe,
     },
   ];
 
@@ -80,8 +79,18 @@ const getNavData = (session: Session | null) => {
     session?.user.role === "ADMIN"
       ? [
           {
+            title: "Shops",
+            url: "/admin/shops",
+            icon: IconShoppingCart,
+          },
+          {
+            title: "Categories",
+            url: "/admin/categories",
+            icon: IconFolder,
+          },
+          {
             title: "Website Provisions",
-            url: "/admin/websites",
+            url: "/admin/website-provisions",
             icon: IconCode,
           },
           {
@@ -90,24 +99,26 @@ const getNavData = (session: Session | null) => {
             icon: IconNotebook,
           },
           {
-            title: "Fork Import",
-            url: "/admin/fork-import",
-            icon: IconDatabase,
-          },
-          {
-            title: "Upcycling",
-            url: "/admin/upcycling",
-            icon: IconDeviceMobileMessage,
-          },
-          {
             title: "Guest Surveys",
             url: "/admin/guest-surveys",
             icon: IconMessageCircle,
           },
+
+          {
+            title: "UPCY Admin",
+            url: "https://generate.dev.artisanalfutures.org/admin",
+            icon: IconSparkles,
+          },
+
           {
             title: "Invites",
             url: "/admin/invites",
             icon: IconUserPlus,
+          },
+          {
+            title: "Fork Import",
+            url: "/admin/fork-import",
+            icon: IconDatabase,
           },
         ]
       : [];
@@ -117,18 +128,8 @@ const getNavData = (session: Session | null) => {
     navPlatformAdmin,
     navSecondary: [
       {
-        title: "Settings",
-        url: "/admin/settings",
-        icon: IconSettings,
-      },
-      {
-        title: "Emails",
-        url: "/admin/emails",
-        icon: IconMail,
-      },
-      {
         title: "Get Help",
-        url: "#!",
+        url: env.NEXT_PUBLIC_HELP_DOCS_URL ?? "#!",
         icon: IconHelp,
       },
     ],

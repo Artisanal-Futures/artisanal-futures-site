@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { PencilIcon, XCircleIcon } from "lucide-react";
 
+import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
 import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
@@ -24,7 +25,7 @@ import { createProductFilter } from "./product-filters";
 
 type Props = {
   products: ProductWithRelations[];
-  shops: Shop[];
+  shops: RouterOutputs["shop"]["getAll"];
 };
 
 export function ProductClient({ products, shops }: Props) {

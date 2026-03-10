@@ -1,4 +1,4 @@
-export const UPCY_URL: string = "https://generate.dev.artisanalfutures.org/";
+export const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
 
 export const TOOLS_DATA = [
   // {

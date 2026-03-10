@@ -5,6 +5,7 @@ import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import {
   adminArtisanProcedure,
+  adminOnlyProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -57,7 +58,13 @@ export const shopsRouter = createTRPCRouter({
 
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const shops = await ctx.db.shop.findMany({
-      include: { owner: true, address: true },
+      include: {
+        owner: true,
+        address: true,
+        products: true,
+        services: true,
+        websiteProvision: true,
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -70,6 +77,42 @@ export const shopsRouter = createTRPCRouter({
       logoPhoto: `${shop?.logoPhoto}`,
       ownerPhoto: `${shop?.ownerPhoto}`,
     }));
+  }),
+
+  getMetrics: adminOnlyProcedure.query(async ({ ctx }) => {
+    const products = await ctx.db.product.count();
+    const services = await ctx.db.service.count();
+    const websites = await ctx.db.websiteProvision.count();
+    const invites = await ctx.db.platformInvite.count();
+    const users = await ctx.db.user.count();
+    const shops = await ctx.db.shop.count();
+
+    const newArtisansThisMonth = await ctx.db.user.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        },
+      },
+    });
+
+    const productsAddedThisWeek = await ctx.db.product.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+        },
+      },
+    });
+
+    return {
+      products,
+      services,
+      websites,
+      invites,
+      users,
+      shops,
+      newArtisansThisMonth,
+      productsAddedThisWeek,
+    };
   }),
 
   get: publicProcedure

@@ -141,7 +141,10 @@ export const websiteProvisionRouter = createTRPCRouter({
           include: { user: true },
         });
 
-        return updateProvision;
+        return {
+          provision: updateProvision,
+          redirectUrl: `https://${coolifyResult.domain}`,
+        };
       } catch (coolifyError) {
         await ctx.db.websiteProvision.update({
           where: { id: provision.id },

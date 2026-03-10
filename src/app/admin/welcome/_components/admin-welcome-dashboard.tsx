@@ -227,7 +227,7 @@ export function AdminWelcomeDashboard({
                   </div>
                 </div>
                 <Button asChild className="shrink-0">
-                  <Link href={"/admin/websites"}>
+                  <Link href={"/admin/website"}>
                     {hasWebsite ? "Explore Hosting" : "Create My Site"}
                     <ArrowRight className="ml-2 size-4" />
                   </Link>
