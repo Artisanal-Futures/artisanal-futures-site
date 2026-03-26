@@ -2,12 +2,12 @@ import { SiteType } from "generated/prisma";
 import { z } from "zod";
 
 export const cancelProvisionSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   reason: z.string().optional(),
 });
 
 export const notifyArtisanSchema = z.object({
-  id: z.string().cuid(),
+  id: z.string(),
   message: z.string().optional(),
 });
 
@@ -28,8 +28,8 @@ export const wordpressConfigSchema = z.object({
 //--------------------------------------------------------
 
 export const websiteCreateFormSchema = z.object({
-  ownerId: z.string().cuid(),
-  shopId: z.string().cuid(),
+  ownerId: z.string(),
+  shopId: z.string(),
   websiteType: z.nativeEnum(SiteType),
   businessName: z.string().min(1, "Business name is required"),
   contactEmail: z.string().email("Invalid email address"),
@@ -42,8 +42,8 @@ export type WebsiteCreateFormData = z.infer<typeof websiteCreateFormSchema>;
 //--------------------------------------------------------
 
 export const createProvisionSchema = z.object({
-  userId: z.string().cuid(),
-  shopId: z.string().cuid(),
+  userId: z.string(),
+  shopId: z.string(),
   framework: z.enum(["WORDPRESS", "NEXTJS", "GHOST", "STRAPI"]),
   siteType: z.enum([
     "ECOMMERCE",

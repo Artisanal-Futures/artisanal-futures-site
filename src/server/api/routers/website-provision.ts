@@ -171,6 +171,18 @@ export const websiteProvisionRouter = createTRPCRouter({
   createNextJs: adminOnlyProcedure
     .input(createProvisionSchema)
     .mutation(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
+        where: { id: input.shopId },
+        select: { id: true, name: true, ownerId: true },
+      });
+
+      if (!shop) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Shop not found",
+        });
+      }
+
       const existingProvision = await ctx.db.websiteProvision.findUnique({
         where: { shopId: input.shopId },
       });

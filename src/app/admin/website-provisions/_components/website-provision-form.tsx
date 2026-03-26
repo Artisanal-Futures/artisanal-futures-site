@@ -41,6 +41,7 @@ const TEMPLATES = [
 ];
 
 export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
+  console.log(initialData);
   const utils = api.useUtils();
   const router = useRouter();
 
@@ -118,7 +119,11 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+        onChange={() => console.log(form.formState.errors)}
+      >
         <FormField
           control={form.control}
           name="framework"
