@@ -34,6 +34,7 @@ model WebsiteProvision {
   coolifyServiceUuid     String?         @unique
   adminPasswordEncrypted String?
   adminUser              String?
+  accessToken            String?         @unique
   shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
   user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 

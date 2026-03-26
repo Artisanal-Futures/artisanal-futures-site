@@ -612,7 +612,9 @@ exports.Prisma.UpcycleResultScalarFieldEnum = {
   originalTrainingId: 'originalTrainingId',
   trainingCaptions: 'trainingCaptions',
   trainingImageFilenames: 'trainingImageFilenames',
-  trainingImageUrls: 'trainingImageUrls'
+  trainingImageUrls: 'trainingImageUrls',
+  promptDetails: 'promptDetails',
+  promptSubject: 'promptSubject'
 };
 
 exports.Prisma.UpcycleQuestionScalarFieldEnum = {
@@ -756,7 +758,8 @@ exports.Prisma.WebsiteProvisionScalarFieldEnum = {
   coolifyDatabaseUuid: 'coolifyDatabaseUuid',
   coolifyServiceUuid: 'coolifyServiceUuid',
   adminPasswordEncrypted: 'adminPasswordEncrypted',
-  adminUser: 'adminUser'
+  adminUser: 'adminUser',
+  accessToken: 'accessToken'
 };
 
 exports.Prisma.ExampleScalarFieldEnum = {

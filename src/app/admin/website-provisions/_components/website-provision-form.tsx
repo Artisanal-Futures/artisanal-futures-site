@@ -50,10 +50,10 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
       ownerId: initialData?.ownerId ?? "",
       shopId: initialData?.shopId ?? "",
       websiteType: "ECOMMERCE",
+      framework: "WORDPRESS",
       businessName: initialData?.name ?? "",
       contactEmail: initialData?.email ?? "",
-      subdomain: initialData?.name ? slugify(initialData.name) : "",
-      framework: "WORDPRESS",
+      subdomain: "",
     },
   });
 
@@ -61,15 +61,13 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
     onSuccess: () => {
       toast.dismiss();
       toast.success("Website provision created successfully!");
+      void utils.shop.invalidate();
       router.refresh();
       onSuccess?.();
     },
     onError: (error) => {
       toast.dismiss();
       toast.error(`Error creating website provision: ${error.message}`);
-    },
-    onSettled: () => {
-      void utils.shop.getAllWithWebsites.invalidate();
     },
     onMutate: () => {
       toast.loading("Creating website provision...");
@@ -80,6 +78,7 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
     onSuccess: (data) => {
       toast.dismiss();
       toast.success("SimplePress provision created successfully! ");
+      void utils.shop.invalidate();
       if (data?.redirectUrl) {
         window.open(data.redirectUrl, "_blank");
       }
@@ -89,9 +88,6 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
     onError: (error) => {
       toast.dismiss();
       toast.error(`Error creating SimplePress website: ${error.message}`);
-    },
-    onSettled: () => {
-      void utils.shop.getAllWithWebsites.invalidate();
     },
     onMutate: () => {
       toast.loading("Creating SimplePress website...");
@@ -107,7 +103,6 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
         framework: data.framework,
         businessName: data.businessName,
         contactEmail: data.contactEmail,
-        subdomain: data.subdomain,
       });
     } else {
       createMutation.mutate({
@@ -168,42 +163,23 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
           )}
         />
 
-        <SelectFormField
-          form={form}
-          name="websiteType"
-          label="Website Type"
-          placeholder="Select website type"
-          values={[{ value: SiteType.ECOMMERCE, label: "E-commerce" }]}
-        />
-
         <InputFormField
           form={form}
           name="businessName"
-          label="Business Name"
-          placeholder="Enter business name"
-          onChangeAdditional={(value: string) => {
-            form.setValue("subdomain", slugify(value));
-          }}
+          label="What is the name of your business?"
+          description="This will be used as the name of the business and will be displayed on the website."
+          placeholder="e.g. My Awesome Store"
+          required
         />
-
-        {form.watch("framework") === "NEXTJS" && (
-          <InputFormField
-            form={form}
-            name="subdomain"
-            onChangeAdditional={(value) => {
-              form.setValue("subdomain", slugify(value));
-            }}
-            label="Subdomain"
-            placeholder="Enter business name"
-          />
-        )}
 
         <InputFormField
           form={form}
           name="contactEmail"
-          label="Contact Email"
-          placeholder="contact@business.com"
+          label="What email will be used to sign in to the website?"
+          description="This is the email that will be used to sign in to the website. "
+          placeholder="e.g. hello@example.com"
           type="email"
+          required
         />
         <div className="flex justify-end space-x-4">
           <Button type="submit" disabled={createMutation.isPending}>

@@ -729,6 +729,8 @@ model UpcycleResult {
   trainingCaptions          Json?             @default("{}")
   trainingImageFilenames    Json?
   trainingImageUrls         String[]          @default([])
+  promptDetails             String?
+  promptSubject             String?
   questions                 UpcycleQuestion[]
   rating                    UpcycleRating?
   user                      User              @relation(fields: [userId], references: [id])
@@ -946,6 +948,7 @@ model WebsiteProvision {
   coolifyServiceUuid     String?         @unique
   adminPasswordEncrypted String?
   adminUser              String?
+  accessToken            String?         @unique
   shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
   user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 

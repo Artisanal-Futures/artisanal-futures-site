@@ -51367,6 +51367,8 @@ export namespace Prisma {
     status: $Enums.status | null
     isRetrain: boolean | null
     originalTrainingId: string | null
+    promptDetails: string | null
+    promptSubject: string | null
   }
 
   export type UpcycleResultMaxAggregateOutputType = {
@@ -51397,6 +51399,8 @@ export namespace Prisma {
     status: $Enums.status | null
     isRetrain: boolean | null
     originalTrainingId: string | null
+    promptDetails: string | null
+    promptSubject: string | null
   }
 
   export type UpcycleResultCountAggregateOutputType = {
@@ -51433,6 +51437,8 @@ export namespace Prisma {
     trainingCaptions: number
     trainingImageFilenames: number
     trainingImageUrls: number
+    promptDetails: number
+    promptSubject: number
     _all: number
   }
 
@@ -51465,6 +51471,8 @@ export namespace Prisma {
     status?: true
     isRetrain?: true
     originalTrainingId?: true
+    promptDetails?: true
+    promptSubject?: true
   }
 
   export type UpcycleResultMaxAggregateInputType = {
@@ -51495,6 +51503,8 @@ export namespace Prisma {
     status?: true
     isRetrain?: true
     originalTrainingId?: true
+    promptDetails?: true
+    promptSubject?: true
   }
 
   export type UpcycleResultCountAggregateInputType = {
@@ -51531,6 +51541,8 @@ export namespace Prisma {
     trainingCaptions?: true
     trainingImageFilenames?: true
     trainingImageUrls?: true
+    promptDetails?: true
+    promptSubject?: true
     _all?: true
   }
 
@@ -51640,6 +51652,8 @@ export namespace Prisma {
     trainingCaptions: JsonValue | null
     trainingImageFilenames: JsonValue | null
     trainingImageUrls: string[]
+    promptDetails: string | null
+    promptSubject: string | null
     _count: UpcycleResultCountAggregateOutputType | null
     _min: UpcycleResultMinAggregateOutputType | null
     _max: UpcycleResultMaxAggregateOutputType | null
@@ -51693,6 +51707,8 @@ export namespace Prisma {
     trainingCaptions?: boolean
     trainingImageFilenames?: boolean
     trainingImageUrls?: boolean
+    promptDetails?: boolean
+    promptSubject?: boolean
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -51734,6 +51750,8 @@ export namespace Prisma {
     trainingCaptions?: boolean
     trainingImageFilenames?: boolean
     trainingImageUrls?: boolean
+    promptDetails?: boolean
+    promptSubject?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upcycleResult"]>
 
@@ -51771,6 +51789,8 @@ export namespace Prisma {
     trainingCaptions?: boolean
     trainingImageFilenames?: boolean
     trainingImageUrls?: boolean
+    promptDetails?: boolean
+    promptSubject?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upcycleResult"]>
 
@@ -51808,9 +51828,11 @@ export namespace Prisma {
     trainingCaptions?: boolean
     trainingImageFilenames?: boolean
     trainingImageUrls?: boolean
+    promptDetails?: boolean
+    promptSubject?: boolean
   }
 
-  export type UpcycleResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "projectTitle" | "prompt" | "negativePrompt" | "refinementObject" | "refinementType" | "styleImageUrl" | "structureImageUrl" | "zipFileUrl" | "outputImageUrl" | "improvePrompt" | "removeBackgroundScrap" | "removeBackgroundStructure" | "removeBackgroundGenerated" | "trackingId" | "userId" | "upcycleType" | "generationModelName" | "styleModelName" | "structureSettings" | "styleSettings" | "trainingSettings" | "trainingModelName" | "error" | "startedAt" | "status" | "isRetrain" | "originalTrainingId" | "trainingCaptions" | "trainingImageFilenames" | "trainingImageUrls", ExtArgs["result"]["upcycleResult"]>
+  export type UpcycleResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "projectTitle" | "prompt" | "negativePrompt" | "refinementObject" | "refinementType" | "styleImageUrl" | "structureImageUrl" | "zipFileUrl" | "outputImageUrl" | "improvePrompt" | "removeBackgroundScrap" | "removeBackgroundStructure" | "removeBackgroundGenerated" | "trackingId" | "userId" | "upcycleType" | "generationModelName" | "styleModelName" | "structureSettings" | "styleSettings" | "trainingSettings" | "trainingModelName" | "error" | "startedAt" | "status" | "isRetrain" | "originalTrainingId" | "trainingCaptions" | "trainingImageFilenames" | "trainingImageUrls" | "promptDetails" | "promptSubject", ExtArgs["result"]["upcycleResult"]>
   export type UpcycleResultInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questions?: boolean | UpcycleResult$questionsArgs<ExtArgs>
     rating?: boolean | UpcycleResult$ratingArgs<ExtArgs>
@@ -51867,6 +51889,8 @@ export namespace Prisma {
       trainingCaptions: Prisma.JsonValue | null
       trainingImageFilenames: Prisma.JsonValue | null
       trainingImageUrls: string[]
+      promptDetails: string | null
+      promptSubject: string | null
     }, ExtArgs["result"]["upcycleResult"]>
     composites: {}
   }
@@ -52327,6 +52351,8 @@ export namespace Prisma {
     readonly trainingCaptions: FieldRef<"UpcycleResult", 'Json'>
     readonly trainingImageFilenames: FieldRef<"UpcycleResult", 'Json'>
     readonly trainingImageUrls: FieldRef<"UpcycleResult", 'String[]'>
+    readonly promptDetails: FieldRef<"UpcycleResult", 'String'>
+    readonly promptSubject: FieldRef<"UpcycleResult", 'String'>
   }
     
 
@@ -61969,6 +61995,7 @@ export namespace Prisma {
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    accessToken: string | null
   }
 
   export type WebsiteProvisionMaxAggregateOutputType = {
@@ -62004,6 +62031,7 @@ export namespace Prisma {
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    accessToken: string | null
   }
 
   export type WebsiteProvisionCountAggregateOutputType = {
@@ -62042,6 +62070,7 @@ export namespace Prisma {
     coolifyServiceUuid: number
     adminPasswordEncrypted: number
     adminUser: number
+    accessToken: number
     _all: number
   }
 
@@ -62079,6 +62108,7 @@ export namespace Prisma {
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    accessToken?: true
   }
 
   export type WebsiteProvisionMaxAggregateInputType = {
@@ -62114,6 +62144,7 @@ export namespace Prisma {
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    accessToken?: true
   }
 
   export type WebsiteProvisionCountAggregateInputType = {
@@ -62152,6 +62183,7 @@ export namespace Prisma {
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    accessToken?: true
     _all?: true
   }
 
@@ -62263,6 +62295,7 @@ export namespace Prisma {
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    accessToken: string | null
     _count: WebsiteProvisionCountAggregateOutputType | null
     _min: WebsiteProvisionMinAggregateOutputType | null
     _max: WebsiteProvisionMaxAggregateOutputType | null
@@ -62318,6 +62351,7 @@ export namespace Prisma {
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    accessToken?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62358,6 +62392,7 @@ export namespace Prisma {
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    accessToken?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62398,6 +62433,7 @@ export namespace Prisma {
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    accessToken?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62438,9 +62474,10 @@ export namespace Prisma {
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    accessToken?: boolean
   }
 
-  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "framework" | "siteType" | "status" | "hasCustomDomain" | "customDomain" | "subdomain" | "businessName" | "businessTagline" | "contactEmail" | "contactPhone" | "businessAddress" | "socialLinks" | "coolifyProjectUuid" | "coolifyServerUuid" | "deploymentUrl" | "lastDeploymentAt" | "lastHealthCheck" | "healthCheckStatus" | "config" | "cpuLimit" | "memoryLimit" | "errorMessage" | "deploymentLogs" | "notes" | "isTest" | "deletedAt" | "shopId" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser", ExtArgs["result"]["websiteProvision"]>
+  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "framework" | "siteType" | "status" | "hasCustomDomain" | "customDomain" | "subdomain" | "businessName" | "businessTagline" | "contactEmail" | "contactPhone" | "businessAddress" | "socialLinks" | "coolifyProjectUuid" | "coolifyServerUuid" | "deploymentUrl" | "lastDeploymentAt" | "lastHealthCheck" | "healthCheckStatus" | "config" | "cpuLimit" | "memoryLimit" | "errorMessage" | "deploymentLogs" | "notes" | "isTest" | "deletedAt" | "shopId" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser" | "accessToken", ExtArgs["result"]["websiteProvision"]>
   export type WebsiteProvisionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -62496,6 +62533,7 @@ export namespace Prisma {
       coolifyServiceUuid: string | null
       adminPasswordEncrypted: string | null
       adminUser: string | null
+      accessToken: string | null
     }, ExtArgs["result"]["websiteProvision"]>
     composites: {}
   }
@@ -62956,6 +62994,7 @@ export namespace Prisma {
     readonly coolifyServiceUuid: FieldRef<"WebsiteProvision", 'String'>
     readonly adminPasswordEncrypted: FieldRef<"WebsiteProvision", 'String'>
     readonly adminUser: FieldRef<"WebsiteProvision", 'String'>
+    readonly accessToken: FieldRef<"WebsiteProvision", 'String'>
   }
     
 
@@ -69915,7 +69954,9 @@ export namespace Prisma {
     originalTrainingId: 'originalTrainingId',
     trainingCaptions: 'trainingCaptions',
     trainingImageFilenames: 'trainingImageFilenames',
-    trainingImageUrls: 'trainingImageUrls'
+    trainingImageUrls: 'trainingImageUrls',
+    promptDetails: 'promptDetails',
+    promptSubject: 'promptSubject'
   };
 
   export type UpcycleResultScalarFieldEnum = (typeof UpcycleResultScalarFieldEnum)[keyof typeof UpcycleResultScalarFieldEnum]
@@ -70086,7 +70127,8 @@ export namespace Prisma {
     coolifyDatabaseUuid: 'coolifyDatabaseUuid',
     coolifyServiceUuid: 'coolifyServiceUuid',
     adminPasswordEncrypted: 'adminPasswordEncrypted',
-    adminUser: 'adminUser'
+    adminUser: 'adminUser',
+    accessToken: 'accessToken'
   };
 
   export type WebsiteProvisionScalarFieldEnum = (typeof WebsiteProvisionScalarFieldEnum)[keyof typeof WebsiteProvisionScalarFieldEnum]
@@ -73719,6 +73761,8 @@ export namespace Prisma {
     trainingCaptions?: JsonNullableFilter<"UpcycleResult">
     trainingImageFilenames?: JsonNullableFilter<"UpcycleResult">
     trainingImageUrls?: StringNullableListFilter<"UpcycleResult">
+    promptDetails?: StringNullableFilter<"UpcycleResult"> | string | null
+    promptSubject?: StringNullableFilter<"UpcycleResult"> | string | null
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -73759,6 +73803,8 @@ export namespace Prisma {
     trainingCaptions?: SortOrderInput | SortOrder
     trainingImageFilenames?: SortOrderInput | SortOrder
     trainingImageUrls?: SortOrder
+    promptDetails?: SortOrderInput | SortOrder
+    promptSubject?: SortOrderInput | SortOrder
     questions?: UpcycleQuestionOrderByRelationAggregateInput
     rating?: UpcycleRatingOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -73802,6 +73848,8 @@ export namespace Prisma {
     trainingCaptions?: JsonNullableFilter<"UpcycleResult">
     trainingImageFilenames?: JsonNullableFilter<"UpcycleResult">
     trainingImageUrls?: StringNullableListFilter<"UpcycleResult">
+    promptDetails?: StringNullableFilter<"UpcycleResult"> | string | null
+    promptSubject?: StringNullableFilter<"UpcycleResult"> | string | null
     questions?: UpcycleQuestionListRelationFilter
     rating?: XOR<UpcycleRatingNullableScalarRelationFilter, UpcycleRatingWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -73842,6 +73890,8 @@ export namespace Prisma {
     trainingCaptions?: SortOrderInput | SortOrder
     trainingImageFilenames?: SortOrderInput | SortOrder
     trainingImageUrls?: SortOrder
+    promptDetails?: SortOrderInput | SortOrder
+    promptSubject?: SortOrderInput | SortOrder
     _count?: UpcycleResultCountOrderByAggregateInput
     _max?: UpcycleResultMaxOrderByAggregateInput
     _min?: UpcycleResultMinOrderByAggregateInput
@@ -73884,6 +73934,8 @@ export namespace Prisma {
     trainingCaptions?: JsonNullableWithAggregatesFilter<"UpcycleResult">
     trainingImageFilenames?: JsonNullableWithAggregatesFilter<"UpcycleResult">
     trainingImageUrls?: StringNullableListFilter<"UpcycleResult">
+    promptDetails?: StringNullableWithAggregatesFilter<"UpcycleResult"> | string | null
+    promptSubject?: StringNullableWithAggregatesFilter<"UpcycleResult"> | string | null
   }
 
   export type UpcycleQuestionWhereInput = {
@@ -74590,6 +74642,7 @@ export namespace Prisma {
     coolifyServiceUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -74630,6 +74683,7 @@ export namespace Prisma {
     coolifyServiceUuid?: SortOrderInput | SortOrder
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
+    accessToken?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -74641,6 +74695,7 @@ export namespace Prisma {
     coolifyProjectUuid?: string
     shopId?: string
     coolifyServiceUuid?: string
+    accessToken?: string
     AND?: WebsiteProvisionWhereInput | WebsiteProvisionWhereInput[]
     OR?: WebsiteProvisionWhereInput[]
     NOT?: WebsiteProvisionWhereInput | WebsiteProvisionWhereInput[]
@@ -74675,7 +74730,7 @@ export namespace Prisma {
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "customDomain" | "subdomain" | "coolifyProjectUuid" | "shopId" | "coolifyServiceUuid">
+  }, "id" | "customDomain" | "subdomain" | "coolifyProjectUuid" | "shopId" | "coolifyServiceUuid" | "accessToken">
 
   export type WebsiteProvisionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -74713,6 +74768,7 @@ export namespace Prisma {
     coolifyServiceUuid?: SortOrderInput | SortOrder
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
+    accessToken?: SortOrderInput | SortOrder
     _count?: WebsiteProvisionCountOrderByAggregateInput
     _max?: WebsiteProvisionMaxOrderByAggregateInput
     _min?: WebsiteProvisionMinOrderByAggregateInput
@@ -74757,6 +74813,7 @@ export namespace Prisma {
     coolifyServiceUuid?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    accessToken?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
   }
 
   export type ExampleWhereInput = {
@@ -78540,6 +78597,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
@@ -78580,6 +78639,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
     checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
@@ -78618,6 +78679,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
@@ -78658,6 +78721,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
     checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
@@ -78697,6 +78762,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
   }
 
   export type UpcycleResultUpdateManyMutationInput = {
@@ -78732,6 +78799,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpcycleResultUncheckedUpdateManyInput = {
@@ -78768,6 +78837,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UpcycleQuestionCreateInput = {
@@ -79558,6 +79629,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
     shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
@@ -79598,6 +79670,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
   }
 
   export type WebsiteProvisionUpdateInput = {
@@ -79634,6 +79707,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
     user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
@@ -79674,6 +79748,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionCreateManyInput = {
@@ -79712,6 +79787,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
   }
 
   export type WebsiteProvisionUpdateManyMutationInput = {
@@ -79748,6 +79824,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUncheckedUpdateManyInput = {
@@ -79786,6 +79863,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ExampleCreateInput = {
@@ -82693,6 +82771,8 @@ export namespace Prisma {
     trainingCaptions?: SortOrder
     trainingImageFilenames?: SortOrder
     trainingImageUrls?: SortOrder
+    promptDetails?: SortOrder
+    promptSubject?: SortOrder
   }
 
   export type UpcycleResultMaxOrderByAggregateInput = {
@@ -82723,6 +82803,8 @@ export namespace Prisma {
     status?: SortOrder
     isRetrain?: SortOrder
     originalTrainingId?: SortOrder
+    promptDetails?: SortOrder
+    promptSubject?: SortOrder
   }
 
   export type UpcycleResultMinOrderByAggregateInput = {
@@ -82753,6 +82835,8 @@ export namespace Prisma {
     status?: SortOrder
     isRetrain?: SortOrder
     originalTrainingId?: SortOrder
+    promptDetails?: SortOrder
+    promptSubject?: SortOrder
   }
 
   export type EnumRefinementTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -83348,6 +83432,7 @@ export namespace Prisma {
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    accessToken?: SortOrder
   }
 
   export type WebsiteProvisionMaxOrderByAggregateInput = {
@@ -83383,6 +83468,7 @@ export namespace Prisma {
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    accessToken?: SortOrder
   }
 
   export type WebsiteProvisionMinOrderByAggregateInput = {
@@ -83418,6 +83504,7 @@ export namespace Prisma {
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    accessToken?: SortOrder
   }
 
   export type EnumFrameworkWithAggregatesFilter<$PrismaModel = never> = {
@@ -91534,6 +91621,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
 
@@ -91572,6 +91660,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
@@ -91799,6 +91888,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
 
@@ -91837,6 +91927,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopCreateWithoutAddressInput = {
@@ -97986,6 +98077,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
     checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
@@ -98025,6 +98118,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
     checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
@@ -98078,6 +98173,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
     checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
@@ -98117,6 +98214,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
     checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
@@ -98302,6 +98401,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
     checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
@@ -98341,6 +98442,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
   }
@@ -98394,6 +98497,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
     checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
@@ -98433,6 +98538,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
   }
@@ -99227,6 +99334,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     user: UserCreateNestedOneWithoutUpcycleResultsInput
@@ -99266,6 +99375,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
   }
@@ -99406,6 +99517,8 @@ export namespace Prisma {
     trainingCaptions?: JsonNullableFilter<"UpcycleResult">
     trainingImageFilenames?: JsonNullableFilter<"UpcycleResult">
     trainingImageUrls?: StringNullableListFilter<"UpcycleResult">
+    promptDetails?: StringNullableFilter<"UpcycleResult"> | string | null
+    promptSubject?: StringNullableFilter<"UpcycleResult"> | string | null
   }
 
   export type ShopCreateWithoutWebsiteProvisionInput = {
@@ -100490,6 +100603,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingCreateNestedOneWithoutUpcycleResultInput
     checkpointsUsed?: TrainingModelCreateNestedManyWithoutUpcycleResultsInput
@@ -100528,6 +100643,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
     questions?: UpcycleQuestionUncheckedCreateNestedManyWithoutUpcycleResultInput
     rating?: UpcycleRatingUncheckedCreateNestedOneWithoutUpcycleResultInput
     checkpointsUsed?: TrainingModelUncheckedCreateNestedManyWithoutUpcycleResultsInput
@@ -100623,6 +100740,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
     shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
   }
 
@@ -100661,6 +100779,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutUserInput = {
@@ -101248,6 +101367,7 @@ export namespace Prisma {
     coolifyServiceUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
   }
 
   export type DepotUpsertWithWhereUniqueWithoutUserInput = {
@@ -103479,6 +103599,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     user?: UserUpdateOneRequiredWithoutUpcycleResultsNestedInput
@@ -103518,6 +103640,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
   }
@@ -103556,6 +103680,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AccountCreateManyUserInput = {
@@ -103739,6 +103865,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultCreatetrainingImageUrlsInput | string[]
+    promptDetails?: string | null
+    promptSubject?: string | null
   }
 
   export type VariationCreateManyUserInput = {
@@ -103789,6 +103917,7 @@ export namespace Prisma {
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    accessToken?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -104292,6 +104421,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUpdateOneWithoutUpcycleResultNestedInput
     checkpointsUsed?: TrainingModelUpdateManyWithoutUpcycleResultsNestedInput
@@ -104330,6 +104461,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
     questions?: UpcycleQuestionUncheckedUpdateManyWithoutUpcycleResultNestedInput
     rating?: UpcycleRatingUncheckedUpdateOneWithoutUpcycleResultNestedInput
     checkpointsUsed?: TrainingModelUncheckedUpdateManyWithoutUpcycleResultsNestedInput
@@ -104368,6 +104501,8 @@ export namespace Prisma {
     trainingCaptions?: NullableJsonNullValueInput | InputJsonValue
     trainingImageFilenames?: NullableJsonNullValueInput | InputJsonValue
     trainingImageUrls?: UpcycleResultUpdatetrainingImageUrlsInput | string[]
+    promptDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    promptSubject?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type VariationUpdateWithoutUserInput = {
@@ -104443,6 +104578,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
 
@@ -104481,6 +104617,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUncheckedUpdateManyWithoutUserInput = {
@@ -104518,6 +104655,7 @@ export namespace Prisma {
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DepotUpdateWithoutUserInput = {

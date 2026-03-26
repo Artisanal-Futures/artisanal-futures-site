@@ -1,3 +1,4 @@
+import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -14,6 +15,10 @@ import { generateSecurePassword } from "~/lib/website-provisions/generate-secure
 import { generateSimplePressLink } from "~/lib/website-provisions/generate-sp-link";
 
 import { adminOnlyProcedure, createTRPCRouter } from "../trpc";
+
+function generateInviteCode(): string {
+  return createId().slice(0, 8).toUpperCase();
+}
 
 export const websiteProvisionRouter = createTRPCRouter({
   getShopForProvision: adminOnlyProcedure
@@ -177,31 +182,46 @@ export const websiteProvisionRouter = createTRPCRouter({
         });
       }
 
-      const provision = await ctx.db.websiteProvision.create({
-        data: {
-          userId: input.userId,
-          shopId: input.shopId,
-          framework: input.framework,
-          siteType: input.siteType,
-          status: "ACTIVE",
-          businessName: input.businessName,
-          contactEmail: input.contactEmail,
-          subdomain: input.subdomain,
-          customDomain: `${input.subdomain}.simplepress.dev`,
-          hasCustomDomain: true,
+      let code: string;
+      let provision: Awaited<ReturnType<typeof ctx.db.websiteProvision.create>>;
+      let attempts = 0;
+      const maxAttempts = 5;
 
-          config: {},
-        },
-        include: { user: true },
-      });
-
-      const redirectUrl = generateSimplePressLink({
-        userEmail: input.contactEmail,
-        subdomain: input.subdomain ?? "",
-      });
+      while (true) {
+        code = generateInviteCode();
+        try {
+          provision = await ctx.db.websiteProvision.create({
+            data: {
+              userId: input.userId,
+              shopId: input.shopId,
+              framework: input.framework,
+              siteType: input.siteType,
+              status: "PROVISIONING",
+              businessName: input.businessName,
+              contactEmail: input.contactEmail,
+              hasCustomDomain: false,
+              accessToken: code,
+              config: {},
+            },
+            include: { user: true },
+          });
+          break;
+        } catch (err) {
+          const isUniqueViolation =
+            err &&
+            typeof err === "object" &&
+            "code" in err &&
+            (err as { code?: string }).code === "P2002";
+          if (isUniqueViolation && attempts < maxAttempts) {
+            attempts++;
+            continue;
+          }
+          throw err;
+        }
+      }
       return {
         provision,
-        redirectUrl,
+        redirectUrl: `https://simplepress.dev/verify?code=${code}`,
       };
     }),
 
