@@ -4,7 +4,7 @@ import { Prisma } from "../../../generated/prisma";
 
 export type SimplePressProvisionPayload = {
   email: string;
-  subdomain: string | null;
+  businessName: string;
 };
 
 export async function getSimplePressProvisionForExchange(
@@ -18,6 +18,7 @@ export async function getSimplePressProvisionForExchange(
       subdomain: true,
       contactEmail: true,
       userId: true,
+      businessName: true,
     },
   });
 
@@ -30,7 +31,7 @@ export async function getSimplePressProvisionForExchange(
 
   return {
     email,
-    subdomain: provision.subdomain,
+    businessName: provision.businessName,
   };
 }
 

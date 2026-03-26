@@ -221,7 +221,7 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
       return {
         provision,
-        redirectUrl: `https://simplepress.dev/verify?code=${code}`,
+        redirectUrl: `https://simplepress.dev/platform/signup?aftoken=${code}`,
       };
     }),
 

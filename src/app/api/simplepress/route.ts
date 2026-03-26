@@ -41,10 +41,13 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json({
-    email: payload.email,
-    subdomain: payload.subdomain,
-  });
+  return NextResponse.json(
+    {
+      email: payload.email,
+      businessName: payload.businessName,
+    },
+    { status: 200 },
+  );
 }
 
 export async function POST(req: Request) {
