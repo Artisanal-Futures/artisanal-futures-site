@@ -1,28 +1,86 @@
-# Create T3 App
+# Artisanal Futures
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+The web platform for [Artisanal Futures](https://artisanalfutures.org) — a community hub for artisan shops, forums, and cooperative tools.
 
-## What's next? How do I make an app with this?
+Built with the [T3 Stack](https://create.t3.gg/): Next.js 15, Prisma, tRPC, Tailwind CSS, and Better Auth.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Tech Stack
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- [Next.js](https://nextjs.org) — App Router (React 19)
+- [Better Auth](https://better-auth.com) — Authentication (Discord, Google, Auth0)
+- [Prisma](https://prisma.io) — ORM (PostgreSQL, shared with UPCY)
+- [tRPC](https://trpc.io) — Type-safe API
+- [Tailwind CSS](https://tailwindcss.com) — Styling
+- [MinIO](https://min.io) — File storage
+- [Resend](https://resend.com) — Email
+- [Stripe](https://stripe.com) — Payments
+- [Coolify](https://coolify.io) — Website provisioning (WordPress/SimplePress)
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Prerequisites
 
-## Learn More
+- [Node.js](https://nodejs.org) (v20+)
+- [pnpm](https://pnpm.io) (v9+)
+- [Docker](https://docker.com) (for local database)
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Local Development
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+### 1. Start the database
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+```bash
+docker compose up -d
+```
 
-## How do I deploy this?
+This starts a PostgreSQL instance on port `3377` (mapped from container port `5432`).
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 2. Install dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Configure environment variables
+
+```bash
+cp .env.example .env
+```
+
+Fill in the required values in `.env`. The database URL for the local Docker instance is:
+
+```
+DATABASE_URL='postgres://myuser:mypassword@localhost:3377/mydatabase'
+```
+
+> **Note:** The database is shared with the UPCY project. Make sure your local Docker volume (`postgres-data`) is consistent across both repos, or point both at the same running container.
+
+### 4. Run database migrations
+
+```bash
+pnpm db:migrate
+```
+
+### 5. Start the dev server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Scripts
+
+| Command                  | Description                           |
+| ------------------------ | ------------------------------------- |
+| `pnpm dev`               | Start development server              |
+| `pnpm build`             | Build for production                  |
+| `pnpm start`             | Start production server               |
+| `pnpm lint`              | Lint the codebase                     |
+| `pnpm db:generate`       | Generate Prisma client                |
+| `pnpm db:migrate`        | Deploy pending migrations             |
+| `pnpm db:migrate-create` | Create a new migration (no apply)     |
+| `pnpm db:push`           | Push schema changes without migration |
+| `pnpm db:studio`         | Open Prisma Studio                    |
+| `pnpm test`              | Run tests                             |
+
+## Deployment
+
+The app is deployed via [Coolify](https://coolify.io). Environment variables are managed in the Coolify dashboard.
