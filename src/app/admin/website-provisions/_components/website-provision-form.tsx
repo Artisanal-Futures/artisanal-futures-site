@@ -1,5 +1,6 @@
 "use client";
 
+import type { Shop, WebsiteProvision } from "generated/prisma";
 import { useRouter } from "next/navigation";
 import { SiteType } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +17,10 @@ import { Form, FormField } from "~/components/ui/form";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 
+type ShopWithWebsite = Shop & {
+  websiteProvision: WebsiteProvision | null;
+};
+
 type Props = {
   initialData?: {
     ownerId?: string;
@@ -24,6 +29,7 @@ type Props = {
     email?: string;
   } | null;
   onSuccess?: () => void;
+  shops?: ShopWithWebsite[];
 };
 
 const TEMPLATES = [
@@ -40,7 +46,7 @@ const TEMPLATES = [
   },
 ];
 
-export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
+export function WebsiteProvisionForm({ initialData, onSuccess, shops }: Props) {
   console.log(initialData);
   const utils = api.useUtils();
   const router = useRouter();
@@ -58,7 +64,7 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
     },
   });
 
-  const createMutation = api.websiteProvision.create.useMutation({
+  const createMutation = api.websiteProvision.createWordPress.useMutation({
     onSuccess: () => {
       toast.dismiss();
       toast.success("Website provision created successfully!");
@@ -167,6 +173,25 @@ export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
             </div>
           )}
         />
+
+        {!!shops && shops?.length > 0 && (
+          <SelectFormField
+            form={form}
+            name="shopId"
+            label="What shop does this provision belong to?"
+            values={
+              shops?.map((shop) => ({
+                label: shop.name,
+                value: shop.id,
+              })) ?? []
+            }
+            onValueChange={(value) => {
+              const ownerId = shops?.find((shop) => shop.id === value)?.ownerId;
+              form.setValue("ownerId", ownerId ?? "");
+            }}
+            defaultValue={initialData?.shopId ?? ""}
+          />
+        )}
 
         <InputFormField
           form={form}

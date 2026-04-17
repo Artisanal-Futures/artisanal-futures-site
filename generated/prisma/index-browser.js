@@ -725,41 +725,30 @@ exports.Prisma.TrainingModelScalarFieldEnum = {
 
 exports.Prisma.WebsiteProvisionScalarFieldEnum = {
   id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId',
   framework: 'framework',
   siteType: 'siteType',
   status: 'status',
-  hasCustomDomain: 'hasCustomDomain',
   customDomain: 'customDomain',
   subdomain: 'subdomain',
+  deploymentUrl: 'deploymentUrl',
   businessName: 'businessName',
-  businessTagline: 'businessTagline',
   contactEmail: 'contactEmail',
-  contactPhone: 'contactPhone',
-  businessAddress: 'businessAddress',
-  socialLinks: 'socialLinks',
+  config: 'config',
+  errorMessage: 'errorMessage',
+  deletedAt: 'deletedAt',
   coolifyProjectUuid: 'coolifyProjectUuid',
   coolifyServerUuid: 'coolifyServerUuid',
-  deploymentUrl: 'deploymentUrl',
-  lastDeploymentAt: 'lastDeploymentAt',
-  lastHealthCheck: 'lastHealthCheck',
-  healthCheckStatus: 'healthCheckStatus',
-  config: 'config',
-  cpuLimit: 'cpuLimit',
-  memoryLimit: 'memoryLimit',
-  errorMessage: 'errorMessage',
-  deploymentLogs: 'deploymentLogs',
-  notes: 'notes',
-  isTest: 'isTest',
-  deletedAt: 'deletedAt',
-  shopId: 'shopId',
   coolifyDatabaseUuid: 'coolifyDatabaseUuid',
   coolifyServiceUuid: 'coolifyServiceUuid',
   adminPasswordEncrypted: 'adminPasswordEncrypted',
   adminUser: 'adminUser',
-  accessToken: 'accessToken'
+  username: 'username',
+  password: 'password',
+  accessToken: 'accessToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  shopId: 'shopId',
+  userId: 'userId'
 };
 
 exports.Prisma.ExampleScalarFieldEnum = {
@@ -979,9 +968,7 @@ exports.TrainingVisibility = exports.$Enums.TrainingVisibility = {
 
 exports.Framework = exports.$Enums.Framework = {
   WORDPRESS: 'WORDPRESS',
-  NEXTJS: 'NEXTJS',
-  GHOST: 'GHOST',
-  STRAPI: 'STRAPI'
+  NEXTJS: 'NEXTJS'
 };
 
 exports.SiteType = exports.$Enums.SiteType = {

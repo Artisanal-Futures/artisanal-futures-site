@@ -12,7 +12,6 @@ import {
   createProvisionSchema,
 } from "~/lib/validators/website-provision";
 import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
-import { generateSimplePressLink } from "~/lib/website-provisions/generate-sp-link";
 
 import { adminOnlyProcedure, createTRPCRouter } from "../trpc";
 
@@ -21,6 +20,13 @@ function generateInviteCode(): string {
 }
 
 export const websiteProvisionRouter = createTRPCRouter({
+  getAll: adminOnlyProcedure.query(async ({ ctx }) => {
+    const provisions = await ctx.db.websiteProvision.findMany({
+      include: { shop: { include: { owner: true } } },
+    });
+    return provisions;
+  }),
+
   getShopForProvision: adminOnlyProcedure
     .input(z.object({ shopId: z.string().cuid() }))
     .query(async ({ ctx, input }) => {
@@ -29,7 +35,7 @@ export const websiteProvisionRouter = createTRPCRouter({
         include: {
           owner: true,
           address: true,
-          websiteProvision: true,
+          siteProvisions: true,
         },
       });
 
@@ -42,7 +48,7 @@ export const websiteProvisionRouter = createTRPCRouter({
 
       return {
         shop,
-        hasProvision: !!shop.websiteProvision,
+        hasProvision: shop.siteProvisions?.length > 0,
         onboardingData: {
           businessName: shop.name,
           ownerName: shop.ownerName,
@@ -65,7 +71,7 @@ export const websiteProvisionRouter = createTRPCRouter({
       };
     }),
 
-  create: adminOnlyProcedure
+  createWordPress: adminOnlyProcedure
     .input(createProvisionSchema)
     .mutation(async ({ ctx, input }) => {
       const adminUser = "af_admin";
@@ -79,13 +85,16 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
 
       const existingProvision = await ctx.db.websiteProvision.findUnique({
-        where: { shopId: input.shopId },
+        where: {
+          shopId_framework: { shopId: input.shopId, framework: "WORDPRESS" },
+        },
       });
 
       if (existingProvision) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "This shop already has an active website provision",
+          message:
+            "This shop already has an active website provision using WordPress",
         });
       }
 
@@ -138,8 +147,7 @@ export const websiteProvisionRouter = createTRPCRouter({
             coolifyProjectUuid: coolifyResult.projectUuid,
             coolifyServiceUuid: coolifyResult.serviceUuid,
             coolifyServerUuid: coolifyResult.serverUuid,
-            customDomain: coolifyResult.domain,
-            hasCustomDomain: true,
+            deploymentUrl: coolifyResult.domain,
             adminUser: adminUser,
             // adminPasswordEncrypted: encryptedPassword,
           },
@@ -184,13 +192,16 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
 
       const existingProvision = await ctx.db.websiteProvision.findUnique({
-        where: { shopId: input.shopId },
+        where: {
+          shopId_framework: { shopId: input.shopId, framework: "NEXTJS" },
+        },
       });
 
       if (existingProvision) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "This shop already has an active website provision",
+          message:
+            "This shop already has an active website provision using SimplePress",
         });
       }
 
@@ -211,7 +222,6 @@ export const websiteProvisionRouter = createTRPCRouter({
               status: "PROVISIONING",
               businessName: input.businessName,
               contactEmail: input.contactEmail,
-              hasCustomDomain: false,
               accessToken: code,
               config: {},
             },

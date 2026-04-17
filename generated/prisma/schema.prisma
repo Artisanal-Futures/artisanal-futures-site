@@ -181,27 +181,27 @@ enum ProductScrapeMethod {
 }
 
 model Shop {
-  id               String            @id @default(cuid())
-  ownerName        String
-  bio              String?
-  description      String?
-  ownerPhoto       String?
-  logoPhoto        String?
-  coverPhoto       String?
-  phone            String?
-  email            String?
-  website          String?
-  ownerId          String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  attributeTags    String[]
-  name             String
-  events           Event[]
-  products         Product[]
-  services         Service[]
-  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
-  address          ShopAddress?
-  websiteProvision WebsiteProvision?
+  id             String             @id @default(cuid())
+  ownerName      String
+  bio            String?
+  description    String?
+  ownerPhoto     String?
+  logoPhoto      String?
+  coverPhoto     String?
+  phone          String?
+  email          String?
+  website        String?
+  ownerId        String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  attributeTags  String[]
+  name           String
+  events         Event[]
+  products       Product[]
+  services       Service[]
+  owner          User               @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  address        ShopAddress?
+  siteProvisions WebsiteProvision[]
 }
 
 model ShopAddress {
@@ -913,45 +913,45 @@ enum TrainingVisibility {
 }
 
 model WebsiteProvision {
-  id                     String          @id @default(cuid())
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
-  userId                 String
-  framework              Framework
-  siteType               SiteType
-  status                 ProvisionStatus @default(PENDING)
-  hasCustomDomain        Boolean         @default(false)
-  customDomain           String?         @unique
-  subdomain              String?         @unique
-  businessName           String
-  businessTagline        String?
-  contactEmail           String
-  contactPhone           String?
-  businessAddress        Json?
-  socialLinks            Json?
-  coolifyProjectUuid     String?         @unique
-  coolifyServerUuid      String?
-  deploymentUrl          String?
-  lastDeploymentAt       DateTime?
-  lastHealthCheck        DateTime?
-  healthCheckStatus      String?
-  config                 Json
-  cpuLimit               String?
-  memoryLimit            String?
-  errorMessage           String?
-  deploymentLogs         String?
-  notes                  String?
-  isTest                 Boolean         @default(false)
-  deletedAt              DateTime?
-  shopId                 String          @unique
-  coolifyDatabaseUuid    String?
-  coolifyServiceUuid     String?         @unique
+  id        String          @id @default(cuid())
+  framework Framework
+  siteType  SiteType
+  status    ProvisionStatus @default(PENDING)
+
+  customDomain  String? @unique //coolname.com
+  subdomain     String? @unique //coolname
+  deploymentUrl String? //coolname.simplepress.dev or simplepress.artisanalfutures.shop
+
+  businessName String
+  contactEmail String
+
+  config       Json
+  errorMessage String?
+
+  deletedAt DateTime?
+
+  coolifyProjectUuid  String? @unique
+  coolifyServerUuid   String?
+  coolifyDatabaseUuid String?
+  coolifyServiceUuid  String? @unique
+
   adminPasswordEncrypted String?
   adminUser              String?
-  accessToken            String?         @unique
-  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  username String?
+  password String?
+
+  accessToken String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([shopId, framework])
   @@index([createdAt])
   @@index([deletedAt])
   @@index([framework])
@@ -984,8 +984,6 @@ enum SiteType {
 enum Framework {
   WORDPRESS
   NEXTJS
-  GHOST
-  STRAPI
 }
 
 generator client {

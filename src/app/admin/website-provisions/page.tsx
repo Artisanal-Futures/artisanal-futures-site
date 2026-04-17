@@ -2,6 +2,7 @@ import { api } from "~/trpc/server";
 
 import { ItemDialog } from "../_components/item-dialog";
 import { TrailHeader } from "../_components/trail-header";
+import { NewProvisionButton } from "./_components/new-provision-button";
 import { WebsiteProvisionDataTable } from "./_components/website-provision-data-table";
 import { WebsiteProvisionForm } from "./_components/website-provision-form";
 
@@ -26,6 +27,7 @@ export default async function AdminWebsitesPage() {
             FormComponent={WebsiteProvisionForm}
             contentClassName="sm:max-w-xl w-full"
           />
+          <NewProvisionButton shops={websiteProvisions} />
         </div>
         <WebsiteProvisionDataTable websiteProvisions={websiteProvisions} />
       </div>

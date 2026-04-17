@@ -14,7 +14,7 @@ import {
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: protectedProcedure.query(async ({ ctx }) => {
     const shops = ctx.db.shop.findMany({
-      include: { websiteProvision: true },
+      include: { siteProvisions: true },
       orderBy: { name: "asc" },
     });
     return shops;
@@ -63,7 +63,7 @@ export const shopsRouter = createTRPCRouter({
         address: true,
         products: true,
         services: true,
-        websiteProvision: true,
+        siteProvisions: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -248,7 +248,7 @@ export const shopsRouter = createTRPCRouter({
   getWelcomeShop: adminArtisanProcedure.query(async ({ ctx }) => {
     const shop = await ctx.db.shop.findFirst({
       where: { ownerId: ctx.session.user.id },
-      include: { products: true, services: true, websiteProvision: true },
+      include: { products: true, services: true, siteProvisions: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -263,7 +263,7 @@ export const shopsRouter = createTRPCRouter({
       completedSurvey: survey ? true : false,
       hasProducts: (shop?.products?.length ?? 0 > 0) ? true : false,
       hasServices: (shop?.services?.length ?? 0 > 0) ? true : false,
-      hasHostedWebsite: shop?.websiteProvision ? true : false,
+      hasHostedWebsite: (shop?.siteProvisions?.length ?? 0) > 0 ? true : false,
     };
 
     return data;

@@ -44,7 +44,7 @@ export type WebsiteCreateFormData = z.infer<typeof websiteCreateFormSchema>;
 export const createProvisionSchema = z.object({
   userId: z.string(),
   shopId: z.string(),
-  framework: z.enum(["WORDPRESS", "NEXTJS", "GHOST", "STRAPI"]),
+  framework: z.enum(["WORDPRESS", "NEXTJS"]),
   siteType: z.enum([
     "ECOMMERCE",
     "BLOG",

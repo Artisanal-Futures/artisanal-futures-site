@@ -485,9 +485,7 @@ export type SiteType = (typeof SiteType)[keyof typeof SiteType]
 
 export const Framework: {
   WORDPRESS: 'WORDPRESS',
-  NEXTJS: 'NEXTJS',
-  GHOST: 'GHOST',
-  STRAPI: 'STRAPI'
+  NEXTJS: 'NEXTJS'
 };
 
 export type Framework = (typeof Framework)[keyof typeof Framework]
@@ -6138,12 +6136,14 @@ export namespace Prisma {
     events: number
     products: number
     services: number
+    siteProvisions: number
   }
 
   export type ShopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | ShopCountOutputTypeCountEventsArgs
     products?: boolean | ShopCountOutputTypeCountProductsArgs
     services?: boolean | ShopCountOutputTypeCountServicesArgs
+    siteProvisions?: boolean | ShopCountOutputTypeCountSiteProvisionsArgs
   }
 
   // Custom InputTypes
@@ -6176,6 +6176,13 @@ export namespace Prisma {
    */
   export type ShopCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceWhereInput
+  }
+
+  /**
+   * ShopCountOutputType without action
+   */
+  export type ShopCountOutputTypeCountSiteProvisionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WebsiteProvisionWhereInput
   }
 
 
@@ -19850,7 +19857,7 @@ export namespace Prisma {
     services?: boolean | Shop$servicesArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
-    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    siteProvisions?: boolean | Shop$siteProvisionsArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19917,7 +19924,7 @@ export namespace Prisma {
     services?: boolean | Shop$servicesArgs<ExtArgs>
     owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
-    websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    siteProvisions?: boolean | Shop$siteProvisionsArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19935,7 +19942,7 @@ export namespace Prisma {
       services: Prisma.$ServicePayload<ExtArgs>[]
       owner: Prisma.$UserPayload<ExtArgs>
       address: Prisma.$ShopAddressPayload<ExtArgs> | null
-      websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
+      siteProvisions: Prisma.$WebsiteProvisionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20352,7 +20359,7 @@ export namespace Prisma {
     services<T extends Shop$servicesArgs<ExtArgs> = {}>(args?: Subset<T, Shop$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     address<T extends Shop$addressArgs<ExtArgs> = {}>(args?: Subset<T, Shop$addressArgs<ExtArgs>>): Prisma__ShopAddressClient<$Result.GetResult<Prisma.$ShopAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    siteProvisions<T extends Shop$siteProvisionsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$siteProvisionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20884,9 +20891,9 @@ export namespace Prisma {
   }
 
   /**
-   * Shop.websiteProvision
+   * Shop.siteProvisions
    */
-  export type Shop$websiteProvisionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Shop$siteProvisionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the WebsiteProvision
      */
@@ -20900,6 +20907,11 @@ export namespace Prisma {
      */
     include?: WebsiteProvisionInclude<ExtArgs> | null
     where?: WebsiteProvisionWhereInput
+    orderBy?: WebsiteProvisionOrderByWithRelationInput | WebsiteProvisionOrderByWithRelationInput[]
+    cursor?: WebsiteProvisionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WebsiteProvisionScalarFieldEnum | WebsiteProvisionScalarFieldEnum[]
   }
 
   /**
@@ -61964,226 +61976,168 @@ export namespace Prisma {
 
   export type WebsiteProvisionMinAggregateOutputType = {
     id: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
     framework: $Enums.Framework | null
     siteType: $Enums.SiteType | null
     status: $Enums.ProvisionStatus | null
-    hasCustomDomain: boolean | null
     customDomain: string | null
     subdomain: string | null
+    deploymentUrl: string | null
     businessName: string | null
-    businessTagline: string | null
     contactEmail: string | null
-    contactPhone: string | null
+    errorMessage: string | null
+    deletedAt: Date | null
     coolifyProjectUuid: string | null
     coolifyServerUuid: string | null
-    deploymentUrl: string | null
-    lastDeploymentAt: Date | null
-    lastHealthCheck: Date | null
-    healthCheckStatus: string | null
-    cpuLimit: string | null
-    memoryLimit: string | null
-    errorMessage: string | null
-    deploymentLogs: string | null
-    notes: string | null
-    isTest: boolean | null
-    deletedAt: Date | null
-    shopId: string | null
     coolifyDatabaseUuid: string | null
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    username: string | null
+    password: string | null
     accessToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    shopId: string | null
+    userId: string | null
   }
 
   export type WebsiteProvisionMaxAggregateOutputType = {
     id: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
     framework: $Enums.Framework | null
     siteType: $Enums.SiteType | null
     status: $Enums.ProvisionStatus | null
-    hasCustomDomain: boolean | null
     customDomain: string | null
     subdomain: string | null
+    deploymentUrl: string | null
     businessName: string | null
-    businessTagline: string | null
     contactEmail: string | null
-    contactPhone: string | null
+    errorMessage: string | null
+    deletedAt: Date | null
     coolifyProjectUuid: string | null
     coolifyServerUuid: string | null
-    deploymentUrl: string | null
-    lastDeploymentAt: Date | null
-    lastHealthCheck: Date | null
-    healthCheckStatus: string | null
-    cpuLimit: string | null
-    memoryLimit: string | null
-    errorMessage: string | null
-    deploymentLogs: string | null
-    notes: string | null
-    isTest: boolean | null
-    deletedAt: Date | null
-    shopId: string | null
     coolifyDatabaseUuid: string | null
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    username: string | null
+    password: string | null
     accessToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    shopId: string | null
+    userId: string | null
   }
 
   export type WebsiteProvisionCountAggregateOutputType = {
     id: number
-    createdAt: number
-    updatedAt: number
-    userId: number
     framework: number
     siteType: number
     status: number
-    hasCustomDomain: number
     customDomain: number
     subdomain: number
+    deploymentUrl: number
     businessName: number
-    businessTagline: number
     contactEmail: number
-    contactPhone: number
-    businessAddress: number
-    socialLinks: number
+    config: number
+    errorMessage: number
+    deletedAt: number
     coolifyProjectUuid: number
     coolifyServerUuid: number
-    deploymentUrl: number
-    lastDeploymentAt: number
-    lastHealthCheck: number
-    healthCheckStatus: number
-    config: number
-    cpuLimit: number
-    memoryLimit: number
-    errorMessage: number
-    deploymentLogs: number
-    notes: number
-    isTest: number
-    deletedAt: number
-    shopId: number
     coolifyDatabaseUuid: number
     coolifyServiceUuid: number
     adminPasswordEncrypted: number
     adminUser: number
+    username: number
+    password: number
     accessToken: number
+    createdAt: number
+    updatedAt: number
+    shopId: number
+    userId: number
     _all: number
   }
 
 
   export type WebsiteProvisionMinAggregateInputType = {
     id?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
     framework?: true
     siteType?: true
     status?: true
-    hasCustomDomain?: true
     customDomain?: true
     subdomain?: true
+    deploymentUrl?: true
     businessName?: true
-    businessTagline?: true
     contactEmail?: true
-    contactPhone?: true
+    errorMessage?: true
+    deletedAt?: true
     coolifyProjectUuid?: true
     coolifyServerUuid?: true
-    deploymentUrl?: true
-    lastDeploymentAt?: true
-    lastHealthCheck?: true
-    healthCheckStatus?: true
-    cpuLimit?: true
-    memoryLimit?: true
-    errorMessage?: true
-    deploymentLogs?: true
-    notes?: true
-    isTest?: true
-    deletedAt?: true
-    shopId?: true
     coolifyDatabaseUuid?: true
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    username?: true
+    password?: true
     accessToken?: true
+    createdAt?: true
+    updatedAt?: true
+    shopId?: true
+    userId?: true
   }
 
   export type WebsiteProvisionMaxAggregateInputType = {
     id?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
     framework?: true
     siteType?: true
     status?: true
-    hasCustomDomain?: true
     customDomain?: true
     subdomain?: true
+    deploymentUrl?: true
     businessName?: true
-    businessTagline?: true
     contactEmail?: true
-    contactPhone?: true
+    errorMessage?: true
+    deletedAt?: true
     coolifyProjectUuid?: true
     coolifyServerUuid?: true
-    deploymentUrl?: true
-    lastDeploymentAt?: true
-    lastHealthCheck?: true
-    healthCheckStatus?: true
-    cpuLimit?: true
-    memoryLimit?: true
-    errorMessage?: true
-    deploymentLogs?: true
-    notes?: true
-    isTest?: true
-    deletedAt?: true
-    shopId?: true
     coolifyDatabaseUuid?: true
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    username?: true
+    password?: true
     accessToken?: true
+    createdAt?: true
+    updatedAt?: true
+    shopId?: true
+    userId?: true
   }
 
   export type WebsiteProvisionCountAggregateInputType = {
     id?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
     framework?: true
     siteType?: true
     status?: true
-    hasCustomDomain?: true
     customDomain?: true
     subdomain?: true
+    deploymentUrl?: true
     businessName?: true
-    businessTagline?: true
     contactEmail?: true
-    contactPhone?: true
-    businessAddress?: true
-    socialLinks?: true
+    config?: true
+    errorMessage?: true
+    deletedAt?: true
     coolifyProjectUuid?: true
     coolifyServerUuid?: true
-    deploymentUrl?: true
-    lastDeploymentAt?: true
-    lastHealthCheck?: true
-    healthCheckStatus?: true
-    config?: true
-    cpuLimit?: true
-    memoryLimit?: true
-    errorMessage?: true
-    deploymentLogs?: true
-    notes?: true
-    isTest?: true
-    deletedAt?: true
-    shopId?: true
     coolifyDatabaseUuid?: true
     coolifyServiceUuid?: true
     adminPasswordEncrypted?: true
     adminUser?: true
+    username?: true
+    password?: true
     accessToken?: true
+    createdAt?: true
+    updatedAt?: true
+    shopId?: true
+    userId?: true
     _all?: true
   }
 
@@ -62261,41 +62215,30 @@ export namespace Prisma {
 
   export type WebsiteProvisionGroupByOutputType = {
     id: string
-    createdAt: Date
-    updatedAt: Date
-    userId: string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status: $Enums.ProvisionStatus
-    hasCustomDomain: boolean
     customDomain: string | null
     subdomain: string | null
+    deploymentUrl: string | null
     businessName: string
-    businessTagline: string | null
     contactEmail: string
-    contactPhone: string | null
-    businessAddress: JsonValue | null
-    socialLinks: JsonValue | null
+    config: JsonValue
+    errorMessage: string | null
+    deletedAt: Date | null
     coolifyProjectUuid: string | null
     coolifyServerUuid: string | null
-    deploymentUrl: string | null
-    lastDeploymentAt: Date | null
-    lastHealthCheck: Date | null
-    healthCheckStatus: string | null
-    config: JsonValue
-    cpuLimit: string | null
-    memoryLimit: string | null
-    errorMessage: string | null
-    deploymentLogs: string | null
-    notes: string | null
-    isTest: boolean
-    deletedAt: Date | null
-    shopId: string
     coolifyDatabaseUuid: string | null
     coolifyServiceUuid: string | null
     adminPasswordEncrypted: string | null
     adminUser: string | null
+    username: string | null
+    password: string | null
     accessToken: string | null
+    createdAt: Date
+    updatedAt: Date
+    shopId: string
+    userId: string
     _count: WebsiteProvisionCountAggregateOutputType | null
     _min: WebsiteProvisionMinAggregateOutputType | null
     _max: WebsiteProvisionMaxAggregateOutputType | null
@@ -62317,167 +62260,123 @@ export namespace Prisma {
 
   export type WebsiteProvisionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
     framework?: boolean
     siteType?: boolean
     status?: boolean
-    hasCustomDomain?: boolean
     customDomain?: boolean
     subdomain?: boolean
+    deploymentUrl?: boolean
     businessName?: boolean
-    businessTagline?: boolean
     contactEmail?: boolean
-    contactPhone?: boolean
-    businessAddress?: boolean
-    socialLinks?: boolean
+    config?: boolean
+    errorMessage?: boolean
+    deletedAt?: boolean
     coolifyProjectUuid?: boolean
     coolifyServerUuid?: boolean
-    deploymentUrl?: boolean
-    lastDeploymentAt?: boolean
-    lastHealthCheck?: boolean
-    healthCheckStatus?: boolean
-    config?: boolean
-    cpuLimit?: boolean
-    memoryLimit?: boolean
-    errorMessage?: boolean
-    deploymentLogs?: boolean
-    notes?: boolean
-    isTest?: boolean
-    deletedAt?: boolean
-    shopId?: boolean
     coolifyDatabaseUuid?: boolean
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    username?: boolean
+    password?: boolean
     accessToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shopId?: boolean
+    userId?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
 
   export type WebsiteProvisionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
     framework?: boolean
     siteType?: boolean
     status?: boolean
-    hasCustomDomain?: boolean
     customDomain?: boolean
     subdomain?: boolean
+    deploymentUrl?: boolean
     businessName?: boolean
-    businessTagline?: boolean
     contactEmail?: boolean
-    contactPhone?: boolean
-    businessAddress?: boolean
-    socialLinks?: boolean
+    config?: boolean
+    errorMessage?: boolean
+    deletedAt?: boolean
     coolifyProjectUuid?: boolean
     coolifyServerUuid?: boolean
-    deploymentUrl?: boolean
-    lastDeploymentAt?: boolean
-    lastHealthCheck?: boolean
-    healthCheckStatus?: boolean
-    config?: boolean
-    cpuLimit?: boolean
-    memoryLimit?: boolean
-    errorMessage?: boolean
-    deploymentLogs?: boolean
-    notes?: boolean
-    isTest?: boolean
-    deletedAt?: boolean
-    shopId?: boolean
     coolifyDatabaseUuid?: boolean
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    username?: boolean
+    password?: boolean
     accessToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shopId?: boolean
+    userId?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
 
   export type WebsiteProvisionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
     framework?: boolean
     siteType?: boolean
     status?: boolean
-    hasCustomDomain?: boolean
     customDomain?: boolean
     subdomain?: boolean
+    deploymentUrl?: boolean
     businessName?: boolean
-    businessTagline?: boolean
     contactEmail?: boolean
-    contactPhone?: boolean
-    businessAddress?: boolean
-    socialLinks?: boolean
+    config?: boolean
+    errorMessage?: boolean
+    deletedAt?: boolean
     coolifyProjectUuid?: boolean
     coolifyServerUuid?: boolean
-    deploymentUrl?: boolean
-    lastDeploymentAt?: boolean
-    lastHealthCheck?: boolean
-    healthCheckStatus?: boolean
-    config?: boolean
-    cpuLimit?: boolean
-    memoryLimit?: boolean
-    errorMessage?: boolean
-    deploymentLogs?: boolean
-    notes?: boolean
-    isTest?: boolean
-    deletedAt?: boolean
-    shopId?: boolean
     coolifyDatabaseUuid?: boolean
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    username?: boolean
+    password?: boolean
     accessToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shopId?: boolean
+    userId?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
 
   export type WebsiteProvisionSelectScalar = {
     id?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    userId?: boolean
     framework?: boolean
     siteType?: boolean
     status?: boolean
-    hasCustomDomain?: boolean
     customDomain?: boolean
     subdomain?: boolean
+    deploymentUrl?: boolean
     businessName?: boolean
-    businessTagline?: boolean
     contactEmail?: boolean
-    contactPhone?: boolean
-    businessAddress?: boolean
-    socialLinks?: boolean
+    config?: boolean
+    errorMessage?: boolean
+    deletedAt?: boolean
     coolifyProjectUuid?: boolean
     coolifyServerUuid?: boolean
-    deploymentUrl?: boolean
-    lastDeploymentAt?: boolean
-    lastHealthCheck?: boolean
-    healthCheckStatus?: boolean
-    config?: boolean
-    cpuLimit?: boolean
-    memoryLimit?: boolean
-    errorMessage?: boolean
-    deploymentLogs?: boolean
-    notes?: boolean
-    isTest?: boolean
-    deletedAt?: boolean
-    shopId?: boolean
     coolifyDatabaseUuid?: boolean
     coolifyServiceUuid?: boolean
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
+    username?: boolean
+    password?: boolean
     accessToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shopId?: boolean
+    userId?: boolean
   }
 
-  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "framework" | "siteType" | "status" | "hasCustomDomain" | "customDomain" | "subdomain" | "businessName" | "businessTagline" | "contactEmail" | "contactPhone" | "businessAddress" | "socialLinks" | "coolifyProjectUuid" | "coolifyServerUuid" | "deploymentUrl" | "lastDeploymentAt" | "lastHealthCheck" | "healthCheckStatus" | "config" | "cpuLimit" | "memoryLimit" | "errorMessage" | "deploymentLogs" | "notes" | "isTest" | "deletedAt" | "shopId" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser" | "accessToken", ExtArgs["result"]["websiteProvision"]>
+  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "framework" | "siteType" | "status" | "customDomain" | "subdomain" | "deploymentUrl" | "businessName" | "contactEmail" | "config" | "errorMessage" | "deletedAt" | "coolifyProjectUuid" | "coolifyServerUuid" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser" | "username" | "password" | "accessToken" | "createdAt" | "updatedAt" | "shopId" | "userId", ExtArgs["result"]["websiteProvision"]>
   export type WebsiteProvisionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -62499,41 +62398,30 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      createdAt: Date
-      updatedAt: Date
-      userId: string
       framework: $Enums.Framework
       siteType: $Enums.SiteType
       status: $Enums.ProvisionStatus
-      hasCustomDomain: boolean
       customDomain: string | null
       subdomain: string | null
+      deploymentUrl: string | null
       businessName: string
-      businessTagline: string | null
       contactEmail: string
-      contactPhone: string | null
-      businessAddress: Prisma.JsonValue | null
-      socialLinks: Prisma.JsonValue | null
+      config: Prisma.JsonValue
+      errorMessage: string | null
+      deletedAt: Date | null
       coolifyProjectUuid: string | null
       coolifyServerUuid: string | null
-      deploymentUrl: string | null
-      lastDeploymentAt: Date | null
-      lastHealthCheck: Date | null
-      healthCheckStatus: string | null
-      config: Prisma.JsonValue
-      cpuLimit: string | null
-      memoryLimit: string | null
-      errorMessage: string | null
-      deploymentLogs: string | null
-      notes: string | null
-      isTest: boolean
-      deletedAt: Date | null
-      shopId: string
       coolifyDatabaseUuid: string | null
       coolifyServiceUuid: string | null
       adminPasswordEncrypted: string | null
       adminUser: string | null
+      username: string | null
+      password: string | null
       accessToken: string | null
+      createdAt: Date
+      updatedAt: Date
+      shopId: string
+      userId: string
     }, ExtArgs["result"]["websiteProvision"]>
     composites: {}
   }
@@ -62960,41 +62848,30 @@ export namespace Prisma {
    */
   interface WebsiteProvisionFieldRefs {
     readonly id: FieldRef<"WebsiteProvision", 'String'>
-    readonly createdAt: FieldRef<"WebsiteProvision", 'DateTime'>
-    readonly updatedAt: FieldRef<"WebsiteProvision", 'DateTime'>
-    readonly userId: FieldRef<"WebsiteProvision", 'String'>
     readonly framework: FieldRef<"WebsiteProvision", 'Framework'>
     readonly siteType: FieldRef<"WebsiteProvision", 'SiteType'>
     readonly status: FieldRef<"WebsiteProvision", 'ProvisionStatus'>
-    readonly hasCustomDomain: FieldRef<"WebsiteProvision", 'Boolean'>
     readonly customDomain: FieldRef<"WebsiteProvision", 'String'>
     readonly subdomain: FieldRef<"WebsiteProvision", 'String'>
+    readonly deploymentUrl: FieldRef<"WebsiteProvision", 'String'>
     readonly businessName: FieldRef<"WebsiteProvision", 'String'>
-    readonly businessTagline: FieldRef<"WebsiteProvision", 'String'>
     readonly contactEmail: FieldRef<"WebsiteProvision", 'String'>
-    readonly contactPhone: FieldRef<"WebsiteProvision", 'String'>
-    readonly businessAddress: FieldRef<"WebsiteProvision", 'Json'>
-    readonly socialLinks: FieldRef<"WebsiteProvision", 'Json'>
+    readonly config: FieldRef<"WebsiteProvision", 'Json'>
+    readonly errorMessage: FieldRef<"WebsiteProvision", 'String'>
+    readonly deletedAt: FieldRef<"WebsiteProvision", 'DateTime'>
     readonly coolifyProjectUuid: FieldRef<"WebsiteProvision", 'String'>
     readonly coolifyServerUuid: FieldRef<"WebsiteProvision", 'String'>
-    readonly deploymentUrl: FieldRef<"WebsiteProvision", 'String'>
-    readonly lastDeploymentAt: FieldRef<"WebsiteProvision", 'DateTime'>
-    readonly lastHealthCheck: FieldRef<"WebsiteProvision", 'DateTime'>
-    readonly healthCheckStatus: FieldRef<"WebsiteProvision", 'String'>
-    readonly config: FieldRef<"WebsiteProvision", 'Json'>
-    readonly cpuLimit: FieldRef<"WebsiteProvision", 'String'>
-    readonly memoryLimit: FieldRef<"WebsiteProvision", 'String'>
-    readonly errorMessage: FieldRef<"WebsiteProvision", 'String'>
-    readonly deploymentLogs: FieldRef<"WebsiteProvision", 'String'>
-    readonly notes: FieldRef<"WebsiteProvision", 'String'>
-    readonly isTest: FieldRef<"WebsiteProvision", 'Boolean'>
-    readonly deletedAt: FieldRef<"WebsiteProvision", 'DateTime'>
-    readonly shopId: FieldRef<"WebsiteProvision", 'String'>
     readonly coolifyDatabaseUuid: FieldRef<"WebsiteProvision", 'String'>
     readonly coolifyServiceUuid: FieldRef<"WebsiteProvision", 'String'>
     readonly adminPasswordEncrypted: FieldRef<"WebsiteProvision", 'String'>
     readonly adminUser: FieldRef<"WebsiteProvision", 'String'>
+    readonly username: FieldRef<"WebsiteProvision", 'String'>
+    readonly password: FieldRef<"WebsiteProvision", 'String'>
     readonly accessToken: FieldRef<"WebsiteProvision", 'String'>
+    readonly createdAt: FieldRef<"WebsiteProvision", 'DateTime'>
+    readonly updatedAt: FieldRef<"WebsiteProvision", 'DateTime'>
+    readonly shopId: FieldRef<"WebsiteProvision", 'String'>
+    readonly userId: FieldRef<"WebsiteProvision", 'String'>
   }
     
 
@@ -70094,41 +69971,30 @@ export namespace Prisma {
 
   export const WebsiteProvisionScalarFieldEnum: {
     id: 'id',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    userId: 'userId',
     framework: 'framework',
     siteType: 'siteType',
     status: 'status',
-    hasCustomDomain: 'hasCustomDomain',
     customDomain: 'customDomain',
     subdomain: 'subdomain',
+    deploymentUrl: 'deploymentUrl',
     businessName: 'businessName',
-    businessTagline: 'businessTagline',
     contactEmail: 'contactEmail',
-    contactPhone: 'contactPhone',
-    businessAddress: 'businessAddress',
-    socialLinks: 'socialLinks',
+    config: 'config',
+    errorMessage: 'errorMessage',
+    deletedAt: 'deletedAt',
     coolifyProjectUuid: 'coolifyProjectUuid',
     coolifyServerUuid: 'coolifyServerUuid',
-    deploymentUrl: 'deploymentUrl',
-    lastDeploymentAt: 'lastDeploymentAt',
-    lastHealthCheck: 'lastHealthCheck',
-    healthCheckStatus: 'healthCheckStatus',
-    config: 'config',
-    cpuLimit: 'cpuLimit',
-    memoryLimit: 'memoryLimit',
-    errorMessage: 'errorMessage',
-    deploymentLogs: 'deploymentLogs',
-    notes: 'notes',
-    isTest: 'isTest',
-    deletedAt: 'deletedAt',
-    shopId: 'shopId',
     coolifyDatabaseUuid: 'coolifyDatabaseUuid',
     coolifyServiceUuid: 'coolifyServiceUuid',
     adminPasswordEncrypted: 'adminPasswordEncrypted',
     adminUser: 'adminUser',
-    accessToken: 'accessToken'
+    username: 'username',
+    password: 'password',
+    accessToken: 'accessToken',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    shopId: 'shopId',
+    userId: 'userId'
   };
 
   export type WebsiteProvisionScalarFieldEnum = (typeof WebsiteProvisionScalarFieldEnum)[keyof typeof WebsiteProvisionScalarFieldEnum]
@@ -71499,7 +71365,7 @@ export namespace Prisma {
     services?: ServiceListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
-    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    siteProvisions?: WebsiteProvisionListRelationFilter
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -71523,7 +71389,7 @@ export namespace Prisma {
     services?: ServiceOrderByRelationAggregateInput
     owner?: UserOrderByWithRelationInput
     address?: ShopAddressOrderByWithRelationInput
-    websiteProvision?: WebsiteProvisionOrderByWithRelationInput
+    siteProvisions?: WebsiteProvisionOrderByRelationAggregateInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -71550,7 +71416,7 @@ export namespace Prisma {
     services?: ServiceListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
-    websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    siteProvisions?: WebsiteProvisionListRelationFilter
   }, "id">
 
   export type ShopOrderByWithAggregationInput = {
@@ -74608,82 +74474,60 @@ export namespace Prisma {
     OR?: WebsiteProvisionWhereInput[]
     NOT?: WebsiteProvisionWhereInput | WebsiteProvisionWhereInput[]
     id?: StringFilter<"WebsiteProvision"> | string
-    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    userId?: StringFilter<"WebsiteProvision"> | string
     framework?: EnumFrameworkFilter<"WebsiteProvision"> | $Enums.Framework
     siteType?: EnumSiteTypeFilter<"WebsiteProvision"> | $Enums.SiteType
     status?: EnumProvisionStatusFilter<"WebsiteProvision"> | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFilter<"WebsiteProvision"> | boolean
     customDomain?: StringNullableFilter<"WebsiteProvision"> | string | null
     subdomain?: StringNullableFilter<"WebsiteProvision"> | string | null
+    deploymentUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
     businessName?: StringFilter<"WebsiteProvision"> | string
-    businessTagline?: StringNullableFilter<"WebsiteProvision"> | string | null
     contactEmail?: StringFilter<"WebsiteProvision"> | string
-    contactPhone?: StringNullableFilter<"WebsiteProvision"> | string | null
-    businessAddress?: JsonNullableFilter<"WebsiteProvision">
-    socialLinks?: JsonNullableFilter<"WebsiteProvision">
+    config?: JsonFilter<"WebsiteProvision">
+    errorMessage?: StringNullableFilter<"WebsiteProvision"> | string | null
+    deletedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
     coolifyProjectUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     coolifyServerUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
-    deploymentUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
-    lastDeploymentAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    lastHealthCheck?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    healthCheckStatus?: StringNullableFilter<"WebsiteProvision"> | string | null
-    config?: JsonFilter<"WebsiteProvision">
-    cpuLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
-    memoryLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
-    errorMessage?: StringNullableFilter<"WebsiteProvision"> | string | null
-    deploymentLogs?: StringNullableFilter<"WebsiteProvision"> | string | null
-    notes?: StringNullableFilter<"WebsiteProvision"> | string | null
-    isTest?: BoolFilter<"WebsiteProvision"> | boolean
-    deletedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    shopId?: StringFilter<"WebsiteProvision"> | string
     coolifyDatabaseUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     coolifyServiceUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    username?: StringNullableFilter<"WebsiteProvision"> | string | null
+    password?: StringNullableFilter<"WebsiteProvision"> | string | null
     accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
+    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    shopId?: StringFilter<"WebsiteProvision"> | string
+    userId?: StringFilter<"WebsiteProvision"> | string
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type WebsiteProvisionOrderByWithRelationInput = {
     id?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
     framework?: SortOrder
     siteType?: SortOrder
     status?: SortOrder
-    hasCustomDomain?: SortOrder
     customDomain?: SortOrderInput | SortOrder
     subdomain?: SortOrderInput | SortOrder
+    deploymentUrl?: SortOrderInput | SortOrder
     businessName?: SortOrder
-    businessTagline?: SortOrderInput | SortOrder
     contactEmail?: SortOrder
-    contactPhone?: SortOrderInput | SortOrder
-    businessAddress?: SortOrderInput | SortOrder
-    socialLinks?: SortOrderInput | SortOrder
+    config?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     coolifyProjectUuid?: SortOrderInput | SortOrder
     coolifyServerUuid?: SortOrderInput | SortOrder
-    deploymentUrl?: SortOrderInput | SortOrder
-    lastDeploymentAt?: SortOrderInput | SortOrder
-    lastHealthCheck?: SortOrderInput | SortOrder
-    healthCheckStatus?: SortOrderInput | SortOrder
-    config?: SortOrder
-    cpuLimit?: SortOrderInput | SortOrder
-    memoryLimit?: SortOrderInput | SortOrder
-    errorMessage?: SortOrderInput | SortOrder
-    deploymentLogs?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
-    isTest?: SortOrder
-    deletedAt?: SortOrderInput | SortOrder
-    shopId?: SortOrder
     coolifyDatabaseUuid?: SortOrderInput | SortOrder
     coolifyServiceUuid?: SortOrderInput | SortOrder
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
+    username?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
     accessToken?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shopId?: SortOrder
+    userId?: SortOrder
     shop?: ShopOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -74693,82 +74537,61 @@ export namespace Prisma {
     customDomain?: string
     subdomain?: string
     coolifyProjectUuid?: string
-    shopId?: string
     coolifyServiceUuid?: string
     accessToken?: string
+    shopId_framework?: WebsiteProvisionShopIdFrameworkCompoundUniqueInput
     AND?: WebsiteProvisionWhereInput | WebsiteProvisionWhereInput[]
     OR?: WebsiteProvisionWhereInput[]
     NOT?: WebsiteProvisionWhereInput | WebsiteProvisionWhereInput[]
-    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    userId?: StringFilter<"WebsiteProvision"> | string
     framework?: EnumFrameworkFilter<"WebsiteProvision"> | $Enums.Framework
     siteType?: EnumSiteTypeFilter<"WebsiteProvision"> | $Enums.SiteType
     status?: EnumProvisionStatusFilter<"WebsiteProvision"> | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFilter<"WebsiteProvision"> | boolean
-    businessName?: StringFilter<"WebsiteProvision"> | string
-    businessTagline?: StringNullableFilter<"WebsiteProvision"> | string | null
-    contactEmail?: StringFilter<"WebsiteProvision"> | string
-    contactPhone?: StringNullableFilter<"WebsiteProvision"> | string | null
-    businessAddress?: JsonNullableFilter<"WebsiteProvision">
-    socialLinks?: JsonNullableFilter<"WebsiteProvision">
-    coolifyServerUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     deploymentUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
-    lastDeploymentAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    lastHealthCheck?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    healthCheckStatus?: StringNullableFilter<"WebsiteProvision"> | string | null
+    businessName?: StringFilter<"WebsiteProvision"> | string
+    contactEmail?: StringFilter<"WebsiteProvision"> | string
     config?: JsonFilter<"WebsiteProvision">
-    cpuLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
-    memoryLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
     errorMessage?: StringNullableFilter<"WebsiteProvision"> | string | null
-    deploymentLogs?: StringNullableFilter<"WebsiteProvision"> | string | null
-    notes?: StringNullableFilter<"WebsiteProvision"> | string | null
-    isTest?: BoolFilter<"WebsiteProvision"> | boolean
     deletedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    coolifyServerUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     coolifyDatabaseUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    username?: StringNullableFilter<"WebsiteProvision"> | string | null
+    password?: StringNullableFilter<"WebsiteProvision"> | string | null
+    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    shopId?: StringFilter<"WebsiteProvision"> | string
+    userId?: StringFilter<"WebsiteProvision"> | string
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "customDomain" | "subdomain" | "coolifyProjectUuid" | "shopId" | "coolifyServiceUuid" | "accessToken">
+  }, "id" | "customDomain" | "subdomain" | "coolifyProjectUuid" | "coolifyServiceUuid" | "accessToken" | "shopId_framework">
 
   export type WebsiteProvisionOrderByWithAggregationInput = {
     id?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
     framework?: SortOrder
     siteType?: SortOrder
     status?: SortOrder
-    hasCustomDomain?: SortOrder
     customDomain?: SortOrderInput | SortOrder
     subdomain?: SortOrderInput | SortOrder
+    deploymentUrl?: SortOrderInput | SortOrder
     businessName?: SortOrder
-    businessTagline?: SortOrderInput | SortOrder
     contactEmail?: SortOrder
-    contactPhone?: SortOrderInput | SortOrder
-    businessAddress?: SortOrderInput | SortOrder
-    socialLinks?: SortOrderInput | SortOrder
+    config?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     coolifyProjectUuid?: SortOrderInput | SortOrder
     coolifyServerUuid?: SortOrderInput | SortOrder
-    deploymentUrl?: SortOrderInput | SortOrder
-    lastDeploymentAt?: SortOrderInput | SortOrder
-    lastHealthCheck?: SortOrderInput | SortOrder
-    healthCheckStatus?: SortOrderInput | SortOrder
-    config?: SortOrder
-    cpuLimit?: SortOrderInput | SortOrder
-    memoryLimit?: SortOrderInput | SortOrder
-    errorMessage?: SortOrderInput | SortOrder
-    deploymentLogs?: SortOrderInput | SortOrder
-    notes?: SortOrderInput | SortOrder
-    isTest?: SortOrder
-    deletedAt?: SortOrderInput | SortOrder
-    shopId?: SortOrder
     coolifyDatabaseUuid?: SortOrderInput | SortOrder
     coolifyServiceUuid?: SortOrderInput | SortOrder
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
+    username?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
     accessToken?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shopId?: SortOrder
+    userId?: SortOrder
     _count?: WebsiteProvisionCountOrderByAggregateInput
     _max?: WebsiteProvisionMaxOrderByAggregateInput
     _min?: WebsiteProvisionMinOrderByAggregateInput
@@ -74779,41 +74602,30 @@ export namespace Prisma {
     OR?: WebsiteProvisionScalarWhereWithAggregatesInput[]
     NOT?: WebsiteProvisionScalarWhereWithAggregatesInput | WebsiteProvisionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"WebsiteProvision"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"WebsiteProvision"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"WebsiteProvision"> | Date | string
-    userId?: StringWithAggregatesFilter<"WebsiteProvision"> | string
     framework?: EnumFrameworkWithAggregatesFilter<"WebsiteProvision"> | $Enums.Framework
     siteType?: EnumSiteTypeWithAggregatesFilter<"WebsiteProvision"> | $Enums.SiteType
     status?: EnumProvisionStatusWithAggregatesFilter<"WebsiteProvision"> | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolWithAggregatesFilter<"WebsiteProvision"> | boolean
     customDomain?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     subdomain?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    deploymentUrl?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     businessName?: StringWithAggregatesFilter<"WebsiteProvision"> | string
-    businessTagline?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     contactEmail?: StringWithAggregatesFilter<"WebsiteProvision"> | string
-    contactPhone?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    businessAddress?: JsonNullableWithAggregatesFilter<"WebsiteProvision">
-    socialLinks?: JsonNullableWithAggregatesFilter<"WebsiteProvision">
+    config?: JsonWithAggregatesFilter<"WebsiteProvision">
+    errorMessage?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
     coolifyProjectUuid?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     coolifyServerUuid?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    deploymentUrl?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    lastDeploymentAt?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
-    lastHealthCheck?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
-    healthCheckStatus?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    config?: JsonWithAggregatesFilter<"WebsiteProvision">
-    cpuLimit?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    memoryLimit?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    errorMessage?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    deploymentLogs?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    notes?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
-    isTest?: BoolWithAggregatesFilter<"WebsiteProvision"> | boolean
-    deletedAt?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
-    shopId?: StringWithAggregatesFilter<"WebsiteProvision"> | string
     coolifyDatabaseUuid?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     coolifyServiceUuid?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    username?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    password?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     accessToken?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"WebsiteProvision"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WebsiteProvision"> | Date | string
+    shopId?: StringWithAggregatesFilter<"WebsiteProvision"> | string
+    userId?: StringWithAggregatesFilter<"WebsiteProvision"> | string
   }
 
   export type ExampleWhereInput = {
@@ -76137,7 +75949,7 @@ export namespace Prisma {
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -76160,7 +75972,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -76183,7 +75995,7 @@ export namespace Prisma {
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -76206,7 +76018,7 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -79597,273 +79409,196 @@ export namespace Prisma {
 
   export type WebsiteProvisionCreateInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
-    shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shop: ShopCreateNestedOneWithoutSiteProvisionsInput
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
 
   export type WebsiteProvisionUncheckedCreateInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    shopId: string
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shopId: string
+    userId: string
   }
 
   export type WebsiteProvisionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shop?: ShopUpdateOneRequiredWithoutSiteProvisionsNestedInput
     user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
 
   export type WebsiteProvisionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WebsiteProvisionCreateManyInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    shopId: string
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shopId: string
+    userId: string
   }
 
   export type WebsiteProvisionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WebsiteProvisionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ExampleCreateInput = {
@@ -81147,12 +80882,17 @@ export namespace Prisma {
     isNot?: ShopAddressWhereInput | null
   }
 
-  export type WebsiteProvisionNullableScalarRelationFilter = {
-    is?: WebsiteProvisionWhereInput | null
-    isNot?: WebsiteProvisionWhereInput | null
+  export type WebsiteProvisionListRelationFilter = {
+    every?: WebsiteProvisionWhereInput
+    some?: WebsiteProvisionWhereInput
+    none?: WebsiteProvisionWhereInput
   }
 
   export type EventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WebsiteProvisionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -83396,115 +83136,91 @@ export namespace Prisma {
     not?: NestedEnumProvisionStatusFilter<$PrismaModel> | $Enums.ProvisionStatus
   }
 
+  export type WebsiteProvisionShopIdFrameworkCompoundUniqueInput = {
+    shopId: string
+    framework: $Enums.Framework
+  }
+
   export type WebsiteProvisionCountOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
     framework?: SortOrder
     siteType?: SortOrder
     status?: SortOrder
-    hasCustomDomain?: SortOrder
     customDomain?: SortOrder
     subdomain?: SortOrder
+    deploymentUrl?: SortOrder
     businessName?: SortOrder
-    businessTagline?: SortOrder
     contactEmail?: SortOrder
-    contactPhone?: SortOrder
-    businessAddress?: SortOrder
-    socialLinks?: SortOrder
+    config?: SortOrder
+    errorMessage?: SortOrder
+    deletedAt?: SortOrder
     coolifyProjectUuid?: SortOrder
     coolifyServerUuid?: SortOrder
-    deploymentUrl?: SortOrder
-    lastDeploymentAt?: SortOrder
-    lastHealthCheck?: SortOrder
-    healthCheckStatus?: SortOrder
-    config?: SortOrder
-    cpuLimit?: SortOrder
-    memoryLimit?: SortOrder
-    errorMessage?: SortOrder
-    deploymentLogs?: SortOrder
-    notes?: SortOrder
-    isTest?: SortOrder
-    deletedAt?: SortOrder
-    shopId?: SortOrder
     coolifyDatabaseUuid?: SortOrder
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
     accessToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shopId?: SortOrder
+    userId?: SortOrder
   }
 
   export type WebsiteProvisionMaxOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
     framework?: SortOrder
     siteType?: SortOrder
     status?: SortOrder
-    hasCustomDomain?: SortOrder
     customDomain?: SortOrder
     subdomain?: SortOrder
+    deploymentUrl?: SortOrder
     businessName?: SortOrder
-    businessTagline?: SortOrder
     contactEmail?: SortOrder
-    contactPhone?: SortOrder
+    errorMessage?: SortOrder
+    deletedAt?: SortOrder
     coolifyProjectUuid?: SortOrder
     coolifyServerUuid?: SortOrder
-    deploymentUrl?: SortOrder
-    lastDeploymentAt?: SortOrder
-    lastHealthCheck?: SortOrder
-    healthCheckStatus?: SortOrder
-    cpuLimit?: SortOrder
-    memoryLimit?: SortOrder
-    errorMessage?: SortOrder
-    deploymentLogs?: SortOrder
-    notes?: SortOrder
-    isTest?: SortOrder
-    deletedAt?: SortOrder
-    shopId?: SortOrder
     coolifyDatabaseUuid?: SortOrder
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
     accessToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shopId?: SortOrder
+    userId?: SortOrder
   }
 
   export type WebsiteProvisionMinOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
     framework?: SortOrder
     siteType?: SortOrder
     status?: SortOrder
-    hasCustomDomain?: SortOrder
     customDomain?: SortOrder
     subdomain?: SortOrder
+    deploymentUrl?: SortOrder
     businessName?: SortOrder
-    businessTagline?: SortOrder
     contactEmail?: SortOrder
-    contactPhone?: SortOrder
+    errorMessage?: SortOrder
+    deletedAt?: SortOrder
     coolifyProjectUuid?: SortOrder
     coolifyServerUuid?: SortOrder
-    deploymentUrl?: SortOrder
-    lastDeploymentAt?: SortOrder
-    lastHealthCheck?: SortOrder
-    healthCheckStatus?: SortOrder
-    cpuLimit?: SortOrder
-    memoryLimit?: SortOrder
-    errorMessage?: SortOrder
-    deploymentLogs?: SortOrder
-    notes?: SortOrder
-    isTest?: SortOrder
-    deletedAt?: SortOrder
-    shopId?: SortOrder
     coolifyDatabaseUuid?: SortOrder
     coolifyServiceUuid?: SortOrder
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
     accessToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shopId?: SortOrder
+    userId?: SortOrder
   }
 
   export type EnumFrameworkWithAggregatesFilter<$PrismaModel = never> = {
@@ -83707,12 +83423,6 @@ export namespace Prisma {
     none?: VariationWhereInput
   }
 
-  export type WebsiteProvisionListRelationFilter = {
-    every?: WebsiteProvisionWhereInput
-    some?: WebsiteProvisionWhereInput
-    none?: WebsiteProvisionWhereInput
-  }
-
   export type DepotListRelationFilter = {
     every?: DepotWhereInput
     some?: DepotWhereInput
@@ -83760,10 +83470,6 @@ export namespace Prisma {
   }
 
   export type VariationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type WebsiteProvisionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -84686,10 +84392,11 @@ export namespace Prisma {
     connect?: ShopAddressWhereUniqueInput
   }
 
-  export type WebsiteProvisionCreateNestedOneWithoutShopInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    connect?: WebsiteProvisionWhereUniqueInput
+  export type WebsiteProvisionCreateNestedManyWithoutShopInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput> | WebsiteProvisionCreateWithoutShopInput[] | WebsiteProvisionUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput | WebsiteProvisionCreateOrConnectWithoutShopInput[]
+    createMany?: WebsiteProvisionCreateManyShopInputEnvelope
+    connect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
   }
 
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
@@ -84719,10 +84426,11 @@ export namespace Prisma {
     connect?: ShopAddressWhereUniqueInput
   }
 
-  export type WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    connect?: WebsiteProvisionWhereUniqueInput
+  export type WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput> | WebsiteProvisionCreateWithoutShopInput[] | WebsiteProvisionUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput | WebsiteProvisionCreateOrConnectWithoutShopInput[]
+    createMany?: WebsiteProvisionCreateManyShopInputEnvelope
+    connect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
   }
 
   export type ShopUpdateattributeTagsInput = {
@@ -84790,14 +84498,18 @@ export namespace Prisma {
     update?: XOR<XOR<ShopAddressUpdateToOneWithWhereWithoutShopInput, ShopAddressUpdateWithoutShopInput>, ShopAddressUncheckedUpdateWithoutShopInput>
   }
 
-  export type WebsiteProvisionUpdateOneWithoutShopNestedInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    upsert?: WebsiteProvisionUpsertWithoutShopInput
-    disconnect?: WebsiteProvisionWhereInput | boolean
-    delete?: WebsiteProvisionWhereInput | boolean
-    connect?: WebsiteProvisionWhereUniqueInput
-    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
+  export type WebsiteProvisionUpdateManyWithoutShopNestedInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput> | WebsiteProvisionCreateWithoutShopInput[] | WebsiteProvisionUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput | WebsiteProvisionCreateOrConnectWithoutShopInput[]
+    upsert?: WebsiteProvisionUpsertWithWhereUniqueWithoutShopInput | WebsiteProvisionUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: WebsiteProvisionCreateManyShopInputEnvelope
+    set?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    disconnect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    delete?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    connect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    update?: WebsiteProvisionUpdateWithWhereUniqueWithoutShopInput | WebsiteProvisionUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: WebsiteProvisionUpdateManyWithWhereWithoutShopInput | WebsiteProvisionUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
   }
 
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
@@ -84852,14 +84564,18 @@ export namespace Prisma {
     update?: XOR<XOR<ShopAddressUpdateToOneWithWhereWithoutShopInput, ShopAddressUpdateWithoutShopInput>, ShopAddressUncheckedUpdateWithoutShopInput>
   }
 
-  export type WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput = {
-    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput
-    upsert?: WebsiteProvisionUpsertWithoutShopInput
-    disconnect?: WebsiteProvisionWhereInput | boolean
-    delete?: WebsiteProvisionWhereInput | boolean
-    connect?: WebsiteProvisionWhereUniqueInput
-    update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
+  export type WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput = {
+    create?: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput> | WebsiteProvisionCreateWithoutShopInput[] | WebsiteProvisionUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: WebsiteProvisionCreateOrConnectWithoutShopInput | WebsiteProvisionCreateOrConnectWithoutShopInput[]
+    upsert?: WebsiteProvisionUpsertWithWhereUniqueWithoutShopInput | WebsiteProvisionUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: WebsiteProvisionCreateManyShopInputEnvelope
+    set?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    disconnect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    delete?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    connect?: WebsiteProvisionWhereUniqueInput | WebsiteProvisionWhereUniqueInput[]
+    update?: WebsiteProvisionUpdateWithWhereUniqueWithoutShopInput | WebsiteProvisionUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: WebsiteProvisionUpdateManyWithWhereWithoutShopInput | WebsiteProvisionUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
   }
 
   export type ShopCreateNestedOneWithoutAddressInput = {
@@ -87383,9 +87099,9 @@ export namespace Prisma {
     deleteMany?: UpcycleResultScalarWhereInput | UpcycleResultScalarWhereInput[]
   }
 
-  export type ShopCreateNestedOneWithoutWebsiteProvisionInput = {
-    create?: XOR<ShopCreateWithoutWebsiteProvisionInput, ShopUncheckedCreateWithoutWebsiteProvisionInput>
-    connectOrCreate?: ShopCreateOrConnectWithoutWebsiteProvisionInput
+  export type ShopCreateNestedOneWithoutSiteProvisionsInput = {
+    create?: XOR<ShopCreateWithoutSiteProvisionsInput, ShopUncheckedCreateWithoutSiteProvisionsInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutSiteProvisionsInput
     connect?: ShopWhereUniqueInput
   }
 
@@ -87407,12 +87123,12 @@ export namespace Prisma {
     set?: $Enums.ProvisionStatus
   }
 
-  export type ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput = {
-    create?: XOR<ShopCreateWithoutWebsiteProvisionInput, ShopUncheckedCreateWithoutWebsiteProvisionInput>
-    connectOrCreate?: ShopCreateOrConnectWithoutWebsiteProvisionInput
-    upsert?: ShopUpsertWithoutWebsiteProvisionInput
+  export type ShopUpdateOneRequiredWithoutSiteProvisionsNestedInput = {
+    create?: XOR<ShopCreateWithoutSiteProvisionsInput, ShopUncheckedCreateWithoutSiteProvisionsInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutSiteProvisionsInput
+    upsert?: ShopUpsertWithoutSiteProvisionsInput
     connect?: ShopWhereUniqueInput
-    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutWebsiteProvisionInput, ShopUpdateWithoutWebsiteProvisionInput>, ShopUncheckedUpdateWithoutWebsiteProvisionInput>
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutSiteProvisionsInput, ShopUpdateWithoutSiteProvisionsInput>, ShopUncheckedUpdateWithoutSiteProvisionsInput>
   }
 
   export type UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput = {
@@ -89267,7 +88983,7 @@ export namespace Prisma {
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -89289,7 +89005,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -89327,7 +89043,7 @@ export namespace Prisma {
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -89349,7 +89065,7 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -91082,7 +90798,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -91104,7 +90820,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -91165,7 +90881,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -91187,7 +90903,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -91225,7 +90941,7 @@ export namespace Prisma {
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -91247,7 +90963,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -91308,7 +91024,7 @@ export namespace Prisma {
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -91330,7 +91046,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -91589,83 +91305,66 @@ export namespace Prisma {
 
   export type WebsiteProvisionCreateWithoutShopInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
 
   export type WebsiteProvisionUncheckedCreateWithoutShopInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
     where: WebsiteProvisionWhereUniqueInput
     create: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+  }
+
+  export type WebsiteProvisionCreateManyShopInputEnvelope = {
+    data: WebsiteProvisionCreateManyShopInput | WebsiteProvisionCreateManyShopInput[]
+    skipDuplicates?: boolean
   }
 
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
@@ -91843,91 +91542,51 @@ export namespace Prisma {
     street?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type WebsiteProvisionUpsertWithoutShopInput = {
+  export type WebsiteProvisionUpsertWithWhereUniqueWithoutShopInput = {
+    where: WebsiteProvisionWhereUniqueInput
     update: XOR<WebsiteProvisionUpdateWithoutShopInput, WebsiteProvisionUncheckedUpdateWithoutShopInput>
     create: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
-    where?: WebsiteProvisionWhereInput
   }
 
-  export type WebsiteProvisionUpdateToOneWithWhereWithoutShopInput = {
-    where?: WebsiteProvisionWhereInput
+  export type WebsiteProvisionUpdateWithWhereUniqueWithoutShopInput = {
+    where: WebsiteProvisionWhereUniqueInput
     data: XOR<WebsiteProvisionUpdateWithoutShopInput, WebsiteProvisionUncheckedUpdateWithoutShopInput>
   }
 
-  export type WebsiteProvisionUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
-    siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
-    status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
-    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
-    subdomain?: NullableStringFieldUpdateOperationsInput | string | null
-    businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
-    contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
-    coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
-    adminUser?: NullableStringFieldUpdateOperationsInput | string | null
-    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
+  export type WebsiteProvisionUpdateManyWithWhereWithoutShopInput = {
+    where: WebsiteProvisionScalarWhereInput
+    data: XOR<WebsiteProvisionUpdateManyMutationInput, WebsiteProvisionUncheckedUpdateManyWithoutShopInput>
   }
 
-  export type WebsiteProvisionUncheckedUpdateWithoutShopInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-    framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
-    siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
-    status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
-    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
-    subdomain?: NullableStringFieldUpdateOperationsInput | string | null
-    businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
-    contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
-    coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
-    adminUser?: NullableStringFieldUpdateOperationsInput | string | null
-    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+  export type WebsiteProvisionScalarWhereInput = {
+    AND?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
+    OR?: WebsiteProvisionScalarWhereInput[]
+    NOT?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
+    id?: StringFilter<"WebsiteProvision"> | string
+    framework?: EnumFrameworkFilter<"WebsiteProvision"> | $Enums.Framework
+    siteType?: EnumSiteTypeFilter<"WebsiteProvision"> | $Enums.SiteType
+    status?: EnumProvisionStatusFilter<"WebsiteProvision"> | $Enums.ProvisionStatus
+    customDomain?: StringNullableFilter<"WebsiteProvision"> | string | null
+    subdomain?: StringNullableFilter<"WebsiteProvision"> | string | null
+    deploymentUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
+    businessName?: StringFilter<"WebsiteProvision"> | string
+    contactEmail?: StringFilter<"WebsiteProvision"> | string
+    config?: JsonFilter<"WebsiteProvision">
+    errorMessage?: StringNullableFilter<"WebsiteProvision"> | string | null
+    deletedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    coolifyProjectUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
+    coolifyServerUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
+    coolifyDatabaseUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
+    coolifyServiceUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
+    adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
+    adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    username?: StringNullableFilter<"WebsiteProvision"> | string | null
+    password?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
+    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
+    shopId?: StringFilter<"WebsiteProvision"> | string
+    userId?: StringFilter<"WebsiteProvision"> | string
   }
 
   export type ShopCreateWithoutAddressInput = {
@@ -91949,7 +91608,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -91971,7 +91630,7 @@ export namespace Prisma {
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -92009,7 +91668,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -92031,7 +91690,7 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ConversationCreateWithoutMemberOneInput = {
@@ -99521,7 +99180,7 @@ export namespace Prisma {
     promptSubject?: StringNullableFilter<"UpcycleResult"> | string | null
   }
 
-  export type ShopCreateWithoutWebsiteProvisionInput = {
+  export type ShopCreateWithoutSiteProvisionsInput = {
     id?: string
     ownerName: string
     bio?: string | null
@@ -99543,7 +99202,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
   }
 
-  export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
+  export type ShopUncheckedCreateWithoutSiteProvisionsInput = {
     id?: string
     ownerName: string
     bio?: string | null
@@ -99565,9 +99224,9 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
   }
 
-  export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
+  export type ShopCreateOrConnectWithoutSiteProvisionsInput = {
     where: ShopWhereUniqueInput
-    create: XOR<ShopCreateWithoutWebsiteProvisionInput, ShopUncheckedCreateWithoutWebsiteProvisionInput>
+    create: XOR<ShopCreateWithoutSiteProvisionsInput, ShopUncheckedCreateWithoutSiteProvisionsInput>
   }
 
   export type UserCreateWithoutWebsiteProvisionInput = {
@@ -99641,18 +99300,18 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutWebsiteProvisionInput, UserUncheckedCreateWithoutWebsiteProvisionInput>
   }
 
-  export type ShopUpsertWithoutWebsiteProvisionInput = {
-    update: XOR<ShopUpdateWithoutWebsiteProvisionInput, ShopUncheckedUpdateWithoutWebsiteProvisionInput>
-    create: XOR<ShopCreateWithoutWebsiteProvisionInput, ShopUncheckedCreateWithoutWebsiteProvisionInput>
+  export type ShopUpsertWithoutSiteProvisionsInput = {
+    update: XOR<ShopUpdateWithoutSiteProvisionsInput, ShopUncheckedUpdateWithoutSiteProvisionsInput>
+    create: XOR<ShopCreateWithoutSiteProvisionsInput, ShopUncheckedCreateWithoutSiteProvisionsInput>
     where?: ShopWhereInput
   }
 
-  export type ShopUpdateToOneWithWhereWithoutWebsiteProvisionInput = {
+  export type ShopUpdateToOneWithWhereWithoutSiteProvisionsInput = {
     where?: ShopWhereInput
-    data: XOR<ShopUpdateWithoutWebsiteProvisionInput, ShopUncheckedUpdateWithoutWebsiteProvisionInput>
+    data: XOR<ShopUpdateWithoutSiteProvisionsInput, ShopUncheckedUpdateWithoutSiteProvisionsInput>
   }
 
-  export type ShopUpdateWithoutWebsiteProvisionInput = {
+  export type ShopUpdateWithoutSiteProvisionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
@@ -99674,7 +99333,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
   }
 
-  export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
+  export type ShopUncheckedUpdateWithoutSiteProvisionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100449,7 +100108,7 @@ export namespace Prisma {
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -100471,7 +100130,7 @@ export namespace Prisma {
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
-    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    siteProvisions?: WebsiteProvisionUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -100708,78 +100367,56 @@ export namespace Prisma {
 
   export type WebsiteProvisionCreateWithoutUserInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
-    shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shop: ShopCreateNestedOneWithoutSiteProvisionsInput
   }
 
   export type WebsiteProvisionUncheckedCreateWithoutUserInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    shopId: string
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shopId: string
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutUserInput = {
@@ -101328,48 +100965,6 @@ export namespace Prisma {
     data: XOR<WebsiteProvisionUpdateManyMutationInput, WebsiteProvisionUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type WebsiteProvisionScalarWhereInput = {
-    AND?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
-    OR?: WebsiteProvisionScalarWhereInput[]
-    NOT?: WebsiteProvisionScalarWhereInput | WebsiteProvisionScalarWhereInput[]
-    id?: StringFilter<"WebsiteProvision"> | string
-    createdAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    updatedAt?: DateTimeFilter<"WebsiteProvision"> | Date | string
-    userId?: StringFilter<"WebsiteProvision"> | string
-    framework?: EnumFrameworkFilter<"WebsiteProvision"> | $Enums.Framework
-    siteType?: EnumSiteTypeFilter<"WebsiteProvision"> | $Enums.SiteType
-    status?: EnumProvisionStatusFilter<"WebsiteProvision"> | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFilter<"WebsiteProvision"> | boolean
-    customDomain?: StringNullableFilter<"WebsiteProvision"> | string | null
-    subdomain?: StringNullableFilter<"WebsiteProvision"> | string | null
-    businessName?: StringFilter<"WebsiteProvision"> | string
-    businessTagline?: StringNullableFilter<"WebsiteProvision"> | string | null
-    contactEmail?: StringFilter<"WebsiteProvision"> | string
-    contactPhone?: StringNullableFilter<"WebsiteProvision"> | string | null
-    businessAddress?: JsonNullableFilter<"WebsiteProvision">
-    socialLinks?: JsonNullableFilter<"WebsiteProvision">
-    coolifyProjectUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
-    coolifyServerUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
-    deploymentUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
-    lastDeploymentAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    lastHealthCheck?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    healthCheckStatus?: StringNullableFilter<"WebsiteProvision"> | string | null
-    config?: JsonFilter<"WebsiteProvision">
-    cpuLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
-    memoryLimit?: StringNullableFilter<"WebsiteProvision"> | string | null
-    errorMessage?: StringNullableFilter<"WebsiteProvision"> | string | null
-    deploymentLogs?: StringNullableFilter<"WebsiteProvision"> | string | null
-    notes?: StringNullableFilter<"WebsiteProvision"> | string | null
-    isTest?: BoolFilter<"WebsiteProvision"> | boolean
-    deletedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
-    shopId?: StringFilter<"WebsiteProvision"> | string
-    coolifyDatabaseUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
-    coolifyServiceUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
-    adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
-    adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
-    accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
-  }
-
   export type DepotUpsertWithWhereUniqueWithoutUserInput = {
     where: DepotWhereUniqueInput
     update: XOR<DepotUpdateWithoutUserInput, DepotUncheckedUpdateWithoutUserInput>
@@ -101841,6 +101436,33 @@ export namespace Prisma {
     serviceUrl?: string | null
   }
 
+  export type WebsiteProvisionCreateManyShopInput = {
+    id?: string
+    framework: $Enums.Framework
+    siteType: $Enums.SiteType
+    status?: $Enums.ProvisionStatus
+    customDomain?: string | null
+    subdomain?: string | null
+    deploymentUrl?: string | null
+    businessName: string
+    contactEmail: string
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
+    coolifyProjectUuid?: string | null
+    coolifyServerUuid?: string | null
+    coolifyDatabaseUuid?: string | null
+    coolifyServiceUuid?: string | null
+    adminPasswordEncrypted?: string | null
+    adminUser?: string | null
+    username?: string | null
+    password?: string | null
+    accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+  }
+
   export type EventUpdateWithoutShopInput = {
     id?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -102002,6 +101624,87 @@ export namespace Prisma {
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type WebsiteProvisionUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
+    siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
+    status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    businessName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: StringFieldUpdateOperationsInput | string
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
+    adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
+  }
+
+  export type WebsiteProvisionUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
+    siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
+    status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    businessName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: StringFieldUpdateOperationsInput | string
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
+    adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type WebsiteProvisionUncheckedUpdateManyWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
+    siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
+    status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    businessName?: StringFieldUpdateOperationsInput | string
+    contactEmail?: StringFieldUpdateOperationsInput | string
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
+    adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
+    adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ConversationCreateManyMemberOneInput = {
@@ -103884,40 +103587,29 @@ export namespace Prisma {
 
   export type WebsiteProvisionCreateManyUserInput = {
     id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
     framework: $Enums.Framework
     siteType: $Enums.SiteType
     status?: $Enums.ProvisionStatus
-    hasCustomDomain?: boolean
     customDomain?: string | null
     subdomain?: string | null
+    deploymentUrl?: string | null
     businessName: string
-    businessTagline?: string | null
     contactEmail: string
-    contactPhone?: string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config: JsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    deletedAt?: Date | string | null
     coolifyProjectUuid?: string | null
     coolifyServerUuid?: string | null
-    deploymentUrl?: string | null
-    lastDeploymentAt?: Date | string | null
-    lastHealthCheck?: Date | string | null
-    healthCheckStatus?: string | null
-    config: JsonNullValueInput | InputJsonValue
-    cpuLimit?: string | null
-    memoryLimit?: string | null
-    errorMessage?: string | null
-    deploymentLogs?: string | null
-    notes?: string | null
-    isTest?: boolean
-    deletedAt?: Date | string | null
-    shopId: string
     coolifyDatabaseUuid?: string | null
     coolifyServiceUuid?: string | null
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
+    username?: string | null
+    password?: string | null
     accessToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shopId: string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -104265,7 +103957,7 @@ export namespace Prisma {
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -104287,7 +103979,7 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
-    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    siteProvisions?: WebsiteProvisionUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {
@@ -104546,116 +104238,83 @@ export namespace Prisma {
 
   export type WebsiteProvisionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
-    shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shop?: ShopUpdateOneRequiredWithoutSiteProvisionsNestedInput
   }
 
   export type WebsiteProvisionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
   }
 
   export type WebsiteProvisionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     framework?: EnumFrameworkFieldUpdateOperationsInput | $Enums.Framework
     siteType?: EnumSiteTypeFieldUpdateOperationsInput | $Enums.SiteType
     status?: EnumProvisionStatusFieldUpdateOperationsInput | $Enums.ProvisionStatus
-    hasCustomDomain?: BoolFieldUpdateOperationsInput | boolean
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     subdomain?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     businessName?: StringFieldUpdateOperationsInput | string
-    businessTagline?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: StringFieldUpdateOperationsInput | string
-    contactPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    businessAddress?: NullableJsonNullValueInput | InputJsonValue
-    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    config?: JsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     coolifyProjectUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServerUuid?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    lastDeploymentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastHealthCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    healthCheckStatus?: NullableStringFieldUpdateOperationsInput | string | null
-    config?: JsonNullValueInput | InputJsonValue
-    cpuLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    memoryLimit?: NullableStringFieldUpdateOperationsInput | string | null
-    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    deploymentLogs?: NullableStringFieldUpdateOperationsInput | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    isTest?: BoolFieldUpdateOperationsInput | boolean
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    shopId?: StringFieldUpdateOperationsInput | string
     coolifyDatabaseUuid?: NullableStringFieldUpdateOperationsInput | string | null
     coolifyServiceUuid?: NullableStringFieldUpdateOperationsInput | string | null
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
   }
 
   export type DepotUpdateWithoutUserInput = {

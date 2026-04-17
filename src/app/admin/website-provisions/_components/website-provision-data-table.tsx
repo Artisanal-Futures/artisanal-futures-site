@@ -23,22 +23,25 @@ type ShopWithWebsite = Shop & {
 export const columns: ColumnDef<ShopWithWebsite>[] = [
   {
     accessorKey: "name",
-    header: "Business Name",
+    header: "Business",
     cell: ({ row }) => (
-      <RowCellIdDisplay id={row.original.id} label={row.original.name} />
+      <div className="flex flex-col space-y-1">
+        <span>{row.original.name}</span>
+        <span className="text-muted-foreground text-xs">
+          Owner: {row.original.ownerName}
+        </span>
+      </div>
     ),
   },
-  {
-    accessorKey: "ownerName",
-    header: "Owner Name",
-    cell: ({ row }) => (
-      <span className="text-sm">{row.original.ownerName}</span>
-    ),
-  },
+
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => <span className="text-sm">{row.original.email}</span>,
+    cell: ({ row }) => (
+      <span className="text-sm">
+        {row.original.websiteProvision?.contactEmail}
+      </span>
+    ),
   },
   {
     accessorKey: "website",
