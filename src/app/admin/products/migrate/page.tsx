@@ -9,9 +9,9 @@ export const metadata = {
 
 export default async function DatabaseMigrationPage() {
   // Only show in development
-  if (process.env.NODE_ENV !== "development") {
-    notFound();
-  }
+  // if (process.env.NODE_ENV !== "development") {
+  //   notFound();
+  // }
 
   return (
     <AdminClientLayout
