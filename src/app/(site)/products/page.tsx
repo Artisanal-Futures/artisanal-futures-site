@@ -13,13 +13,13 @@ export default function ProductsPage() {
         <h1 className="mb-4 text-5xl font-bold tracking-tight">
           Artisanal Products
         </h1>
-        <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-          Discover unique handcrafted goods from our talented artisans and
+        <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
+          Discover unique goods from our talented artisans
           {/* support small businesses */}
         </p>
       </div>
 
-      <div className="rounded-lg bg-background shadow-sm">
+      <div className="bg-background rounded-lg shadow-sm">
         <NewProductClient />
       </div>
     </div>

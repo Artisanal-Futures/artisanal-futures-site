@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import type { Shop } from "@prisma/client";
+import Link from "next/link";
 
 import { api } from "~/trpc/server";
 import { ShopCard } from "~/app/(site)/shops/_components/shop-card";
@@ -19,18 +18,18 @@ export default async function ShopsPage() {
         <h1 className="mb-4 text-5xl font-bold tracking-tight">
           Artisanal Shops
         </h1>
-        <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-          Discover unique handcrafted goods from our featured artisans
+        <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
+          Discover unique goods from our featured artisans
         </p>
       </div>
 
       {shops?.length === 0 ? (
-        <div className="rounded-lg bg-muted p-8 text-center">
-          <p className="text-xl text-muted-foreground">
+        <div className="bg-muted rounded-lg p-8 text-center">
+          <p className="text-muted-foreground text-xl">
             We don&apos;t have any shops set up at the moment.{" "}
             <Link
               href="/profile/shop"
-              className="font-medium text-primary hover:underline"
+              className="text-primary font-medium hover:underline"
             >
               Create your shop here
             </Link>{" "}
