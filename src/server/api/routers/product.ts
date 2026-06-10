@@ -14,6 +14,7 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
+import { SafeFetchError, safeFetchText } from "~/server/lib/safe-fetch";
 
 export const productRouter = createTRPCRouter({
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
@@ -185,6 +186,118 @@ export const productRouter = createTRPCRouter({
         totalPages: Math.ceil(totalCount / limit),
         subcategories: parentCategory.children,
       };
+    }),
+
+  // Server-side "fetch from my store" for the migration wizard. Fetches the
+  // shop's public product feed (Shopify / WordPress) so artisans don't have to
+  // copy-paste JSON. Squarespace is intentionally unsupported here because its
+  // feed lives at the products *page* URL, which we can't derive from the shop
+  // root reliably — it stays on the manual paste flow. The returned `json` is
+  // shaped exactly like the manual export so the existing client-side
+  // `mapProducts` parser handles it unchanged.
+  fetchFromStore: adminArtisanProcedure
+    .input(
+      z.object({
+        shopId: z.string().min(1),
+        platform: z.enum(["shopify", "wordpress"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const isShopOwner = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+      if (!isShopOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
+      const shop = await ctx.db.shop.findUnique({
+        where: { id: input.shopId },
+        select: { website: true },
+      });
+
+      if (!shop?.website?.trim()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "This shop has no website on file. Add the store URL to the shop, or paste the export manually.",
+        });
+      }
+
+      // Normalize the stored website to an https origin (no path/query).
+      let origin: string;
+      try {
+        const withScheme = /^https?:\/\//i.test(shop.website.trim())
+          ? shop.website.trim()
+          : `https://${shop.website.trim()}`;
+        origin = new URL(withScheme).origin.replace(/^http:\/\//i, "https://");
+      } catch {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `The shop website "${shop.website}" is not a valid URL.`,
+        });
+      }
+
+      try {
+        if (input.platform === "shopify") {
+          // Shopify exposes /products.json with page-based pagination.
+          const MAX_PAGES = 40; // 40 * 250 = up to 10k products
+          const products: unknown[] = [];
+          for (let page = 1; page <= MAX_PAGES; page++) {
+            const text = await safeFetchText(
+              `${origin}/products.json?limit=250&page=${page}`,
+            );
+            const parsed = JSON.parse(text) as { products?: unknown[] };
+            const batch = parsed.products ?? [];
+            products.push(...batch);
+            if (batch.length < 250) break;
+          }
+          return {
+            json: JSON.stringify({ products }),
+            count: products.length,
+          };
+        }
+
+        // WordPress REST API: /wp-json/wp/v2/product with per_page/page.
+        const MAX_PAGES = 50; // 50 * 100 = up to 5k products
+        const products: unknown[] = [];
+        for (let page = 1; page <= MAX_PAGES; page++) {
+          let text: string;
+          try {
+            text = await safeFetchText(
+              `${origin}/wp-json/wp/v2/product?per_page=100&page=${page}`,
+            );
+          } catch (err) {
+            // WP returns a 400 once you page past the end; stop gracefully if
+            // we've already collected something, otherwise surface the error.
+            if (page > 1 && err instanceof SafeFetchError) break;
+            throw err;
+          }
+          const batch = JSON.parse(text) as unknown[];
+          if (!Array.isArray(batch) || batch.length === 0) break;
+          products.push(...batch);
+          if (batch.length < 100) break;
+        }
+        return {
+          json: JSON.stringify(products),
+          count: products.length,
+        };
+      } catch (err) {
+        if (err instanceof SafeFetchError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: err.message });
+        }
+        if (err instanceof SyntaxError) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "The store responded but the data wasn't in the expected format. Try the manual paste flow.",
+          });
+        }
+        throw err;
+      }
     }),
 
   importProducts: adminArtisanProcedure

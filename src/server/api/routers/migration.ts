@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  adminOnlyProcedure,
-  createTRPCRouter,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { adminOnlyProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import { applyTable } from "~/server/fork-import/apply";
 import {
@@ -28,7 +24,7 @@ const forkApplySchema = z.object({
 });
 
 export const migrationRouter = createTRPCRouter({
-  get: publicProcedure.query(async ({ ctx }) => {
+  get: adminOnlyProcedure.query(async ({ ctx }) => {
     // Find sessions where the userId doesn't exist in the users table
     const orphanedSessions = await ctx.db.session.findMany({
       where: {
@@ -41,7 +37,7 @@ export const migrationRouter = createTRPCRouter({
     return orphanedSessions;
   }),
 
-  migrateUsernames: publicProcedure.mutation(async ({ ctx }) => {
+  migrateUsernames: adminOnlyProcedure.mutation(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({
       where: {
         name: {

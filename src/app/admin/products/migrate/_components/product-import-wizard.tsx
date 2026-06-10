@@ -3,7 +3,6 @@
 import { Fragment, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
@@ -11,6 +10,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  DownloadCloud,
   FileJson,
   Package,
   Store,
@@ -70,7 +70,6 @@ export function ProductImportWizard({
     [],
   );
   const [parseError, setParseError] = useState<string | null>(null);
-  const [isImporting, setIsImporting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -84,7 +83,6 @@ export function ProductImportWizard({
   }, [parsedProducts, currentPage]);
 
   const apiUtils = api.useUtils();
-  const router = useRouter();
 
   const productMigration = api.product.importProducts.useMutation({
     onSuccess: () => {
@@ -102,10 +100,10 @@ export function ProductImportWizard({
     },
   });
 
-  const handleParse = async () => {
+  const parseJsonString = async (raw: string) => {
     setParseError(null);
     try {
-      const parsedJson = JSON.parse(jsonInput) as ProductData;
+      const parsedJson = JSON.parse(raw) as ProductData;
       const products = await mapProducts({
         parsedJson: parsedJson,
         selectedSource: selectedPlatform,
@@ -130,6 +128,30 @@ export function ProductImportWizard({
       );
     }
   };
+
+  const handleParse = () => parseJsonString(jsonInput);
+
+  const fetchFromStore = api.product.fetchFromStore.useMutation({
+    onSuccess: async ({ json, count }) => {
+      toast.dismiss();
+      if (count === 0) {
+        toast.error("No products found at your store.");
+        return;
+      }
+      setJsonInput(json);
+      toast.success(
+        `Fetched ${count} product${count !== 1 ? "s" : ""} from your store.`,
+      );
+      await parseJsonString(json);
+    },
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(error.message ?? "Could not fetch from your store.");
+    },
+    onMutate: () => {
+      toast.loading("Fetching products from your store...");
+    },
+  });
 
   const handleImport = async () => {
     productMigration.mutate(
@@ -369,6 +391,60 @@ export function ProductImportWizard({
                 below.
               </p>
             </div>
+
+            {(selectedPlatform === "shopify" ||
+              selectedPlatform === "wordpress") && (
+              <div className="border-border bg-secondary/30 rounded-xl border p-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-foreground text-sm font-medium">
+                      Fetch automatically
+                    </p>
+                    <p className="text-muted-foreground mt-0.5 text-sm">
+                      Pull your products directly — no copy-paste needed.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      if (
+                        selectedPlatform === "shopify" ||
+                        selectedPlatform === "wordpress"
+                      ) {
+                        fetchFromStore.mutate({
+                          shopId: selectedShop,
+                          platform: selectedPlatform,
+                        });
+                      }
+                    }}
+                    disabled={fetchFromStore.isPending}
+                    className="shrink-0 gap-2"
+                  >
+                    {fetchFromStore.isPending ? (
+                      <>
+                        <Spinner className="size-4" />
+                        Fetching…
+                      </>
+                    ) : (
+                      <>
+                        <DownloadCloud className="size-4" />
+                        Fetch from my store
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {(selectedPlatform === "shopify" ||
+              selectedPlatform === "wordpress") && (
+              <div className="relative flex items-center py-1">
+                <div className="border-border flex-grow border-t" />
+                <span className="text-muted-foreground mx-3 shrink-0 text-xs">
+                  or paste manually
+                </span>
+                <div className="border-border flex-grow border-t" />
+              </div>
+            )}
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -626,10 +702,10 @@ export function ProductImportWizard({
               </Button>
               <Button
                 onClick={handleImport}
-                disabled={isImporting}
+                disabled={productMigration.isPending}
                 className="gap-2"
               >
-                {isImporting ? (
+                {productMigration.isPending ? (
                   <>
                     <Spinner className="size-4" />
                     Importing...
