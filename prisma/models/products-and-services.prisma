@@ -51,4 +51,6 @@ enum ProductScrapeMethod {
   WORDPRESS
   SHOPIFY
   SQUARESPACE
+  SIMPLEPRESS
+  SQUARE
 }

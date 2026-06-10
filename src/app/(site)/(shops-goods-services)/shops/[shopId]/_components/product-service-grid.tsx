@@ -54,6 +54,7 @@ export function ProductServiceGrid({
               key={item.id}
               item={item}
               onClick={() => handleItemClick(item)}
+              fallbackImage={shop?.logoPhoto}
             />
           ))}
         </div>
@@ -63,6 +64,7 @@ export function ProductServiceGrid({
           linkToWebsite={shop?.website ?? undefined}
           onOpenChange={setDialogOpen}
           shopPrinciples={shop?.attributeTags ?? []}
+          fallbackImage={shop?.logoPhoto}
         />
       </section>
     );
@@ -113,6 +115,7 @@ export function ProductServiceGrid({
         shopPrinciples={shop?.attributeTags ?? []}
         onOpenChange={setDialogOpen}
         linkToWebsite={shop?.website ?? undefined}
+        fallbackImage={shop?.logoPhoto}
       />
     </section>
   );

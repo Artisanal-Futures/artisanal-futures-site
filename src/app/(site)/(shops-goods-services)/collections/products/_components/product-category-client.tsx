@@ -127,6 +127,7 @@ export function CategoryClient({
               onClick={() => handleItemClick(product as Product)}
               createdBy={product?.shop?.name ?? ""}
               shopPrinciples={product?.shop?.attributeTags ?? []}
+              fallbackImage={product?.shop?.logoPhoto}
             />
           ))}
         </div>
@@ -146,6 +147,7 @@ export function CategoryClient({
             (selectedItem as ProductWithRelations)?.shop?.attributeTags ?? []
           }
           linkToProfile={`/shops/${(selectedItem as ProductWithRelations)?.shop?.id}`}
+          fallbackImage={(selectedItem as ProductWithRelations)?.shop?.logoPhoto}
         />
 
         {totalPages > 1 && (

@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, User } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
+import { ImageWithFallback } from "~/components/image-with-fallback";
 import {
   Dialog,
   DialogContentHighContrast,
@@ -27,6 +28,8 @@ type Props = {
   shopPrinciples?: string[];
   linkToProfile?: string;
   linkToWebsite?: string;
+  /** Business logo, shown if the product image fails to load. */
+  fallbackImage?: string | null;
 };
 
 const removeHtmlTags = (text: string) => {
@@ -40,11 +43,18 @@ export function ProductDetailDialog({
   shopPrinciples,
   linkToWebsite,
   createdBy,
+  fallbackImage,
 }: Props) {
   if (!item) return null;
 
   const hasTags = item.tags && item.tags.length > 0;
   const hasPrinciples = shopPrinciples && shopPrinciples.length > 0;
+  const fallbackSrc =
+    fallbackImage?.trim() && fallbackImage !== "null"
+      ? fallbackImage.startsWith("http")
+        ? fallbackImage
+        : handleImageUrl(fallbackImage)
+      : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -52,8 +62,9 @@ export function ProductDetailDialog({
         {/* Image */}
         {item?.imageUrl ? (
           <div className="bg-muted relative aspect-4/3 w-full">
-            <Image
+            <ImageWithFallback
               src={item.imageUrl ?? "/placeholder.svg"}
+              fallbackSrc={fallbackSrc}
               alt={item?.name ?? ""}
               fill
               className="object-cover"

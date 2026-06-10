@@ -67,10 +67,6 @@ export interface DataTableProps<TData, TValue> {
   onTableInit?: (table: ReactTableInstance<TData>) => void;
 }
 
-const noop = () => {
-  // Intentionally empty
-};
-
 export function AdvancedDataTable<TData, TValue>({
   columns,
   data,
@@ -98,9 +94,25 @@ export function AdvancedDataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const lastSelectedRowIndex = React.useRef<number | null>(null);
 
-  const paginationState = pagination ?? {
-    pageSize: 10,
-    pageIndex: 0,
+  // Pagination is controlled only when the parent supplies both the value and
+  // a change handler. Otherwise we manage it internally — without this, the
+  // controlled state would reset to page 0 every render and "next page" would
+  // do nothing (the change handler was a no-op).
+  const isPaginationControlled =
+    pagination !== undefined && onPaginationChange !== undefined;
+  const [internalPagination, setInternalPagination] =
+    React.useState<PaginationState>(
+      pagination ?? { pageIndex: 0, pageSize: 10 },
+    );
+  const paginationState = isPaginationControlled
+    ? pagination
+    : internalPagination;
+  const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
+    if (isPaginationControlled) {
+      onPaginationChange(updater);
+    } else {
+      setInternalPagination(updater);
+    }
   };
 
   const table = useReactTable({
@@ -119,7 +131,7 @@ export function AdvancedDataTable<TData, TValue>({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: onPaginationChange ?? noop,
+    onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

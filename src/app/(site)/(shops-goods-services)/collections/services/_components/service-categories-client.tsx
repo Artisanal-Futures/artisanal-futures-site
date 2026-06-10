@@ -60,6 +60,7 @@ export function ServiceCategoriesClient({ categories }: Props) {
                   onClick={() => handleItemClick(product as Service)}
                   createdBy={product?.shop?.name ?? ""}
                   shopPrinciples={product?.shop?.attributeTags ?? []}
+                  fallbackImage={product?.shop?.logoPhoto}
                 />
               ))}
             </div>
@@ -74,6 +75,7 @@ export function ServiceCategoriesClient({ categories }: Props) {
               (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
             }
             linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
+            fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
           />
 
           {category?.items?.length === 0 && (

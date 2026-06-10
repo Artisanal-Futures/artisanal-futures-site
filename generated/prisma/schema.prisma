@@ -3,7 +3,7 @@ model Category {
   name     String       @unique
   parentId String?
   type     CategoryType @default(PRODUCT)
-  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: NoAction)
+  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: Cascade)
   children Category[]   @relation("Subcategories")
   products Product[]    @relation("CategoryToProduct")
   services Service[]    @relation("CategoryToService")
@@ -178,6 +178,8 @@ enum ProductScrapeMethod {
   WORDPRESS
   SHOPIFY
   SQUARESPACE
+  SIMPLEPRESS
+  SQUARE
 }
 
 model Shop {

@@ -303,7 +303,9 @@ export const ProductScrapeMethod: {
   MANUAL: 'MANUAL',
   WORDPRESS: 'WORDPRESS',
   SHOPIFY: 'SHOPIFY',
-  SQUARESPACE: 'SQUARESPACE'
+  SQUARESPACE: 'SQUARESPACE',
+  SIMPLEPRESS: 'SIMPLEPRESS',
+  SQUARE: 'SQUARE'
 };
 
 export type ProductScrapeMethod = (typeof ProductScrapeMethod)[keyof typeof ProductScrapeMethod]

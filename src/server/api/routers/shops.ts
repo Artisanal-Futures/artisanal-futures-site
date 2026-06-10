@@ -175,15 +175,18 @@ export const shopsRouter = createTRPCRouter({
       }
 
       const updateShopData = await ctx.db.$transaction(async (tx) => {
-        const updatedAddress = await tx.shopAddress.update({
+        const addressData = {
+          address: input?.address ?? "",
+          city: input?.city ?? "",
+          state: input?.state ?? "",
+          zip: input?.zip ?? "",
+          country: input?.country ?? "",
+        };
+
+        const updatedAddress = await tx.shopAddress.upsert({
           where: { shopId: input.id },
-          data: {
-            address: input?.address ?? "",
-            city: input?.city ?? "",
-            state: input?.state ?? "",
-            zip: input?.zip ?? "",
-            country: input?.country ?? "",
-          },
+          create: { ...addressData, shopId: input.id },
+          update: addressData,
         });
 
         const updatedShop = await tx.shop.update({

@@ -124,6 +124,7 @@ export function ServiceCategoryClient({
               onClick={() => handleItemClick(service as Service)}
               createdBy={service?.shop?.name ?? ""}
               shopPrinciples={service?.shop?.attributeTags ?? []}
+              fallbackImage={service?.shop?.logoPhoto}
             />
           ))}
         </div>
@@ -143,6 +144,7 @@ export function ServiceCategoryClient({
             (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
           }
           linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
+          fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
         />
 
         {totalPages > 1 && (

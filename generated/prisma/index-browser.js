@@ -869,7 +869,9 @@ exports.ProductScrapeMethod = exports.$Enums.ProductScrapeMethod = {
   MANUAL: 'MANUAL',
   WORDPRESS: 'WORDPRESS',
   SHOPIFY: 'SHOPIFY',
-  SQUARESPACE: 'SQUARESPACE'
+  SQUARESPACE: 'SQUARESPACE',
+  SIMPLEPRESS: 'SIMPLEPRESS',
+  SQUARE: 'SQUARE'
 };
 
 exports.MemberRole = exports.$Enums.MemberRole = {

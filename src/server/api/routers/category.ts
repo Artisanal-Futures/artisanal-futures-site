@@ -53,6 +53,8 @@ export const categoryRouter = createTRPCRouter({
   delete: adminOnlyProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      // Children are removed automatically via the onDelete: Cascade on the
+      // Category self-relation (see prisma/models/categories.prisma).
       await ctx.db.category.delete({
         where: { id: input.id },
       });

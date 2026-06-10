@@ -1,19 +1,33 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   ShopifyData,
   ShopifyProduct,
+  SimplePressData,
+  SimplePressProduct,
+  SquareData,
+  SquareProduct,
   SquareSpaceData,
   SquareSpaceProduct,
   WordPressProduct,
 } from "../_validators/types";
 import type { ProductWithRelations } from "~/types/product";
 
-export type ProductData = ShopifyData | SquareSpaceData | WordPressProduct[];
+export type ProductData =
+  | ShopifyData
+  | SquareSpaceData
+  | SimplePressData
+  | SquareData
+  | WordPressProduct[];
 
 export async function convertToProduct(
-  product: ShopifyProduct | SquareSpaceProduct | WordPressProduct,
+  product:
+    | ShopifyProduct
+    | SquareSpaceProduct
+    | SimplePressProduct
+    | SquareProduct
+    | WordPressProduct,
   shopId: string,
   siteUrl?: string,
+  fallbackImageUrl?: string | null,
 ) {
   // Handle Shopify product
   if ("body_html" in product) {
@@ -25,7 +39,7 @@ export async function convertToProduct(
         ? Math.round(parseFloat(product.variants[0].price) * 100)
         : null,
       currency: "USD", // Shopify typically uses USD
-      imageUrl: product.images[0]?.src ?? null,
+      imageUrl: product.images[0]?.src ?? fallbackImageUrl ?? null,
       productUrl: siteUrl
         ? `${siteUrl}/products/${product.handle}`
         : `/products/${product.handle}`,
@@ -41,24 +55,18 @@ export async function convertToProduct(
 
   // Handle WordPress product
   if ("class_list" in product) {
-    let imageUrl = null;
     const description = product.content.rendered.replace(/<[^>]*>/g, "");
 
-    const mediaHref = product._links["wp:featuredmedia"]?.[0]?.href ?? "";
-    let isJson = false;
-    if (mediaHref) {
-      const getMedia = await fetch(mediaHref);
-      const contentType = getMedia.headers.get("content-type") ?? "";
-      if (getMedia.ok && contentType.includes("application/json")) {
-        isJson = true;
-        const media = (await getMedia.json()) as {
-          guid: {
-            rendered: string;
-          };
-        };
-        imageUrl = media.guid.rendered;
-      }
-    }
+    // The featured image is resolved server-side by `fetchFromStore` (which
+    // injects `featured_image_url`) so we never make a CORS-bound request from
+    // the browser. For manual pastes fetched with `_embed`, read the embedded
+    // media instead. Falls back to the shop logo below when neither is present.
+    const embedded = product._embedded?.["wp:featuredmedia"]?.[0];
+    const imageUrl =
+      product.featured_image_url ??
+      embedded?.source_url ??
+      embedded?.guid?.rendered ??
+      null;
 
     return {
       shopProductId: product.id.toString(),
@@ -66,7 +74,7 @@ export async function convertToProduct(
       description: removeHtmlTags(description),
       priceInCents: null, // WordPress core doesn't include price
       currency: null,
-      imageUrl: imageUrl, // Would need to fetch featured media separately
+      imageUrl: imageUrl ?? fallbackImageUrl ?? null, // falls back to shop logo
       productUrl: product.link,
       attributeTags: [],
       tags: [], // Would need to map product_tag if needed
@@ -78,9 +86,73 @@ export async function convertToProduct(
     };
   }
 
+  // Handle SimplePress product. Its feed has a flat shape with `price`
+  // already in integer cents and no per-product id, so we derive a stable
+  // `shopProductId` from the product URL's slug.
+  if ("priceFormatted" in product) {
+    const slug =
+      product.url
+        ?.split("?")[0]
+        ?.replace(/\/+$/, "")
+        .split("/")
+        .filter(Boolean)
+        .pop() ?? product.url;
+    return {
+      shopProductId: slug,
+      name: product.name,
+      description: removeHtmlTags(product.description ?? undefined),
+      priceInCents:
+        typeof product.price === "number" && product.price > 0
+          ? product.price
+          : null,
+      currency: product.currency ?? "USD",
+      imageUrl: product.imageUrl ?? fallbackImageUrl ?? null,
+      productUrl: product.url ?? null,
+      attributeTags: [],
+      tags: [],
+      materialTags: [],
+      environmentalTags: [],
+      aiGeneratedTags: [],
+      scrapeMethod: "SIMPLEPRESS",
+      shopId,
+    };
+  }
+
+  // Handle Square (square.site) product. Prices are nested integer cents under
+  // `price.*_subunits`; images and links are already absolute URLs.
+  if ("square_id" in product) {
+    const priceInCents =
+      product.price?.high_subunits ?? product.price?.low_subunits ?? null;
+    const squareImageUrl =
+      product.thumbnail?.data?.absolute_url ??
+      product.images?.data?.[0]?.absolute_url ??
+      fallbackImageUrl ??
+      null;
+    return {
+      shopProductId: product.id,
+      name: product.name,
+      description: removeHtmlTags(product.short_description ?? undefined),
+      priceInCents:
+        typeof priceInCents === "number" && priceInCents > 0
+          ? priceInCents
+          : null,
+      currency: "USD",
+      imageUrl: squareImageUrl,
+      productUrl: product.absolute_site_link ?? null,
+      attributeTags: [],
+      tags: [],
+      materialTags: [],
+      environmentalTags: [],
+      aiGeneratedTags: [],
+      scrapeMethod: "SQUARE",
+      shopId,
+    };
+  }
+
   // Handle SquareSpace product
 
-  const imageUrl = product.items?.[0]?.assetUrl ?? product.assetUrl ?? null;
+  const imageUrl =
+    product.items?.[0]?.assetUrl ?? product.assetUrl ?? fallbackImageUrl ?? null;
   return {
     shopProductId: product.id,
     name: product.title,
@@ -106,11 +178,14 @@ export async function mapProducts({
   selectedSource,
   selectedShopId,
   selectedSiteUrl,
+  fallbackImageUrl,
 }: {
   parsedJson: ProductData;
   selectedSource: string;
   selectedShopId: string;
   selectedSiteUrl?: string;
+  /** Shop logo URL used when a product has no image of its own. */
+  fallbackImageUrl?: string | null;
 }) {
   let convertedProducts: Partial<ProductWithRelations>[] = [];
 
@@ -123,6 +198,7 @@ export async function mapProducts({
             product,
             selectedShopId,
             selectedSiteUrl ?? undefined,
+            fallbackImageUrl,
           )) as Partial<ProductWithRelations>,
       ),
     );
@@ -135,6 +211,33 @@ export async function mapProducts({
             product,
             selectedShopId,
             selectedSiteUrl ?? undefined,
+            fallbackImageUrl,
+          )) as Partial<ProductWithRelations>,
+      ),
+    );
+  } else if (selectedSource === "simplepress") {
+    const simplePressData = parsedJson as SimplePressData;
+    convertedProducts = await Promise.all(
+      simplePressData?.products?.map(
+        async (product) =>
+          (await convertToProduct(
+            product,
+            selectedShopId,
+            selectedSiteUrl ?? undefined,
+            fallbackImageUrl,
+          )) as Partial<ProductWithRelations>,
+      ),
+    );
+  } else if (selectedSource === "square") {
+    const squareData = parsedJson as SquareData;
+    convertedProducts = await Promise.all(
+      squareData?.data?.map(
+        async (product) =>
+          (await convertToProduct(
+            product,
+            selectedShopId,
+            selectedSiteUrl ?? undefined,
+            fallbackImageUrl,
           )) as Partial<ProductWithRelations>,
       ),
     );
@@ -146,6 +249,8 @@ export async function mapProducts({
           (await convertToProduct(
             product,
             selectedShopId,
+            undefined,
+            fallbackImageUrl,
           )) as Partial<ProductWithRelations>,
       ),
     );

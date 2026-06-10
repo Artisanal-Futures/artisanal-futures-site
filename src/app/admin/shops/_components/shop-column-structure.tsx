@@ -12,14 +12,25 @@ import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data
 
 import { DeleteShopDialog } from "./delete-shop-dialog";
 
-function isValidUrl(url?: string): boolean {
-  if (!url || typeof url !== "string") return false;
+const PLACEHOLDER_IMAGE = "/placeholder-image.webp";
+
+// Returns a renderable image src, normalizing (URL-encoding) absolute URLs so
+// values containing spaces or other unencoded characters still load. Falls back
+// to the placeholder when the value is empty or not a usable url.
+function toImageSrc(url?: string | null): string {
+  if (!url || typeof url !== "string") return PLACEHOLDER_IMAGE;
+
+  // Root-relative or protocol-relative paths are passed through as-is.
+  if (url.startsWith("/")) return url;
+
   try {
-    // Accepts http, https, protocol-relative, or root-relative urls
-    const pattern = /^(https?:\/\/|\/\/|\/)[^\s/$.?#].[^\s]*$/i;
-    return pattern.test(url);
+    const parsed = new URL(url);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return PLACEHOLDER_IMAGE;
+    }
+    return parsed.href;
   } catch {
-    return false;
+    return PLACEHOLDER_IMAGE;
   }
 }
 
@@ -34,7 +45,7 @@ export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
         <RowImageLink
           id={row.original.id}
           name={`${row.original.name} `}
-          image={`${isValidUrl(row.original?.logoPhoto ?? "") ? row.original?.logoPhoto : "/placeholder-image.webp"}`}
+          image={toImageSrc(row.original?.logoPhoto)}
           hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />

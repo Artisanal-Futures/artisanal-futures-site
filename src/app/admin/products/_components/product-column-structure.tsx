@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { type ColumnDef } from "@tanstack/react-table";
 import { PencilIcon } from "lucide-react";
+
+import { type ColumnDef } from "@tanstack/react-table";
 
 import type { ProductWithRelations } from "~/types/product";
 import { cn } from "~/lib/utils";
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
 import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -49,8 +51,13 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       <>
         <RowImageLink
           id={row.original.id}
-          name={`${row.original.name} • #${row.original.id}`}
+          name={`${row.original.name}`}
           image={row.original.imageUrl ?? ""}
+          fallbackImage={(() => {
+            const logo = row.original.shop?.logoPhoto;
+            if (!logo?.trim() || logo === "null") return undefined;
+            return logo.startsWith("http") ? logo : handleImageUrl(logo);
+          })()}
           hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
@@ -66,9 +73,9 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     cell: ({ row }) => (
       <div className="flex flex-col space-y-1">
         <span>{row.original.shop?.name}</span>
-        <span className="text-muted-foreground text-xs">
+        {/* <span className="text-muted-foreground text-xs">
           Shop ID: {row.original.shopId}
-        </span>
+        </span> */}
       </div>
     ),
   },

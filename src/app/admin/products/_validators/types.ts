@@ -453,6 +453,16 @@ export type WordPressProduct = {
   product_cat: number[];
   product_tag: unknown[];
   class_list: Record<string, string>;
+  // Injected server-side by `fetchFromStore`: the product's featured image
+  // resolved from the WordPress media endpoint. Absent on manual pastes.
+  featured_image_url?: string | null;
+  // Present when the feed was fetched with `_embed=wp:featuredmedia`.
+  _embedded?: {
+    "wp:featuredmedia"?: Array<{
+      source_url?: string;
+      guid?: { rendered?: string };
+    }>;
+  };
   _links: {
     self: Array<{
       href: string;
@@ -492,4 +502,54 @@ export type WordPressProduct = {
 
 export type WordPressData = {
   products: WordPressProduct[];
+};
+
+// SimplePress exposes a flat product feed at `/api/products`. Prices are
+// already integer cents, and there's no per-product id — the product `url`
+// (its shop page) is the stable identifier we dedupe on.
+export type SimplePressProduct = {
+  name: string;
+  price: number | null;
+  priceFormatted: string | null;
+  currency: string | null;
+  description: string | null;
+  url: string;
+  imageUrl: string | null;
+};
+
+export type SimplePressData = {
+  business?: string;
+  products: SimplePressProduct[];
+};
+
+// Square Online (square.site / Weebly) renders its storefront via an internal
+// `products?page=N` XHR feed. There's no public API, so this is paste-only.
+// Prices live under `price.*_subunits` (integer cents); descriptions are HTML.
+type SquareImage = {
+  absolute_url?: string | null;
+  url?: string | null;
+};
+
+export type SquareProduct = {
+  id: string;
+  // Always present in the Square feed; used as the discriminator that tells
+  // this shape apart from SquareSpace in convertToProduct.
+  square_id: string;
+  site_product_id?: string;
+  name: string;
+  short_description?: string | null;
+  absolute_site_link?: string | null;
+  site_link?: string | null;
+  price?: {
+    high_subunits?: number | null;
+    low_subunits?: number | null;
+    regular_high_subunits?: number | null;
+    regular_low_subunits?: number | null;
+  } | null;
+  thumbnail?: { data?: SquareImage | null } | null;
+  images?: { data?: SquareImage[] | null } | null;
+};
+
+export type SquareData = {
+  data: SquareProduct[];
 };

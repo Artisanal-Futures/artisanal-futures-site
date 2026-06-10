@@ -1,10 +1,10 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -42,10 +42,41 @@ import {
 } from "~/components/ui/table";
 import { Textarea } from "~/components/ui/textarea";
 
+import { handleImageUrl } from "~/lib/handle-image-url";
+import { ImageWithFallback } from "~/components/image-with-fallback";
 import { mapProducts } from "../../_utils/convert-to-product";
 
-type Platform = "squarespace" | "wordpress" | "shopify";
+// Platforms we can pull from automatically. Square (square.site) has no public
+// product feed, so it's paste-only and excluded here.
+type FetchablePlatform = "squarespace" | "wordpress" | "shopify" | "simplepress";
+type Platform = FetchablePlatform | "square";
+
+const FETCHABLE_PLATFORMS: FetchablePlatform[] = [
+  "squarespace",
+  "wordpress",
+  "shopify",
+  "simplepress",
+];
+
+function isFetchable(platform: Platform | ""): platform is FetchablePlatform {
+  return (FETCHABLE_PLATFORMS as string[]).includes(platform);
+}
 type Step = "select" | "paste" | "review" | "success";
+
+function platformLabel(platform: Platform | ""): string {
+  switch (platform) {
+    case "wordpress":
+      return "WordPress/WooCommerce";
+    case "simplepress":
+      return "SimplePress";
+    case "square":
+      return "Square";
+    case "":
+      return "";
+    default:
+      return platform.charAt(0).toUpperCase() + platform.slice(1);
+  }
+}
 
 function formatPrice(cents: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -70,6 +101,7 @@ export function ProductImportWizard({
     [],
   );
   const [parseError, setParseError] = useState<string | null>(null);
+  const [certWarning, setCertWarning] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -104,11 +136,14 @@ export function ProductImportWizard({
     setParseError(null);
     try {
       const parsedJson = JSON.parse(raw) as ProductData;
+      // Use the shop's logo as the fallback image for any product whose own
+      // image couldn't be fetched.
       const products = await mapProducts({
         parsedJson: parsedJson,
         selectedSource: selectedPlatform,
         selectedShopId: selectedShop,
         selectedSiteUrl: selectedSiteUrl ?? undefined,
+        fallbackImageUrl: selectedShopLogoUrl,
       });
 
       if (products.length === 0) {
@@ -129,15 +164,24 @@ export function ProductImportWizard({
     }
   };
 
-  const handleParse = () => parseJsonString(jsonInput);
+  const handleParse = () => {
+    // The cert notice only applies to server fetches, not manual pastes.
+    setCertWarning(null);
+    return parseJsonString(jsonInput);
+  };
 
   const fetchFromStore = api.product.fetchFromStore.useMutation({
-    onSuccess: async ({ json, count }) => {
+    onSuccess: async ({ json, count, insecureTLSCode }) => {
       toast.dismiss();
       if (count === 0) {
         toast.error("No products found at your store.");
         return;
       }
+      setCertWarning(
+        insecureTLSCode
+          ? "We imported your products, but your store's SSL certificate appears to be invalid or expired. The import still worked — you may want to let your web host know so customers' browsers don't warn them away from your site."
+          : null,
+      );
       setJsonInput(json);
       toast.success(
         `Fetched ${count} product${count !== 1 ? "s" : ""} from your store.`,
@@ -149,6 +193,7 @@ export function ProductImportWizard({
       toast.error(error.message ?? "Could not fetch from your store.");
     },
     onMutate: () => {
+      setCertWarning(null);
       toast.loading("Fetching products from your store...");
     },
   });
@@ -178,6 +223,16 @@ export function ProductImportWizard({
   };
 
   const selectedArtisan = shops.find((s) => s.id === selectedShop);
+  // Shop logo used as the fallback image for products whose own image is
+  // missing or fails to load. `getAll` stringifies logoPhoto for admins, so
+  // guard against the literal "null"/"undefined" and empty values.
+  const selectedShopLogoUrl = (() => {
+    const rawLogo = selectedArtisan?.logoPhoto;
+    if (!rawLogo || ["null", "undefined", ""].includes(rawLogo.trim())) {
+      return undefined;
+    }
+    return rawLogo.startsWith("http") ? rawLogo : handleImageUrl(rawLogo);
+  })();
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -305,6 +360,8 @@ export function ProductImportWizard({
                       WordPress / WooCommerce
                     </SelectItem>
                     <SelectItem value="shopify">Shopify</SelectItem>
+                    <SelectItem value="simplepress">SimplePress</SelectItem>
+                    <SelectItem value="square">Square</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -314,11 +371,7 @@ export function ProductImportWizard({
             {selectedPlatform && (
               <div className="border-border bg-secondary/30 rounded-xl border p-5">
                 <h3 className="text-foreground font-medium">
-                  How to export from{" "}
-                  {selectedPlatform === "wordpress"
-                    ? "WordPress/WooCommerce"
-                    : selectedPlatform.charAt(0).toUpperCase() +
-                      selectedPlatform.slice(1)}
+                  How to export from {platformLabel(selectedPlatform)}
                 </h3>
                 <div className="text-muted-foreground mt-3 space-y-2 text-sm">
                   {selectedPlatform === "squarespace" && (
@@ -359,6 +412,30 @@ export function ProductImportWizard({
                       <p>3. Copy the entire JSON response</p>
                     </>
                   )}
+                  {selectedPlatform === "simplepress" && (
+                    <>
+                      <p>1. Go to your SimplePress site</p>
+                      <p>2. Add &quot;/api/products&quot; to your site URL</p>
+                      <p>3. Copy the entire JSON response</p>
+                    </>
+                  )}
+                  {selectedPlatform === "square" && (
+                    <>
+                      <p>1. Go to the shop page of your Square site</p>
+                      <p>
+                        2. Open your browser&apos;s developer console and go to
+                        the Network tab
+                      </p>
+                      <p>
+                        3. Refresh the page and toggle the &quot;Fetch/XHR&quot;
+                        filter
+                      </p>
+                      <p>
+                        4. Find a request starting with &quot;products?page&quot;,
+                        open its Response, and copy the entire JSON
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -383,17 +460,12 @@ export function ProductImportWizard({
                 Paste Your Product JSON
               </h2>
               <p className="text-muted-foreground mt-1 text-sm">
-                Paste the JSON export from{" "}
-                {selectedPlatform === "wordpress"
-                  ? "WordPress/WooCommerce"
-                  : selectedPlatform?.charAt(0).toUpperCase() +
-                    selectedPlatform?.slice(1)}{" "}
+                Paste the JSON export from {platformLabel(selectedPlatform)}{" "}
                 below.
               </p>
             </div>
 
-            {(selectedPlatform === "shopify" ||
-              selectedPlatform === "wordpress") && (
+            {isFetchable(selectedPlatform) && (
               <div className="border-border bg-secondary/30 rounded-xl border p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -406,10 +478,7 @@ export function ProductImportWizard({
                   </div>
                   <Button
                     onClick={() => {
-                      if (
-                        selectedPlatform === "shopify" ||
-                        selectedPlatform === "wordpress"
-                      ) {
+                      if (isFetchable(selectedPlatform)) {
                         fetchFromStore.mutate({
                           shopId: selectedShop,
                           platform: selectedPlatform,
@@ -432,11 +501,22 @@ export function ProductImportWizard({
                     )}
                   </Button>
                 </div>
+                {selectedPlatform === "squarespace" && (
+                  <p className="text-muted-foreground mt-3 flex items-start gap-2 border-t border-border pt-3 text-xs">
+                    <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+                    <span>
+                      Squarespace only works if your shop&apos;s website is set
+                      to the exact page that lists your products (e.g.{" "}
+                      <span className="font-medium">business.com/store</span>).
+                      If it points at your homepage, this may return nothing — in
+                      that case, paste the JSON manually instead.
+                    </span>
+                  </p>
+                )}
               </div>
             )}
 
-            {(selectedPlatform === "shopify" ||
-              selectedPlatform === "wordpress") && (
+            {isFetchable(selectedPlatform) && (
               <div className="relative flex items-center py-1">
                 <div className="border-border flex-grow border-t" />
                 <span className="text-muted-foreground mx-3 shrink-0 text-xs">
@@ -494,6 +574,12 @@ export function ProductImportWizard({
 
         {step === "review" && (
           <div className="space-y-6">
+            {certWarning && (
+              <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                <span>{certWarning}</span>
+              </div>
+            )}
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-foreground text-xl font-semibold">
@@ -551,8 +637,9 @@ export function ProductImportWizard({
                           <TableCell>
                             {product.imageUrl ? (
                               <div className="border-border relative size-10 overflow-hidden rounded border">
-                                <Image
+                                <ImageWithFallback
                                   src={product.imageUrl}
+                                  fallbackSrc={selectedShopLogoUrl}
                                   alt={product.name}
                                   fill
                                   className="object-cover"

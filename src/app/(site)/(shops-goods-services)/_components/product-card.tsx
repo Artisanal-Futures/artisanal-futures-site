@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
-
 import type { RouterOutputs } from "~/trpc/react";
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
+import { ImageWithFallback } from "~/components/image-with-fallback";
 
 type Product = NonNullable<RouterOutputs["shop"]["get"]>["products"][number];
 type Service = NonNullable<RouterOutputs["shop"]["get"]>["services"][number];
@@ -13,13 +13,22 @@ type Props = {
   onClick: () => void;
   createdBy?: string;
   shopPrinciples?: string[];
+  /** Business logo, shown if the product image fails to load. */
+  fallbackImage?: string | null;
 };
 export function ProductCard({
   item,
   onClick,
   createdBy,
   shopPrinciples,
+  fallbackImage,
 }: Props) {
+  const fallbackSrc =
+    fallbackImage?.trim() && fallbackImage !== "null"
+      ? fallbackImage.startsWith("http")
+        ? fallbackImage
+        : handleImageUrl(fallbackImage)
+      : undefined;
   return (
     <button
       type="button"
@@ -29,8 +38,9 @@ export function ProductCard({
       {/* Image */}
       {item.imageUrl ? (
         <div className="bg-muted relative aspect-4/3 w-full overflow-hidden">
-          <Image
+          <ImageWithFallback
             src={item.imageUrl ?? "/placeholder.svg"}
+            fallbackSrc={fallbackSrc}
             alt={item.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
