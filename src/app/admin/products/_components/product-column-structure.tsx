@@ -106,6 +106,21 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       </span>
     ),
   },
+  {
+    accessorKey: "isPublic",
+    header: "Visibility",
+    cell: ({ row }) =>
+      row.original.isPublic ? (
+        <Badge variant="default" className="text-xs font-normal">
+          Public
+        </Badge>
+      ) : (
+        <Badge variant="outline" className="text-xs font-normal">
+          Hidden
+        </Badge>
+      ),
+    enableSorting: false,
+  },
 
   {
     id: "options",

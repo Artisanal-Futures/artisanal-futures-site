@@ -4,12 +4,12 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 import { authClient } from "~/server/better-auth/client";
+import { AuthShell } from "~/app/auth/_components/auth-shell";
 
 function SignUpForm({
   code,
@@ -108,7 +108,7 @@ function SignUpForm({
                 }
               }
             }}
-            className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-base sm:text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             required
           />
         </div>
@@ -225,7 +225,7 @@ function SignUpForm({
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-base sm:text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
           />
         </div>
@@ -240,7 +240,7 @@ function SignUpForm({
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-base sm:text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
           />
         </div>
@@ -255,7 +255,7 @@ function SignUpForm({
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+            className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-base sm:text-sm focus-visible:ring-2 focus-visible:outline-none"
             required
             minLength={8}
           />
@@ -283,180 +283,93 @@ function SignUpForm({
   );
 }
 
+const signUpAside = (
+  <>
+    <h1 className="mb-4 text-4xl font-bold text-balance">
+      Join Artisanal Futures
+    </h1>
+    <p className="text-primary-foreground/80 mb-8 text-lg">
+      Create your account to connect with other artisans, browse our
+      shops, and stay connected within our artisan community.
+    </p>
+
+    <div className="space-y-4">
+      <div className="flex items-start gap-3">
+        <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+          <CheckCircle2 className="h-4 w-4" />
+        </div>
+        <p className="text-primary-foreground/90 text-sm">
+          Access to multiple active shops and community groups within
+          and around the Detroit area
+        </p>
+      </div>
+      <div className="flex items-start gap-3">
+        <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+          <CheckCircle2 className="h-4 w-4" />
+        </div>
+        <p className="text-primary-foreground/90 text-sm">
+          Access to our community forum and exclusive AI tools for
+          artisans
+        </p>
+      </div>
+      <div className="flex items-start gap-3">
+        <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+          <CheckCircle2 className="h-4 w-4" />
+        </div>
+        <p className="text-primary-foreground/90 text-sm">
+          Resources and support for your artisan business
+        </p>
+      </div>
+    </div>
+  </>
+);
+
+const signUpFooter = (
+  <>
+    By signing up, you agree to our{" "}
+    <Link
+      href="/legal/terms-of-use"
+      className="text-primary hover:underline"
+    >
+      Terms of Use
+    </Link>{" "}
+    and{" "}
+    <Link href="/legal/privacy" className="text-primary hover:underline">
+      Privacy Policy
+    </Link>
+  </>
+);
+
 function SignUpPageContent() {
   const searchParams = useSearchParams();
   const [code, setCode] = useState(searchParams.get("code") ?? "");
   const [error, setError] = useState("");
-  const year = new Date().getFullYear();
-  // const [isValidated, setIsValidated] = useState(!!searchParams.get("code"));
-
-  // Validate code before showing auth form
-  // const validateCode = () => {
-  //   if (code === process.env.NEXT_PUBLIC_PASSWORD_PROTECT) {
-  //     setIsValidated(true);
-  //     setError("");
-  //   } else {
-  //     setError("Invalid sign-up code");
-  //   }
-  // };
 
   return (
-    <div className="bg-background flex min-h-screen">
-      <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
-        <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
-        <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
-          <Link
-            href="/"
-            className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
-          >
-            <Image
-              src="/logos/logo.png"
-              alt="Artisanal Futures"
-              width={300}
-              height={120}
-            />
-          </Link>
-
-          <div className="max-w-md">
-            <h1 className="mb-4 text-4xl font-bold text-balance">
-              Join Artisanal Futures
-            </h1>
-            <p className="text-primary-foreground/80 mb-8 text-lg">
-              Create your account to connect with other artisans, browse our
-              shops, and stay connected within our artisan community.
-            </p>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <p className="text-primary-foreground/90 text-sm">
-                  Access to multiple active shops and community groups within
-                  and around the Detroit area
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <p className="text-primary-foreground/90 text-sm">
-                  Access to our community forum and exclusive AI tools for
-                  artisans
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="bg-primary-foreground/20 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <p className="text-primary-foreground/90 text-sm">
-                  Resources and support for your artisan business
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-primary-foreground/60 text-sm">
-            © {year} Artisanal Futures. All rights reserved.
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col overflow-y-auto">
-        <div className="bg-background sticky top-0 z-10 border-b p-4 lg:hidden">
-          <Link
-            href="/"
-            className="text-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm">Back to Home</span>
-          </Link>
-        </div>
-
-        <div className="flex flex-1 items-center justify-center p-6 md:p-12">
-          <div className="w-full max-w-md">
-            <div className="mb-8 flex items-center justify-center lg:hidden">
-              <Image
-                src="/logos/logo.png"
-                alt="Artisanal Futures"
-                width={300}
-                height={120}
-              />
-            </div>
-
-            <SignUpForm
-              code={code}
-              setCode={setCode}
-              error={error}
-              setError={setError}
-            />
-
-            <div className="mt-8 hidden text-left lg:block">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Home
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-muted-foreground border-t p-4 text-center text-xs">
-          By signing up, you agree to our{" "}
-          <Link
-            href="/legal/terms-of-use"
-            className="text-primary hover:underline"
-          >
-            Terms of Use
-          </Link>{" "}
-          and{" "}
-          <Link href="/legal/privacy" className="text-primary hover:underline">
-            Privacy Policy
-          </Link>
-        </div>
-      </div>
-    </div>
+    <AuthShell
+      aside={signUpAside}
+      asideImage="/image-father-daughter.png"
+      footer={signUpFooter}
+    >
+      <SignUpForm
+        code={code}
+        setCode={setCode}
+        error={error}
+        setError={setError}
+      />
+    </AuthShell>
   );
 }
 
 function SignUpPageFallback() {
-  const year = new Date().getFullYear();
   return (
-    <div className="bg-background flex min-h-screen">
-      <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
-        <div className="absolute inset-0 bg-[url('/image-father-daughter.png')] bg-cover bg-center opacity-20" />
-        <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
-          <Link
-            href="/"
-            className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
-          >
-            <Image
-              src="/logos/logo.png"
-              alt="Artisanal Futures"
-              width={300}
-              height={120}
-            />
-          </Link>
-          <div className="max-w-md">
-            <h1 className="mb-4 text-4xl font-bold text-balance">
-              Join Artisanal Futures
-            </h1>
-            <p className="text-primary-foreground/80 mb-8 text-lg">
-              Create your account to connect with other artisans, browse our
-              shops, and stay connected within our artisan community.
-            </p>
-          </div>
-          <div className="text-primary-foreground/60 text-sm">
-            © {year} Artisanal Futures. All rights reserved.
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto p-6 md:p-12">
-        <div className="text-muted-foreground text-sm">Loading...</div>
-      </div>
-    </div>
+    <AuthShell
+      aside={signUpAside}
+      asideImage="/image-father-daughter.png"
+      footer={signUpFooter}
+    >
+      <div className="text-muted-foreground text-sm">Loading...</div>
+    </AuthShell>
   );
 }
 

@@ -70,3 +70,65 @@ export const checkUserServicePermissions = async (
 
   return services.some((service) => service.id === serviceId);
 };
+
+export const checkUserOwnsProducts = async (
+  session: Session,
+  productIds: string[],
+): Promise<boolean> => {
+  if (productIds.length === 0) {
+    return true;
+  }
+
+  if (session.user.role === "ADMIN") {
+    return true;
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      shops: { select: { products: { select: { id: true } } } },
+    },
+  });
+
+  if (!user) {
+    return false;
+  }
+
+  const ownedProductIds = new Set(
+    user.shops?.flatMap((shop) => shop.products).map((p) => p.id) ?? [],
+  );
+
+  return productIds.every((id) => ownedProductIds.has(id));
+};
+
+export const checkUserOwnsServices = async (
+  session: Session,
+  serviceIds: string[],
+): Promise<boolean> => {
+  if (serviceIds.length === 0) {
+    return true;
+  }
+
+  if (session.user.role === "ADMIN") {
+    return true;
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      shops: { select: { services: { select: { id: true } } } },
+    },
+  });
+
+  if (!user) {
+    return false;
+  }
+
+  const ownedServiceIds = new Set(
+    user.shops?.flatMap((shop) => shop.services).map((s) => s.id) ?? [],
+  );
+
+  return serviceIds.every((id) => ownedServiceIds.has(id));
+};

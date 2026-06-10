@@ -104,13 +104,6 @@ export function ServiceClient({ services, shops }: Props) {
   const addButtonNode = useMemo(
     () => (
       <>
-        {/* <Link
-          href="/admin/services/migrate"
-          className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
-        >
-          Migrate Services
-        </Link> */}
-
         <Link
           href="/admin/services/new"
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}

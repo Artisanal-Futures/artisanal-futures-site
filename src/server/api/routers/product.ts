@@ -1,9 +1,13 @@
-import { type Prisma, type PrismaClient } from "generated/prisma";
+import { $Enums, type Prisma, type PrismaClient } from "generated/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
-import { checkUserProductPermissions } from "~/lib/check-user-permissions";
+import {
+  checkUserOwnsProducts,
+  checkUserProductPermissions,
+  checkUserShopPermissions,
+} from "~/lib/check-user-permissions";
 import { productSchema } from "~/lib/validators/products";
 import {
   adminArtisanProcedure,
@@ -186,6 +190,23 @@ export const productRouter = createTRPCRouter({
   importProducts: adminArtisanProcedure
     .input(z.array(productSchema.extend({ shopProductId: z.string() })))
     .mutation(async ({ ctx, input }) => {
+      // Verify the caller owns every distinct shop referenced in the batch
+      const distinctShopIds = [...new Set(input.map((p) => p.shopId))];
+
+      for (const shopId of distinctShopIds) {
+        const isShopOwner = await checkUserShopPermissions(
+          ctx.session,
+          shopId,
+        );
+
+        if (!isShopOwner) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: `Shop ${shopId} does not belong to current user`,
+          });
+        }
+      }
+
       const products = await Promise.all(
         input.map(async (product) => {
           const existingProduct = await ctx.db.product.findFirst({
@@ -209,6 +230,43 @@ export const productRouter = createTRPCRouter({
         }),
       );
 
+      // Reconciliation: soft-hide products that were removed from the source
+      // (i.e., not in this import batch) for each shop/scrapeMethod combination.
+      // Only applies to non-MANUAL scrape methods — never touch manually-created products.
+      for (const shopId of distinctShopIds) {
+        const shopItems = input.filter((p) => p.shopId === shopId);
+
+        // Collect the set of imported shopProductIds and non-MANUAL scrapeMethods for this shop
+        const importedShopProductIds = shopItems
+          .map((p) => p.shopProductId)
+          .filter((id): id is string => typeof id === "string" && id.length > 0);
+
+        const importedScrapeMethods = [
+          ...new Set(
+            shopItems
+              .map((p) => p.scrapeMethod)
+              .filter(
+                (m): m is $Enums.ProductScrapeMethod =>
+                  m !== undefined && m !== $Enums.ProductScrapeMethod.MANUAL,
+              ),
+          ),
+        ];
+
+        if (importedScrapeMethods.length === 0) {
+          // All items are MANUAL; nothing to reconcile for this shop
+          continue;
+        }
+
+        await ctx.db.product.updateMany({
+          where: {
+            shopId,
+            scrapeMethod: { in: importedScrapeMethods, not: $Enums.ProductScrapeMethod.MANUAL },
+            shopProductId: { notIn: importedShopProductIds },
+          },
+          data: { isPublic: false },
+        });
+      }
+
       return {
         data: products.map(addFullProductImageUrl),
         message: "Products imported successfully",
@@ -229,6 +287,29 @@ export const productRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { productIds, categoryIds, tags, isPublic, shopId } = input;
+
+      const isOwner = await checkUserOwnsProducts(ctx.session, productIds);
+
+      if (!isOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more products do not belong to current user",
+        });
+      }
+
+      if (shopId) {
+        const isShopOwner = await checkUserShopPermissions(
+          ctx.session,
+          shopId,
+        );
+
+        if (!isShopOwner) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Shop does not belong to current user",
+          });
+        }
+      }
 
       // Filter only existing product IDs
       const existingProducts = await ctx.db.product.findMany({
@@ -277,6 +358,18 @@ export const productRouter = createTRPCRouter({
   create: adminArtisanProcedure
     .input(productSchema)
     .mutation(async ({ ctx, input }) => {
+      const isUserAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isUserAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
       const { categoryIds, tags, ...productData } = input;
 
       const allCategoryIds = await getCategoriesWithParents(
@@ -363,6 +456,15 @@ export const productRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { productIds, tagType, tags } = input;
+
+      const isOwner = await checkUserOwnsProducts(ctx.session, productIds);
+
+      if (!isOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more products do not belong to current user",
+        });
+      }
       const updatedProducts = await Promise.all(
         productIds.map(async (id) => {
           return ctx.db.product.update({

@@ -249,7 +249,7 @@ export function ProductImportWizard({
                     );
                   }}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" aria-label="Your Shop">
                     <SelectValue placeholder="Select a shop" />
                   </SelectTrigger>
                   <SelectContent>
@@ -274,7 +274,7 @@ export function ProductImportWizard({
                   value={selectedPlatform}
                   onValueChange={(v) => setSelectedPlatform(v as Platform)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" aria-label="Current Platform">
                     <SelectValue placeholder="Select a platform" />
                   </SelectTrigger>
                   <SelectContent>
@@ -372,7 +372,7 @@ export function ProductImportWizard({
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-foreground text-sm font-medium">
+                <label htmlFor="json-data-input" className="text-foreground text-sm font-medium">
                   JSON Data
                 </label>
                 <span className="text-muted-foreground text-xs">
@@ -381,6 +381,7 @@ export function ProductImportWizard({
                 </span>
               </div>
               <Textarea
+                id="json-data-input"
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 placeholder={`Paste your ${selectedPlatform} JSON export here...`}
@@ -461,11 +462,13 @@ export function ProductImportWizard({
                             <button
                               onClick={() => toggleRowExpand(product.id)}
                               className="hover:bg-muted rounded p-1 md:hidden"
+                              aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                              aria-expanded={isExpanded}
                             >
                               {isExpanded ? (
-                                <ChevronUp className="size-4" />
+                                <ChevronUp className="size-4" aria-hidden="true" />
                               ) : (
-                                <ChevronDown className="size-4" />
+                                <ChevronDown className="size-4" aria-hidden="true" />
                               )}
                             </button>
                           </TableCell>

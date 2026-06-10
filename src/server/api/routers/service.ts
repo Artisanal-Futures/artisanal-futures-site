@@ -3,7 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { addFullServiceImageUrl } from "~/lib/add-full-image-url";
-import { checkUserServicePermissions } from "~/lib/check-user-permissions";
+import {
+  checkUserOwnsServices,
+  checkUserServicePermissions,
+  checkUserShopPermissions,
+} from "~/lib/check-user-permissions";
 import { serviceSchema } from "~/lib/validators/services";
 import {
   adminArtisanProcedure,
@@ -167,35 +171,10 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  importServices: publicProcedure
-    .input(z.array(serviceSchema))
-    .mutation(async ({ ctx, input }) => {
-      const services = await Promise.all(
-        input.map(async (service) => {
-          const existingService = await ctx.db.service.findFirst({
-            where: {
-              name: service.name,
-              shopId: service.shopId,
-            },
-          });
-          const { tags, ...serviceData } = service;
-          const formattedTags = tags.map((tag) => tag.text);
-          if (existingService) {
-            return ctx.db.service.update({
-              where: { id: existingService.id },
-              data: { ...serviceData, tags: formattedTags },
-            });
-          }
-          return ctx.db.service.create({
-            data: { ...serviceData, tags: formattedTags },
-          });
-        }),
-      );
-      return {
-        data: services.map(addFullServiceImageUrl),
-        message: "Services imported successfully",
-      };
-    }),
+  // NOTE: Services are not scraped/migrated (there's no reliable source to
+  // import them from), so there is intentionally no `importServices` procedure.
+  // Migration is products-only — see `product.importProducts`.
+
   bulkUpdate: adminOnlyProcedure
     .input(
       z.object({
@@ -210,6 +189,29 @@ export const serviceRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { serviceIds, categoryIds, tags, isPublic, shopId } = input;
+
+      const isOwner = await checkUserOwnsServices(ctx.session, serviceIds);
+
+      if (!isOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more services do not belong to current user",
+        });
+      }
+
+      if (shopId) {
+        const isShopOwner = await checkUserShopPermissions(
+          ctx.session,
+          shopId,
+        );
+
+        if (!isShopOwner) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Shop does not belong to current user",
+          });
+        }
+      }
 
       const dataToUpdate: Record<string, unknown> = {};
 
@@ -242,6 +244,18 @@ export const serviceRouter = createTRPCRouter({
   create: adminArtisanProcedure
     .input(serviceSchema)
     .mutation(async ({ ctx, input }) => {
+      const isUserAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isUserAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
       const { categoryIds, tags, ...serviceData } = input;
 
       const allCategoryIds = await getCategoriesWithParents(
@@ -320,6 +334,15 @@ export const serviceRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { serviceIds, tagType, tags } = input;
+
+      const isOwner = await checkUserOwnsServices(ctx.session, serviceIds);
+
+      if (!isOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "One or more services do not belong to current user",
+        });
+      }
       const updatedServices = await Promise.all(
         serviceIds.map(async (id) => {
           return ctx.db.service.update({

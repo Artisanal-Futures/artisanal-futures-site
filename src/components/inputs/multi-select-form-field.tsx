@@ -74,9 +74,10 @@ export function MultiSelectFormField({
                       handleUnselect(value);
                     }}
                     className="cursor-pointer"
+                    aria-label={`Remove ${item?.label ?? value}`}
                   >
                     {item?.label ?? value}
-                    <X className="ml-1 h-3 w-3" />
+                    <X className="ml-1 h-3 w-3" aria-hidden="true" />
                   </Badge>
                 );
               })
@@ -92,25 +93,28 @@ export function MultiSelectFormField({
         align="start"
       >
         <Command className={className}>
-          <CommandInput placeholder="Search..." />
+          <CommandInput placeholder="Search..." aria-label={placeholder} />
           <CommandList className="max-h-48">
             <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  onSelect={() => handleSelect(option.value)}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      selected.includes(option.value)
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
+              {options.map((option) => {
+                const isSelected = selected.includes(option.value);
+                return (
+                  <CommandItem
+                    key={option.value}
+                    onSelect={() => handleSelect(option.value)}
+                    role="option"
+                    aria-selected={isSelected}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        isSelected ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
             <CommandEmpty>No options found.</CommandEmpty>
           </CommandList>

@@ -7,6 +7,7 @@ import { useUploadFile } from "@better-upload/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import type { Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -30,7 +31,8 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Form, FormField, FormItem, FormLabel } from "~/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
@@ -70,7 +72,7 @@ export function ProductForm({
     name: initialData?.name ?? "",
     description: initialData?.description ?? "",
     priceInCents: initialData?.priceInCents ?? 0,
-    currency: initialData?.currency ?? "USD",
+    currency: (initialData?.currency as "USD" | "CAD" | "EUR" | "GBP") ?? "USD",
     tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
     productUrl: initialData?.productUrl ?? "",
     attributeTags: initialData?.attributeTags ?? [],
@@ -83,12 +85,13 @@ export function ProductForm({
     imageUrl: initialData?.imageUrl ?? "",
     categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
     isFeatured: initialData?.isFeatured ?? false,
+    isPublic: initialData?.isPublic ?? false,
 
     imageFile: null,
   };
 
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productFormSchema),
+    resolver: zodResolver(productFormSchema) as Resolver<ProductFormData>,
     defaultValues,
   });
 
@@ -175,10 +178,11 @@ export function ProductForm({
     }
   };
 
-  const handleReset = (data?: ProductFormData) => {
+  const handleReset = (data?: Omit<ProductFormData, "currency"> & { currency?: string | null }) => {
     if (data)
       form.reset({
-        ...data,
+        ...(data as ProductFormData),
+        currency: (data.currency as "USD" | "CAD" | "EUR" | "GBP") ?? "USD",
         imageFile: null,
       });
     else form.reset(defaultValues);
@@ -246,6 +250,7 @@ export function ProductForm({
                   size="sm"
                   disabled={isPending}
                   onClick={() => setShowDeleteDialog(true)}
+                  aria-label="Delete product"
                   className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4 sm:mr-2" />
@@ -317,6 +322,17 @@ export function ProductForm({
                 </Card>
               </div>
               <div className="col-span-4 flex flex-col gap-4">
+                <Card>
+                  <CardContent>
+                    <FancySwitchFormField
+                      form={form}
+                      name="isPublic"
+                      label="Visible to public"
+                      description="When off, this is hidden from the public storefront."
+                    />
+                  </CardContent>
+                </Card>
+
                 {userRole === "ADMIN" && (
                   <Card>
                     <CardContent>
@@ -356,26 +372,57 @@ export function ProductForm({
                       label="Product URL"
                     />
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <InputFormField
-                        form={form}
+                      <FormField
+                        control={form.control}
                         name="priceInCents"
-                        label="Price (in cents)"
-                        type="number"
-                        placeholder="1000"
-                        className="col-span-1"
+                        render={({ field }) => (
+                          <FormItem className="col-span-1">
+                            <FormLabel>Price (USD)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="19.99"
+                                value={
+                                  field.value != null && field.value !== 0
+                                    ? (field.value / 100).toFixed(2)
+                                    : ""
+                                }
+                                onChange={(e) => {
+                                  const raw = parseFloat(e.target.value);
+                                  field.onChange(
+                                    isNaN(raw)
+                                      ? null
+                                      : Math.round(raw * 100),
+                                  );
+                                }}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Enter the price in dollars.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                      <InputFormField
+                      <SelectFormField
                         form={form}
                         name="currency"
                         label="Currency"
-                        placeholder="USD"
                         className="col-span-1"
+                        values={[
+                          { label: "USD", value: "USD" },
+                          { label: "CAD", value: "CAD" },
+                          { label: "EUR", value: "EUR" },
+                          { label: "GBP", value: "GBP" },
+                        ]}
                       />
                     </div>
                     <TextareaFormField
                       form={form}
                       name="description"
-                      label="ProductDescription *"
+                      label="Description *"
                       placeholder="e.g. This is a description of my product."
                     />
                     <TagFormField
