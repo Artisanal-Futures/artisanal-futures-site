@@ -248,6 +248,32 @@ export const shopsRouter = createTRPCRouter({
       return { data: null, message: "Shop deleted successfully" };
     }),
 
+  deleteMany: adminArtisanProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input: shopIds }) => {
+      if (ctx.session.user.role !== "ADMIN") {
+        // Non-admin users may only delete shops they own
+        const user = await ctx.db.user.findUnique({
+          where: { id: ctx.session.user.id },
+          include: { shops: { select: { id: true } } },
+        });
+        const ownedIds = new Set(user?.shops.map((s) => s.id) ?? []);
+        const unauthorized = shopIds.find((id) => !ownedIds.has(id));
+        if (unauthorized) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "One or more shops do not belong to current user",
+          });
+        }
+      }
+
+      await ctx.db.shop.deleteMany({
+        where: { id: { in: shopIds } },
+      });
+
+      return { data: null, message: `${shopIds.length} shop(s) deleted successfully` };
+    }),
+
   getWelcomeShop: adminArtisanProcedure.query(async ({ ctx }) => {
     const shop = await ctx.db.shop.findFirst({
       where: { ownerId: ctx.session.user.id },

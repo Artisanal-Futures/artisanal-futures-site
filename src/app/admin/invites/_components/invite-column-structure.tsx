@@ -1,34 +1,74 @@
+"use client";
+
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { Checkbox } from "~/components/ui/checkbox";
+import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 export type InviteRow = RouterOutputs["invite"]["listInvites"][number];
 
 export const inviteColumns: ColumnDef<InviteRow>[] = [
   {
+    id: "select",
+    size: 48,
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "email",
-    header: "Email",
+    size: 240,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Email" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm font-medium">{row.original.email}</span>
     ),
   },
   {
     accessorKey: "role",
-    header: "Role",
+    size: 110,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Role" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm capitalize">{row.original.role.toLowerCase()}</span>
     ),
   },
   {
     accessorKey: "code",
+    size: 140,
     header: "Code",
+    enableSorting: false,
     cell: ({ row }) => (
       <span className="font-mono text-sm">{row.original.code}</span>
     ),
   },
   {
     accessorKey: "status",
-    header: "Status",
+    size: 120,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Status" />
+    ),
     cell: ({ row }) => {
       const status = row.original.status;
       const badge =
@@ -48,7 +88,10 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
   },
   {
     accessorKey: "expiresAt",
-    header: "Expires",
+    size: 120,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Expires" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm">
         {row.original.expiresAt.toLocaleDateString()}
@@ -57,7 +100,10 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Created",
+    size: 120,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Created" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm text-muted-foreground">
         {row.original.createdAt.toLocaleDateString()}
@@ -66,7 +112,12 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
   },
   {
     accessorKey: "creator",
-    header: "Created by",
+    size: 180,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Created by" />
+    ),
+    accessorFn: (row) =>
+      row.creator?.name ?? row.creator?.email ?? "",
     cell: ({ row }) => (
       <span className="text-sm">
         {row.original.creator?.name ?? row.original.creator?.email ?? "—"}

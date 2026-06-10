@@ -85,7 +85,7 @@ export function ProductForm({
     imageUrl: initialData?.imageUrl ?? "",
     categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
     isFeatured: initialData?.isFeatured ?? false,
-    isPublic: initialData?.isPublic ?? false,
+    isPublic: initialData?.isPublic ?? true,
 
     imageFile: null,
   };

@@ -381,4 +381,31 @@ export const surveysRouter = createTRPCRouter({
         message: "Survey deleted successfully",
       };
     }),
+
+  deleteMany: adminArtisanProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.role !== "ADMIN") {
+        // Non-admins may only delete their own surveys
+        const surveys = await ctx.db.survey.findMany({
+          where: { id: { in: input } },
+          select: { id: true, ownerId: true },
+        });
+        const unauthorized = surveys.some(
+          (s) => s.ownerId !== ctx.session.user.id,
+        );
+        if (unauthorized) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to delete one or more of these surveys",
+          });
+        }
+      }
+
+      await ctx.db.survey.deleteMany({
+        where: { id: { in: input } },
+      });
+
+      return { message: `${input.length} survey(s) deleted successfully` };
+    }),
 });

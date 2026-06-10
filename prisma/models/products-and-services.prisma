@@ -38,7 +38,7 @@ model Product {
   scrapeMethod      ProductScrapeMethod @default(MANUAL)
   shopId            String?
   tags              String[]
-  isPublic          Boolean             @default(false)
+  isPublic          Boolean             @default(true)
   isFeatured        Boolean             @default(false)
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[]          @relation("CategoryToProduct")

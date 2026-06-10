@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { PencilIcon } from "lucide-react";
 
-import { type ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef, type FilterFn } from "@tanstack/react-table";
 
 import type { ProductWithRelations } from "~/types/product";
 import { cn } from "~/lib/utils";
@@ -12,6 +12,7 @@ import { Badge } from "~/components/ui/badge";
 import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { RowImageLink } from "~/components/admin/row-image-link";
+import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { DeleteProductDialog } from "./delete-product-dialog";
 
@@ -22,6 +23,7 @@ export type ProductColumnEntry = ProductWithRelations & {
 export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   {
     id: "select",
+    size: 48,
     header: ({ table }) => (
       <Checkbox
         checked={
@@ -46,7 +48,10 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     accessorKey: "searchableString",
-    header: "Title",
+    size: 360,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Title" />
+    ),
     cell: ({ row }) => (
       <>
         <RowImageLink
@@ -69,10 +74,13 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     accessorKey: "shopId",
-    header: "Shop",
+    size: 160,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Shop" />
+    ),
     cell: ({ row }) => (
-      <div className="flex flex-col space-y-1">
-        <span>{row.original.shop?.name}</span>
+      <div className="flex min-w-0 flex-col space-y-1">
+        <span className="truncate">{row.original.shop?.name}</span>
         {/* <span className="text-muted-foreground text-xs">
           Shop ID: {row.original.shopId}
         </span> */}
@@ -81,6 +89,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     accessorKey: "categories",
+    size: 220,
     header: "Categories",
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
@@ -102,7 +111,10 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     accessorKey: "priceInCents",
-    header: "Price",
+    size: 110,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Price" />
+    ),
     cell: ({ row }) => (
       <span>
         {row.original.priceInCents
@@ -115,22 +127,31 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     accessorKey: "isPublic",
+    size: 120,
     header: "Visibility",
     cell: ({ row }) =>
       row.original.isPublic ? (
-        <Badge variant="default" className="text-xs font-normal">
+        <Badge
+          variant="default"
+          className="bg-green-100 text-xs font-normal text-green-800 hover:bg-green-100"
+        >
           Public
         </Badge>
       ) : (
-        <Badge variant="outline" className="text-xs font-normal">
+        <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
           Hidden
         </Badge>
       ),
     enableSorting: false,
+    filterFn: ((row, _columnId, filterValues: string[]) => {
+      if (!filterValues.length) return true;
+      return filterValues.includes(String(row.original.isPublic));
+    }) as FilterFn<ProductColumnEntry>,
   },
 
   {
     id: "options",
+    size: 220,
     header: "Options",
     cell: ({ row }) => (
       <div className="flex gap-2">
@@ -146,5 +167,28 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
         <DeleteProductDialog productId={row.original.id} />
       </div>
     ),
+  },
+
+  // ── Hidden helper columns for faceted filters ─────────────────────────────
+  {
+    id: "categoryIds",
+    accessorFn: (row) => row.categories.map((c) => c.id),
+    header: () => null,
+    cell: () => null,
+    enableHiding: true,
+    enableSorting: false,
+    filterFn: ((row, _columnId, filterValues: string[]) => {
+      if (!filterValues.length) return true;
+      const ids: string[] = row.original.categories.map((c) => c.id);
+      return filterValues.some((fv) => ids.includes(fv));
+    }) as FilterFn<ProductColumnEntry>,
+  },
+  {
+    id: "priceStatus",
+    accessorFn: (row) => (row.priceInCents ? "set" : "missing"),
+    header: () => null,
+    cell: () => null,
+    enableHiding: true,
+    enableSorting: false,
   },
 ];

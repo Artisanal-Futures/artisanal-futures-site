@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import {
   artisanOnboardingSchema,
@@ -184,4 +185,12 @@ export const onboardingRouter = createTRPCRouter({
     const artisans = await ctx.db.artisanSurvey.findMany();
     return artisans;
   }),
+  deleteGuestSurveys: adminOnlyProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.guestSurvey.deleteMany({
+        where: { id: { in: input } },
+      });
+      return { message: `${input.length} guest survey(s) deleted successfully` };
+    }),
 });

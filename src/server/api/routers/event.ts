@@ -83,4 +83,16 @@ export const eventRouter = createTRPCRouter({
         message: "Event deleted successfully",
       };
     }),
+
+  deleteMany: adminArtisanProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input: ids }) => {
+      await ctx.db.event.deleteMany({
+        where: { id: { in: ids } },
+      });
+      return {
+        data: null,
+        message: "Events deleted successfully",
+      };
+    }),
 });

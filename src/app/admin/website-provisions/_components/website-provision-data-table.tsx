@@ -9,7 +9,8 @@ import { toast } from "sonner";
 import type { RouterOutputs } from "~/trpc/react";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import { DataTable } from "~/components/ui/data-table";
+import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
+import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 import { ItemDialog } from "~/app/admin/_components/item-dialog";
 import { RowCellIdDisplay } from "~/app/admin/_components/row-cell-id-display";
 import { SingleActionDialog } from "~/app/admin/_components/single-action-dialog";
@@ -23,25 +24,35 @@ type ShopWithWebsite = Shop & {
 export const columns: ColumnDef<ShopWithWebsite>[] = [
   {
     accessorKey: "name",
-    header: "Business Name",
+    size: 240,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Business Name" />
+    ),
     cell: ({ row }) => (
       <RowCellIdDisplay id={row.original.id} label={row.original.name} />
     ),
   },
   {
     accessorKey: "ownerName",
-    header: "Owner Name",
+    size: 180,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Owner Name" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm">{row.original.ownerName}</span>
     ),
   },
   {
     accessorKey: "email",
-    header: "Email",
+    size: 220,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Email" />
+    ),
     cell: ({ row }) => <span className="text-sm">{row.original.email}</span>,
   },
   {
     accessorKey: "website",
+    size: 240,
     header: "Website",
     cell: ({ row }) => {
       const website = row.original.website;
@@ -61,6 +72,7 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
   },
   {
     accessorKey: "domain",
+    size: 260,
     header: "AF Generated Website",
     cell: ({ row }) => {
       const domain = row.original.websiteProvision?.customDomain;
@@ -76,6 +88,7 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
   },
   {
     id: "actions",
+    size: 220,
     cell: ({ row }) => {
       const shop = row.original;
       const utils = api.useUtils();
@@ -150,10 +163,12 @@ type Props = {
 
 export function WebsiteProvisionDataTable({ websiteProvisions }: Props) {
   return (
-    <DataTable<ShopWithWebsite, unknown>
+    <AdvancedDataTable<ShopWithWebsite, unknown>
       columns={columns}
       data={(websiteProvisions as ShopWithWebsite[]) ?? []}
       searchKey="name"
+      searchPlaceholder="Search by business name..."
+      mobileHiddenColumnIds={["ownerName", "website", "domain"]}
     />
   );
 }

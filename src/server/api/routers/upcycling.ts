@@ -41,4 +41,15 @@ export const upcyclingRouter = createTRPCRouter({
         message: "Upcycling item deleted successfully",
       };
     }),
+
+  deleteMany: adminOnlyProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ input }) => {
+      await Promise.all(
+        input.map((id) =>
+          axios.delete(`${AI_AGENT_BACKEND_URL}/delete/upcycle/${id}`),
+        ),
+      );
+      return { message: `${input.length} upcycling item(s) deleted successfully` };
+    }),
 });

@@ -30,10 +30,10 @@ export const RowImageLink = ({
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <span className="text-sm text-gray-500">{name}</span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="truncate text-sm text-gray-500">{name}</span>
         {subheader && (
-          <span className="text-xs text-muted-foreground">{subheader}</span>
+          <span className="truncate text-xs text-muted-foreground">{subheader}</span>
         )}
       </div>
     </div>

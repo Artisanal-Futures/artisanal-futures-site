@@ -14,7 +14,9 @@ import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
+import { EventBulkActions } from "./event-bulk-actions";
 import { eventColumns } from "./event-column-structure";
+import { createEventFilter } from "./event-filters";
 
 export function EventClient({
   events,
@@ -32,6 +34,19 @@ export function EventClient({
       ? Number(searchParams.get("limit"))
       : 10,
   });
+
+  const selectedEventIds = useMemo(() => {
+    return Object.keys(rowSelection)
+      .filter((key) => rowSelection[key])
+      .map((index) => events[parseInt(index, 10)]?.id)
+      .filter((id): id is string => !!id);
+  }, [rowSelection, events]);
+
+  const eventFilters = useMemo(
+    () => createEventFilter(events ?? []),
+    [events],
+  );
+
   const addButtonNode = useMemo(
     () => (
       <>
@@ -50,10 +65,21 @@ export function EventClient({
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="name"
+        searchKey="title"
         searchPlaceholder="Search by title..."
         columns={eventColumns}
+        mobileHiddenColumnIds={["shop", "startDate"]}
         data={events}
+        filters={eventFilters}
+        selectionActions={
+          selectedEventIds.length > 0 ? (
+            <EventBulkActions
+              selectedEventIds={selectedEventIds}
+              onClear={() => setRowSelection({})}
+            />
+          ) : undefined
+        }
+        defaultColumnVisibility={{ shopId: false }}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         addButton={addButtonNode}

@@ -126,6 +126,7 @@ export function ServiceClient({ services, shops }: Props) {
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
         columns={serviceColumns}
+        mobileHiddenColumnIds={["shopId", "categories", "priceInCents"]}
         data={enhancedServices}
         filters={serviceFilters}
         toolbarActions={toolbarActionsNode}

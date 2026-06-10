@@ -7,6 +7,7 @@ import { EyeIcon, PencilIcon } from "lucide-react";
 import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { RowImageLink } from "~/components/admin/row-image-link";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
@@ -34,79 +35,120 @@ function toImageSrc(url?: string | null): string {
   }
 }
 
-export const shopColumns: ColumnDef<RouterOutputs["shop"]["getAll"][number]>[] =
-  [
-    {
-      accessorKey: "name",
-      header: "Shop name",
-      accessorFn: (row) => row.name,
-      filterFn: "includesString",
-      cell: ({ row }) => (
-        <RowImageLink
-          id={row.original.id}
-          name={`${row.original.name} `}
-          image={toImageSrc(row.original?.logoPhoto)}
-          hasLink={false}
-          subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
-        />
+export type ShopRow = RouterOutputs["shop"]["getAll"][number];
+
+export const shopColumns: ColumnDef<ShopRow>[] = [
+  {
+    id: "select",
+    size: 48,
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    size: 300,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Shop name" />
+    ),
+    accessorFn: (row) => row.name,
+    filterFn: "includesString",
+    cell: ({ row }) => (
+      <RowImageLink
+        id={row.original.id}
+        name={`${row.original.name} `}
+        image={toImageSrc(row.original?.logoPhoto)}
+        hasLink={false}
+        subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
+      />
+    ),
+  },
+  {
+    accessorKey: "owner",
+    size: 220,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Owner" />
+    ),
+    // Accessor returns owner id so the faceted Owner filter (which uses owner.id
+    // values) matches; sorting is done by name via the custom sortingFn below.
+    accessorFn: (row) => row.owner?.id,
+    filterFn: "arrIncludesSome",
+    sortingFn: (rowA, rowB) =>
+      (rowA.original.owner?.name ?? "").localeCompare(
+        rowB.original.owner?.name ?? "",
       ),
-    },
-    {
-      accessorKey: "owner",
-      header: "Owner",
-      accessorFn: (row) => row.owner?.id,
-      filterFn: "arrIncludesSome",
-      cell: ({ row }) => (
-        <div className="flex flex-col space-y-1">
-          <span>{row.original.owner?.name}</span>
-          <span className="text-muted-foreground text-xs">
-            Owner ID: {row.original.ownerId}
-          </span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <AdvancedDataTableColumnHeader column={column} title="Created on" />
-      ),
-      cell: ({ row }) => (
-        <span className="text-sm text-gray-500">
-          {row.original.createdAt.toLocaleDateString()}
+    cell: ({ row }) => (
+      <div className="flex min-w-0 flex-col space-y-1">
+        <span className="truncate">{row.original.owner?.name}</span>
+        <span className="text-muted-foreground truncate text-xs">
+          Owner ID: {row.original.ownerId}
         </span>
-      ),
-    },
-    {
-      id: "options",
-      header: "Options",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <DeleteShopDialog shopId={row.original.id} />
+      </div>
+    ),
+  },
+  {
+    accessorKey: "createdAt",
+    size: 140,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Created on" />
+    ),
+    cell: ({ row }) => (
+      <span className="text-sm text-gray-500">
+        {row.original.createdAt.toLocaleDateString()}
+      </span>
+    ),
+  },
+  {
+    id: "options",
+    size: 280,
+    header: "Options",
+    enableSorting: false,
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <DeleteShopDialog shopId={row.original.id} />
 
-          <Link
-            href={`/admin/shops/${row.original.id}`}
-            className={cn(
-              buttonVariants({
-                variant: "default",
-                className: "h-8 bg-blue-500 text-xs hover:bg-blue-600",
-              }),
-            )}
-          >
-            <PencilIcon className="mr-1 h-4 w-4" /> Edit
-          </Link>
+        <Link
+          href={`/admin/shops/${row.original.id}`}
+          className={cn(
+            buttonVariants({
+              variant: "default",
+              className: "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+            }),
+          )}
+        >
+          <PencilIcon className="mr-1 h-4 w-4" /> Edit
+        </Link>
 
-          <Link
-            href={`/shops/${row.original.id}`}
-            className={cn(
-              buttonVariants({
-                variant: "default",
-                className: "h-8 bg-green-500 text-xs hover:bg-green-600",
-              }),
-            )}
-          >
-            <EyeIcon className="mr-1 h-4 w-4" /> View
-          </Link>
-        </div>
-      ),
-    },
-  ];
+        <Link
+          href={`/shops/${row.original.id}`}
+          className={cn(
+            buttonVariants({
+              variant: "default",
+              className: "h-8 bg-green-500 text-xs hover:bg-green-600",
+            }),
+          )}
+        >
+          <EyeIcon className="mr-1 h-4 w-4" /> View
+        </Link>
+      </div>
+    ),
+  },
+];

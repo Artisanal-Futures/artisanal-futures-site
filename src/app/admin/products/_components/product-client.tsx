@@ -3,23 +3,20 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+
 import {
   type PaginationState,
   type RowSelectionState,
 } from "@tanstack/react-table";
-import { PencilIcon, XCircleIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
-import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-import { ItemDialog } from "../../_components/item-dialog";
-import { BulkProductFormWrapper } from "./bulk-product-form-wrapper";
-import { DeleteMultipleProductsDialog } from "./delete-multiple-products";
+import { ProductBulkActions } from "./product-bulk-actions";
 import { productColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
 
@@ -62,46 +59,6 @@ export function ProductClient({ products, shops }: Props) {
     }));
   }, [products]);
 
-  const toolbarActionsNode = useMemo(() => {
-    if (selectedProductIds.length === 0) return null;
-
-    return (
-      <div className="flex items-center gap-2">
-        {/* <ItemDialog
-          title={`Bulk Edit ${selectedProductIds.length} Products`}
-          subtitle="Apply changes to all selected products."
-          FormComponent={BulkProductFormWrapper}
-          initialData={{
-            selectedProductIds: selectedProductIds,
-            clearRowSelection: () => setRowSelection({}),
-          }}
-          buttonText={
-            <>
-              <PencilIcon className="mr-1 h-4 w-4" />
-              Bulk Edit ({selectedProductIds.length})
-            </>
-          }
-          buttonClassName="h-8 text-xs"
-          preventCloseOnOutsideClick={true}
-        /> */}
-
-        <DeleteMultipleProductsDialog
-          productIds={selectedProductIds}
-          onSuccessCallback={() => setRowSelection({})}
-        />
-
-        <Button
-          variant="outline"
-          onClick={() => setRowSelection({})}
-          className="h-8 px-2 text-xs lg:px-3"
-        >
-          <XCircleIcon className="mr-2 h-4 w-4" />
-          Cancel
-        </Button>
-      </div>
-    );
-  }, [selectedProductIds]);
-
   const addButtonNode = useMemo(
     () => (
       <>
@@ -124,7 +81,11 @@ export function ProductClient({ products, shops }: Props) {
   );
 
   const columnVisibility = useMemo(
-    () => ({ user_id: isElevated }),
+    () => ({
+      user_id: isElevated,
+      categoryIds: false,
+      priceStatus: false,
+    }),
     [isElevated],
   );
 
@@ -136,8 +97,14 @@ export function ProductClient({ products, shops }: Props) {
         columns={productColumns}
         data={enhancedProducts}
         filters={productFilters}
-        toolbarActions={toolbarActionsNode}
+        selectionActions={
+          <ProductBulkActions
+            selectedProductIds={selectedProductIds}
+            onClear={() => setRowSelection({})}
+          />
+        }
         defaultColumnVisibility={columnVisibility}
+        mobileHiddenColumnIds={["shopId", "categories", "priceInCents"]}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         addButton={addButtonNode}

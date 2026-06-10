@@ -30,7 +30,7 @@ export const productSchema = z.object({
   ]),
   categoryIds: z.array(z.string()).optional(),
   isFeatured: z.boolean(),
-  isPublic: z.boolean().default(false),
+  isPublic: z.boolean().default(true),
   productUrl: z.string().url().optional().nullable().or(z.literal("")),
   imageUrl: z.string().url().optional().nullable().or(z.literal("")),
 });

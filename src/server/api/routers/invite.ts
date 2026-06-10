@@ -69,6 +69,20 @@ export const inviteRouter = createTRPCRouter({
       return invite;
     }),
 
+  deleteInvite: adminOnlyProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.platformInvite.delete({ where: { id: input.id } });
+      return { message: "Invite deleted successfully" };
+    }),
+
+  deleteManyInvites: adminOnlyProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input: ids }) => {
+      await ctx.db.platformInvite.deleteMany({ where: { id: { in: ids } } });
+      return { message: `${ids.length} invite(s) deleted successfully` };
+    }),
+
   listInvites: adminOnlyProcedure
     .input(
       z

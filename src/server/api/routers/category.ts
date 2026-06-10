@@ -64,6 +64,18 @@ export const categoryRouter = createTRPCRouter({
       };
     }),
 
+  deleteMany: adminOnlyProcedure
+    .input(z.array(z.string()))
+    .mutation(async ({ ctx, input: ids }) => {
+      await ctx.db.category.deleteMany({
+        where: { id: { in: ids } },
+      });
+      return {
+        data: null,
+        message: "Categories deleted successfully",
+      };
+    }),
+
   getNavigationTree: publicProcedure
     .input(z.object({ type: z.nativeEnum(CategoryType).optional() }).optional())
     .query(({ ctx, input }) => {
