@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -44,6 +45,31 @@ type CompareResult =
   | CompareResultAuth
   | { error: string };
 
+type RefGroup = {
+  model: string;
+  fields: string[];
+  missing: { id: string; count: number }[];
+  candidates: { id: string; label: string }[];
+};
+
+type RefPreflight = { groups: RefGroup[] };
+
+const UNMAPPED = "__unmapped__";
+const ALL_STORES = "__all__";
+
+/** All row ids that can be selected for import in a compare result. */
+function selectableIds(
+  result: CompareResultNormal | CompareResultAuth,
+): string[] {
+  if (result.kind === "auth") {
+    return result.new.map((r) => r.id as string).filter(Boolean);
+  }
+  return [
+    ...result.new.map((r) => r.id as string),
+    ...result.updated.map((u) => u.row.id as string),
+  ].filter(Boolean);
+}
+
 export function ForkImportClient() {
   const [loadedFileName, setLoadedFileName] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<Record<
@@ -58,6 +84,35 @@ export function ForkImportClient() {
     null,
   );
   const [isLoadingFile, setIsLoadingFile] = useState(false);
+  // Ids checked for import. Defaults to every row on each compare, so the
+  // out-of-the-box behaviour (import everything) is unchanged.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // Foreign-key preflight: referenced rows (users, shops, …) not in the DB yet.
+  const [preflight, setPreflight] = useState<RefPreflight | null>(null);
+  // Chosen reassignments: missing referenced id -> existing id.
+  const [idRemap, setIdRemap] = useState<Record<string, string>>({});
+  // Product/Service only: limit displayed/imported rows to one store (shopId).
+  const [storeFilter, setStoreFilter] = useState<string>(ALL_STORES);
+
+  const toggleId = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const setManySelected = useCallback((ids: string[], checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) {
+        if (checked) next.add(id);
+        else next.delete(id);
+      }
+      return next;
+    });
+  }, []);
 
   const getTables = api.migration.getForkImportTables.useMutation({
     onSuccess: (data) => {
@@ -67,11 +122,21 @@ export function ForkImportClient() {
   });
   const compareTable = api.migration.compareForkTable.useMutation({
     onSuccess: (data) => {
-      if (data && "error" in data) {
+      if (!data) return;
+      setIdRemap({});
+      setStoreFilter(ALL_STORES);
+      if ("error" in data && typeof data.error === "string") {
         setCompareResult({ error: data.error });
-      } else if (data) {
-        setCompareResult(data as CompareResultNormal | CompareResultAuth);
+        setSelectedIds(new Set());
+        setPreflight(null);
+        return;
       }
+      const full = data as (CompareResultNormal | CompareResultAuth) & {
+        refPreflight?: RefPreflight;
+      };
+      setCompareResult(full);
+      setSelectedIds(new Set(selectableIds(full)));
+      setPreflight(full.refPreflight ?? null);
     },
     onError: (e) => toast.error(e.message),
   });
@@ -154,6 +219,51 @@ export function ForkImportClient() {
           }))
         : [];
 
+  // Product/Service get a "filter by store" control that scopes the displayed,
+  // selectable, and imported rows to one shopId.
+  const isStoreTable =
+    selectedTableKey === "Product" || selectedTableKey === "Service";
+
+  const shopNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    const shops = parsedData?.Shop;
+    if (Array.isArray(shops)) {
+      for (const s of shops as Record<string, unknown>[]) {
+        if (typeof s.id === "string") {
+          map.set(s.id, typeof s.name === "string" ? s.name : s.id);
+        }
+      }
+    }
+    return map;
+  }, [parsedData]);
+
+  const storeOptions = useMemo(() => {
+    if (!isStoreTable || !compareResult || "error" in compareResult) return [];
+    const rows =
+      compareResult.kind === "auth"
+        ? compareResult.new
+        : [...compareResult.new, ...compareResult.updated.map((u) => u.row)];
+    const counts = new Map<string, number>();
+    for (const r of rows) {
+      const sid = typeof r.shopId === "string" ? r.shopId : "(none)";
+      counts.set(sid, (counts.get(sid) ?? 0) + 1);
+    }
+    return [...counts.entries()].map(([id, count]) => ({
+      id,
+      count,
+      label: id === "(none)" ? "(no store)" : (shopNameById.get(id) ?? id),
+    }));
+  }, [isStoreTable, compareResult, shopNameById]);
+
+  const rowVisible = useCallback(
+    (row: Record<string, unknown>) => {
+      if (!isStoreTable || storeFilter === ALL_STORES) return true;
+      const sid = typeof row.shopId === "string" ? row.shopId : "(none)";
+      return sid === storeFilter;
+    },
+    [isStoreTable, storeFilter],
+  );
+
   const handleCompare = useCallback(() => {
     if (!selectedTableKey || !parsedData?.[selectedTableKey]) {
       toast.error("Select a table first.");
@@ -166,29 +276,57 @@ export function ForkImportClient() {
     });
   }, [selectedTableKey, parsedData, compareTable]);
 
+  // Rows that will actually be imported: selected AND visible under the store filter.
+  const keepRow = useCallback(
+    (r: Record<string, unknown>) =>
+      selectedIds.has(r.id as string) && rowVisible(r),
+    [selectedIds, rowVisible],
+  );
+
+  const effectiveCount = useMemo(() => {
+    if (!compareResult || "error" in compareResult) return 0;
+    const rows =
+      compareResult.kind === "auth"
+        ? compareResult.new
+        : [...compareResult.new, ...compareResult.updated.map((u) => u.row)];
+    return rows.filter(keepRow).length;
+  }, [compareResult, keepRow]);
+
+  // Rows shown under the current store filter (normal tables only).
+  const visibleNew = useMemo(() => {
+    if (!compareResult || "error" in compareResult) return [];
+    if (compareResult.kind !== "normal") return [];
+    return compareResult.new.filter(rowVisible);
+  }, [compareResult, rowVisible]);
+
+  const visibleUpdated = useMemo(() => {
+    if (!compareResult || "error" in compareResult) return [];
+    if (compareResult.kind !== "normal") return [];
+    return compareResult.updated.filter((u) => rowVisible(u.row));
+  }, [compareResult, rowVisible]);
+
   const handleApply = useCallback(() => {
     if (!selectedTableKey || !compareResult || "error" in compareResult) return;
+    const remap = Object.keys(idRemap).length > 0 ? idRemap : undefined;
     if (compareResult.kind === "auth") {
       applyTable.mutate({
         tableKey: selectedTableKey,
-        new: compareResult.new,
+        new: compareResult.new.filter(keepRow),
         updated: [],
+        idRemap: remap,
       });
     } else {
       applyTable.mutate({
         tableKey: selectedTableKey,
-        new: compareResult.new,
-        updated: compareResult.updated.map((u) => u.row),
+        new: compareResult.new.filter(keepRow),
+        updated: compareResult.updated.map((u) => u.row).filter(keepRow),
+        idRemap: remap,
       });
     }
-  }, [selectedTableKey, compareResult, applyTable]);
+  }, [selectedTableKey, compareResult, applyTable, idRemap, keepRow]);
 
   const canApply =
-    compareResult &&
-    !("error" in compareResult) &&
-    ((compareResult.kind === "auth" && compareResult.new.length > 0) ||
-      (compareResult.kind === "normal" &&
-        (compareResult.new.length > 0 || compareResult.updated.length > 0)));
+    !!compareResult && !("error" in compareResult) && effectiveCount > 0;
 
   return (
     <div className="space-y-6">
@@ -248,6 +386,9 @@ export function ForkImportClient() {
                 onValueChange={(v) => {
                   setSelectedTableKey(v || null);
                   setCompareResult(null);
+                  setPreflight(null);
+                  setIdRemap({});
+                  setStoreFilter(ALL_STORES);
                 }}
               >
                 <SelectTrigger className="w-[220px]">
@@ -293,22 +434,130 @@ export function ForkImportClient() {
             )}
           </CardHeader>
           <CardContent className="space-y-4">
+            {preflight?.groups.map((group) => (
+              <div
+                key={group.model}
+                className="space-y-3 rounded-md border border-amber-300 bg-amber-50 p-4"
+              >
+                <div>
+                  <h4 className="font-medium text-amber-900">
+                    Missing {group.model.toLowerCase()} references (
+                    {group.missing.length})
+                  </h4>
+                  <p className="text-xs text-amber-800">
+                    Some rows reference {group.model.toLowerCase()}s not in this
+                    database (field{group.fields.length === 1 ? "" : "s"}:{" "}
+                    {group.fields.join(", ")}). Reassign each to an existing{" "}
+                    {group.model.toLowerCase()}, or leave unmapped to skip those
+                    rows (they will error on import).{" "}
+                    {
+                      group.missing.filter((m) => idRemap[m.id]).length
+                    } of {group.missing.length} reassigned.
+                  </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Missing {group.model.toLowerCase()} id</TableHead>
+                      <TableHead>Rows</TableHead>
+                      <TableHead>Reassign to</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {group.missing.map((m) => (
+                      <TableRow key={m.id}>
+                        <TableCell className="font-mono text-xs">
+                          {m.id}
+                        </TableCell>
+                        <TableCell className="text-xs">{m.count}</TableCell>
+                        <TableCell>
+                          <Select
+                            value={idRemap[m.id] ?? ""}
+                            onValueChange={(v) =>
+                              setIdRemap((prev) => {
+                                const next = { ...prev };
+                                if (v && v !== UNMAPPED) next[m.id] = v;
+                                else delete next[m.id];
+                                return next;
+                              })
+                            }
+                          >
+                            <SelectTrigger className="w-[280px]">
+                              <SelectValue placeholder="— leave unmapped —" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={UNMAPPED}>
+                                — leave unmapped —
+                              </SelectItem>
+                              {group.candidates.map((c) => (
+                                <SelectItem key={c.id} value={c.id}>
+                                  {c.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ))}
+            {isStoreTable && storeOptions.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium">Filter by store:</span>
+                <Select value={storeFilter} onValueChange={setStoreFilter}>
+                  <SelectTrigger className="w-[280px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_STORES}>All stores</SelectItem>
+                    {storeOptions.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.label} ({s.count})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             {"error" in compareResult ? null : compareResult.kind === "auth" ? (
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-8">
+                      <Checkbox
+                        checked={
+                          compareResult.new.length > 0 &&
+                          compareResult.new.every((r) =>
+                            selectedIds.has(r.id as string),
+                          )
+                        }
+                        onCheckedChange={(c) =>
+                          setManySelected(
+                            compareResult.new.map((r) => r.id as string),
+                            c === true,
+                          )
+                        }
+                        aria-label="Select all rows"
+                      />
+                    </TableHead>
                     <TableHead>id</TableHead>
-                    {compareResult.new[0]
-                      ? Object.keys(compareResult.new[0] as object)
-                          .filter((k) => k !== "id")
-                          .slice(0, 4)
-                          .map((k) => <TableHead key={k}>{k}</TableHead>)
-                      : null}
+                    {["name", "email", "userId", "provider"].map((k) => (
+                      <TableHead key={k}>{k}</TableHead>
+                    ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {compareResult.new.slice(0, 20).map((row, i) => (
+                  {compareResult.new.map((row, i) => (
                     <TableRow key={(row.id as string) ?? i}>
+                      <TableCell className="w-8">
+                        <Checkbox
+                          checked={selectedIds.has(row.id as string)}
+                          onCheckedChange={() => toggleId(row.id as string)}
+                          aria-label={`Select ${String(row.id)}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-mono text-xs">
                         {String(row.id)}
                       </TableCell>
@@ -326,21 +575,42 @@ export function ForkImportClient() {
               </Table>
             ) : (
               <>
-                {compareResult.new.length > 0 && (
+                {visibleNew.length > 0 && (
                   <>
-                    <h4 className="font-medium">
-                      New ({compareResult.new.length})
-                    </h4>
+                    <h4 className="font-medium">New ({visibleNew.length})</h4>
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-8">
+                            <Checkbox
+                              checked={visibleNew.every((r) =>
+                                selectedIds.has(r.id as string),
+                              )}
+                              onCheckedChange={(c) =>
+                                setManySelected(
+                                  visibleNew.map((r) => r.id as string),
+                                  c === true,
+                                )
+                              }
+                              aria-label="Select all new rows"
+                            />
+                          </TableHead>
                           <TableHead>id</TableHead>
                           <TableHead>Preview</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {compareResult.new.slice(0, 15).map((row, i) => (
+                        {visibleNew.map((row, i) => (
                           <TableRow key={(row.id as string) ?? i}>
+                            <TableCell className="w-8">
+                              <Checkbox
+                                checked={selectedIds.has(row.id as string)}
+                                onCheckedChange={() =>
+                                  toggleId(row.id as string)
+                                }
+                                aria-label={`Select ${String(row.id)}`}
+                              />
+                            </TableCell>
                             <TableCell className="font-mono text-xs">
                               {String(row.id)}
                             </TableCell>
@@ -357,51 +627,62 @@ export function ForkImportClient() {
                         ))}
                       </TableBody>
                     </Table>
-                    {compareResult.new.length > 15 && (
-                      <p className="text-muted-foreground text-xs">
-                        … and {compareResult.new.length - 15} more
-                      </p>
-                    )}
                   </>
                 )}
-                {compareResult.updated.length > 0 && (
+                {visibleUpdated.length > 0 && (
                   <>
                     <h4 className="font-medium">
-                      Updated ({compareResult.updated.length})
+                      Updated ({visibleUpdated.length})
                     </h4>
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-8">
+                            <Checkbox
+                              checked={visibleUpdated.every((u) =>
+                                selectedIds.has(u.row.id as string),
+                              )}
+                              onCheckedChange={(c) =>
+                                setManySelected(
+                                  visibleUpdated.map((u) => u.row.id as string),
+                                  c === true,
+                                )
+                              }
+                              aria-label="Select all updated rows"
+                            />
+                          </TableHead>
                           <TableHead>id</TableHead>
                           <TableHead>Preview</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {compareResult.updated
-                          .slice(0, 10)
-                          .map(({ row }, i) => (
-                            <TableRow key={(row.id as string) ?? i}>
-                              <TableCell className="font-mono text-xs">
-                                {String(row.id)}
-                              </TableCell>
-                              <TableCell className="max-w-[300px] truncate text-xs">
-                                {JSON.stringify(
-                                  Object.fromEntries(
-                                    Object.entries(row)
-                                      .filter(([k]) => k !== "id")
-                                      .slice(0, 3),
-                                  ),
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          ))}
+                        {visibleUpdated.map(({ row }, i) => (
+                          <TableRow key={(row.id as string) ?? i}>
+                            <TableCell className="w-8">
+                              <Checkbox
+                                checked={selectedIds.has(row.id as string)}
+                                onCheckedChange={() =>
+                                  toggleId(row.id as string)
+                                }
+                                aria-label={`Select ${String(row.id)}`}
+                              />
+                            </TableCell>
+                            <TableCell className="font-mono text-xs">
+                              {String(row.id)}
+                            </TableCell>
+                            <TableCell className="max-w-[300px] truncate text-xs">
+                              {JSON.stringify(
+                                Object.fromEntries(
+                                  Object.entries(row)
+                                    .filter(([k]) => k !== "id")
+                                    .slice(0, 3),
+                                ),
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
                       </TableBody>
                     </Table>
-                    {compareResult.updated.length > 10 && (
-                      <p className="text-muted-foreground text-xs">
-                        … and {compareResult.updated.length - 10} more
-                      </p>
-                    )}
                   </>
                 )}
               </>
@@ -411,7 +692,9 @@ export function ForkImportClient() {
               <Button onClick={handleApply} disabled={applyTable.isPending}>
                 {applyTable.isPending
                   ? "Applying…"
-                  : "Add new/updated for this table"}
+                  : `Import ${effectiveCount} selected row${
+                      effectiveCount === 1 ? "" : "s"
+                    }`}
               </Button>
             )}
           </CardContent>

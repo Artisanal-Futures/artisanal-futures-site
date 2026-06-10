@@ -91,6 +91,7 @@ export function ProductServiceGrid({
                 key={item.id}
                 item={item}
                 onClick={() => handleItemClick(item)}
+                fallbackImage={shop?.logoPhoto}
               />
             ))}
           </div>
@@ -103,6 +104,7 @@ export function ProductServiceGrid({
                 key={item.id}
                 item={item}
                 onClick={() => handleItemClick(item)}
+                fallbackImage={shop?.logoPhoto}
               />
             ))}
           </div>

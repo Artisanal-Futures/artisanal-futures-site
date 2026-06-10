@@ -5,6 +5,7 @@ import { db } from "~/server/db";
 import { applyTable } from "~/server/fork-import/apply";
 import {
   getExistingRows,
+  preflightRefs,
   compareTable as runCompareTable,
 } from "~/server/fork-import/compare";
 import {
@@ -21,6 +22,9 @@ const forkApplySchema = z.object({
   tableKey: z.string(),
   new: z.array(z.record(z.unknown())),
   updated: z.array(z.record(z.unknown())),
+  // Optional remap of missing referenced ids (user/shop/…) -> existing ids,
+  // applied at insert time.
+  idRemap: z.record(z.string()).optional(),
 });
 
 export const migrationRouter = createTRPCRouter({
@@ -114,17 +118,30 @@ export const migrationRouter = createTRPCRouter({
       if (!getDelegateName(input.tableKey)) {
         return { error: `Unknown or unsupported table: ${input.tableKey}` };
       }
-      const ids = input.rows
-        .map((r) => r.id as string)
-        .filter((id): id is string => typeof id === "string");
-      const existing = await getExistingRows(ctx.db, input.tableKey, ids);
-      return runCompareTable(input.tableKey, input.rows, existing);
+      const existing = await getExistingRows(
+        ctx.db,
+        input.tableKey,
+        input.rows,
+      );
+      const result = runCompareTable(input.tableKey, input.rows, existing);
+      const refPreflight = await preflightRefs(
+        ctx.db,
+        input.tableKey,
+        input.rows,
+      );
+      return { ...result, refPreflight };
     }),
 
   /** Apply new/updated rows for one table. Auth tables: new only, with mapping. */
   applyForkTable: adminOnlyProcedure
     .input(forkApplySchema)
     .mutation(async ({ ctx, input }) => {
-      return applyTable(ctx.db, input.tableKey, input.new, input.updated);
+      return applyTable(
+        ctx.db,
+        input.tableKey,
+        input.new,
+        input.updated,
+        input.idRemap,
+      );
     }),
 });

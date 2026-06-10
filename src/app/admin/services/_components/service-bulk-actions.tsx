@@ -22,14 +22,14 @@ import {
 } from "~/components/ui/select";
 import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 
-import { DeleteMultipleProductsDialog } from "./delete-multiple-products";
+import { DeleteMultipleServicesDialog } from "./delete-multiple-services";
 
 type Props = {
-  selectedProductIds: string[];
+  selectedServiceIds: string[];
   onClear: () => void;
 };
 
-export function ProductBulkActions({ selectedProductIds, onClear }: Props) {
+export function ServiceBulkActions({ selectedServiceIds, onClear }: Props) {
   const apiUtils = api.useUtils();
   const router = useRouter();
 
@@ -41,44 +41,44 @@ export function ProductBulkActions({ selectedProductIds, onClear }: Props) {
   const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<string[]>([]);
   const [selectedShopId, setSelectedShopId] = React.useState<string | undefined>(undefined);
 
-  const bulkUpdate = api.product.bulkUpdate.useMutation({
+  const bulkUpdate = api.service.bulkUpdate.useMutation({
     onMutate: () => {
-      toast.loading("Updating products…");
+      toast.loading("Updating services…");
     },
     onSuccess: async (data) => {
       toast.dismiss();
       toast.success(data.message);
-      await apiUtils.product.invalidate();
+      await apiUtils.service.invalidate();
       router.refresh();
       onClear();
     },
     onError: (error) => {
       toast.dismiss();
-      toast.error(error.message ?? "Failed to update products.");
+      toast.error(error.message ?? "Failed to update services.");
     },
   });
 
   const categoryOptions: OptionType[] =
     categories
-      ?.filter((cat) => cat.type === "PRODUCT")
+      ?.filter((cat) => cat.type === "SERVICE")
       .map((cat) => ({
         value: cat.id,
         label: `${cat.parent ? `${cat.parent.name} / ` : ""}${cat.name}`,
       })) ?? [];
 
   const handleVisibility = (isPublic: boolean) => {
-    bulkUpdate.mutate({ productIds: selectedProductIds, isPublic });
+    bulkUpdate.mutate({ serviceIds: selectedServiceIds, isPublic });
   };
 
   const handleApplyCategories = () => {
-    bulkUpdate.mutate({ productIds: selectedProductIds, categoryIds: selectedCategoryIds });
+    bulkUpdate.mutate({ serviceIds: selectedServiceIds, categoryIds: selectedCategoryIds });
     setCategoryPopoverOpen(false);
     setSelectedCategoryIds([]);
   };
 
   const handleApplyStore = () => {
     if (!selectedShopId) return;
-    bulkUpdate.mutate({ productIds: selectedProductIds, shopId: selectedShopId });
+    bulkUpdate.mutate({ serviceIds: selectedServiceIds, shopId: selectedShopId });
     setStorePopoverOpen(false);
     setSelectedShopId(undefined);
   };
@@ -86,13 +86,13 @@ export function ProductBulkActions({ selectedProductIds, onClear }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 px-3 py-2">
       <span className="text-sm font-medium text-muted-foreground">
-        {selectedProductIds.length} selected
+        {selectedServiceIds.length} selected
       </span>
 
       <div className="h-4 w-px bg-border" />
 
-      <DeleteMultipleProductsDialog
-        productIds={selectedProductIds}
+      <DeleteMultipleServicesDialog
+        serviceIds={selectedServiceIds}
         onSuccessCallback={onClear}
       />
 

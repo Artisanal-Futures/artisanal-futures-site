@@ -505,9 +505,11 @@ export type WordPressData = {
 };
 
 // SimplePress exposes a flat product feed at `/api/products`. Prices are
-// already integer cents, and there's no per-product id — the product `url`
-// (its shop page) is the stable identifier we dedupe on.
+// already integer cents. Newer feeds include a stable per-product `id`, which
+// we prefer as the dedupe/update key; older feeds without one fall back to the
+// product `url` slug (see convertToProduct).
 export type SimplePressProduct = {
+  id?: number | string | null;
   name: string;
   price: number | null;
   priceFormatted: string | null;

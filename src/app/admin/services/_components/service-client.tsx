@@ -7,19 +7,15 @@ import {
   type PaginationState,
   type RowSelectionState,
 } from "@tanstack/react-table";
-import { PencilIcon, XCircleIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import type { ServiceWithShop } from "~/types/service";
-import type { Shop } from "~/types/shop";
 import { cn } from "~/lib/utils";
 import { usePermissions } from "~/hooks/use-permissions";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-import { ItemDialog } from "../../_components/item-dialog";
-import { BulkServiceFormWrapper } from "./bulk-service-form-wrapper";
-import { DeleteMultipleServicesDialog } from "./delete-multiple-services";
+import { ServiceBulkActions } from "./service-bulk-actions";
 import { serviceColumns } from "./service-column-structure";
 import { createServiceFilter } from "./service-filters";
 
@@ -62,45 +58,6 @@ export function ServiceClient({ services, shops }: Props) {
     }));
   }, [services]);
 
-  const toolbarActionsNode = useMemo(() => {
-    if (selectedServiceIds.length === 0) return null;
-
-    return (
-      <div className="flex items-center gap-2">
-        {/* <ItemDialog
-          title={`Bulk Edit ${selectedServiceIds.length} Products`}
-          subtitle="Apply changes to all selected products."
-          FormComponent={BulkServiceFormWrapper}
-          initialData={{
-            selectedServiceIds: selectedServiceIds,
-            clearRowSelection: () => setRowSelection({}),
-          }}
-          buttonText={
-            <>
-              <PencilIcon className="mr-1 h-4 w-4" />
-              Bulk Edit ({selectedServiceIds.length})
-            </>
-          }
-          buttonClassName="h-8 text-xs"
-          preventCloseOnOutsideClick={true}
-        /> */}
-
-        <DeleteMultipleServicesDialog
-          serviceIds={selectedServiceIds}
-          onSuccessCallback={() => setRowSelection({})}
-        />
-        <Button
-          variant="destructive"
-          onClick={() => setRowSelection({})}
-          className="h-8 bg-red-500 px-2 text-xs lg:px-3"
-        >
-          <XCircleIcon className="mr-2 h-4 w-4" />
-          Cancel
-        </Button>
-      </div>
-    );
-  }, [selectedServiceIds]);
-
   const addButtonNode = useMemo(
     () => (
       <>
@@ -129,7 +86,12 @@ export function ServiceClient({ services, shops }: Props) {
         mobileHiddenColumnIds={["shopId", "categories", "priceInCents"]}
         data={enhancedServices}
         filters={serviceFilters}
-        toolbarActions={toolbarActionsNode}
+        selectionActions={
+          <ServiceBulkActions
+            selectedServiceIds={selectedServiceIds}
+            onClear={() => setRowSelection({})}
+          />
+        }
         defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}

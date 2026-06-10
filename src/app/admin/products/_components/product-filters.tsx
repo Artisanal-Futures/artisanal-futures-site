@@ -17,14 +17,20 @@ export const createProductFilter = (
     .sort((a, b) => a[1].localeCompare(b[1]))
     .map(([id, name]) => ({ value: id, label: name }));
 
+  // Only surface shops that actually have products in the current data set, so
+  // the Shop filter doesn't list businesses with nothing to show.
+  const shopsWithProducts = new Set(products.map((product) => product.shopId));
+
   return [
     {
       column: "shopId",
       title: "Shop",
-      filters: shops.map((shop) => ({
-        value: shop.id,
-        label: shop.name,
-      })),
+      filters: shops
+        .filter((shop) => shopsWithProducts.has(shop.id))
+        .map((shop) => ({
+          value: shop.id,
+          label: shop.name,
+        })),
     },
     {
       column: "isPublic",

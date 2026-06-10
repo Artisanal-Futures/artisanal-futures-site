@@ -87,8 +87,9 @@ export async function convertToProduct(
   }
 
   // Handle SimplePress product. Its feed has a flat shape with `price`
-  // already in integer cents and no per-product id, so we derive a stable
-  // `shopProductId` from the product URL's slug.
+  // already in integer cents. Newer feeds expose a stable per-product `id` we
+  // prefer as `shopProductId`; older feeds without one fall back to a slug
+  // derived from the product URL.
   if ("priceFormatted" in product) {
     const slug =
       product.url
@@ -97,8 +98,14 @@ export async function convertToProduct(
         .split("/")
         .filter(Boolean)
         .pop() ?? product.url;
+    const shopProductId =
+      product.id !== undefined &&
+      product.id !== null &&
+      String(product.id).length > 0
+        ? String(product.id)
+        : slug;
     return {
-      shopProductId: slug,
+      shopProductId,
       name: product.name,
       description: removeHtmlTags(product.description ?? undefined),
       priceInCents:

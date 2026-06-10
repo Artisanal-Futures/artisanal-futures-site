@@ -16,7 +16,8 @@
     "dev": "next dev",
     "postinstall": "prisma generate --schema ./prisma",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "db:export-prod": "tsx scripts/export-production.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
