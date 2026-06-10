@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { env } from "~/env";
-import { verifyHCaptcha } from "~/lib/captcha/verify-hcaptcha";
 import { db } from "~/server/db";
 
 const SIGN_UP_URL = `${env.BETTER_AUTH_URL}/api/auth/sign-up/email`;
@@ -15,14 +14,6 @@ export async function POST(req: Request) {
       invitationCode?: string;
       captchaToken?: string;
     };
-
-    const isValid = await verifyHCaptcha(body.captchaToken ?? "");
-    if (!isValid) {
-      return NextResponse.json(
-        { message: "Captcha verification failed" },
-        { status: 401 },
-      );
-    }
 
     const email = body.email?.trim();
     const password = body.password;
@@ -81,6 +72,7 @@ export async function POST(req: Request) {
       headers: {
         "Content-Type": "application/json",
         Origin: env.BETTER_AUTH_URL,
+        "x-captcha-response": body.captchaToken ?? "",
       },
       body: JSON.stringify({
         email,

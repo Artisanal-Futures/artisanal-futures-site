@@ -14,6 +14,15 @@ const hostName = !useSecureCookies
   ? new URL(env.BETTER_AUTH_URL).hostname
   : env.HOSTNAME;
 
+// Mirror the client captcha guard in `src/providers/providers.tsx`, which
+// enables the better-auth-ui captcha (sign-in / password-reset) only in
+// production. Keeping the server gate identical ensures the client always sends
+// `x-captcha-response` whenever the server requires it, on every endpoint.
+const captchaEnabled =
+  process.env.NODE_ENV === "production" &&
+  !!env.HCAPTCHA_SECRET_KEY &&
+  !!env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
+
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
 
@@ -77,11 +86,15 @@ export const auth = betterAuth({
       ],
     }),
 
-    captcha({
-      provider: "hcaptcha",
-      secretKey: env.HCAPTCHA_SECRET_KEY,
-      siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
-    }),
+    ...(captchaEnabled
+      ? [
+          captcha({
+            provider: "hcaptcha",
+            secretKey: env.HCAPTCHA_SECRET_KEY,
+            siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+          }),
+        ]
+      : []),
   ],
 
   advanced: {
