@@ -22,10 +22,7 @@ type HCaptchaFieldProps = {
 };
 
 export const HCaptchaField = forwardRef<HCaptchaHandle, HCaptchaFieldProps>(
-  (
-    { onVerify, onError, onExpire, size = "invisible", label, required },
-    ref,
-  ) => {
+  ({ onVerify, onError, onExpire, size = "compact", label, required }, ref) => {
     const captchaRef = useRef<HCaptcha>(null);
     const siteKey = env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
