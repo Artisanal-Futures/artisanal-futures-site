@@ -33,6 +33,7 @@ import { DateTimeFormField } from "~/components/inputs/date-time-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
+import { SwitchFormField } from "~/components/inputs/switch-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 type Props = {
@@ -112,6 +113,7 @@ export function EventForm({ initialData, shops }: Props) {
     imageUrl: initialData?.imageUrl ?? "",
     callToActionLink: initialData?.callToActionLink ?? "",
     shopId: initialData?.shopId ?? "",
+    persist: initialData?.persist ?? false,
   };
 
   const form = useForm<EventFormData>({
@@ -141,10 +143,15 @@ export function EventForm({ initialData, shops }: Props) {
       }
     }
 
+    // Exclude the staged File from the payload — it's already been uploaded
+    // above and isn't serializable over the tRPC wire.
+    const payload = { ...data };
+    delete payload.imageFile;
+
     if (initialData) {
-      updateEvent.mutate({ ...data, id: initialData.id, imageUrl });
+      updateEvent.mutate({ ...payload, id: initialData.id, imageUrl });
     } else {
-      createEvent.mutate({ ...data, imageUrl });
+      createEvent.mutate({ ...payload, imageUrl });
     }
   };
   const handleReset = (data?: EventFormData) => {
@@ -170,7 +177,7 @@ export function EventForm({ initialData, shops }: Props) {
           <div className={cn("admin-form-toolbar", isDirty ? "dirty" : "")}>
             <div className="toolbar-info">
               <Button variant="ghost" size="sm" asChild className="shrink-0">
-                <Link href="/admin/categories">
+                <Link href="/admin/events">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Link>
@@ -312,6 +319,12 @@ export function EventForm({ initialData, shops }: Props) {
                         label: shop.name,
                         value: shop.id,
                       }))}
+                    />
+                    <SwitchFormField
+                      form={form}
+                      name="persist"
+                      label="Keep on homepage"
+                      description="Stay featured on the homepage even after the event has ended."
                     />
                   </CardContent>
                 </Card>

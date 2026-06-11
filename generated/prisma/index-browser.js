@@ -137,6 +137,7 @@ exports.Prisma.EventScalarFieldEnum = {
   location: 'location',
   imageUrl: 'imageUrl',
   callToActionLink: 'callToActionLink',
+  persist: 'persist',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   title: 'title'

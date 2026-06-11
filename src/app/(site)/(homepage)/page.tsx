@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Cog, GraduationCap, Store } from "lucide-react";
 
-import { EventBulletinBoard } from "./_components/event-bulletin-board";
+import { api } from "~/trpc/server";
+import { selectHomepageEvents } from "~/lib/select-homepage-events";
+import { EventsBoard } from "./_components/events-board";
 import { Hero } from "./_components/hero";
 import { HomePageCard } from "./_components/homepage-card";
 
@@ -27,6 +29,9 @@ const CARD_DATA = [
 ];
 
 export default async function HomePage() {
+  const events = await api.event.getHomepageEvents();
+  const { featured, rest } = selectHomepageEvents(events);
+
   return (
     <div className="page-container">
       <Hero />
@@ -36,35 +41,7 @@ export default async function HomePage() {
         ))}
       </div>
 
-      <EventBulletinBoard
-        upcomingEvents={[
-          {
-            shopName: "Home Ec Detroit",
-            text: `
-              A Hoophouse Warming 
-
-              Neighbors in Bloom
-
-              A cozy space where community and connection take root
-
-              📍 15100 Mendota St, Detroit, MI 48238
-              📅 November 8th, 2025
-              ⏰ 2 PM - 5 PM
-
-              Bulb Planting Activity
-              Bonfire & S'mores
-              Herbal Tea Bar
-              Community Yoga
-              Collage Table Vendors
-              Music
-              Moxie the Foxie
-            `,
-            imageUrl: "/img/homeec-nov.png",
-            // ctaLabel: "Learn More",
-            // ctaHref: "https://www.dbcfsn.org/harvest2025",
-          },
-        ]}
-      />
+      <EventsBoard featured={featured} rest={rest} />
 
       <div className="my-16 space-y-4 text-center">
         <h2 className="mt-12 text-3xl font-bold">

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { eventSchema } from "~/lib/validators/event";
+import { eventSchema, eventUpdateSchema } from "~/lib/validators/event";
 import {
   adminArtisanProcedure,
   createTRPCRouter,
@@ -8,6 +8,23 @@ import {
 } from "~/server/api/trpc";
 
 export const eventRouter = createTRPCRouter({
+  getHomepageEvents: publicProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    return ctx.db.event.findMany({
+      where: {
+        OR: [
+          { persist: true },
+          { endDate: { gte: now } },
+          { endDate: null, startDate: { gte: startOfToday } },
+        ],
+      },
+      orderBy: { startDate: "asc" },
+      include: { shop: true },
+    });
+  }),
+
   getUpcomingEvents: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.event.findMany({
       where: {
@@ -42,6 +59,7 @@ export const eventRouter = createTRPCRouter({
           imageUrl: input.imageUrl,
           callToActionLink: input.callToActionLink,
           shopId: input.shopId,
+          persist: input.persist,
         },
       });
       return {
@@ -51,7 +69,7 @@ export const eventRouter = createTRPCRouter({
     }),
 
   update: adminArtisanProcedure
-    .input(eventSchema.extend({ id: z.string() }))
+    .input(eventUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       const event = await ctx.db.event.update({
         where: { id: input.id },
@@ -64,6 +82,7 @@ export const eventRouter = createTRPCRouter({
           imageUrl: input.imageUrl,
           callToActionLink: input.callToActionLink,
           shopId: input.shopId,
+          persist: input.persist,
         },
       });
       return {

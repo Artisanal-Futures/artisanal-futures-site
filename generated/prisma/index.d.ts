@@ -8152,6 +8152,7 @@ export namespace Prisma {
     location: string | null
     imageUrl: string | null
     callToActionLink: string | null
+    persist: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     title: string | null
@@ -8166,6 +8167,7 @@ export namespace Prisma {
     location: string | null
     imageUrl: string | null
     callToActionLink: string | null
+    persist: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     title: string | null
@@ -8180,6 +8182,7 @@ export namespace Prisma {
     location: number
     imageUrl: number
     callToActionLink: number
+    persist: number
     createdAt: number
     updatedAt: number
     title: number
@@ -8196,6 +8199,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     callToActionLink?: true
+    persist?: true
     createdAt?: true
     updatedAt?: true
     title?: true
@@ -8210,6 +8214,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     callToActionLink?: true
+    persist?: true
     createdAt?: true
     updatedAt?: true
     title?: true
@@ -8224,6 +8229,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     callToActionLink?: true
+    persist?: true
     createdAt?: true
     updatedAt?: true
     title?: true
@@ -8311,6 +8317,7 @@ export namespace Prisma {
     location: string | null
     imageUrl: string | null
     callToActionLink: string | null
+    persist: boolean
     createdAt: Date
     updatedAt: Date
     title: string
@@ -8342,6 +8349,7 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     callToActionLink?: boolean
+    persist?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     title?: boolean
@@ -8357,6 +8365,7 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     callToActionLink?: boolean
+    persist?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     title?: boolean
@@ -8372,6 +8381,7 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     callToActionLink?: boolean
+    persist?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     title?: boolean
@@ -8387,12 +8397,13 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     callToActionLink?: boolean
+    persist?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     title?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "callToActionLink" | "createdAt" | "updatedAt" | "title", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "callToActionLink" | "persist" | "createdAt" | "updatedAt" | "title", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopDefaultArgs<ExtArgs>
   }
@@ -8417,6 +8428,7 @@ export namespace Prisma {
       location: string | null
       imageUrl: string | null
       callToActionLink: string | null
+      persist: boolean
       createdAt: Date
       updatedAt: Date
       title: string
@@ -8852,6 +8864,7 @@ export namespace Prisma {
     readonly location: FieldRef<"Event", 'String'>
     readonly imageUrl: FieldRef<"Event", 'String'>
     readonly callToActionLink: FieldRef<"Event", 'String'>
+    readonly persist: FieldRef<"Event", 'Boolean'>
     readonly createdAt: FieldRef<"Event", 'DateTime'>
     readonly updatedAt: FieldRef<"Event", 'DateTime'>
     readonly title: FieldRef<"Event", 'String'>
@@ -69370,6 +69383,7 @@ export namespace Prisma {
     location: 'location',
     imageUrl: 'imageUrl',
     callToActionLink: 'callToActionLink',
+    persist: 'persist',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     title: 'title'
@@ -70704,6 +70718,7 @@ export namespace Prisma {
     location?: StringNullableFilter<"Event"> | string | null
     imageUrl?: StringNullableFilter<"Event"> | string | null
     callToActionLink?: StringNullableFilter<"Event"> | string | null
+    persist?: BoolFilter<"Event"> | boolean
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     title?: StringFilter<"Event"> | string
@@ -70719,6 +70734,7 @@ export namespace Prisma {
     location?: SortOrderInput | SortOrder
     imageUrl?: SortOrderInput | SortOrder
     callToActionLink?: SortOrderInput | SortOrder
+    persist?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
@@ -70737,6 +70753,7 @@ export namespace Prisma {
     location?: StringNullableFilter<"Event"> | string | null
     imageUrl?: StringNullableFilter<"Event"> | string | null
     callToActionLink?: StringNullableFilter<"Event"> | string | null
+    persist?: BoolFilter<"Event"> | boolean
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     title?: StringFilter<"Event"> | string
@@ -70752,6 +70769,7 @@ export namespace Prisma {
     location?: SortOrderInput | SortOrder
     imageUrl?: SortOrderInput | SortOrder
     callToActionLink?: SortOrderInput | SortOrder
+    persist?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
@@ -70772,6 +70790,7 @@ export namespace Prisma {
     location?: StringNullableWithAggregatesFilter<"Event"> | string | null
     imageUrl?: StringNullableWithAggregatesFilter<"Event"> | string | null
     callToActionLink?: StringNullableWithAggregatesFilter<"Event"> | string | null
+    persist?: BoolWithAggregatesFilter<"Event"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     title?: StringWithAggregatesFilter<"Event"> | string
@@ -75291,6 +75310,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -75306,6 +75326,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -75319,6 +75340,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -75334,6 +75356,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -75348,6 +75371,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -75361,6 +75385,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -75375,6 +75400,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -80501,6 +80527,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type ShopScalarRelationFilter = {
     is?: ShopWhereInput
     isNot?: ShopWhereInput
@@ -80515,6 +80546,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     callToActionLink?: SortOrder
+    persist?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
@@ -80529,6 +80561,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     callToActionLink?: SortOrder
+    persist?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
@@ -80543,6 +80576,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     callToActionLink?: SortOrder
+    persist?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
@@ -80576,9 +80610,12 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type PostListRelationFilter = {
@@ -80634,14 +80671,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type SubredditScalarRelationFilter = {
@@ -83999,6 +84028,10 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type ShopUpdateOneRequiredWithoutEventsNestedInput = {
     create?: XOR<ShopCreateWithoutEventsInput, ShopUncheckedCreateWithoutEventsInput>
     connectOrCreate?: ShopCreateOrConnectWithoutEventsInput
@@ -84039,10 +84072,6 @@ export namespace Prisma {
     connectOrCreate?: SubscriptionCreateOrConnectWithoutSubredditInput | SubscriptionCreateOrConnectWithoutSubredditInput[]
     createMany?: SubscriptionCreateManySubredditInputEnvelope
     connect?: SubscriptionWhereUniqueInput | SubscriptionWhereUniqueInput[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type PostUpdateManyWithoutSubredditNestedInput = {
@@ -88444,6 +88473,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -88470,11 +88504,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -91359,6 +91388,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -91372,6 +91402,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -91698,6 +91729,7 @@ export namespace Prisma {
     location?: StringNullableFilter<"Event"> | string | null
     imageUrl?: StringNullableFilter<"Event"> | string | null
     callToActionLink?: StringNullableFilter<"Event"> | string | null
+    persist?: BoolFilter<"Event"> | boolean
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     title?: StringFilter<"Event"> | string
@@ -101798,6 +101830,7 @@ export namespace Prisma {
     location?: string | null
     imageUrl?: string | null
     callToActionLink?: string | null
+    persist?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     title: string
@@ -101851,6 +101884,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -101864,6 +101898,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
@@ -101877,6 +101912,7 @@ export namespace Prisma {
     location?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     callToActionLink?: NullableStringFieldUpdateOperationsInput | string | null
+    persist?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     title?: StringFieldUpdateOperationsInput | string
