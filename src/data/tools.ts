@@ -1,6 +1,16 @@
 export const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
 
-export const TOOLS_DATA = [
+export type Tool = {
+  title: string;
+  subtitle: string;
+  type: string;
+  image: string;
+  url: string;
+  /** When true, the tool is only shown to signed-in users (not public). */
+  requiresAuth?: boolean;
+};
+
+export const TOOLS_DATA: Tool[] = [
   // {
   //   title: "Solidarity Pathways (Update In Progress)",
   //   subtitle: "Optimize your delivery route",
@@ -36,5 +46,6 @@ export const TOOLS_DATA = [
     type: "Design",
     image: "img/craft_composition.png",
     url: UPCY_URL,
+    requiresAuth: true,
   },
 ];

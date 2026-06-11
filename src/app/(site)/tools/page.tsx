@@ -1,4 +1,5 @@
 import { TOOLS_DATA } from "~/data/tools";
+import { getSession } from "~/server/better-auth/server";
 
 import { ToolCard } from "~/app/(site)/tools/_components/tool-card";
 
@@ -8,7 +9,10 @@ export const metadata = {
     "Browse our current selection of free and open source tools to power up your business workflow",
 };
 
-export default function ToolsPage() {
+export default async function ToolsPage() {
+  const session = await getSession();
+  const tools = TOOLS_DATA.filter((tool) => !tool.requiresAuth || !!session);
+
   return (
     <>
       <header className="site-header">
@@ -25,14 +29,9 @@ export default function ToolsPage() {
       </header>
 
       <section className="site-section">
-        <div className="mx-auto grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {TOOLS_DATA.map((tool, idx) => (
-            <div
-              key={idx}
-              className="transform transition duration-300 hover:scale-105"
-            >
-              <ToolCard {...tool} />
-            </div>
+        <div className="mx-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {tools.map((tool, idx) => (
+            <ToolCard key={idx} {...tool} />
           ))}
         </div>
       </section>
