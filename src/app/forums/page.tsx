@@ -17,14 +17,19 @@ export default async function ForumHome() {
 
   return (
     <>
-      <h1 className="text-foreground text-3xl font-bold md:text-4xl">
-        Your feed
-      </h1>
+      <div className="space-y-1">
+        <h1 className="text-foreground text-3xl font-bold tracking-tight md:text-4xl">
+          Your feed
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          The latest from the communities you follow.
+        </p>
+      </div>
       <div className="grid grid-cols-1 gap-y-4 py-6 md:grid-cols-3 md:gap-x-4">
         {session ? <CustomFeed /> : <GeneralFeed />}
 
         {/* subreddit info */}
-        <div className="border-border bg-background order-first h-fit overflow-hidden rounded-lg border md:order-last">
+        <div className="border-border bg-card order-first h-fit overflow-hidden rounded-2xl border md:order-last">
           <div className="bg-secondary px-6 py-4">
             <p className="text-foreground flex items-center gap-1.5 py-3 font-semibold">
               <HomeIcon className="h-4 w-4" />

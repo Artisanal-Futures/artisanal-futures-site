@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Clock, FileText, Home, Scale, Scroll } from "lucide-react";
+import { Clock, FileText, MessagesSquare, Scale, Scroll } from "lucide-react";
 
 import { authClient } from "~/server/better-auth/client";
 import { api } from "~/trpc/react";
@@ -51,13 +51,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const subreddits = api.forumSubreddit.getNavigationSubreddits.useQuery();
 
   const mainNav = React.useMemo(() => {
+    if (!subreddits.data?.length) return [];
     return [
       {
         title: "Recent",
         url: "#",
         icon: Clock,
         isActive: true,
-        items: subreddits.data?.map((subreddit) => ({
+        items: subreddits.data.map((subreddit) => ({
           title: `r/${subreddit.name}`,
           url: `/forums/r/${subreddit.name}`,
         })),
@@ -72,14 +73,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Home className="size-4" />
+                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-xl">
+                  <MessagesSquare className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    Artisanal Futures Forums
+                    Artisanal Futures
                   </span>
-                  <span className="truncate text-xs">Back to Home</span>
+                  <span className="text-muted-foreground truncate text-xs">
+                    Community Forums
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>

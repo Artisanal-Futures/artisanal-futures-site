@@ -54,7 +54,7 @@ export default function CreateCommunityClient() {
           <h1 className="text-xl font-semibold">Create a Community</h1>
         </div>
 
-        <hr className="h-px bg-red-500" />
+        <hr className="h-px bg-border border-0" />
 
         <div>
           <p className="text-lg font-medium">Name</p>
@@ -62,7 +62,7 @@ export default function CreateCommunityClient() {
             Community names including capitalization cannot be changed.
           </p>
           <div className="relative">
-            <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-zinc-400">
+            <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-muted-foreground">
               r/
             </p>
             <Input

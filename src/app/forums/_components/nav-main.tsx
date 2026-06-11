@@ -2,7 +2,8 @@
 
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { ChevronRight, Home, Sparkles, Users } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ChevronRight, Hash, Home, Sparkles, Users } from "lucide-react";
 
 import {
   Collapsible,
@@ -11,6 +12,7 @@ import {
 } from "~/components/ui/collapsible";
 import {
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
@@ -18,7 +20,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
 } from "~/components/ui/sidebar";
 
 export function NavMain({
@@ -35,16 +36,14 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const pathname = usePathname();
+
   return (
     <SidebarGroup>
-      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
+      <SidebarGroupLabel>Browse</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton
-            asChild
-            tooltip="Forums"
-            className="text-base font-light"
-          >
+          <SidebarMenuButton asChild tooltip="Home" isActive={pathname === "/forums"}>
             <Link href="/forums">
               <Home />
               <span>Home</span>
@@ -55,7 +54,7 @@ export function NavMain({
           <SidebarMenuButton
             asChild
             tooltip="New"
-            className="text-base font-light"
+            isActive={pathname === "/forums/new"}
           >
             <Link href="/forums/new">
               <Sparkles />
@@ -64,16 +63,23 @@ export function NavMain({
           </SidebarMenuButton>
         </SidebarMenuItem>
 
-        <SidebarSeparator />
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            tooltip="Communities"
+            isActive={pathname === "/forums/communities"}
+          >
+            <Link href="/forums/communities">
+              <Users />
+              <span>Communities</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
 
         {items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip={item.title}
-                className="text-base font-light"
-              >
+              <SidebarMenuButton asChild tooltip={item.title}>
                 <a href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
@@ -91,9 +97,13 @@ export function NavMain({
                     <SidebarMenuSub>
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild className="font-light">
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={pathname === subItem.url}
+                          >
                             <a href={subItem.url}>
-                              <span>{subItem.title}</span>
+                              <Hash className="text-muted-foreground size-3.5 shrink-0" />
+                              <span className="truncate">{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -105,19 +115,6 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
-
-        <SidebarSeparator />
-
-        <SidebarMenuButton
-          asChild
-          tooltip="Communities"
-          className="text-base font-light"
-        >
-          <Link href="/forums/communities">
-            <Users />
-            <span>Communities</span>
-          </Link>
-        </SidebarMenuButton>
       </SidebarMenu>
     </SidebarGroup>
   );

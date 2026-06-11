@@ -78,8 +78,8 @@ export const HeartPostVoteClient = ({
           className={cn(
             "h-5 w-5 transition-colors",
             currentVote === "UP"
-              ? "fill-red-500 text-red-500"
-              : "text-muted-foreground hover:fill-red-200 hover:text-red-500",
+              ? "fill-destructive text-destructive"
+              : "text-muted-foreground hover:fill-destructive/20 hover:text-destructive",
           )}
         />
       </Button>

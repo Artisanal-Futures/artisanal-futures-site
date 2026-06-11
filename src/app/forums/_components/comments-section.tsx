@@ -79,7 +79,7 @@ export const CommentsSection = async ({ postId }: Props) => {
                     return (
                       <div
                         key={reply.id}
-                        className="ml-2 border-l-2 border-zinc-200 py-2 pl-4"
+                        className="ml-2 border-l-2 border-border py-2 pl-4"
                       >
                         <PostComment
                           comment={reply}

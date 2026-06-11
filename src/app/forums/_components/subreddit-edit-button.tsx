@@ -131,7 +131,7 @@ export function SubredditEditButton({
             <div>
               <p className="mb-2 text-sm font-medium">Subreddit Name</p>
               <div className="relative">
-                <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-zinc-400">
+                <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-muted-foreground">
                   r/
                 </p>
                 <Input

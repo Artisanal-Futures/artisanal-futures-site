@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
 // import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageSquareText } from "lucide-react";
 
 import type { ExtendedPost } from "~/types/post";
 import { authClient } from "~/server/better-auth/client";
@@ -69,10 +69,13 @@ export const PostFeed: FC<Props> = ({ initialPosts, subredditName }) => {
 
   if (posts.length === 0) {
     return (
-      <div className="col-span-2 flex flex-col items-center justify-center space-y-4 py-12">
-        <p className="text-muted-foreground text-lg">No posts yet.</p>
-        <p className="text-muted-foreground text-sm">
-          Be the first one to make a post!
+      <div className="border-border bg-card col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed py-16 text-center">
+        <div className="bg-secondary text-muted-foreground flex size-12 items-center justify-center rounded-full">
+          <MessageSquareText className="h-6 w-6" />
+        </div>
+        <p className="text-foreground text-lg font-semibold">No posts yet</p>
+        <p className="text-muted-foreground max-w-xs text-sm">
+          Be the first one to start the conversation in this community.
         </p>
       </div>
     );
@@ -120,7 +123,7 @@ export const PostFeed: FC<Props> = ({ initialPosts, subredditName }) => {
 
       {isFetchingNextPage && (
         <li className="flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </li>
       )}
     </ul>

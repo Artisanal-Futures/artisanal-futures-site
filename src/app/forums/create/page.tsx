@@ -52,7 +52,7 @@ const CreatePostPage = async ({ searchParams }: CreatePostPageProps) => {
             <h3 className="text-foreground text-2xl font-semibold dark:text-white">
               Create Post
             </h3>
-            <p className="text-muted-foreground ml-2 text-sm dark:text-gray-400">
+            <p className="text-muted-foreground ml-2 text-sm">
               Share your thoughts with the community
             </p>
           </div>

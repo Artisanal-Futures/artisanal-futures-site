@@ -83,28 +83,28 @@ export default async function CreateLayout({
           <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
           {/* info sidebar */}
-          <div className="order-first h-fit overflow-hidden rounded-lg border border-gray-200 md:order-last">
+          <div className="order-first h-fit overflow-hidden rounded-2xl border border-border bg-card md:order-last">
             <div className="px-6 py-4">
               <p className="py-3 font-semibold">About r/{subreddit.name}</p>
             </div>
-            <div className="bg-background divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+            <div className="divide-y divide-border px-6 py-4 text-sm leading-6">
               <div className="flex justify-between gap-x-4 py-3">
-                <span className="text-gray-500">Created</span>
-                <span className="text-gray-700">
+                <span className="text-muted-foreground">Created</span>
+                <span className="text-foreground">
                   <time dateTime={subreddit.createdAt.toDateString()}>
                     {format(subreddit.createdAt, "MMMM d, yyyy")}
                   </time>
                 </span>
               </div>
               <div className="flex justify-between gap-x-4 py-3">
-                <span className="text-gray-500">Members</span>
+                <span className="text-muted-foreground">Members</span>
                 <span className="flex items-start gap-x-2">
-                  <div className="text-gray-900">{memberCount}</div>
+                  <div className="text-foreground">{memberCount}</div>
                 </span>
               </div>
               {subreddit.creatorId === session?.user?.id ? (
                 <div className="flex justify-between gap-x-4 py-3">
-                  <span className="text-gray-500">
+                  <span className="text-muted-foreground">
                     You created this community
                   </span>
                 </div>

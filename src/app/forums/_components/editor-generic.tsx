@@ -227,13 +227,13 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
               aria-label="Select a community"
               className={cn(
                 "border-input bg-background hover:border-accent focus:ring-ring flex h-[38px] w-[300px] items-center justify-between rounded-full border px-4 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none",
-                !selectedSubreddit && "text-gray-500",
+                !selectedSubreddit && "text-muted-foreground",
               )}
             >
               <span className="sr-only">Select a community</span>
               {selectedSubreddit ? (
                 <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF4500]">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <span className="text-xs font-bold text-white">r/</span>
                   </div>
                   <span className="font-medium">
@@ -262,7 +262,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
                     }}
                     className="flex items-center gap-2 px-2 py-1.5 text-sm"
                   >
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF4500]">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <span className="text-xs font-bold text-white">r/</span>
                     </div>
                     <span className="flex-1">{subreddit.name}</span>
@@ -282,7 +282,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
         </Popover>
       </div>
 
-      <div className="border-border bg-background w-full rounded-lg border p-4">
+      <div className="border-border bg-card w-full rounded-2xl border p-4">
         <form
           id="subreddit-post-form"
           className="w-fit"
@@ -300,7 +300,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
               className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
             />
             <div id="editor" className="min-h-[500px]" />
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Use{" "}
               <kbd className="bg-muted rounded-md border px-1 text-xs uppercase">
                 Tab

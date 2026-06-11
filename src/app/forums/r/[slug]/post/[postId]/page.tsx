@@ -12,6 +12,7 @@ import { CommentsSection } from "~/app/forums/_components/comments-section";
 import { EditorOutput } from "~/app/forums/_components/editor-output";
 import { PostEditButton } from "~/app/forums/_components/post-edit-button";
 import { PostVoteServer } from "~/app/forums/_components/post-vote/post-vote-server";
+import { UserAvatar } from "~/app/forums/_components/user-avatar";
 
 interface SubRedditPostPageProps {
   params: Promise<{
@@ -58,12 +59,21 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
           />
         </Suspense>
 
-        <div className="bg-background w-full flex-1 rounded-sm p-4 sm:w-0">
+        <div className="bg-card w-full flex-1 rounded-2xl border p-5 shadow-sm sm:w-0 sm:p-6">
           <div className="flex items-center justify-between">
-            <p className="text-muted-foreground mt-1 max-h-40 truncate text-xs">
-              Posted by u/{post?.author.username}{" "}
-              {formatTimeToNow(new Date(post?.createdAt))}
-            </p>
+            <div className="text-muted-foreground flex items-center gap-2 text-xs">
+              <UserAvatar
+                user={{
+                  name: post?.author.username ?? null,
+                  image: post?.author.image ?? null,
+                }}
+                className="h-6 w-6 shrink-0"
+              />
+              <span>
+                Posted by u/{post?.author.username}{" "}
+                {formatTimeToNow(new Date(post?.createdAt))}
+              </span>
+            </div>
 
             {post?.authorId === session?.user.id && (
               <PostEditButton
@@ -74,9 +84,10 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
             )}
           </div>
 
-          <h1 className="text-foreground py-2 text-xl leading-6 font-semibold">
+          <h1 className="text-foreground mt-3 text-2xl leading-tight font-bold text-balance">
             {post?.title}
           </h1>
+          <div className="bg-border my-4 h-px w-full" />
           <EditorOutput content={post?.content} />
           <Suspense
             fallback={

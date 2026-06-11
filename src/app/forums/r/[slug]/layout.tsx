@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
+import { Info } from "lucide-react";
 
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
@@ -74,9 +75,10 @@ const Layout = async ({
           <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
           {/* info sidebar */}
-          <div className="border-border order-first h-fit overflow-hidden rounded-lg border md:order-last">
+          <div className="border-border order-first h-fit overflow-hidden rounded-2xl border bg-card md:order-last">
             <div className="bg-secondary flex items-center justify-between px-6 py-4">
-              <p className="text-foreground py-3 font-semibold">
+              <p className="text-foreground flex items-center gap-1.5 py-3 font-semibold">
+                <Info className="h-4 w-4" />
                 About r/{subreddit.name}
               </p>
 

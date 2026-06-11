@@ -79,8 +79,8 @@ export const HeartCommentVotes: FC<Props> = ({
           className={cn(
             "h-4 w-4 transition-colors",
             currentVote?.type === "UP"
-              ? "fill-red-500 text-red-500"
-              : "text-muted-foreground hover:fill-red-200 hover:text-red-500",
+              ? "fill-destructive text-destructive"
+              : "text-muted-foreground hover:fill-destructive/20 hover:text-destructive",
           )}
         />
       </Button>

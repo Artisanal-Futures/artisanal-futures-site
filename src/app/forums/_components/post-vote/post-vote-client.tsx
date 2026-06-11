@@ -81,7 +81,7 @@ export const PostVoteClient = ({
       >
         <ArrowBigUp
           className={cn("text-muted-foreground h-5 w-5", {
-            "fill-emerald-500 text-emerald-500": currentVote === "UP",
+            "fill-primary text-primary": currentVote === "UP",
           })}
         />
       </Button>
@@ -95,15 +95,12 @@ export const PostVoteClient = ({
       <Button
         onClick={() => subredditPostVote.mutate({ voteType: "DOWN", postId })}
         size="sm"
-        className={cn({
-          "text-emerald-500": currentVote === "DOWN",
-        })}
         variant="ghost"
         aria-label="downvote"
       >
         <ArrowBigDown
           className={cn("text-muted-foreground h-5 w-5", {
-            "fill-red-500 text-red-500": currentVote === "DOWN",
+            "fill-destructive text-destructive": currentVote === "DOWN",
           })}
         />
       </Button>

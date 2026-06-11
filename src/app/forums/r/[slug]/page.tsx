@@ -46,9 +46,20 @@ const page = async ({ params }: Props) => {
 
   return (
     <>
-      <h1 className="h-14 text-3xl font-bold md:text-4xl">
-        r/{subreddit.name}
-      </h1>
+      <div className="mb-2 flex items-center gap-4">
+        <div className="bg-secondary text-foreground flex size-14 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold uppercase">
+          {subreddit.name.charAt(0)}
+        </div>
+        <div className="space-y-0.5">
+          <h1 className="text-foreground text-3xl font-bold tracking-tight md:text-4xl">
+            r/{subreddit.name}
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            {subreddit.subscribers.length}{" "}
+            {subreddit.subscribers.length === 1 ? "member" : "members"}
+          </p>
+        </div>
+      </div>
       {showPosts && (
         <>
           <MiniCreatePost session={session} />
