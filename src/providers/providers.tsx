@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 "use client";
 
-import { AuthUIProvider, type ProviderIcon } from "@daveyplate/better-auth-ui";
-import { auth0 } from "better-auth/plugins";
-import Link from "next/link";
-import { useRouter } from "nextjs-toploader/app";
 import type { ReactNode } from "react";
-
-import { IconBrandAuth0 } from "@tabler/icons-react";
-import { Toaster } from "~/components/ui/sonner";
-import { env } from "~/env";
+import Link from "next/link";
 import { ThemeProvider } from "~/providers/theme-provider";
 import { authClient } from "~/server/better-auth/client";
+import { auth0 } from "better-auth/plugins";
+import { useRouter } from "nextjs-toploader/app";
+
+import type { ProviderIcon } from "@daveyplate/better-auth-ui";
+import { AuthUIProvider } from "@daveyplate/better-auth-ui";
+import { IconBrandAuth0 } from "@tabler/icons-react";
+
+import { env } from "~/env";
+import { Toaster } from "~/components/ui/sonner";
 
 export function SiteProviders({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -22,6 +24,9 @@ export function SiteProviders({ children }: { children: ReactNode }) {
         authClient={authClient}
         navigate={router.push}
         replace={router.replace}
+        account={{
+          fields: ["providers", "image", "name"],
+        }}
         onSessionChange={() => {
           // Clear router cache (protected routes)
           router.refresh();

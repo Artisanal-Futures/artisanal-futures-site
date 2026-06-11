@@ -22,6 +22,7 @@ import {
   IconShoppingCart,
   IconSparkles,
   IconUserPlus,
+  IconUsers,
 } from "@tabler/icons-react";
 
 import type { Session } from "~/server/better-auth/config";
@@ -110,6 +111,11 @@ const getNavData = (session: Session | null) => {
             icon: IconSparkles,
           },
 
+          {
+            title: "Users",
+            url: "/admin/users",
+            icon: IconUsers,
+          },
           {
             title: "Invites",
             url: "/admin/invites",
