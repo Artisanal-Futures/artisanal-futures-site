@@ -176,8 +176,7 @@ export function InvitationCodeStep() {
               1
             </span>
             <span>
-              Get discovered by customers who value locally made, handcrafted
-              goods
+              Get discovered by customers who value locally made, unique goods
             </span>
           </li>
           <li className="flex gap-3">

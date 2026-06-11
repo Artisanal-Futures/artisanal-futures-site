@@ -16,8 +16,8 @@ export default async function ShopsPage() {
           </div>
           <p className="description">
             Meet the talented artisans in our community. Browse their profiles,
-            explore their handcrafted products and services, and support local
-            makers directly.
+            explore their unique products and services, and support small
+            businesses directly.
           </p>
           <p className="text-muted-foreground text-sm">
             {shops?.length} {shops?.length === 1 ? "artisan" : "artisans"} in
