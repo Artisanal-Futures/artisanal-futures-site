@@ -1,26 +1,28 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
-import { useDefaultMutationActions } from "~/hooks/use-default-mutation-actions";
 
 import { SingleActionDialog } from "../../_components/single-action-dialog";
 
 type Props = { serviceId: string };
 
 export function DeleteServiceDialog(props: Props) {
-  const { defaultError, defaultSettled } = useDefaultMutationActions({
-    entity: "service",
-  });
+  const router = useRouter();
+  const apiUtils = api.useUtils();
 
   const deleteService = api.service.delete.useMutation({
     onSuccess: () => {
       toast.success("Service deleted successfully.");
-      defaultSettled();
+      void apiUtils.service.invalidate();
+      router.refresh();
     },
-    onError: defaultError, 
+    onError: (error) => {
+      toast.error(error.message ?? "Failed to delete service.");
+    },
   });
 
   const onSubmit = () => deleteService.mutate(props.serviceId);

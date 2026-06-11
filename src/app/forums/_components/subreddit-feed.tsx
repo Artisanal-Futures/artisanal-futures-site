@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 "use client";
 
 import type { FC } from "react";
@@ -51,12 +50,12 @@ export const SubredditFeed: FC<Props> = ({ initialSubreddits }) => {
           <li
             key={subreddit.id}
             ref={isLastItem ? ref : undefined}
-            className="overflow-hidden rounded-lg border border-border hover:border-muted-foreground/80"
+            className="overflow-hidden rounded-2xl border bg-card shadow-sm transition-all hover:border-ring/30 hover:shadow-md"
           >
             <Link href={`/forums/r/${subreddit.name}`}>
-              <div className="bg-background p-6">
-                <h3 className="text-lg font-semibold">r/{subreddit.name}</h3>
-                <div className="mt-2 flex items-center gap-4 text-sm text-gray-600">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-foreground">r/{subreddit.name}</h3>
+                <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
                   <span>{subreddit._count.subscribers} members</span>
                   <span>{subreddit._count.posts} posts</span>
                 </div>
@@ -68,7 +67,7 @@ export const SubredditFeed: FC<Props> = ({ initialSubreddits }) => {
 
       {isFetchingNextPage && (
         <li className="flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </li>
       )}
     </ul>

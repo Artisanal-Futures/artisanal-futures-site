@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { Survey } from "~/types/survey";
+import { Checkbox } from "~/components/ui/checkbox";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { ItemDialog } from "../../_components/item-dialog";
@@ -10,15 +11,46 @@ import { ViewSurveyDialog } from "./view-survey-dialog";
 
 export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
   {
+    id: "select",
+    size: 48,
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "id",
-    header: "ID",
+    size: 240,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="ID" />
+    ),
     cell: ({ row }) => (
       <span className="text-sm text-gray-500">{row.original.id}</span>
     ),
   },
   {
     accessorKey: "owner",
-    header: "Owner",
+    size: 220,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Owner" />
+    ),
     accessorFn: (row) => row.ownerId,
     filterFn: "arrIncludesSome",
     cell: ({ row }) => (
@@ -31,6 +63,7 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
   },
   {
     accessorKey: "createdAt",
+    size: 160,
     header: ({ column }) => (
       <AdvancedDataTableColumnHeader column={column} title="Created on" />
     ),
@@ -42,7 +75,9 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
   },
   {
     id: "options",
+    size: 280,
     header: "Options",
+    enableSorting: false,
     cell: ({ row }) => (
       <div className="flex gap-2">
         <ViewSurveyDialog survey={row.original} />

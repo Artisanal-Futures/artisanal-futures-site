@@ -1,151 +1,243 @@
+import Link from "next/link";
+
 export const metadata = {
-  title: 'Privacy Policy',
-  description: 'The privacy policy for Artisanal Futures',
-}
+  title: "Privacy Policy",
+  description: "The privacy policy for Artisanal Futures",
+};
 
 export default function PrivacyPage() {
   return (
-    <article className="prose lg:prose-xl">
-      <h3 id="privacy">Privacy</h3>
-      <h4 id="what-information-do-we-collect">
-        What information do we collect?
-      </h4>
-      <p>
-        We collect information from you when you register on our site and gather
-        data when you participate in the forum by reading, writing, and
-        evaluating the content shared here.
-      </p>
-      <p>
-        When registering on our site, you may be asked to enter your name and
-        e-mail address. You may, however, visit our site without registering.
-        Your e-mail address will be verified by an email containing a unique
-        link. If that link is visited, we know that you control the e-mail
-        address.
-      </p>
-      <p>
-        When registered and posting, we record the IP address that the post
-        originated from. We also may retain server logs which include the IP
-        address of every request to our server.
-      </p>
-      <h4 id="what-do-we-use-your-information-for">
-        What do we use your information for?
-      </h4>
-      <p>
-        Any of the information we collect from you may be used in one of the
-        following ways:
-      </p>
-      <ul>
-        <li>
-          To personalize your experience — your information helps us to better
-          respond to your individual needs.
-        </li>
-        <li>
-          To improve our site — we continually strive to improve our site
-          offerings based on the information and feedback we receive from you.
-        </li>
-        <li>
-          To improve customer service — your information helps us to more
-          effectively respond to your customer service requests and support
-          needs.
-        </li>
-        <li>
-          To send periodic emails — The email address you provide may be used to
-          send you information, notifications that you request about changes to
-          topics or in response to your user name, respond to inquiries, and/or
-          other requests or questions.
-        </li>
-      </ul>
-      <h4 id="how-do-we-protect-your-information">
-        How do we protect your information?
-      </h4>
-      <p>
-        We implement a variety of security measures to maintain the safety of
-        your personal information when you enter, submit, or access your
-        personal information.
-      </p>
-      <h4 id="what-is-your-data-retention-policy">
-        What is your data retention policy?
-      </h4>
-      <p>We will make a good faith effort to:</p>
-      <ul>
-        <li>
-          Retain server logs containing the IP address of all requests to this
-          server no more than 90 days.
-        </li>
-        <li>
-          Retain the IP addresses associated with registered users and their
-          posts no more than 5 years.
-        </li>
-      </ul>
-      <h4 id="do-we-use-cookies">Do we use cookies?</h4>
-      <p>
-        Yes. Cookies are small files that a site or its service provider
-        transfers to your computer’s hard drive through your Web browser (if you
-        allow). These cookies enable the site to recognize your browser and, if
-        you have a registered account, associate it with your registered
-        account.
-      </p>
-      <p>
-        We use cookies to understand and save your preferences for future visits
-        and compile aggregate data about site traffic and site interaction so
-        that we can offer better site experiences and tools in the future. We
-        may contract with third-party service providers to assist us in better
-        understanding our site visitors. These service providers are not
-        permitted to use the information collected on our behalf except to help
-        us conduct and improve our business.
-      </p>
-      <h4 id="do-we-disclose-any-information-to-outside-parties">
-        Do we disclose any information to outside parties?
-      </h4>
-      <p>
-        We do not sell, trade, or otherwise transfer to outside parties your
-        personally identifiable information. This does not include trusted third
-        parties who assist us in operating our site, conducting our business, or
-        servicing you, so long as those parties agree to keep this information
-        confidential. We may also release your information when we believe
-        release is appropriate to comply with the law, enforce our site
-        policies, or protect ours or others rights, property, or safety.
-        However, non-personally identifiable visitor information may be provided
-        to other parties for marketing, advertising, or other uses.
-      </p>
-      <h4 id="third-party-links">Third party links</h4>
-      <p>
-        Occasionally, at our discretion, we may include or offer third party
-        products or services on our site. These third party sites have separate
-        and independent privacy policies. We therefore have no responsibility or
-        liability for the content and activities of these linked sites.
-        Nonetheless, we seek to protect the integrity of our site and welcome
-        any feedback about these sites.
-      </p>
-      <h4 id="childrens-online-privacy-protection-act-compliance">
-        Children’s Online Privacy Protection Act Compliance
-      </h4>
-      <p>
-        Our site, products and services are all directed to people who are at
-        least 13 years old or older. If this server is in the USA, and you are
-        under the age of 13, per the requirements of COPPA (
-        <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">
-          Children’s Online Privacy Protection Act
-        </a>
-        ), do not use this site.
-      </p>
-      <h4 id="online-privacy-policy-only">Online Privacy Policy Only</h4>
-      <p>
-        This online privacy policy applies only to information collected through
-        our site and not to information collected offline.
-      </p>
-      <h4 id="your-consent">Your Consent</h4>
-      <p>By using our site, you consent to our web site privacy policy.</p>
-      <h4 id="changes-to-our-privacy-policy">Changes to our Privacy Policy</h4>
-      <p>
-        If we decide to change our privacy policy, we will post those changes on
-        this page.
-      </p>
-      <p>
-        Content adopted from{' '}
-        <a href="https://forum.nativesintech.org/faq">Natives in Tech</a>;{' '}
-        <a href="https://opendefinition.org/licenses/cc-by-sa/">CC-BY-SA</a>
-      </p>
-    </article>
-  )
+    <>
+      <header className="site-header">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <p className="tagline">Legal</p>
+            <h1>Privacy Policy</h1>
+          </div>
+          <p className="description">Last updated: June 10th, 2026</p>
+        </div>
+      </header>
+
+      <section className="site-section prose prose-sm lg:prose-base mb-6">
+        <h2>Introduction</h2>
+        <p>
+          This Privacy Policy explains what information Artisanal Futures
+          collects, how we use it, and the choices you have. It applies to our
+          website and the services we offer through it, including artisan and
+          shop profiles, our community forum, surveys, and our image generation
+          app, &quot;UPCY&quot;. By using our site you agree to the practices
+          described here.
+        </p>
+        <p>
+          We aim to collect as little personal information as possible and to
+          keep as much of it as we can on infrastructure we operate ourselves.
+        </p>
+
+        <h2>What information do we collect?</h2>
+        <p>
+          We only collect information that is needed to provide our services.
+          Depending on how you use the site, this may include:
+        </p>
+        <ul>
+          <li>
+            <span className="font-bold">Account information</span>: When you
+            register, we collect your name, email address, and an optional
+            username and profile image. You may sign up with an email and
+            password or through a third-party login (Google, Discord, or Auth0).
+            Email addresses may be verified by sending a unique link.
+          </li>
+          <li>
+            <span className="font-bold">Shop and artisan profiles</span>: If you
+            create a shop or artisan profile, we collect the details you
+            provide, such as business name, owner name, bio, contact email,
+            phone number, website, business address, and photos. This
+            information is generally displayed publicly on your profile.
+          </li>
+          <li>
+            <span className="font-bold">Survey responses</span>: If you complete
+            one of our surveys, we collect the answers you give, which may
+            include your name, email address, general location (country and
+            state), and information about your craft or business.
+          </li>
+          <li>
+            <span className="font-bold">Forum activity</span>: When you
+            participate in the community forum, we store the content you create
+            — posts, comments, and votes — along with the IP address a post or
+            comment originated from.
+          </li>
+          <li>
+            <span className="font-bold">Messages</span>: If you use our
+            messaging features, we store the messages and any files you send so
+            they can be delivered and displayed.
+          </li>
+          <li>
+            <span className="font-bold">UPCY content</span>: When you use UPCY,
+            our image generation app, we store the images you upload, the
+            prompts and settings you provide, the images that are generated, and
+            any custom models or &quot;checkpoints&quot; you train, so we can
+            produce and return your results.
+          </li>
+          <li>
+            <span className="font-bold">Technical information</span>: When you
+            sign in, we record limited technical details such as your IP address
+            and browser user-agent to maintain your session and protect against
+            abuse. We may also keep server logs that include the IP address of
+            requests to our servers.
+          </li>
+        </ul>
+
+        <h2>How do we use your information?</h2>
+        <p>The information we collect is used to:</p>
+        <ul>
+          <li>Create and maintain your account and keep you signed in.</li>
+          <li>
+            Provide the features you use — shop profiles, the forum, surveys,
+            messaging, and UPCY image generation.
+          </li>
+          <li>
+            Communicate with you, including account-related and service emails
+            and notifications you request.
+          </li>
+          <li>Operate, secure, maintain, and improve our services.</li>
+          <li>
+            Comply with the law and protect the rights, property, and safety of
+            our community, others, and ourselves.
+          </li>
+        </ul>
+
+        <h2>Cookies</h2>
+        <p>
+          We only use cookies that are strictly necessary for the functionality
+          and security of our website and services, such as keeping you signed
+          in and remembering interface preferences.{" "}
+          <span className="font-bold">
+            We do <u>not</u> use cookies for personal tracking, advertising, or
+            analytics.
+          </span>{" "}
+          For more detail, see our{" "}
+          <Link
+            href="/legal/cookies"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Cookie Policy
+          </Link>
+          .
+        </p>
+
+        <h2>How we share information</h2>
+        <p>
+          <span className="font-bold">
+            We do not sell or rent your personal information, and we do not
+            share it for advertising or marketing purposes.
+          </span>{" "}
+          We share information only with the service providers we rely on to
+          operate the site, and only as needed to provide our services:
+        </p>
+        <ul>
+          <li>
+            <span className="font-bold">Sign-in providers</span> (Google,
+            Discord, Auth0): used only if you choose to sign in with them.
+          </li>
+          <li>
+            <span className="font-bold">Email delivery</span> (Resend): to send
+            account and service emails.
+          </li>
+          <li>
+            <span className="font-bold">Payments</span> (Stripe): if you make a
+            purchase. Payment card details are handled by Stripe; we do not
+            store full card numbers.
+          </li>
+          <li>
+            <span className="font-bold">Abuse prevention</span> (hCaptcha): to
+            help protect sign-in and account flows from automated abuse.
+          </li>
+        </ul>
+        <p>
+          Wherever practical, we keep processing in-house: uploaded files and
+          images are stored on storage we operate, image generation is performed
+          on our own backend, and our hosting infrastructure is self-managed. We
+          may also disclose information when we believe it is necessary to
+          comply with the law or to protect the rights, property, or safety of
+          our community.
+        </p>
+
+        <h2>Third-party links</h2>
+        <p>
+          Our site may link to or offer third-party products or services. Those
+          sites have their own privacy policies, and we are not responsible for
+          their content or practices. We encourage you to review the privacy
+          policy of any third-party site you visit.
+        </p>
+
+        <h2>Data retention</h2>
+        <p>
+          We keep personal information for as long as your account is active or
+          as needed to provide our services, and we make a good-faith effort to:
+        </p>
+        <ul>
+          <li>
+            Retain server logs containing IP addresses for no more than 90 days.
+          </li>
+          <li>
+            Retain IP addresses associated with registered users and their forum
+            posts for no more than 5 years.
+          </li>
+        </ul>
+        <p>
+          When information is no longer needed, we delete or anonymize it where
+          reasonably possible.
+        </p>
+
+        <h2>Your rights and choices</h2>
+        <p>
+          You may request to access, correct, or delete the personal information
+          we hold about you, and you may close your account at any time.
+          Depending on where you live, you may have additional rights under
+          applicable privacy laws. To make a request, contact us using the
+          details below, and we will respond as required by law.
+        </p>
+
+        <h2>How we protect your information</h2>
+        <p>
+          We implement a variety of technical and organizational measures to
+          maintain the safety of your personal information when you enter,
+          submit, or access it. No method of transmission or storage is
+          completely secure, but we work to protect your information using
+          industry-standard practices.
+        </p>
+
+        <h2>Children&apos;s privacy</h2>
+        <p>
+          Our site, products, and services are directed to people who are at
+          least 13 years old. In accordance with the Children&apos;s Online
+          Privacy Protection Act (
+          <a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">
+            COPPA
+          </a>
+          ), if you are under the age of 13, please do not use this site.
+        </p>
+
+        <h2>Changes to this Privacy Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time to reflect changes
+          in our practices or for legal, operational, or regulatory reasons.
+          When we do, we will revise the &quot;Last updated&quot; date above and
+          post the changes on this page.
+        </p>
+
+        <h2>Contact us</h2>
+        <p>
+          If you have any questions about this Privacy Policy or wish to
+          exercise your rights, please contact us at{" "}
+          <a
+            href="mailto:support@artisanalfutures.org"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            support@artisanalfutures.org
+          </a>
+          .
+        </p>
+      </section>
+    </>
+  );
 }

@@ -1,18 +1,29 @@
 import { api } from "~/trpc/server";
 
-import { AdminClientLayout } from "../_components/client-layout";
+import { TrailHeader } from "../_components/trail-header";
 import { SurveyClient } from "./_components/survey-client";
-
-export const metadata = {
-  title: "Surveys",
-};
 
 export default async function SurveysAdminPage() {
   const surveys = await api.survey.getAll();
 
   return (
-    <AdminClientLayout currentPage="Surveys" title="Surveys">
-      <SurveyClient surveys={surveys} />
-    </AdminClientLayout>
+    <>
+      <TrailHeader
+        breadcrumbs={[{ label: `Surveys (${surveys?.length ?? 0})` }]}
+      />
+      <div className="admin-container">
+        <div className="admin-header">
+          <div>
+            <h1>All Artisan Surveys</h1>
+            <p>Manage surveys for artisans of AF</p>
+          </div>
+        </div>
+        <SurveyClient surveys={surveys} />
+      </div>
+    </>
   );
 }
+
+export const metadata = {
+  title: "Surveys",
+};

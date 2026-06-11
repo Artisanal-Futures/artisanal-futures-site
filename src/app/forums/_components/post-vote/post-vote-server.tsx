@@ -1,9 +1,8 @@
+import type { Post, Vote } from "generated/prisma";
 import { notFound } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
-
-import type { Post, Vote } from "@prisma/client";
 
 import { env } from "~/env";
+import { getSession } from "~/server/better-auth/server";
 
 import { HeartPostVoteClient } from "./heart-post-vote-client";
 import { PostVoteClient } from "./post-vote-client";
@@ -28,7 +27,7 @@ export const PostVoteServer = async ({
   initialVote,
   getData,
 }: PostVoteServerProps) => {
-  const session = await getServerAuthSession();
+  const session = await getSession();
 
   let _votesAmt = 0;
   let _currentVote: Vote["type"] | null | undefined = undefined;

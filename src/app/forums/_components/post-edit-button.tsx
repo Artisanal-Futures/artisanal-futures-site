@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-
-import { toastService } from "@dreamwalker-studios/toasts";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import {
@@ -46,16 +45,16 @@ export function PostEditButton({ postId, title, content }: Props) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   // const [editedTitle, setEditedTitle] = useState(title)
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent] = useState(content);
   const apiUtils = api.useUtils();
   const router = useRouter();
 
   const postEditMutation = api.forum.updateSubredditPost.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message);
+      toast.success(message);
       setIsEditDialogOpen(false);
     },
-    onError: ({ message }) => toastService.error(message),
+    onError: ({ message }) => toast.error(message),
     onSettled: () => {
       void apiUtils.forum.invalidate();
       void apiUtils.forumSubreddit.invalidate();
@@ -65,11 +64,11 @@ export function PostEditButton({ postId, title, content }: Props) {
 
   const postDeleteMutation = api.forum.deleteSubredditPost.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message);
+      toast.success(message);
       setIsDeleteAlertOpen(false);
       router.push("/forums");
     },
-    onError: ({ message }) => toastService.error(message),
+    onError: ({ message }) => toast.error(message),
     onSettled: () => {
       void apiUtils.forum.invalidate();
       void apiUtils.forumSubreddit.invalidate();

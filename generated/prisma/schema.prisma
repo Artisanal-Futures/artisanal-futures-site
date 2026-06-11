@@ -1,0 +1,1096 @@
+model Category {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  parentId String?
+  type     CategoryType @default(PRODUCT)
+  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[]   @relation("Subcategories")
+  products Product[]    @relation("CategoryToProduct")
+  services Service[]    @relation("CategoryToService")
+}
+
+enum CategoryType {
+  PRODUCT
+  SERVICE
+}
+
+model Event {
+  id               String    @id @default(cuid())
+  shopId           String
+  description      String
+  startDate        DateTime
+  endDate          DateTime?
+  location         String?
+  imageUrl         String?
+  callToActionLink String?
+  persist          Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  title            String
+  shop             Shop      @relation(fields: [shopId], references: [id])
+}
+
+model Subreddit {
+  id          String         @id @default(cuid())
+  description String?
+  isPublic    Boolean        @default(true)
+  name        String         @unique
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  creatorId   String?
+  posts       Post[]
+  creator     User?          @relation("CreatedBy", fields: [creatorId], references: [id])
+  subscribers Subscription[]
+
+  @@index([name])
+}
+
+model Subscription {
+  userId      String
+  subredditId String
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@id([userId, subredditId])
+}
+
+model Post {
+  title       String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  authorId    String
+  id          String         @id @default(cuid())
+  subredditId String
+  content     Json?
+  comments    ForumComment[]
+  author      User           @relation(fields: [authorId], references: [id])
+  subreddit   Subreddit      @relation(fields: [subredditId], references: [id], onDelete: Cascade)
+  votes       Vote[]
+}
+
+model ForumComment {
+  id        String         @id @default(cuid())
+  text      String
+  createdAt DateTime       @default(now())
+  authorId  String
+  postId    String
+  replyToId String?
+  commentId String?
+  deletedAt DateTime?
+  votes     CommentVote[]
+  author    User           @relation(fields: [authorId], references: [id])
+  post      Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  replyTo   ForumComment?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   ForumComment[] @relation("ReplyTo")
+}
+
+model Vote {
+  userId String
+  postId String
+  type   VoteType
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, postId])
+}
+
+model CommentVote {
+  userId    String
+  commentId String
+  type      VoteType
+  comment   ForumComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id])
+
+  @@id([userId, commentId])
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+model PlatformInvite {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  email     String
+  code      String    @unique
+  role      Role
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
+  createdBy String?
+  creator   User?     @relation("CreatedInvites", fields: [createdBy], references: [id])
+
+  @@index([email])
+  @@index([code])
+}
+
+model Service {
+  id                String     @id @default(cuid())
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  durationInMinutes Int?
+  locationType      String?
+  tags              String[]
+  attributeTags     String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  isPublic          Boolean    @default(false)
+  shopId            String?
+  isFeatured        Boolean    @default(false)
+  serviceUrl        String?
+  shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[] @relation("CategoryToService")
+}
+
+model Product {
+  id                String              @id @default(cuid())
+  shopProductId     String?
+  name              String
+  description       String
+  priceInCents      Int?
+  currency          String?
+  imageUrl          String?
+  productUrl        String?
+  attributeTags     String[]
+  materialTags      String[]
+  environmentalTags String[]
+  aiGeneratedTags   String[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  scrapeMethod      ProductScrapeMethod @default(MANUAL)
+  shopId            String?
+  tags              String[]
+  isPublic          Boolean             @default(true)
+  isFeatured        Boolean             @default(false)
+  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories        Category[]          @relation("CategoryToProduct")
+
+  @@unique([shopId, shopProductId])
+}
+
+enum ProductScrapeMethod {
+  MANUAL
+  WORDPRESS
+  SHOPIFY
+  SQUARESPACE
+  SIMPLEPRESS
+  SQUARE
+}
+
+model Shop {
+  id               String            @id @default(cuid())
+  ownerName        String
+  bio              String?
+  description      String?
+  ownerPhoto       String?
+  logoPhoto        String?
+  coverPhoto       String?
+  phone            String?
+  email            String?
+  website          String?
+  ownerId          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  attributeTags    String[]
+  name             String
+  events           Event[]
+  products         Product[]
+  services         Service[]
+  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  address          ShopAddress?
+  websiteProvision WebsiteProvision?
+}
+
+model ShopAddress {
+  id         String  @id @default(cuid())
+  address    String?
+  additional String?
+  city       String?
+  state      String?
+  zip        String?
+  country    String?
+  shopId     String? @unique
+  street     String?
+  shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+}
+
+model Member {
+  id                     String          @id @default(uuid())
+  role                   MemberRole      @default(GUEST)
+  profileId              String
+  serverId               String
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  conversationsInitiated Conversation[]  @relation("MemberOne")
+  conversationsReceived  Conversation[]  @relation("MemberTwo")
+  directMessages         DirectMessage[]
+  profile                Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  server                 Server          @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  messages               Message[]
+
+  @@index([profileId])
+  @@index([serverId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  fileUrl   String?
+  memberId  String
+  channelId String
+  deleted   Boolean  @default(false)
+  unread    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@index([memberId])
+}
+
+model Conversation {
+  id             String          @id @default(uuid())
+  memberOneId    String
+  memberTwoId    String
+  memberOne      Member          @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: Cascade)
+  memberTwo      Member          @relation("MemberTwo", fields: [memberTwoId], references: [id], onDelete: Cascade)
+  directMessages DirectMessage[]
+
+  @@unique([memberOneId, memberTwoId])
+  @@index([memberTwoId])
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  userId    String?   @unique
+  driverId  String?   @unique
+  name      String
+  imageUrl  String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  channels  Channel[]
+  members   Member[]
+  driver    Driver?   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  servers   Server[]
+}
+
+model Server {
+  id         String    @id @default(uuid())
+  name       String
+  imageUrl   String
+  inviteCode String    @unique
+  profileId  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  channels   Channel[]
+  members    Member[]
+  profile    Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Channel {
+  id        String      @id @default(uuid())
+  name      String
+  type      ChannelType @default(TEXT)
+  profileId String
+  serverId  String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  profile   Profile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  server    Server      @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([profileId])
+  @@index([serverId])
+}
+
+model DirectMessage {
+  id             String       @id @default(uuid())
+  content        String
+  fileUrl        String?
+  memberId       String
+  conversationId String
+  deleted        Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  member         Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([conversationId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+enum ChannelType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Depot {
+  id        String    @id @default(cuid())
+  ownerId   String    @unique
+  name      String?
+  magicCode String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  address   Address?
+  clients   Client[]
+  drivers   Driver[]
+  jobs      Job[]
+  routes    Route[]
+  vehicles  Vehicle[]
+  user      User[]    @relation("DepotToUser")
+}
+
+model Address {
+  id             String   @id @default(cuid())
+  formatted      String
+  street         String?
+  additional     String?
+  city           String?
+  state          String?
+  postal_code    String?
+  country        String?
+  latitude       Float
+  longitude      Float
+  depotId        String?  @unique
+  driverId       String?  @unique
+  startVehicleId String?  @unique
+  endVehicleId   String?  @unique
+  clientId       String?  @unique
+  jobId          String?  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  client         Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  depot          Depot?   @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  driver         Driver?  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  endVehicle     Vehicle? @relation("EndAddressToVehicle", fields: [endVehicleId], references: [id], onDelete: Cascade)
+  job            Job?     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  startVehicle   Vehicle? @relation("StartAddressToVehicle", fields: [startVehicleId], references: [id], onDelete: Cascade)
+}
+
+model Schedule {
+  id       Int     @id @default(autoincrement())
+  day      WeekDay
+  start    String
+  end      String
+  driverId String
+  driver   Driver  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+}
+
+model Driver {
+  id               String     @id @default(cuid())
+  type             DriverType @default(FULL_TIME)
+  depotId          String
+  name             String
+  phone            String
+  email            String
+  defaultVehicleId String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  address          Address?
+  depot            Depot      @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  profile          Profile?
+  schedule         Schedule[]
+  vehicles         Vehicle[]
+
+  @@index([depotId])
+}
+
+model Vehicle {
+  id               String              @id @default(cuid())
+  depotId          String
+  driverId         String?
+  shiftStart       Int
+  shiftEnd         Int
+  capacity         Int?
+  maxTasks         Int?
+  maxTravelTime    Int?
+  maxDistance      Int?
+  notes            String?
+  cargo            String?
+  routeId          String?
+  optimizedRouteId String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  endAddress       Address?            @relation("EndAddressToVehicle")
+  startAddress     Address?            @relation("StartAddressToVehicle")
+  breaks           Break[]
+  optimizedRoute   OptimizedRoutePath?
+  depot            Depot               @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  driver           Driver?             @relation(fields: [driverId], references: [id])
+  route            Route?              @relation(fields: [routeId], references: [id])
+
+  @@index([driverId])
+  @@index([routeId])
+  @@index([optimizedRouteId])
+  @@index([depotId])
+}
+
+model Break {
+  id        Int     @id @default(autoincrement())
+  start     Int?
+  end       Int?
+  duration  Int
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+}
+
+model Client {
+  id           String   @id @default(cuid())
+  depotId      String
+  name         String
+  phone        String?
+  email        String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  defaultJobId String?
+  address      Address?
+  depot        Depot    @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  jobs         Job[]
+
+  @@index([depotId])
+}
+
+model Job {
+  id              String         @id @default(cuid())
+  type            JobType
+  depotId         String
+  clientId        String?
+  prepTime        Int
+  serviceTime     Int
+  priority        Int
+  timeWindowStart Int
+  timeWindowEnd   Int
+  routeId         String?
+  isOptimized     Boolean        @default(false)
+  notes           String?
+  order           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  optimizedStopId String?
+  address         Address?
+  client          Client?        @relation(fields: [clientId], references: [id])
+  depot           Depot          @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  route           Route?         @relation(fields: [routeId], references: [id])
+  optimizedStop   OptimizedStop?
+
+  @@index([clientId])
+  @@index([routeId])
+  @@index([depotId])
+}
+
+model Route {
+  id             String               @id @default(cuid())
+  depotId        String
+  status         RouteStatus          @default(EDIT)
+  optimizedData  String?
+  deliveryAt     DateTime
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  jobs           Job[]
+  optimizedRoute OptimizedRoutePath[]
+  depot          Depot                @relation(fields: [depotId], references: [id], onDelete: Cascade)
+  vehicles       Vehicle[]
+
+  @@index([depotId])
+}
+
+model OptimizedRoutePath {
+  id        String          @id @default(cuid())
+  routeId   String
+  vehicleId String          @unique
+  distance  Float?
+  startTime Int?
+  endTime   Int?
+  status    RouteStatus     @default(NOT_STARTED)
+  geoJson   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  route     Route           @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  vehicle   Vehicle         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  stops     OptimizedStop[]
+
+  @@index([routeId])
+}
+
+model OptimizedStop {
+  id          String             @id @default(cuid())
+  routePathId String
+  jobId       String?            @unique
+  arrival     Int
+  departure   Int
+  duration    Int
+  prep        Int
+  type        String
+  notes       String?
+  order       String?
+  status      RouteStatus
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  job         Job?               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  routePath   OptimizedRoutePath @relation(fields: [routePathId], references: [id], onDelete: Cascade)
+
+  @@index([routePathId])
+}
+
+enum RouteStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+  NOT_STARTED
+  FAILED
+  EDIT
+  CREATE
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum DriverType {
+  FULL_TIME
+  PART_TIME
+  TEMP
+  VOLUNTEER
+}
+
+enum JobType {
+  PICKUP
+  DELIVERY
+  PICKUP_AND_DELIVERY
+  SERVICE
+  ADMIN
+  OTHER
+}
+
+model Survey {
+  id              String   @id @default(cuid())
+  processes       String?
+  materials       String?
+  principles      String?
+  description     String?
+  unmoderatedForm Boolean  @default(false)
+  moderatedForm   Boolean  @default(false)
+  hiddenForm      Boolean  @default(false)
+  privateForm     Boolean  @default(false)
+  supplyChain     Boolean  @default(false)
+  messagingOptIn  Boolean  @default(false)
+  ownerId         String?
+  shopId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  businessType    String?
+  country         String?
+  email           String?
+  experience      String?
+  practice        String?
+  state           String?
+
+  @@index([ownerId])
+}
+
+model GuestSurvey {
+  id                String   @id @default(cuid())
+  name              String   @default("Guest")
+  country           String?
+  state             String?
+  artisanalPractice String?
+  otherPractice     String?
+  email             String
+  createdAt         DateTime @default(now())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model ArtisanSurvey {
+  id                String   @id @default(cuid())
+  userId            String
+  name              String
+  businessName      String
+  businessInterview String
+  businessLocation  String?
+  businessEmail     String?
+  businessPhone     String?
+  businessWebsite   String?
+  businessType      String
+  productCategories String[]
+  principles        String[]
+  processes         String[]
+  materials         String[]
+  socials           Json?
+  createdAt         DateTime @default(now())
+}
+
+model GeneratedImages {
+  id           String @id @default(cuid())
+  userId       String
+  projectTitle String
+  prompt       String
+  imageUrl     String
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model GenerationSurvey {
+  id                       String @id @default(cuid())
+  userId                   String
+  projectTitle             String
+  levelOfStatisfaction     String
+  directDigitalFabrication String
+  user                     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Variation {
+  id             String @id @default(cuid())
+  userId         String
+  projectTitle   String
+  guidancePrompt String
+  imageUrl       String
+  exceutionTime  String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Modification {
+  id             String @id @default(cuid())
+  userId         String
+  projectTitle   String
+  guidanceScale  String
+  prompt         String
+  negativePrompt String
+  exceutionTime  String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model UpcycleResult {
+  id                        String            @id @default(cuid())
+  createdAt                 DateTime          @default(now())
+  updatedAt                 DateTime          @updatedAt
+  projectTitle              String?
+  prompt                    String
+  negativePrompt            String?
+  refinementObject          String
+  refinementType            RefinementType
+  styleImageUrl             String?
+  structureImageUrl         String?
+  zipFileUrl                String?
+  outputImageUrl            String?
+  improvePrompt             Boolean?
+  removeBackgroundScrap     Boolean?
+  removeBackgroundStructure Boolean?
+  removeBackgroundGenerated Boolean?
+  trackingId                String?           @unique
+  userId                    String
+  upcycleType               UpcycleType       @default(GENERATE)
+  generationModelName       String?
+  styleModelName            String?
+  structureSettings         Json?
+  styleSettings             Json?
+  trainingSettings          Json?
+  trainingModelName         String?
+  error                     String?
+  startedAt                 DateTime?
+  status                    status            @default(QUEUED)
+  isRetrain                 Boolean           @default(false)
+  originalTrainingId        String?
+  trainingCaptions          Json?             @default("{}")
+  trainingImageFilenames    Json?
+  trainingImageUrls         String[]          @default([])
+  promptDetails             String?
+  promptSubject             String?
+  questions                 UpcycleQuestion[]
+  rating                    UpcycleRating?
+  user                      User              @relation(fields: [userId], references: [id])
+  checkpointsUsed           TrainingModel[]   @relation("TrainingModelToUpcycleResult")
+}
+
+model UpcycleQuestion {
+  id              String        @id @default(cuid())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  question        String
+  llmResponse     String
+  upcycleResultId String
+  upcycleResult   UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id           String       @id @default(cuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  title        String
+  message      String
+  resourceId   String
+  resourceType ResourceType @default(GENERIC)
+  read         Boolean      @default(false)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+}
+
+model UpcycleRating {
+  id              String        @id @default(cuid())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  rating          UpcycleThumb  @default(NEUTRAL)
+  upcycleResultId String        @unique
+  reasoning       String?
+  upcycleResult   UpcycleResult @relation(fields: [upcycleResultId], references: [id], onDelete: Cascade)
+}
+
+enum RefinementType {
+  ITEM
+  STYLE
+}
+
+enum ResourceType {
+  UPCYCLE_RESULT
+  GENERIC
+  TRAINING_RESULT
+  CHECKPOINT_TRAINING
+  CHECKPOINT_GENERATION
+}
+
+enum UpcycleType {
+  GENERATE
+  GENERATE_FROM_STRUCTURE
+  TRAIN_AND_GENERATE
+  GENERATE_ON_PRE_TRAINED
+  TRAIN_ONLY
+}
+
+enum status {
+  QUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+  TIMEOUT
+}
+
+enum UpcycleThumb {
+  UP
+  DOWN
+  NEUTRAL
+}
+
+model GenerationJob {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TrainingDataSet {
+  id              String          @id @default(cuid())
+  trainingModelId String?
+  name            String?
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  tags            String[]
+  userId          String
+  setType         LoraType        @default(UNKNOWN)
+  triggerWord     String          @default("TOK")
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  images          TrainingImage[]
+}
+
+model TrainingImage {
+  id                   String           @id @default(cuid())
+  trainingModelId      String?
+  imageUrl             String
+  userCaption          String?
+  autoCaption          String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  referenceId          String?
+  imageType            LoraType         @default(UNKNOWN)
+  trainingDataSetId    String?
+  isRegularization     Boolean          @default(false)
+  autoCaptionUpdatedAt DateTime?
+  userCaptionUpdatedAt DateTime?
+  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
+  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
+}
+
+model TrainingJob {
+  id              String          @id @default(cuid())
+  trainingModelId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  status          status          @default(QUEUED)
+  error           String?
+  referenceId     String?
+  type            TrainingJobType @default(GENERIC_JOB)
+  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
+}
+
+model TrainingModel {
+  id               String             @id @default(cuid())
+  userId           String
+  triggerWord      String
+  status           status             @default(QUEUED)
+  weightsUrl       String
+  log              Json?
+  zipFileUrl       String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  trainingSettings Json?
+  trainingDetails  Json?
+  error            String?
+  referenceId      String?
+  versionId        String?
+  loraType         LoraType           @default(SUBJECT)
+  trainingSubject  String             @default("Unknown Object")
+  description      String?
+  tags             String[]
+  title            String?
+  visibility       TrainingVisibility @default(PRIVATE)
+  trainingDataSets TrainingDataSet[]
+  imageUrls        TrainingImage[]
+  jobs             TrainingJob[]
+  upcycleResults   UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+}
+
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
+
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
+
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+model WebsiteProvision {
+  id                     String          @id @default(cuid())
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  userId                 String
+  framework              Framework
+  siteType               SiteType
+  status                 ProvisionStatus @default(PENDING)
+  hasCustomDomain        Boolean         @default(false)
+  customDomain           String?         @unique
+  subdomain              String?         @unique
+  businessName           String
+  businessTagline        String?
+  contactEmail           String
+  contactPhone           String?
+  businessAddress        Json?
+  socialLinks            Json?
+  coolifyProjectUuid     String?         @unique
+  coolifyServerUuid      String?
+  deploymentUrl          String?
+  lastDeploymentAt       DateTime?
+  lastHealthCheck        DateTime?
+  healthCheckStatus      String?
+  config                 Json
+  cpuLimit               String?
+  memoryLimit            String?
+  errorMessage           String?
+  deploymentLogs         String?
+  notes                  String?
+  isTest                 Boolean         @default(false)
+  deletedAt              DateTime?
+  shopId                 String          @unique
+  coolifyDatabaseUuid    String?
+  coolifyServiceUuid     String?         @unique
+  adminPasswordEncrypted String?
+  adminUser              String?
+  accessToken            String?         @unique
+  shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([framework])
+  @@index([status])
+  @@index([subdomain])
+  @@index([userId])
+}
+
+enum ProvisionStatus {
+  PENDING
+  PROVISIONING
+  BUILDING
+  DEPLOYING
+  ACTIVE
+  FAILED
+  SUSPENDED
+  DELETING
+  DELETED
+}
+
+enum SiteType {
+  ECOMMERCE
+  BLOG
+  PORTFOLIO
+  LANDING_PAGE
+  BUSINESS
+  CUSTOM
+}
+
+enum Framework {
+  WORDPRESS
+  NEXTJS
+  GHOST
+  STRAPI
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Example {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  providerId            String
+  accountId             String
+  refreshToken          String?
+  accessToken           String?
+  scope                 String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  emailVerified     Boolean            @default(false)
+  image             String?
+  title             String?
+  role              Role               @default(GUEST)
+  createdAt         DateTime           @default(now())
+  username          String?
+  updatedAt         DateTime           @updatedAt
+  accounts          Account[]
+  commentVotes      CommentVote[]
+  forumComments     ForumComment[]
+  generatedImages   GeneratedImages[]
+  generationSurveys GenerationSurvey[]
+  guestSurveys      GuestSurvey[]
+  modifications     Modification[]
+  notifications     Notification[]
+  createdInvites    PlatformInvite[]   @relation("CreatedInvites")
+  posts             Post[]
+  messagingProfile  Profile?
+  sessions          Session[]
+  shops             Shop[]
+  createdSubreddits Subreddit[]        @relation("CreatedBy")
+  subscriptions     Subscription[]
+  trainingDataSet   TrainingDataSet[]
+  upcycleResults    UpcycleResult[]
+  variations        Variation[]
+  votes             Vote[]
+  websiteProvision  WebsiteProvision[]
+  Depot             Depot[]            @relation("DepotToUser")
+}
+
+model Verification {
+  identifier String
+  value      String    @unique
+  expiresAt  DateTime
+  id         String    @id @default(cuid())
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("VerificationToken")
+}
+
+enum Role {
+  USER
+  ADMIN
+  ARTISAN
+  DRIVER
+  GUEST
+  MANAGER
+}

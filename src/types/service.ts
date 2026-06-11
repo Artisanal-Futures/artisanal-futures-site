@@ -1,4 +1,4 @@
-import type { Service, Shop, Category } from "@prisma/client";
+import type { Category, Service, Shop } from "generated/prisma";
 
 export type ServiceWithShop = Service & {
   shop?: Shop | null;

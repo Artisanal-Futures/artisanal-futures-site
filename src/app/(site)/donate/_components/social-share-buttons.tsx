@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Facebook, Linkedin, Share2, Twitter } from "lucide-react";
+import { Linkedin, Share2 } from "lucide-react";
 import {
   FacebookShareButton,
   LinkedinShareButton,
@@ -10,19 +10,19 @@ import {
 } from "react-share";
 
 import { cn } from "~/lib/utils";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 
-interface SocialShareButtonsProps {
+type Props = {
   url?: string;
   title?: string;
   description?: string;
-}
+};
 
 export function SocialShareButtons({
   url,
   title = "Donate to Artisanal Futures!",
   description = "Support Artisanal Futures - a platform for artisan communities and worker-owned businesses.",
-}: SocialShareButtonsProps) {
+}: Props) {
   const [shareUrl, setShareUrl] = useState(url ?? "");
   const [hasNativeShare, setHasNativeShare] = useState(false);
 
@@ -37,9 +37,16 @@ export function SocialShareButtons({
       typeof navigator !== "undefined" &&
       typeof navigator.share === "function"
     ) {
-      setHasNativeShare(true);
+      const urlForCheck =
+        (url ?? (typeof window !== "undefined" ? window.location.href : "")) ||
+        "https://artisanalfutures.org/donate";
+      const payload = { title, text: description, url: urlForCheck };
+      const canUseShare =
+        typeof navigator.canShare !== "function" ||
+        navigator.canShare(payload);
+      setHasNativeShare(canUseShare);
     }
-  }, [url]);
+  }, [url, title, description]);
 
   const handleNativeShare = async () => {
     if (navigator.share) {
@@ -68,6 +75,16 @@ export function SocialShareButtons({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
+        {hasNativeShare && (
+          <button
+            type="button"
+            className={buttonClasses}
+            onClick={handleNativeShare}
+          >
+            <Share2 className="h-4 w-4" />
+            Share
+          </button>
+        )}
         <div className={buttonClasses}>
           <FacebookShareButton
             url={`https://artisanalfutures.org/donate`}

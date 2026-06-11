@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "sonner";
 
-import type { RouterOutputs } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
@@ -65,7 +64,7 @@ export function TagProductsButton() {
   const [newTag, setNewTag] = useState("");
 
   const { data: productsData = [] } = api.product.getAll.useQuery();
-  const { data: storesData = [] } = api.shop.getAllValid.useQuery();
+  const { data: storesData = [] } = api.shop.getAllPublic.useQuery();
 
   // Type guard functions
   const isValidProduct = (item: unknown): item is ProductData => {
@@ -115,6 +114,7 @@ export function TagProductsButton() {
       "African American Civil Rights",
       "Black Owned",
       "Woman Owned",
+      "Worker Owned",
       "Community Education",
       "Food Sovereignty",
     ],

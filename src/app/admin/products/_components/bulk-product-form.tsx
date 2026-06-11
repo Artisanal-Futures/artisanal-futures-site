@@ -1,10 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { OptionType } from "~/components/inputs/multi-select-form-field";
 import { api } from "~/trpc/react";
@@ -40,7 +39,7 @@ type BulkUpdateFormValues = z.infer<typeof bulkUpdateFormSchema>;
 type Props = {
   productIds: string[];
   onSuccessCallback: () => void;
-  dialogRef?: React.RefObject<HTMLDivElement>;
+  dialogRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
@@ -103,7 +102,7 @@ export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           You are editing {productIds.length} products. Only the fields you
           change will be updated.
         </p>
@@ -169,7 +168,7 @@ export function BulkProductForm({ productIds, onSuccessCallback }: Props) {
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel>Public Visibility</FormLabel>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Make these products visible on the public website.
                   </p>
                 </div>

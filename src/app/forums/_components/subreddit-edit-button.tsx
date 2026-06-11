@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-
-import { toastService } from "@dreamwalker-studios/toasts";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import {
@@ -61,10 +60,10 @@ export function SubredditEditButton({
 
   const subredditEditMutation = api.forumSubreddit.updateSubreddit.useMutation({
     onSuccess: ({ message }) => {
-      toastService.success(message);
+      toast.success(message);
       setIsEditDialogOpen(false);
     },
-    onError: ({ message }) => toastService.error(message),
+    onError: ({ message }) => toast.error(message),
     onSettled: () => {
       void apiUtils.forum.invalidate();
       void apiUtils.forumSubreddit.invalidate();
@@ -75,11 +74,11 @@ export function SubredditEditButton({
   const subredditDeleteMutation =
     api.forumSubreddit.deleteSubreddit.useMutation({
       onSuccess: ({ message }) => {
-        toastService.success(message);
+        toast.success(message);
         setIsDeleteAlertOpen(false);
         router.push("/forums");
       },
-      onError: ({ message }) => toastService.error(message),
+      onError: ({ message }) => toast.error(message),
       onSettled: () => {
         void apiUtils.forum.invalidate();
         void apiUtils.forumSubreddit.invalidate();
@@ -132,7 +131,7 @@ export function SubredditEditButton({
             <div>
               <p className="mb-2 text-sm font-medium">Subreddit Name</p>
               <div className="relative">
-                <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-zinc-400">
+                <p className="absolute inset-y-0 left-0 grid w-8 place-items-center text-sm text-muted-foreground">
                   r/
                 </p>
                 <Input

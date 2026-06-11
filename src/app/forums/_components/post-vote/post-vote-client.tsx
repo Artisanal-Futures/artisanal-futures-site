@@ -1,12 +1,11 @@
 "use client";
 
+import type { VoteType } from "generated/prisma";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
-
-import type { VoteType } from "@prisma/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -51,9 +50,7 @@ export const PostVoteClient = ({
           return;
         }
 
-        return toastService.error({
-          message: "Your vote was not registered. Please try again.",
-        });
+        return toast.error("Your vote was not registered. Please try again.");
       },
       onMutate: ({ voteType }) => {
         if (currentVote === voteType) {
@@ -74,7 +71,7 @@ export const PostVoteClient = ({
 
   if (IS_VOTE_DISABLED) return null;
   return (
-    <div className="flex flex-col gap-4 pb-4 pr-6 sm:w-20 sm:gap-0 sm:pb-0">
+    <div className="flex flex-col gap-4 pr-6 pb-4 sm:w-20 sm:gap-0 sm:pb-0">
       {/* upvote */}
       <Button
         onClick={() => subredditPostVote.mutate({ voteType: "UP", postId })}
@@ -83,14 +80,14 @@ export const PostVoteClient = ({
         aria-label="upvote"
       >
         <ArrowBigUp
-          className={cn("h-5 w-5 text-muted-foreground", {
-            "fill-emerald-500 text-emerald-500": currentVote === "UP",
+          className={cn("text-muted-foreground h-5 w-5", {
+            "fill-primary text-primary": currentVote === "UP",
           })}
         />
       </Button>
 
       {/* score */}
-      <p className="py-2 text-center text-sm font-medium text-foreground">
+      <p className="text-foreground py-2 text-center text-sm font-medium">
         {votesAmt}
       </p>
 
@@ -98,15 +95,12 @@ export const PostVoteClient = ({
       <Button
         onClick={() => subredditPostVote.mutate({ voteType: "DOWN", postId })}
         size="sm"
-        className={cn({
-          "text-emerald-500": currentVote === "DOWN",
-        })}
         variant="ghost"
         aria-label="downvote"
       >
         <ArrowBigDown
-          className={cn("h-5 w-5 text-muted-foreground", {
-            "fill-red-500 text-red-500": currentVote === "DOWN",
+          className={cn("text-muted-foreground h-5 w-5", {
+            "fill-destructive text-destructive": currentVote === "DOWN",
           })}
         />
       </Button>

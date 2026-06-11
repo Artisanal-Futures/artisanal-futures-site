@@ -1,16 +1,44 @@
-import { cn } from "~/utils/styles";
-
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { GuestSurveyColumn } from "../_validators/types";
+import { cn } from "~/lib/utils";
+import { Checkbox } from "~/components/ui/checkbox";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { ViewGuestSurveyDialog } from "./view-prompt-dialog";
 
 export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
   {
+    id: "select",
+    size: 48,
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(checked) =>
+          table.toggleAllPageRowsSelected(!!checked)
+        }
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     id: "user",
-    header: "User",
+    size: 300,
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="User" />
+    ),
     accessorFn: (row) => `${row?.name ?? "Guest"} ${row?.email ?? "No email"}`,
     cell: ({ row }) => (
       <div className="flex flex-col items-start space-y-1">
@@ -28,6 +56,7 @@ export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
   },
   {
     accessorKey: "createdAt",
+    size: 220,
     header: ({ column }) => (
       <AdvancedDataTableColumnHeader column={column} title="Created At" />
     ),
@@ -42,12 +71,15 @@ export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
   },
   {
     accessorKey: "prompt",
+    size: 240,
     header: "Email",
     cell: ({ row }) => <>{row.original.email ?? ""}</>,
   },
 
   {
     id: "actions",
+    size: 120,
+    enableSorting: false,
     cell: ({ row }) => <ViewGuestSurveyDialog item={row.original} />,
   },
 ];

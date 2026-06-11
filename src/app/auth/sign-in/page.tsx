@@ -1,76 +1,55 @@
-import { Suspense } from 'react'
+import Link from "next/link";
+import { AuthView } from "@daveyplate/better-auth-ui";
 
-import { Separator } from '~/components/ui/separator'
-import {
-  ErrorText,
-  ProviderSignInButton,
-  ProviderSignInForm,
-} from '../_components'
+import { AuthShell } from "~/app/auth/_components/auth-shell";
 
 export const metadata = {
-  title: 'Sign In ',
-}
+  title: "Sign In",
+  description: "Sign in to your Crossroads Community Association account",
+};
 
-export default function SignInPage() {
-  const providers = [
-    {
-      id: 'google',
-      name: 'Google',
-    },
-    {
-      id: 'discord',
-      name: 'Discord',
-    },
+type Props = {
+  searchParams: Promise<{ callbackUrl?: string }>;
+};
 
-    {
-      id: 'auth0',
-      name: 'Auth0',
-    },
-  ]
+export default async function SignInPage({ searchParams }: Props) {
+  const { callbackUrl } = await searchParams;
 
   return (
-    <>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ErrorText />
-      </Suspense>
-
-      <ProviderSignInForm storeName={'Artisanal Futures'}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <div className="flex flex-col w-full">
-            <div className="flex gap-4">
-              {providers &&
-                Object.values(providers).map((provider) => {
-                  if (
-                    provider.name !== 'Auth0' &&
-                    provider.name !== 'Credentials'
-                  ) {
-                    return (
-                      <ProviderSignInButton
-                        id={provider.id}
-                        name={provider.name}
-                        key={provider.name}
-                      />
-                    )
-                  }
-                })}
-            </div>
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  or
-                </span>
-              </div>
-            </div>
-
-            <div className="flex w-full justify-center">
-              <ProviderSignInButton id={'auth0'} name={'Sign in with email'} />
-            </div>
-          </div>
-        </Suspense>
-      </ProviderSignInForm>
-    </>
-  )
+    <AuthShell
+      aside={
+        <>
+          <h1 className="mb-4 text-4xl font-bold text-balance">
+            Welcome Back to Artisanal Futures
+          </h1>
+          <p className="text-primary-foreground/80 mb-8 text-lg">
+            Sign in to access your account, browse our shops, and stay
+            connected within our artisan community.
+          </p>
+        </>
+      }
+      asideImage="/image-bench.png"
+      footer={
+        <>
+          By signing in, you agree to our{" "}
+          <Link
+            href="/legal/terms-of-use"
+            className="text-primary hover:underline"
+          >
+            Terms of Use
+          </Link>{" "}
+          and{" "}
+          <Link href="/legal/privacy" className="text-primary hover:underline">
+            Privacy Policy
+          </Link>
+        </>
+      }
+    >
+      <AuthView
+        view="SIGN_IN"
+        classNames={{ base: "max-w-full" }}
+        redirectTo={callbackUrl}
+      />
+    </AuthShell>
+  );
 }

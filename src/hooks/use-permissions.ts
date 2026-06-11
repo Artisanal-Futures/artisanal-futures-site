@@ -1,7 +1,7 @@
-import { useSession } from "next-auth/react";
+import { authClient } from "~/server/better-auth/client";
 
 export const usePermissions = () => {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const userRole = session?.user.role ?? "ARTISAN";
   const isElevated = userRole !== "ARTISAN";
   const isAdmin = userRole === "ADMIN";

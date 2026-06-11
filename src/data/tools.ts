@@ -1,4 +1,16 @@
-export const TOOLS_DATA = [
+export const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
+
+export type Tool = {
+  title: string;
+  subtitle: string;
+  type: string;
+  image: string;
+  url: string;
+  /** When true, the tool is only shown to signed-in users (not public). */
+  requiresAuth?: boolean;
+};
+
+export const TOOLS_DATA: Tool[] = [
   // {
   //   title: "Solidarity Pathways (Update In Progress)",
   //   subtitle: "Optimize your delivery route",
@@ -29,10 +41,11 @@ export const TOOLS_DATA = [
     url: "/tools/sankofa-sizer",
   },
   {
-    title: "Upcycling AI",
+    title: "UPCY",
     subtitle: "Upcycle your old scraps into new designs",
     type: "Design",
     image: "img/craft_composition.png",
-    url: "https://generate.dev.artisanalfutures.org/",
+    url: UPCY_URL,
+    requiresAuth: true,
   },
 ];

@@ -1,29 +1,31 @@
-'use client'
+"use client";
 
-import type { Post as PostType, User, Vote } from '@prisma/client'
-import type { FC } from 'react'
-import { useRef } from 'react'
-import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
+import type { Post as PostType, User, Vote } from "generated/prisma";
+import type { FC } from "react";
+import { useRef } from "react";
+import Link from "next/link";
+import { MessageSquare } from "lucide-react";
 
-import { env } from '~/env'
-import { formatTimeToNow } from '~/lib/utils'
-import { EditorOutput } from './editor-output'
-import { HeartPostVoteClient } from './post-vote/heart-post-vote-client'
-import { PostVoteClient } from './post-vote/post-vote-client'
+import { env } from "~/env";
+import { formatTimeToNow } from "~/lib/utils";
 
-type PartialVote = Pick<Vote, 'type'>
+import { EditorOutput } from "./editor-output";
+import { HeartPostVoteClient } from "./post-vote/heart-post-vote-client";
+import { PostVoteClient } from "./post-vote/post-vote-client";
+import { UserAvatar } from "./user-avatar";
+
+type PartialVote = Pick<Vote, "type">;
 
 type Props = {
   post: PostType & {
-    author: User
-    votes: Vote[]
-  }
-  votesAmt: number
-  subredditName: string
-  currentVote?: PartialVote
-  commentAmt: number
-}
+    author: User;
+    votes: Vote[];
+  };
+  votesAmt: number;
+  subredditName: string;
+  currentVote?: PartialVote;
+  commentAmt: number;
+};
 
 export const SinglePost: FC<Props> = ({
   post,
@@ -32,10 +34,10 @@ export const SinglePost: FC<Props> = ({
   subredditName,
   commentAmt,
 }) => {
-  const pRef = useRef<HTMLParagraphElement>(null)
+  const pRef = useRef<HTMLParagraphElement>(null);
 
   return (
-    <div className="rounded-md bg-background shadow">
+    <div className="bg-card rounded-2xl border shadow-sm transition-all hover:border-ring/30 hover:shadow-md overflow-hidden">
       <div className="flex justify-between px-6 py-4">
         {env.NEXT_PUBLIC_HEART_VOTE_DISABLED ? (
           <PostVoteClient
@@ -52,48 +54,58 @@ export const SinglePost: FC<Props> = ({
         )}
 
         <div className="w-0 flex-1">
-          <div className="mt-1 max-h-40 text-xs text-muted-foreground">
-            {subredditName ? (
-              <>
-                <a
-                  className="text-sm text-foreground underline underline-offset-2"
-                  href={`/forums/r/${subredditName}`}
-                >
-                  r/{subredditName}
-                </a>
-                <span className="px-1">•</span>
-              </>
-            ) : null}
-            <span>Posted by u/{post.author.username}</span>{' '}
-            {formatTimeToNow(new Date(post.createdAt))}
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <UserAvatar
+              user={{
+                name: post.author.username ?? null,
+                image: post.author.image ?? null,
+              }}
+              className="h-6 w-6 shrink-0"
+            />
+            <div className="flex flex-wrap items-center gap-x-1.5">
+              {subredditName ? (
+                <>
+                  <a
+                    className="text-foreground font-medium hover:underline"
+                    href={`/forums/r/${subredditName}`}
+                  >
+                    r/{subredditName}
+                  </a>
+                  <span className="text-muted-foreground/50">•</span>
+                </>
+              ) : null}
+              <span>u/{post.author.username}</span>
+              <span className="text-muted-foreground/50">•</span>
+              <span>{formatTimeToNow(new Date(post.createdAt))}</span>
+            </div>
           </div>
           <a href={`/forums/r/${subredditName}/post/${post.id}`}>
-            <h1 className="py-2 text-lg font-semibold leading-6 text-foreground">
+            <h1 className="text-foreground hover:text-primary mt-2 text-lg leading-snug font-semibold text-balance transition-colors">
               {post.title}
             </h1>
           </a>
 
           <div
-            className="relative max-h-40 w-full overflow-clip text-sm"
+            className="text-muted-foreground relative mt-2 max-h-40 w-full overflow-clip text-sm"
             ref={pRef}
           >
             <EditorOutput content={post.content} />
             {pRef.current?.clientHeight === 160 ? (
               // blur bottom if content is too long
-              <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent"></div>
+              <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-card to-transparent"></div>
             ) : null}
           </div>
         </div>
       </div>
 
-      <div className="z-20 bg-muted px-4 py-4 text-sm sm:px-6">
+      <div className="bg-muted/40 border-border z-20 border-t px-4 py-3 text-sm sm:px-6">
         <Link
           href={`/forums/r/${subredditName}/post/${post.id}`}
-          className="flex w-fit items-center gap-2"
+          className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-2 font-medium transition-colors"
         >
           <MessageSquare className="h-4 w-4" /> {commentAmt} comments
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

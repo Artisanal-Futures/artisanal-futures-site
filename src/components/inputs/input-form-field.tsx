@@ -1,5 +1,7 @@
-import type { FieldValues, Path, UseFormReturn } from 'react-hook-form'
+import type { InputHTMLAttributes } from "react";
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
+import { cn } from "~/lib/utils";
 import {
   FormControl,
   FormDescription,
@@ -7,23 +9,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
-import { cn } from '~/lib/utils'
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 
 type Props<CurrentForm extends FieldValues> = {
-  form: UseFormReturn<CurrentForm>
-  name: Path<CurrentForm>
-  label?: string
-  description?: string
-  className?: string
-  disabled?: boolean
-  placeholder?: string
-  onChange?: (value: string) => void
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
-  inputId?: string
-  type?: HTMLInputElement['type']
-}
+  form: UseFormReturn<CurrentForm>;
+  name: Path<CurrentForm>;
+  label?: string;
+  description?: string;
+  className?: string;
+  disabled?: boolean;
+  placeholder?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  onChangeAdditional?: (value: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  inputId?: string;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
+  type?: InputHTMLAttributes<HTMLInputElement>["type"];
+  required?: boolean;
+  autoFocus?: boolean;
+  labelClassName?: string;
+  inputClassName?: string;
+  autoComplete?: string;
+};
 
 export const InputFormField = <CurrentForm extends FieldValues>({
   form,
@@ -34,37 +45,76 @@ export const InputFormField = <CurrentForm extends FieldValues>({
   disabled,
   placeholder,
   onChange,
+  onChangeAdditional,
   onKeyDown,
+  onFocus,
+  onBlur,
   inputId,
+  inputRef,
+  required,
+  autoFocus,
+  labelClassName,
+  inputClassName,
+  autoComplete,
   type,
 }: Props<CurrentForm>) => {
   return (
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem className={cn('col-span-full', className)}>
-          {label && <FormLabel>{label}</FormLabel>}
-          <FormControl>
-            <Input
-              disabled={disabled}
-              placeholder={placeholder ?? ''}
-              type={type}
-              {...field}
-              onChange={(e) => {
-                if (!!onChange) {
-                  onChange(e.target.value)
-                }
-                field.onChange(e.target.value)
-              }}
-              onKeyDown={onKeyDown}
-              id={inputId}
-            />
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        const { ref: _fieldRef, ...fieldRest } = field;
+        return (
+          <FormItem className={cn("col-span-full", className)}>
+            {label && (
+              <FormLabel className={cn(labelClassName)}>
+                {label}{" "}
+                {required ? <span className="text-red-500">*</span> : null}
+              </FormLabel>
+            )}
+            <FormControl>
+              <Input
+                autoComplete={autoComplete}
+                disabled={disabled}
+                className={inputClassName}
+                placeholder={placeholder ?? ""}
+                type={type}
+                {...fieldRest}
+                ref={(el) => {
+                  field.ref(el);
+                  if (inputRef) {
+                    (
+                      inputRef as React.MutableRefObject<HTMLInputElement | null>
+                    ).current = el;
+                  }
+                }}
+                onChange={(e) => {
+                  if (!!onChangeAdditional) {
+                    onChangeAdditional(e.target.value);
+                  }
+
+                  if (!!onChange) {
+                    onChange(e.target.value);
+                  } else {
+                    field.onChange(e.target.value);
+                  }
+                }}
+                onKeyDown={onKeyDown}
+                onFocus={onFocus}
+                onBlur={(e) => {
+                  field.onBlur();
+                  onBlur?.(e);
+                }}
+                id={inputId}
+                required={required}
+                autoFocus={autoFocus}
+              />
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
-  )
-}
+  );
+};

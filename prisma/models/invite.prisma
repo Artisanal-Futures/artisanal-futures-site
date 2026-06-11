@@ -1,0 +1,16 @@
+model PlatformInvite {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  email     String
+  code      String    @unique
+  role      Role
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
+  createdBy String?
+  creator   User?     @relation("CreatedInvites", fields: [createdBy], references: [id])
+
+  @@index([email])
+  @@index([code])
+}

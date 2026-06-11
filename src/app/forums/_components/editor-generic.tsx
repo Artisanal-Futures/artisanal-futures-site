@@ -1,62 +1,55 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-'use client'
+"use client";
 
-import type EditorJS from '@editorjs/editorjs'
-import type { z } from 'zod'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import TextareaAutosize from 'react-textarea-autosize'
+import type EditorJS from "@editorjs/editorjs";
+import type { z } from "zod";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useUploadFile } from "@better-upload/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useForm } from "react-hook-form";
+import TextareaAutosize from "react-textarea-autosize";
+import { toast } from "sonner";
 
+import { cn } from "~/lib/utils";
+import { PostValidator } from "~/lib/validators/post";
+import { api } from "~/trpc/react";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from '~/components/ui/command'
+} from "~/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '~/components/ui/popover'
-import { env } from '~/env'
-import { useFileUpload } from '~/lib/file-upload/hooks/use-file-upload'
-import { cn } from '~/lib/utils'
-import { PostValidator } from '~/lib/validators/post'
-import { api } from '~/trpc/react'
+} from "~/components/ui/popover";
 
-import '~/styles/editor.css'
+import "~/styles/editor.css";
 
-type FormData = z.infer<typeof PostValidator>
+type FormData = z.infer<typeof PostValidator>;
 
 type Props = {
   subreddits: {
-    id: string
-    name: string
-  }[]
-}
+    id: string;
+    name: string;
+  }[];
+};
 
 export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
-  const { uploadFile, uploadedFile } = useFileUpload({
-    route: 'post',
-    api: '/api/upload-post',
-    generateThumbnail: false,
-  })
+  const imageUploader = useUploadFile({
+    api: "/api/upload",
+    route: "postImage",
+    onError: (error) => {
+      toast.error(error.message ?? "Image upload failed.");
+    },
+  });
 
-  const uploadRef = useRef<string | null>(null)
-
-  useEffect(() => {
-    if (uploadedFile?.objectKey) {
-      uploadRef.current = uploadedFile.objectKey
-    }
-  }, [uploadedFile])
-
-  const [selectedSubreddit, setSelectedSubreddit] = useState<string>('')
+  const [selectedSubreddit, setSelectedSubreddit] = useState<string>("");
 
   const {
     register,
@@ -65,55 +58,54 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
   } = useForm<FormData>({
     resolver: zodResolver(PostValidator),
     defaultValues: {
-      subredditId: '',
-      title: '',
+      subredditId: "",
+      title: "",
       content: null,
     },
-  })
-  const ref = useRef<EditorJS>()
-  const _titleRef = useRef<HTMLTextAreaElement>(null)
-  const router = useRouter()
-  const [isMounted, setIsMounted] = useState<boolean>(false)
-  const pathname = usePathname()
-  const apiUtils = api.useUtils()
+  });
+  const ref = useRef<EditorJS | undefined>(undefined);
+  const _titleRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const pathname = usePathname();
+  const apiUtils = api.useUtils();
 
   const createSubredditPost =
     api.forumSubreddit.createSubredditPost.useMutation({
       onError: () =>
-        toastService.error({
-          message: 'Your post was not published. Please try again.',
-        }),
+        toast.error("Your post was not published. Please try again."),
+
       onSuccess: () => {
-        const newPathname = pathname.split('/').slice(0, -1).join('/')
-        router.push(newPathname)
+        const newPathname = pathname.split("/").slice(0, -1).join("/");
+        router.push(newPathname);
 
-        toastService.success('Your post has been published.')
+        toast.success("Your post has been published.");
 
-        void apiUtils.forumSubreddit.invalidate()
-        void apiUtils.forum.invalidate()
+        void apiUtils.forumSubreddit.invalidate();
+        void apiUtils.forum.invalidate();
 
-        router.refresh()
+        router.refresh();
       },
-    })
+    });
 
   const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import('@editorjs/editorjs')).default
-    const Header = (await import('@editorjs/header')).default
-    const Embed = (await import('@editorjs/embed')).default
-    const Table = (await import('@editorjs/table')).default
-    const List = (await import('@editorjs/list')).default
-    const Code = (await import('@editorjs/code')).default
-    const LinkTool = (await import('@editorjs/link')).default
-    const InlineCode = (await import('@editorjs/inline-code')).default
-    const ImageTool = (await import('@editorjs/image')).default
+    const EditorJS = (await import("@editorjs/editorjs")).default;
+    const Header = (await import("@editorjs/header")).default;
+    const Embed = (await import("@editorjs/embed")).default;
+    const Table = (await import("@editorjs/table")).default;
+    const List = (await import("@editorjs/list")).default;
+    const Code = (await import("@editorjs/code")).default;
+    const LinkTool = (await import("@editorjs/link")).default;
+    const InlineCode = (await import("@editorjs/inline-code")).default;
+    const ImageTool = (await import("@editorjs/image")).default;
 
     if (!ref.current) {
       const editor = new EditorJS({
-        holder: 'editor',
+        holder: "editor",
         onReady() {
-          ref.current = editor
+          ref.current = editor;
         },
-        placeholder: 'Type here to write your post...',
+        placeholder: "Type here to write your post...",
         inlineToolbar: true,
         data: { blocks: [] },
         tools: {
@@ -121,7 +113,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
           linkTool: {
             class: LinkTool,
             config: {
-              endpoint: '/api/link',
+              endpoint: "/api/link",
             },
           },
           image: {
@@ -129,14 +121,26 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  const res = await uploadFile(file)
+                  let imageUrl: string | undefined = undefined;
+                  const imageFile = file;
+                  if (imageFile instanceof File) {
+                    try {
+                      const response = await imageUploader.upload(imageFile);
+                      const fileLocation =
+                        (response.file.objectInfo.metadata?.pathname as
+                          | string
+                          | undefined) ?? "";
+                      if (fileLocation) imageUrl = fileLocation;
+                    } catch {
+                      toast.error("Failed to upload post image.");
+                      return;
+                    }
+                  }
 
                   return {
                     success: 1,
-                    file: {
-                      url: `${env.NEXT_PUBLIC_STORAGE_URL}/posts/${res}`,
-                    },
-                  }
+                    file: { url: imageUrl },
+                  };
                 },
               },
             },
@@ -147,69 +151,68 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
           table: Table,
           embed: Embed,
         },
-      })
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (Object.keys(errors).length) {
       for (const [, value] of Object.entries(errors)) {
-        value
-        toastService.error({
-          message: (value as { message: string }).message,
-        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        value;
+        toast.error((value as { message: string }).message);
       }
     }
-  }, [errors])
+  }, [errors]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsMounted(true)
+    if (typeof window !== "undefined") {
+      setIsMounted(true);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const init = async () => {
-      await initializeEditor()
+      await initializeEditor();
 
       setTimeout(() => {
-        _titleRef?.current?.focus()
-      }, 0)
-    }
+        _titleRef?.current?.focus();
+      }, 0);
+    };
 
     if (isMounted) {
-      void init()
+      void init();
 
       return () => {
-        ref.current?.destroy()
-        ref.current = undefined
-      }
+        if (ref.current) {
+          ref.current.destroy();
+          ref.current = undefined;
+        }
+      };
     }
-  }, [isMounted, initializeEditor])
+  }, [isMounted, initializeEditor]);
 
   async function onSubmit(data: FormData) {
     if (!selectedSubreddit) {
-      toastService.error({
-        message: 'Please select a community',
-      })
-      return
+      toast.error("Please select a community");
+      return;
     }
 
-    const blocks = await ref.current?.save()
+    const blocks = await ref.current?.save();
 
     createSubredditPost.mutate({
       title: data.title,
       content: blocks,
       subredditId: selectedSubreddit,
-    })
+    });
   }
 
   if (!isMounted) {
-    return null
+    return null;
   }
 
-  const { ref: titleRef, ...rest } = register('title')
+  const { ref: titleRef, ...rest } = register("title");
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -223,14 +226,14 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
               aria-controls="communities-list"
               aria-label="Select a community"
               className={cn(
-                'flex h-[38px] w-[300px] items-center justify-between rounded-full border border-input bg-background px-4 py-2 text-sm hover:border-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                !selectedSubreddit && 'text-gray-500',
+                "border-input bg-background hover:border-accent focus:ring-ring flex h-[38px] w-[300px] items-center justify-between rounded-full border px-4 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none",
+                !selectedSubreddit && "text-muted-foreground",
               )}
             >
               <span className="sr-only">Select a community</span>
               {selectedSubreddit ? (
                 <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF4500]">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <span className="text-xs font-bold text-white">r/</span>
                   </div>
                   <span className="font-medium">
@@ -254,21 +257,21 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
                     value={subreddit.name}
                     onSelect={() => {
                       setSelectedSubreddit(
-                        selectedSubreddit === subreddit.id ? '' : subreddit.id,
-                      )
+                        selectedSubreddit === subreddit.id ? "" : subreddit.id,
+                      );
                     }}
                     className="flex items-center gap-2 px-2 py-1.5 text-sm"
                   >
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF4500]">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <span className="text-xs font-bold text-white">r/</span>
                     </div>
                     <span className="flex-1">{subreddit.name}</span>
                     <Check
                       className={cn(
-                        'h-4 w-4',
+                        "h-4 w-4",
                         selectedSubreddit === subreddit.id
-                          ? 'opacity-100'
-                          : 'opacity-0',
+                          ? "opacity-100"
+                          : "opacity-0",
                       )}
                     />
                   </CommandItem>
@@ -279,7 +282,7 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
         </Popover>
       </div>
 
-      <div className="w-full rounded-lg border border-border bg-background p-4">
+      <div className="border-border bg-card w-full rounded-2xl border p-4">
         <form
           id="subreddit-post-form"
           className="w-fit"
@@ -288,25 +291,25 @@ export const EditorGeneric: React.FC<Props> = ({ subreddits }) => {
           <div className="prose prose-stone dark:prose-invert">
             <TextareaAutosize
               ref={(e) => {
-                titleRef(e)
-                // @ts-expect-error editorjs types
-                _titleRef.current = e
+                titleRef(e);
+
+                _titleRef.current = e;
               }}
               {...rest}
               placeholder="Title"
               className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
             />
             <div id="editor" className="min-h-[500px]" />
-            <p className="text-sm text-gray-500">
-              Use{' '}
-              <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
+            <p className="text-sm text-muted-foreground">
+              Use{" "}
+              <kbd className="bg-muted rounded-md border px-1 text-xs uppercase">
                 Tab
-              </kbd>{' '}
+              </kbd>{" "}
               to open the command menu.
             </p>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};

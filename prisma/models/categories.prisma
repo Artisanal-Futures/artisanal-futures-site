@@ -1,0 +1,15 @@
+model Category {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  parentId String?
+  type     CategoryType @default(PRODUCT)
+  parent   Category?    @relation("Subcategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[]   @relation("Subcategories")
+  products Product[]    @relation("CategoryToProduct")
+  services Service[]    @relation("CategoryToService")
+}
+
+enum CategoryType {
+  PRODUCT
+  SERVICE
+}

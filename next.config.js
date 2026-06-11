@@ -8,14 +8,6 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 
-// Configuration object tells the next-pwa plugin
-// const withNextPWA = withPWA({
-//   dest: 'public', // Destination directory for the PWA files
-//   disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
-//   register: true, // Register the PWA service worker
-//   skipWaiting: true, // Skip waiting for service worker activation
-// })
-
 const config = {
   reactStrictMode: true,
 
@@ -30,77 +22,16 @@ const config = {
   },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.shortpixel.ai",
-      },
-      {
-        protocol: "https",
-        hostname: "media.githubusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "img.clerk.com",
-      },
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.discordapp.com",
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "s.gravatar.com",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.shopify.com",
-      },
-      {
-        protocol: "https",
-        hostname: "storage.artisanalfutures.org",
-      },
-      {
-        protocol: "https",
-        hostname: "static1.squarespace.com",
-      },
-      {
-        protocol: "https",
-        hostname: "images.squarespace-cdn.com",
-      },
-      {
-        protocol: "https",
-        hostname: "trendanomaly.com",
-      },
-      {
-        protocol: "https",
-        hostname: "judysledge.com",
-      },
-      {
-        protocol: "https",
-        hostname: "detroitpollinatorcompany.com",
-      },
-      {
-        protocol: "https",
-        hostname: "darkgoldenrod-cod-537275.hostingersite.com",
-      },
-
-      {
-        protocol: "https",
-        hostname: "rescuenaturenow.org",
-      },
-    ],
+    // Product/shop images are pulled from arbitrary artisan store hostnames
+    // (set in the DB by admins/artisans), so we allow any host rather than
+    // maintaining an ever-growing allowlist. `**` matches any hostname.
+    //
+    // Trade-off: this makes the Next image optimizer (`/_next/image`) willing
+    // to fetch and cache any https URL, i.e. it becomes an open image proxy.
+    // We deliberately allow https only (not http) to keep the optimizer from
+    // reaching internal plain-HTTP services (SSRF), and rely on the fact that
+    // rendered srcs come from admin/artisan-curated records.
+    remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
 };
 

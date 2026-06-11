@@ -1,6 +1,6 @@
 import { type LucideIcon } from "lucide-react";
 
-import { LoadButton } from "~/components/common/load-button";
+import { cn } from "~/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { cn } from "~/lib/utils";
+import { LoadButton } from "~/components/common/load-button";
 
 type Props = {
   onSubmit: () => void;
@@ -34,7 +34,7 @@ export function SingleActionDialog({
   isLoading,
 }: Props) {
   const colorClasses = {
-    red: "bg-red-500 hover:bg-red-500/90bg-destructive text-destructive-foreground hover:bg-destructive/90",
+    red: "bg-red-500 hover:bg-red-500/90 bg-destructive text-white hover:bg-destructive/90",
     green: "bg-green-500 hover:bg-green-500/90",
     blue: "bg-blue-500 hover:bg-blue-500/90",
     orange: "bg-orange-500 hover:bg-orange-500/90",
@@ -48,8 +48,10 @@ export function SingleActionDialog({
           size={"sm"}
           isLoading={isLoading}
         >
-          <Icon className="mr-1 h-4 w-4" />
-          <span>{actionText}</span>
+          <>
+            <Icon className="mr-1 h-4 w-4" />
+            <span>{actionText}</span>
+          </>
         </LoadButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -58,7 +60,7 @@ export function SingleActionDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="border border-input bg-background hover:bg-accent hover:text-accent-foreground">
+          <AlertDialogCancel className="border-input bg-background hover:bg-accent hover:text-accent-foreground border">
             Cancel
           </AlertDialogCancel>
 

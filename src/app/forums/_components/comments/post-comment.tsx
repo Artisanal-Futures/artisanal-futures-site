@@ -1,39 +1,40 @@
-'use client'
+"use client";
 
-import type { CommentVote, ForumComment, User } from '@prisma/client'
-import type { FC } from 'react'
-import { useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { toastService } from '@dreamwalker-studios/toasts'
-import { MessageSquare } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import type { CommentVote, ForumComment, User } from "generated/prisma";
+import type { FC } from "react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { MessageSquare } from "lucide-react";
+import { toast } from "sonner";
 
-import { LoadButton } from '~/components/common/load-button'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
-import { Label } from '~/components/ui/label'
-import { Textarea } from '~/components/ui/textarea'
-import { env } from '~/env'
-import { useOnClickOutside } from '~/hooks/use-on-click-outside'
-import { formatTimeToNow } from '~/lib/utils'
-import { api } from '~/trpc/react'
-import { CommentEditButton } from '../comment-edit-button'
-import { CommentVotes } from '../comment-votes'
-import { HeartCommentVotes } from '../heart-comment-votes'
-import { UserAvatar } from '../user-avatar'
+import { env } from "~/env";
+import { formatTimeToNow } from "~/lib/utils";
+import { authClient } from "~/server/better-auth/client";
+import { api } from "~/trpc/react";
+import { useOnClickOutside } from "~/hooks/use-on-click-outside";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
+import { Textarea } from "~/components/ui/textarea";
+import { LoadButton } from "~/components/common/load-button";
+
+import { CommentEditButton } from "../comment-edit-button";
+import { CommentVotes } from "../comment-votes";
+import { HeartCommentVotes } from "../heart-comment-votes";
+import { UserAvatar } from "../user-avatar";
 
 type ExtendedComment = ForumComment & {
-  votes: CommentVote[]
-  author: User
-}
+  votes: CommentVote[];
+  author: Omit<User, "email"> & { email: string | null };
+};
 
 type Props = {
-  comment: ExtendedComment
-  votesAmt: number
-  currentVote: CommentVote | undefined
-  postId: string
-  originalPostAuthorId: string
-}
+  comment: ExtendedComment;
+  votesAmt: number;
+  currentVote: CommentVote | undefined;
+  postId: string;
+  originalPostAuthorId: string;
+};
 
 export const PostComment: FC<Props> = ({
   comment,
@@ -42,28 +43,26 @@ export const PostComment: FC<Props> = ({
   postId,
   originalPostAuthorId,
 }) => {
-  const { data: session } = useSession()
-  const [isReplying, setIsReplying] = useState<boolean>(false)
-  const commentRef = useRef<HTMLDivElement>(null)
-  const [input, setInput] = useState<string>(`@${comment.author.username} `)
-  const router = useRouter()
-  useOnClickOutside(commentRef, () => {
-    setIsReplying(false)
-  })
+  const { data: session } = authClient.useSession();
+  const [isReplying, setIsReplying] = useState<boolean>(false);
+  const commentRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState<string>(`@${comment.author.username} `);
+  const router = useRouter();
+  useOnClickOutside(commentRef as React.RefObject<HTMLDivElement>, () => {
+    setIsReplying(false);
+  });
 
-  const isOriginalPostAuthor = originalPostAuthorId === comment.authorId
+  const isOriginalPostAuthor = originalPostAuthorId === comment.authorId;
 
   const postCommentMutation =
     api.forumSubreddit.createSubredditPostComment.useMutation({
       onError: () =>
-        toastService.error({
-          message: "Comment wasn't created successfully. Please try again.",
-        }),
+        toast.error("Comment wasn't created successfully. Please try again."),
       onSuccess: () => {
-        router.refresh()
-        setIsReplying(false)
+        router.refresh();
+        setIsReplying(false);
       },
-    })
+    });
   return (
     <div ref={commentRef} className="flex flex-col">
       <div className="flex items-center justify-between">
@@ -77,9 +76,9 @@ export const PostComment: FC<Props> = ({
               className="h-6 w-6"
             />
             <div className="ml-2 flex items-center gap-x-2">
-              <p className="text-sm font-medium text-foreground">Deleted</p>
+              <p className="text-foreground text-sm font-medium">Deleted</p>
 
-              <p className="max-h-40 truncate text-xs text-muted-foreground">
+              <p className="text-muted-foreground max-h-40 truncate text-xs">
                 {formatTimeToNow(new Date(comment.deletedAt))}
               </p>
             </div>
@@ -94,12 +93,12 @@ export const PostComment: FC<Props> = ({
               className="h-6 w-6"
             />
             <div className="ml-2 flex items-center gap-x-2">
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-foreground text-sm font-medium">
                 u/{comment.author.username}
               </p>
               {isOriginalPostAuthor && <Badge variant="outline">OP</Badge>}
 
-              <p className="max-h-40 truncate text-xs text-muted-foreground">
+              <p className="text-muted-foreground max-h-40 truncate text-xs">
                 {formatTimeToNow(new Date(comment.createdAt))}
               </p>
             </div>
@@ -112,11 +111,11 @@ export const PostComment: FC<Props> = ({
       </div>
 
       {comment.deletedAt ? (
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-sm">
           This comment was deleted by user.
         </p>
       ) : (
-        <p className="mt-2 text-sm text-foreground">{comment.text}</p>
+        <p className="text-foreground mt-2 text-sm">{comment.text}</p>
       )}
       <div className="flex items-center gap-2">
         {env.NEXT_PUBLIC_HEART_VOTE_DISABLED ? (
@@ -135,8 +134,8 @@ export const PostComment: FC<Props> = ({
 
         <Button
           onClick={() => {
-            if (!session) return router.push('/sign-in')
-            setIsReplying(true)
+            if (!session) return router.push("/sign-in");
+            setIsReplying(true);
           }}
           variant="ghost"
           size="xs"
@@ -168,7 +167,7 @@ export const PostComment: FC<Props> = ({
             <div className="mt-2 flex justify-end gap-2">
               <Button
                 tabIndex={-1}
-                variant="subtle"
+                variant="ghost"
                 onClick={() => setIsReplying(false)}
               >
                 Cancel
@@ -176,12 +175,12 @@ export const PostComment: FC<Props> = ({
               <LoadButton
                 isLoading={postCommentMutation.isPending}
                 onClick={() => {
-                  if (!input) return
+                  if (!input) return;
                   postCommentMutation.mutate({
                     postId,
                     text: input,
                     replyToId: comment.replyToId ?? comment.id, // default to top-level comment
-                  })
+                  });
                 }}
               >
                 Post
@@ -191,5 +190,5 @@ export const PostComment: FC<Props> = ({
         </div>
       ) : null}
     </div>
-  )
-}
+  );
+};

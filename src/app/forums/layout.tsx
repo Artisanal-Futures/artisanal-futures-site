@@ -28,8 +28,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               src="/logos/logo.png"
               alt="Artisanal Futures Logo"
               width={158}
-              height={8}
-              className="object-contain"
+              height={40}
+              className="h-7 w-auto object-contain"
             />
           </div>
 

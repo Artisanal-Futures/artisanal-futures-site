@@ -1,4 +1,4 @@
-import type { ShopAddress } from "@prisma/client";
+import type { ShopAddress } from "generated/prisma";
 
 import type { ProductWithRelations } from "./product";
 

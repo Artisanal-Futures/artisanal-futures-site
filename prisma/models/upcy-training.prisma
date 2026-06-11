@@ -1,0 +1,105 @@
+model GenerationJob {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  status      String
+  replicateId String?
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TrainingDataSet {
+  id              String          @id @default(cuid())
+  trainingModelId String?
+  name            String?
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  tags            String[]
+  userId          String
+  setType         LoraType        @default(UNKNOWN)
+  triggerWord     String          @default("TOK")
+  trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  images          TrainingImage[]
+}
+
+model TrainingImage {
+  id                   String           @id @default(cuid())
+  trainingModelId      String?
+  imageUrl             String
+  userCaption          String?
+  autoCaption          String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  referenceId          String?
+  imageType            LoraType         @default(UNKNOWN)
+  trainingDataSetId    String?
+  isRegularization     Boolean          @default(false)
+  autoCaptionUpdatedAt DateTime?
+  userCaptionUpdatedAt DateTime?
+  trainingDataSet      TrainingDataSet? @relation(fields: [trainingDataSetId], references: [id], onDelete: Cascade)
+  trainingModel        TrainingModel?   @relation(fields: [trainingModelId], references: [id])
+}
+
+model TrainingJob {
+  id              String          @id @default(cuid())
+  trainingModelId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  status          status          @default(QUEUED)
+  error           String?
+  referenceId     String?
+  type            TrainingJobType @default(GENERIC_JOB)
+  trainingModel   TrainingModel   @relation(fields: [trainingModelId], references: [id], onDelete: Cascade)
+}
+
+model TrainingModel {
+  id               String             @id @default(cuid())
+  userId           String
+  triggerWord      String
+  status           status             @default(QUEUED)
+  weightsUrl       String
+  log              Json?
+  zipFileUrl       String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  trainingSettings Json?
+  trainingDetails  Json?
+  error            String?
+  referenceId      String?
+  versionId        String?
+  loraType         LoraType           @default(SUBJECT)
+  trainingSubject  String             @default("Unknown Object")
+  description      String?
+  tags             String[]
+  title            String?
+  visibility       TrainingVisibility @default(PRIVATE)
+  trainingDataSets TrainingDataSet[]
+  imageUrls        TrainingImage[]
+  jobs             TrainingJob[]
+  upcycleResults   UpcycleResult[]    @relation("TrainingModelToUpcycleResult")
+}
+
+enum LoraType {
+  SUBJECT
+  STYLE
+  MULTI_CONCEPT
+  REGULARIZATION
+  UNKNOWN
+  SINGLE_CONCEPT
+}
+
+enum TrainingJobType {
+  CAPTION_IMAGE
+  TRAIN_MODEL
+  GENERIC_JOB
+}
+
+enum TrainingVisibility {
+  PUBLIC
+  PRIVATE
+}

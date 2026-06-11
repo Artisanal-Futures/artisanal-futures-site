@@ -1,9 +1,9 @@
 "use client";
 
-import type { Session } from "next-auth";
 import type { FC } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+import type { Session } from "~/server/better-auth/config";
 import { Input } from "~/components/ui/input";
 
 import { UserAvatar } from "./user-avatar";
@@ -17,7 +17,7 @@ export const MiniCreatePost: FC<Props> = ({ session }) => {
   const pathname = usePathname();
 
   return (
-    <li className="overflow-hidden rounded-md bg-background shadow">
+    <li className="bg-card overflow-hidden rounded-2xl border shadow-sm">
       <div className="flex h-full justify-between gap-6 px-6 py-4">
         <div className="relative">
           <UserAvatar
@@ -27,12 +27,13 @@ export const MiniCreatePost: FC<Props> = ({ session }) => {
             }}
           />
 
-          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 outline outline-2 outline-white" />
+          <span className="absolute right-0 bottom-0 h-3 w-3 rounded-full bg-green-500 outline outline-2 outline-background" />
         </div>
         <Input
           onClick={() => router.push(pathname + "/submit")}
           readOnly
           placeholder="Create post"
+          className="hover:bg-muted/60 cursor-pointer transition-colors"
         />
         {/* <Button
           onClick={() => router.push(pathname + "/submit")}

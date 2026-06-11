@@ -1,47 +1,40 @@
-import '~/styles/globals.css'
+import "~/styles/globals.css";
 
-import { type Metadata } from 'next'
-import { Toaster } from '@dreamwalker-studios/toasts'
-import { GeistSans } from 'geist/font/sans'
-import { getServerSession } from 'next-auth'
-import NextTopLoader from 'nextjs-toploader'
+import { type Metadata } from "next";
+import { Geist } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 
-import { ModalProvider } from '~/providers/modal-provider'
-import { ThemeProvider } from '~/providers/theme-provider'
-import { authOptions } from '~/server/auth'
-import { TRPCReactProvider } from '~/trpc/react'
-import SessionProviderClientComponent from './auth/_components/session-provider-client-component'
+import { TRPCReactProvider } from "~/trpc/react";
+import { SiteProviders } from "~/providers/providers";
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Artisanal Futures',
-    default: 'Artisanal Futures',
+    template: "%s - Artisanal Futures",
+    default: "Artisanal Futures",
   },
   description:
-    'Shop worker-owned stores, share knowledge and tech, & participate in the transition to a decolonized circular economy.',
-  icons: [{ rel: 'icon', url: '/favicon.ico' }],
-}
+    "Shop worker-owned stores, share knowledge and tech, & participate in the transition to a decolonized circular economy.",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
+};
 
-type Props = {
-  children: React.ReactNode
-}
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
 
-export default async function RootLayout({ children }: Props) {
-  const session = await getServerSession(authOptions)
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
-        <SessionProviderClientComponent session={session}>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <TRPCReactProvider>
-              <NextTopLoader />
-              {children}
-              <Toaster />
-              <ModalProvider />
-            </TRPCReactProvider>
-          </ThemeProvider>
-        </SessionProviderClientComponent>
+        <SiteProviders>
+          <TRPCReactProvider>
+            <NextTopLoader />
+            {children}
+          </TRPCReactProvider>
+        </SiteProviders>
       </body>
     </html>
-  )
+  );
 }

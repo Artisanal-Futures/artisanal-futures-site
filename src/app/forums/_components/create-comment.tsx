@@ -3,9 +3,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import { Label } from "~/components/ui/label";
@@ -29,9 +28,7 @@ export const CreateComment: FC<Props> = ({ postId, replyToId }) => {
           return;
         }
 
-        toastService.error({
-          message: "Comment wasn't created successfully. Please try again.",
-        });
+        toast.error("Comment wasn't created successfully. Please try again.");
       },
       onSuccess: () => {
         router.refresh();

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import React from "react";
-import { TagInput, type Tag } from "emblor";
+import { TagInput } from "emblor";
 
 import { cn } from "~/lib/utils";
 import {
@@ -35,7 +35,6 @@ export const TagFormField = <CurrentForm extends FieldValues>({
   placeholder,
   disabled,
 }: Props<CurrentForm>) => {
-  
   return (
     <FormField
       control={form.control}
@@ -45,7 +44,7 @@ export const TagFormField = <CurrentForm extends FieldValues>({
           {label && <FormLabel className="text-left">{label}</FormLabel>}
           <FormControl>
             <TagInput
-              {...field} 
+              {...field}
               disabled={disabled}
               placeholder={placeholder ?? ""}
               tags={field.value ?? []}

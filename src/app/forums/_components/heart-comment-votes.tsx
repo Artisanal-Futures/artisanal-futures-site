@@ -1,13 +1,12 @@
 "use client";
 
+import type { CommentVote } from "generated/prisma";
 import type { FC } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
-
-import type { CommentVote } from "@prisma/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { Heart } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -48,9 +47,7 @@ export const HeartCommentVotes: FC<Props> = ({
           return;
         }
 
-        toastService.error({
-          message: "Your heart was not registered. Please try again.",
-        });
+        toast.error("Your heart was not registered. Please try again.");
       },
       onMutate: () => {
         if (currentVote?.type === "UP") {
@@ -82,13 +79,13 @@ export const HeartCommentVotes: FC<Props> = ({
           className={cn(
             "h-4 w-4 transition-colors",
             currentVote?.type === "UP"
-              ? "fill-red-500 text-red-500"
-              : "text-muted-foreground hover:fill-red-200 hover:text-red-500",
+              ? "fill-destructive text-destructive"
+              : "text-muted-foreground hover:fill-destructive/20 hover:text-destructive",
           )}
         />
       </Button>
 
-      <span className="text-xs font-medium text-foreground">{votesAmt}</span>
+      <span className="text-foreground text-xs font-medium">{votesAmt}</span>
     </div>
   );
 };

@@ -1,9 +1,12 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { Clock, FileText, Home, Scale, Scroll } from 'lucide-react'
+import * as React from "react";
+import Link from "next/link";
+import { Clock, FileText, MessagesSquare, Scale, Scroll } from "lucide-react";
+
+import { authClient } from "~/server/better-auth/client";
+import { api } from "~/trpc/react";
 // import { TeamSwitcher } from "~/components/team-switcher";
-import { useSession } from 'next-auth/react'
 
 import {
   Sidebar,
@@ -14,53 +17,54 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '~/components/ui/sidebar'
-import { api } from '~/trpc/react'
-import { NavMain } from './nav-main'
-import { NavProjects } from './nav-projects'
-import { NavSignIn } from './nav-sign-in'
-import { NavUser } from './nav-user'
+} from "~/components/ui/sidebar";
+
+import { NavMain } from "./nav-main";
+import { NavProjects } from "./nav-projects";
+import { NavSignIn } from "./nav-sign-in";
+import { NavUser } from "./nav-user";
 
 // This is sample data.
 const data = {
   projects: [
     {
-      name: 'Content Policy',
-      url: '/forums/content-policy',
+      name: "Content Policy",
+      url: "/forums/content-policy",
       icon: Scroll,
     },
     {
-      name: 'Privacy Policy',
-      url: '/forums/privacy-policy',
+      name: "Privacy Policy",
+      url: "/forums/privacy-policy",
       icon: Scale,
     },
     {
-      name: 'User Agreement',
-      url: '/forums/user-agreement',
+      name: "User Agreement",
+      url: "/forums/user-agreement",
       icon: FileText,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession()
+  const { data: session } = authClient.useSession();
 
-  const subreddits = api.forumSubreddit.getNavigationSubreddits.useQuery()
+  const subreddits = api.forumSubreddit.getNavigationSubreddits.useQuery();
 
   const mainNav = React.useMemo(() => {
+    if (!subreddits.data?.length) return [];
     return [
       {
-        title: 'Recent',
-        url: '#',
+        title: "Recent",
+        url: "#",
         icon: Clock,
         isActive: true,
-        items: subreddits.data?.map((subreddit) => ({
+        items: subreddits.data.map((subreddit) => ({
           title: `r/${subreddit.name}`,
           url: `/forums/r/${subreddit.name}`,
         })),
       },
-    ]
-  }, [subreddits.data])
+    ];
+  }, [subreddits.data]);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* <SidebarHeader><TeamSwitcher teams={data.teams} /></SidebarHeader> */}
@@ -68,17 +72,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Home className="size-4" />
+              <Link href="/">
+                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-xl">
+                  <MessagesSquare className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    Artisanal Futures Forums
+                    Artisanal Futures
                   </span>
-                  <span className="truncate text-xs">Back to Home</span>
+                  <span className="text-muted-foreground truncate text-xs">
+                    Community Forums
+                  </span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -91,9 +97,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {session?.user ? (
           <NavUser
             user={{
-              name: session?.user?.name ?? '',
-              email: session?.user?.email ?? '',
-              avatar: session?.user?.image ?? '',
+              name: session?.user?.name ?? "",
+              email: session?.user?.email ?? "",
+              avatar: session?.user?.image ?? "",
             }}
           />
         ) : (
@@ -102,5 +108,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

@@ -1,12 +1,11 @@
 "use client";
 
+import type { VoteType } from "generated/prisma";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
-
-import type { VoteType } from "@prisma/client";
-import { toastService } from "@dreamwalker-studios/toasts";
 import { TRPCError } from "@trpc/server";
+import { Heart } from "lucide-react";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -50,9 +49,7 @@ export const HeartPostVoteClient = ({
           return;
         }
 
-        return toastService.error({
-          message: "Your heart was not registered. Please try again.",
-        });
+        return toast.error("Your heart was not registered. Please try again.");
       },
       onMutate: () => {
         if (currentVote === "UP") {
@@ -69,7 +66,7 @@ export const HeartPostVoteClient = ({
 
   if (IS_VOTE_DISABLED) return null;
   return (
-    <div className="flex flex-col gap-4 pb-4 pr-6 sm:w-20 sm:gap-0 sm:pb-0">
+    <div className="flex flex-col gap-4 pr-6 pb-4 sm:w-20 sm:gap-0 sm:pb-0">
       <Button
         onClick={() => subredditPostVote.mutate({ voteType: "UP", postId })}
         size="sm"
@@ -81,13 +78,13 @@ export const HeartPostVoteClient = ({
           className={cn(
             "h-5 w-5 transition-colors",
             currentVote === "UP"
-              ? "fill-red-500 text-red-500"
-              : "text-muted-foreground hover:fill-red-200 hover:text-red-500",
+              ? "fill-destructive text-destructive"
+              : "text-muted-foreground hover:fill-destructive/20 hover:text-destructive",
           )}
         />
       </Button>
 
-      <p className="py-2 text-center text-sm font-medium text-foreground">
+      <p className="text-foreground py-2 text-center text-sm font-medium">
         {votesAmt}
       </p>
     </div>

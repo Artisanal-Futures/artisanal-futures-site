@@ -1,46 +1,55 @@
 "use client";
 
-import type { User } from "@prisma/client";
+import { useMemo, useState } from "react";
+
+import { type RowSelectionState } from "@tanstack/react-table";
 
 import type { FilterOption } from "~/components/tables/advanced-data-table";
-import { type Shop } from "~/types/shop";
+import type { RouterOutputs } from "~/trpc/react";
 import { usePermissions } from "~/hooks/use-permissions";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
-import { ItemDialog } from "../../_components/item-dialog";
+import { ShopBulkActions } from "./shop-bulk-actions";
 import { shopColumns } from "./shop-column-structure";
 import { createShopFilters } from "./shop-filters";
-import { ShopForm } from "./shop-form";
 
-type Props = { shops: (Shop & { owner: User })[] };
+type Props = {
+  shops: RouterOutputs["shop"]["getAll"];
+};
 
 export function ShopClient({ shops }: Props) {
   const { isAdmin } = usePermissions();
 
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
   const shopFilter = createShopFilters(shops, isAdmin);
+
+  const selectedShopIds = useMemo(() => {
+    return Object.keys(rowSelection)
+      .filter((key) => rowSelection[key])
+      .map((index) => shops[parseInt(index, 10)]?.id)
+      .filter((id): id is string => !!id);
+  }, [rowSelection, shops]);
 
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="shopName"
+        searchKey="name"
         searchPlaceholder="Filter by shop name..."
         columns={shopColumns}
+        mobileHiddenColumnIds={["owner", "createdAt"]}
         data={shops ?? []}
         filters={shopFilter as FilterOption[]}
         defaultColumnVisibility={{
           owner: isAdmin,
         }}
-        addButton={
-          isAdmin && (
-            <ItemDialog
-              title={`Create shop`}
-              subtitle="Create a new shop"
-              FormComponent={ShopForm}
-              type="shop"
-              mode="create"
-              contentClassName="max-w-5xl w-full"
-            />
-          )
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+        selectionActions={
+          <ShopBulkActions
+            selectedShopIds={selectedShopIds}
+            onClear={() => setRowSelection({})}
+          />
         }
       />
     </div>

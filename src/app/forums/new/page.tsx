@@ -21,7 +21,7 @@ export default function NewSubredditsPage() {
         <GeneralFeed />
 
         {/* subreddit info */}
-        <div className="order-first h-fit overflow-hidden rounded-lg border border-border bg-background md:order-last">
+        <div className="order-first h-fit overflow-hidden rounded-2xl border border-border bg-card md:order-last">
           <div className="bg-secondary px-6 py-4">
             <p className="flex items-center gap-1.5 py-3 font-semibold text-foreground">
               <HomeIcon className="h-4 w-4" />

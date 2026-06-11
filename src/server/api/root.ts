@@ -1,18 +1,21 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 import { authRouter } from "./routers/auth";
+import { categoryRouter } from "./routers/category";
+import { contactRouter } from "./routers/contact";
+import { eventRouter } from "./routers/event";
 import { forumRouter } from "./routers/forum";
+import { inviteRouter } from "./routers/invite";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
-import { guestRouter } from "./routers/guest";
 import { migrationRouter } from "./routers/migration";
+import { onboardingRouter } from "./routers/onboarding";
 import { productRouter } from "./routers/product";
-import { productsRouter } from "./routers/products";
+import { serviceRouter } from "./routers/service";
 import { shopsRouter } from "./routers/shops";
 import { surveysRouter } from "./routers/surveys";
 import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
-import { serviceRouter } from "./routers/service";
-import { categoryRouter } from "./routers/category";
+import { websiteProvisionRouter } from "./routers/website-provision";
 
 /**
  * This is the primary router for your server.
@@ -29,11 +32,15 @@ export const appRouter = createTRPCRouter({
   service: serviceRouter,
   migration: migrationRouter,
   category: categoryRouter,
-  products: productsRouter,
   forum: forumRouter,
   forumSubreddit: forumSubredditRouter,
-  guest: guestRouter,
+  invite: inviteRouter,
+
   upcycling: upcyclingRouter,
+  websiteProvision: websiteProvisionRouter,
+  onboarding: onboardingRouter,
+  event: eventRouter,
+  contact: contactRouter,
 });
 
 // export type definition of API

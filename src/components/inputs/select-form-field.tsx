@@ -44,7 +44,6 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
   placeholder,
   values,
   onValueChange,
-  defaultValue,
 }: Props<CurrentForm>) => {
   return (
     <FormField
@@ -56,14 +55,15 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
           <FormControl>
             <Select
               disabled={disabled}
-              onValueChange={onValueChange ?? field.onChange}
+              onValueChange={(e) => {
+                onValueChange?.(e);
+                field.onChange(e);
+              }}
               value={field.value}
-              defaultValue={defaultValue ?? field.value}
             >
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger disabled={disabled} className="w-full">
                   <SelectValue
-                    defaultValue={field.value}
                     placeholder={placeholder ?? "Select an option"}
                   />
                 </SelectTrigger>
