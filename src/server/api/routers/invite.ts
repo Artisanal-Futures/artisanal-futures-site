@@ -17,13 +17,17 @@ export const inviteRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email(),
-        role: z.enum(["ARTISAN", "GUEST"]),
+        role: z.enum(["ARTISAN", "GUEST", "ADMIN"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const baseUrl = env.BETTER_AUTH_URL ?? "https://localhost:3000";
-      const path =
-        input.role === "ARTISAN" ? "/auth/join/artisan" : "/auth/join/guest";
+      const rolePaths: Record<string, string> = {
+        ARTISAN: "/auth/join/artisan",
+        GUEST: "/auth/join/guest",
+        ADMIN: "/auth/join/admin",
+      };
+      const path = rolePaths[input.role] ?? "/auth/join/guest";
 
       let code: string;
       let invite: Awaited<ReturnType<typeof ctx.db.platformInvite.create>>;

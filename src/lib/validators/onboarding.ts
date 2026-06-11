@@ -94,3 +94,26 @@ export const guestSignupFormSchema = guestSignupFormSchemaBase
   );
 
 export type GuestSignupFormData = z.infer<typeof guestSignupFormSchema>;
+
+// API input for onboardAdmin (invite code only — role is already set during sign-up)
+export const adminOnboardingSchema = z.object({
+  invitationCode: z.string(),
+});
+
+// Full form schema for admin signup wizard (code + account details only)
+const adminSignupFormSchemaBase = z.object({
+  invitationCode: z.string().min(1, "Invitation code is required"),
+  name: z.string().min(1, "Please enter your name"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().optional(),
+});
+
+export const adminSignupFormSchema = adminSignupFormSchemaBase.refine(
+  (data) =>
+    data.confirmPassword === undefined ||
+    data.password === data.confirmPassword,
+  { message: "Passwords do not match", path: ["confirmPassword"] },
+);
+
+export type AdminSignupFormData = z.infer<typeof adminSignupFormSchema>;

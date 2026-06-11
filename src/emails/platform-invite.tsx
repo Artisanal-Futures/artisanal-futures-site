@@ -5,12 +5,18 @@ import { EmailLayout } from "./components/layout";
 interface PlatformInviteEmailProps {
   inviteUrl: string;
   inviteCode: string;
-  role: "ARTISAN" | "GUEST";
+  role: "ARTISAN" | "GUEST" | "ADMIN";
   logoUrl?: string;
 }
 
-const roleLabel = (role: "ARTISAN" | "GUEST") =>
-  role === "ARTISAN" ? "Artisan" : "Guest";
+const ROLE_LABELS: Record<string, string> = {
+  ARTISAN: "Artisan",
+  GUEST: "Guest",
+  ADMIN: "Admin",
+};
+
+const roleLabel = (role: "ARTISAN" | "GUEST" | "ADMIN") =>
+  ROLE_LABELS[role] ?? role;
 
 export function PlatformInviteEmail({
   inviteUrl,

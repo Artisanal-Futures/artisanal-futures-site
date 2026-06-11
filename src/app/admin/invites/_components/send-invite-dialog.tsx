@@ -28,7 +28,7 @@ import {
 export function SendInviteDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"ARTISAN" | "GUEST">("GUEST");
+  const [role, setRole] = useState<"ARTISAN" | "GUEST" | "ADMIN">("GUEST");
 
   const apiUtils = api.useUtils();
 
@@ -65,7 +65,7 @@ export function SendInviteDialog() {
             <DialogTitle>Send platform invite</DialogTitle>
             <DialogDescription>
               Send an invitation email with a one-time code. The recipient can
-              join as an Artisan or Guest. Codes expire in 30 days.
+              join as an Artisan, Guest, or Admin. Codes expire in 30 days.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -84,7 +84,7 @@ export function SendInviteDialog() {
               <Label htmlFor="invite-role">Role</Label>
               <Select
                 value={role}
-                onValueChange={(v) => setRole(v as "ARTISAN" | "GUEST")}
+                onValueChange={(v) => setRole(v as "ARTISAN" | "GUEST" | "ADMIN")}
               >
                 <SelectTrigger id="invite-role">
                   <SelectValue />
@@ -92,6 +92,7 @@ export function SendInviteDialog() {
                 <SelectContent>
                   <SelectItem value="ARTISAN">Artisan</SelectItem>
                   <SelectItem value="GUEST">Guest</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
                 </SelectContent>
               </Select>
             </div>

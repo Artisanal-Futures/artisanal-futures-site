@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const { invitationCode, type } = (await req.json()) as {
       invitationCode: string;
-      type: "artisan" | "guest";
+      type: "artisan" | "guest" | "admin";
     };
 
     const code = invitationCode?.trim().toUpperCase();
@@ -18,7 +18,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const expectedRole = type === "artisan" ? "ARTISAN" : "GUEST";
+    const expectedRoleMap: Record<string, string> = {
+      artisan: "ARTISAN",
+      guest: "GUEST",
+      admin: "ADMIN",
+    };
+    const expectedRole = expectedRoleMap[type];
+
+    if (!expectedRole) {
+      return NextResponse.json(
+        { error: "Invalid invitation type" },
+        { status: 400 },
+      );
+    }
 
     // Check PlatformInvite first
     const invite = await db.platformInvite.findUnique({
@@ -41,10 +53,7 @@ export async function POST(req: NextRequest) {
       if (invite.role !== expectedRole) {
         return NextResponse.json(
           {
-            error:
-              type === "artisan"
-                ? "This code is for guest invitations only"
-                : "This code is for artisan invitations only",
+            error: `This code is not valid for ${type} invitations`,
           },
           { status: 400 },
         );
@@ -52,7 +61,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: true });
     }
 
-    // Fall back to environment variable
+    // Admin invites require a real PlatformInvite — no env-code fallback
+    if (type === "admin") {
+      return NextResponse.json(
+        { error: "Invalid invitation code" },
+        { status: 400 },
+      );
+    }
+
+    // Fall back to environment variable for artisan/guest
     const validCode =
       type === "artisan" ? process.env.ARTISAN_CODE : process.env.GUEST_CODE;
 

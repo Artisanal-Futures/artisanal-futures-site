@@ -42,12 +42,17 @@ export async function sendPlatformInviteEmail({
   logoUrl,
 }: {
   to: string;
-  role: "ARTISAN" | "GUEST";
+  role: "ARTISAN" | "GUEST" | "ADMIN";
   inviteUrl: string;
   inviteCode: string;
   logoUrl?: string;
 }) {
-  const label = role === "ARTISAN" ? "Artisan" : "Guest";
+  const roleLabels: Record<string, string> = {
+    ARTISAN: "Artisan",
+    GUEST: "Guest",
+    ADMIN: "Admin",
+  };
+  const label = roleLabels[role] ?? role;
   return sendEmail({
     from: EMAIL_FROM.NOREPLY,
     fromName: "Artisanal Futures",

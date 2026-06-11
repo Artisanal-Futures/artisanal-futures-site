@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
+  adminOnboardingSchema,
   artisanOnboardingSchema,
   guestOnboardingSchema,
 } from "~/lib/validators/onboarding";
@@ -19,6 +20,14 @@ function isValidArtisanCode(
   if (code === envCode?.toUpperCase()) return true;
   return (
     invite?.role === "ARTISAN" && !invite.used && invite.expiresAt > new Date()
+  );
+}
+
+function isValidAdminCode(
+  invite: { role: string; used: boolean; expiresAt: Date } | null,
+) {
+  return (
+    invite?.role === "ADMIN" && !invite.used && invite.expiresAt > new Date()
   );
 }
 
@@ -174,6 +183,36 @@ export const onboardingRouter = createTRPCRouter({
         data: guest,
         message: "Welcome to the platform!",
         redirectUrl: "/join/guest/welcome",
+      };
+    }),
+
+  onboardAdmin: protectedProcedure
+    .input(adminOnboardingSchema)
+    .mutation(async ({ ctx, input }) => {
+      const code = input.invitationCode.trim().toUpperCase();
+      const invite = await ctx.db.platformInvite.findUnique({
+        where: { code },
+      });
+
+      if (!isValidAdminCode(invite)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid invitation code",
+        });
+      }
+
+      await ctx.db.platformInvite.update({
+        where: { id: invite!.id },
+        data: {
+          used: true,
+          usedAt: new Date(),
+          usedBy: ctx.session.user.id,
+        },
+      });
+
+      return {
+        message: "Welcome to the platform!",
+        redirectUrl: "/auth/join/admin/welcome",
       };
     }),
 
