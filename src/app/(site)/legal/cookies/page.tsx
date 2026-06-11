@@ -7,17 +7,18 @@ export default function CookiePolicyPage() {
             <p className="tagline">Legal</p>
             <h1>Cookie Policy</h1>
           </div>
-          <p className="description">Last updated: January 6th, 2026</p>
+          <p className="description">Last updated: June 10th, 2026</p>
         </div>
       </header>
 
       <section className="site-section prose prose-sm lg:prose-base mb-6">
         <h2>Introduction</h2>
         <p>
-          Welcome to Artisanal Futures&apos; Cookie Policy. By using our website
-          and services, including our application, &quot;Solidarity
-          Pathways&quot;, you agree to the use of cookies as described in this
-          policy.
+          Welcome to Artisanal Futures&apos; Cookie Policy. This policy explains
+          how we use cookies across our website and services, including our
+          application, &quot;Solidarity Pathways&quot;. We only use cookies that
+          are strictly necessary to operate the site, so there are no optional
+          cookies to accept or decline.
         </p>
         <h2>What are Cookies?</h2>
         <p>
@@ -45,10 +46,20 @@ export default function CookiePolicyPage() {
         <h2>Types of Cookies We Use</h2>
         <ul>
           <li>
-            <span className="font-bold">Authentication Cookies</span>: These
-            cookies are used to authenticate users and drivers accessing our
-            app, &quot;Solidarity Pathways&quot;. They enable users to securely
-            log in to their accounts and access our services.
+            <span className="font-bold">Authentication &amp; Session Cookies</span>
+            : Set when you sign in to authenticate users and drivers accessing
+            our app, &quot;Solidarity Pathways&quot;. They keep you securely
+            logged in and let you access your account and our services.
+          </li>
+          <li>
+            <span className="font-bold">Sign-up Cookies</span>: A short-lived
+            cookie (expiring after a few minutes) used to validate an invitation
+            code while you create an account.
+          </li>
+          <li>
+            <span className="font-bold">Preference Cookies</span>: Remember
+            interface choices, such as whether the navigation sidebar is expanded
+            or collapsed, so the site behaves the way you left it.
           </li>
           <li>
             <span className="font-bold">Strictly Necessary Cookies</span>:
