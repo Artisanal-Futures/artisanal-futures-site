@@ -16,8 +16,8 @@ export default function CookiePolicyPage() {
         <p>
           Welcome to Artisanal Futures&apos; Cookie Policy. This policy explains
           how we use cookies across our website and services, including our
-          application, &quot;Solidarity Pathways&quot;. We only use cookies that
-          are strictly necessary to operate the site, so there are no optional
+          image generation app, &quot;UPCY&quot;. We only use cookies that are
+          strictly necessary to operate the site, so there are no optional
           cookies to accept or decline.
         </p>
         <h2>What are Cookies?</h2>
@@ -29,11 +29,11 @@ export default function CookiePolicyPage() {
         <h2>How We Use Cookies</h2>
         <p>
           At Artisanal Futures, we only use cookies that are strictly necessary
-          for the functionality and security of our website and application,
-          &quot;Solidarity Pathways&quot;. Specifically, we use cookies for
-          authentication purposes. These cookies are essential for ensuring the
-          security of our users&apos; accounts and for enabling access to the
-          features and functionalities of our app.
+          for the functionality and security of our website and services.
+          Specifically, we use cookies for authentication purposes. These
+          cookies are essential for ensuring the security of our users&apos;
+          accounts and for enabling access to the features and functionalities
+          of our platform.
         </p>
         <p>
           <span className="font-bold">
@@ -47,9 +47,8 @@ export default function CookiePolicyPage() {
         <ul>
           <li>
             <span className="font-bold">Authentication &amp; Session Cookies</span>
-            : Set when you sign in to authenticate users and drivers accessing
-            our app, &quot;Solidarity Pathways&quot;. They keep you securely
-            logged in and let you access your account and our services.
+            : Set when you sign in to authenticate your account. They keep you
+            securely logged in and let you access your account and our services.
           </li>
           <li>
             <span className="font-bold">Sign-up Cookies</span>: A short-lived
