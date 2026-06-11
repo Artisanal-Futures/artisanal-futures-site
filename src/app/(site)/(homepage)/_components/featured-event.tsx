@@ -27,7 +27,7 @@ export function FeaturedEvent({ event, onOpen }: Props) {
     : undefined;
 
   return (
-    <div className="group focus-within:ring-ring bg-card relative rounded-2xl border shadow-sm transition-shadow hover:shadow-md focus-within:ring-2">
+    <div className="group focus-within:ring-ring bg-card relative rounded-2xl border shadow-sm transition-shadow focus-within:ring-2 hover:shadow-md">
       {/* Full-card click target (opens the details dialog). Sits beneath the CTA. */}
       <button
         type="button"
@@ -37,8 +37,8 @@ export function FeaturedEvent({ event, onOpen }: Props) {
       />
       <div className="flex flex-col items-center gap-6 p-6 lg:flex-row">
         {imageSrc && (
-          <div className="lg:w-1/2">
-            <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+          <div className="w-full lg:w-1/2">
+            <div className="bg-muted relative aspect-4/3 w-full overflow-hidden rounded-xl">
               <ImageWithFallback
                 src={imageSrc}
                 fallbackSrc={fallbackSrc}
@@ -50,13 +50,13 @@ export function FeaturedEvent({ event, onOpen }: Props) {
             </div>
           </div>
         )}
-        <div className="flex flex-col gap-4 lg:w-1/2">
+        <div className="flex w-full flex-col gap-4 lg:w-1/2">
           <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
             {event.shop.name}
           </span>
           <h3 className="text-foreground text-2xl font-bold">{event.title}</h3>
           {event.description && (
-            <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed whitespace-pre-line">
+            <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-line">
               {event.description}
             </p>
           )}
