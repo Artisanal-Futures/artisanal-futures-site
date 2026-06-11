@@ -128,6 +128,7 @@ export function CategoryClient({
               createdBy={product?.shop?.name ?? ""}
               shopPrinciples={product?.shop?.attributeTags ?? []}
               fallbackImage={product?.shop?.logoPhoto}
+              showPrice={false}
             />
           ))}
         </div>

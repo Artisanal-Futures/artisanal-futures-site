@@ -21,6 +21,7 @@ const STORE_ATTRIBUTES = [
   "African American Civil Rights",
   "Black Owned",
   "Woman Owned",
+  "Worker Owned",
   "Community Education",
   "Food Sovereignty",
 ];

@@ -3,11 +3,12 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useUploadFile } from "@better-upload/client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+import { useUploadFile } from "@better-upload/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { ShopFormData } from "~/lib/validators/shop";
 import type { RouterOutputs } from "~/trpc/react";
@@ -55,6 +56,7 @@ const STORE_ATTRIBUTES = [
   "African American Civil Rights",
   "Black Owned",
   "Woman Owned",
+  "Worker Owned",
   "Community Education",
   "Food Sovereignty",
 ] as const;

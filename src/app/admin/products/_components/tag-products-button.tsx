@@ -114,6 +114,7 @@ export function TagProductsButton() {
       "African American Civil Rights",
       "Black Owned",
       "Woman Owned",
+      "Worker Owned",
       "Community Education",
       "Food Sovereignty",
     ],

@@ -124,9 +124,12 @@ export function TagServicesButton() {
     attributeTags: [
       "African American Culture",
       "African Culture",
+      "African American Civil Rights",
       "Black Owned",
       "Woman Owned",
+      "Worker Owned",
       "Community Education",
+      "Food Sovereignty",
     ],
     tags: ["Workshop", "Class", "Consulting", "Design"],
   };

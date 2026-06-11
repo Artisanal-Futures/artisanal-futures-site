@@ -125,6 +125,7 @@ export function ServiceCategoryClient({
               createdBy={service?.shop?.name ?? ""}
               shopPrinciples={service?.shop?.attributeTags ?? []}
               fallbackImage={service?.shop?.logoPhoto}
+              showPrice={false}
             />
           ))}
         </div>

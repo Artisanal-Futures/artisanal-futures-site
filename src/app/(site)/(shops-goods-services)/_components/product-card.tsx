@@ -1,6 +1,7 @@
 "use client";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { formatPrice } from "~/lib/format-price";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
 import { ImageWithFallback } from "~/components/image-with-fallback";
@@ -15,6 +16,8 @@ type Props = {
   shopPrinciples?: string[];
   /** Business logo, shown if the product image fails to load. */
   fallbackImage?: string | null;
+  /** Whether to show the price line. Hidden on the collections/listing pages. */
+  showPrice?: boolean;
 };
 export function ProductCard({
   item,
@@ -22,6 +25,7 @@ export function ProductCard({
   createdBy,
   shopPrinciples,
   fallbackImage,
+  showPrice = true,
 }: Props) {
   const fallbackSrc =
     fallbackImage?.trim() && fallbackImage !== "null"
@@ -29,6 +33,7 @@ export function ProductCard({
         ? fallbackImage
         : handleImageUrl(fallbackImage)
       : undefined;
+  const price = formatPrice(item.priceInCents, item.currency);
   return (
     <button
       type="button"
@@ -37,7 +42,7 @@ export function ProductCard({
     >
       {/* Image */}
       {item.imageUrl ? (
-        <div className="bg-muted relative aspect-4/3 w-full overflow-hidden">
+        <div className="bg-muted relative aspect-square w-full overflow-hidden">
           <ImageWithFallback
             src={item.imageUrl ?? "/placeholder.svg"}
             fallbackSrc={fallbackSrc}
@@ -47,7 +52,7 @@ export function ProductCard({
           />
         </div>
       ) : (
-        <div className="bg-muted flex aspect-4/3 w-full items-center justify-center">
+        <div className="bg-muted flex aspect-square w-full items-center justify-center">
           <span className="text-muted-foreground/30 text-3xl font-semibold">
             {item.name.charAt(0)}
           </span>
@@ -60,16 +65,20 @@ export function ProductCard({
         <h3 className="text-card-foreground group-hover:text-foreground text-sm leading-snug font-semibold">
           {item.name}
         </h3>
-        {createdBy ? (
+        {createdBy && (
           <p className="text-muted-foreground text-xs">
             by{" "}
             <span className="text-foreground/80 font-medium">{createdBy}</span>
           </p>
-        ) : item.description ? (
-          <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
-            {item.description}
-          </p>
-        ) : null}
+        )}
+        {showPrice &&
+          (price !== null ? (
+            <p className="text-foreground/70 text-xs font-medium">{price}</p>
+          ) : (
+            <p className="text-muted-foreground text-xs">
+              See shop for pricing
+            </p>
+          ))}
         {shopPrinciples && shopPrinciples.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-1 pt-2">
             {shopPrinciples.slice(0, 2).map((principle) => (
