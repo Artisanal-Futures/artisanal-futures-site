@@ -19,23 +19,33 @@ export function ShopCard({ shop }: { shop: Shop }) {
   return (
     <article className="group border-border bg-card hover:border-ring/30 relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all hover:shadow-md">
       {/* Owner portrait */}
-
-      {shop?.ownerPhoto ? (
-        <div className="bg-muted relative aspect-4/3 w-full overflow-hidden">
-          <Image
-            src={handleImageUrl(shop?.ownerPhoto)}
-            alt={`Portrait of ${shop?.ownerName}`}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-      ) : (
-        <div className="bg-muted flex aspect-4/3 w-full items-center justify-center">
-          <span className="text-muted-foreground text-3xl font-semibold">
-            {getInitials(shop?.ownerName ?? "")}
-          </span>
-        </div>
-      )}
+      <Link href={`/shops/${shop?.id}`}>
+        {shop?.ownerPhoto ? (
+          <div className="bg-muted relative aspect-square w-full overflow-hidden">
+            <Image
+              src={handleImageUrl(shop?.ownerPhoto)}
+              alt={`Portrait of ${shop?.ownerName}`}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+        ) : shop?.logoPhoto ? (
+          <div className="bg-muted relative aspect-square w-full overflow-hidden">
+            <Image
+              src={handleImageUrl(shop?.logoPhoto)}
+              alt={`Logo of ${shop?.name}`}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+        ) : (
+          <div className="bg-muted flex aspect-4/3 w-full items-center justify-center">
+            <span className="text-muted-foreground text-3xl font-semibold">
+              {getInitials(shop?.ownerName ?? "")}
+            </span>
+          </div>
+        )}
+      </Link>
 
       {/* Identity */}
       <div className="flex flex-col items-center gap-1 px-6 pt-5 pb-6 text-center">
