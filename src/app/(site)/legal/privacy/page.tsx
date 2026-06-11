@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Privacy Policy",
   description: "The privacy policy for Artisanal Futures",
@@ -41,8 +43,8 @@ export default function PrivacyPage() {
             <span className="font-bold">Account information</span>: When you
             register, we collect your name, email address, and an optional
             username and profile image. You may sign up with an email and
-            password or through a third-party login (Google, Discord, or
-            Auth0). Email addresses may be verified by sending a unique link.
+            password or through a third-party login (Google, Discord, or Auth0).
+            Email addresses may be verified by sending a unique link.
           </li>
           <li>
             <span className="font-bold">Shop and artisan profiles</span>: If you
@@ -113,20 +115,20 @@ export default function PrivacyPage() {
             analytics.
           </span>{" "}
           For more detail, see our{" "}
-          <a
+          <Link
             href="/legal/cookies"
             className="text-primary font-medium underline underline-offset-4"
           >
             Cookie Policy
-          </a>
+          </Link>
           .
         </p>
 
         <h2>How we share information</h2>
         <p>
           <span className="font-bold">
-            We do not sell or rent your personal information, and we do not share
-            it for advertising or marketing purposes.
+            We do not sell or rent your personal information, and we do not
+            share it for advertising or marketing purposes.
           </span>{" "}
           We share information only with the service providers we rely on to
           operate the site, and only as needed to provide our services:
@@ -142,8 +144,8 @@ export default function PrivacyPage() {
           </li>
           <li>
             <span className="font-bold">Payments</span> (Stripe): if you make a
-            purchase. Payment card details are handled by Stripe; we do not store
-            full card numbers.
+            purchase. Payment card details are handled by Stripe; we do not
+            store full card numbers.
           </li>
           <li>
             <span className="font-bold">Abuse prevention</span> (hCaptcha): to
@@ -154,9 +156,9 @@ export default function PrivacyPage() {
           Wherever practical, we keep processing in-house: uploaded files and
           images are stored on storage we operate, image generation is performed
           on our own backend, and our hosting infrastructure is self-managed. We
-          may also disclose information when we believe it is necessary to comply
-          with the law or to protect the rights, property, or safety of our
-          community.
+          may also disclose information when we believe it is necessary to
+          comply with the law or to protect the rights, property, or safety of
+          our community.
         </p>
 
         <h2>Third-party links</h2>
@@ -218,15 +220,15 @@ export default function PrivacyPage() {
         <h2>Changes to this Privacy Policy</h2>
         <p>
           We may update this Privacy Policy from time to time to reflect changes
-          in our practices or for legal, operational, or regulatory reasons. When
-          we do, we will revise the &quot;Last updated&quot; date above and post
-          the changes on this page.
+          in our practices or for legal, operational, or regulatory reasons.
+          When we do, we will revise the &quot;Last updated&quot; date above and
+          post the changes on this page.
         </p>
 
         <h2>Contact us</h2>
         <p>
-          If you have any questions about this Privacy Policy or wish to exercise
-          your rights, please contact us at{" "}
+          If you have any questions about this Privacy Policy or wish to
+          exercise your rights, please contact us at{" "}
           <a
             href="mailto:support@artisanalfutures.org"
             className="text-primary font-medium underline underline-offset-4"
