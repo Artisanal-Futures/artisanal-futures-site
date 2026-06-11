@@ -1,10 +1,11 @@
 "use client";
 
+import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 
+import type { HomepageEvent } from "./events-board";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { ImageWithFallback } from "~/components/image-with-fallback";
-import type { HomepageEvent } from "./events-board";
 
 type Props = {
   event: HomepageEvent;
@@ -27,12 +28,15 @@ export function EventCard({ event, onOpen }: Props) {
     : undefined;
 
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(event)}
-      className="group rounded-2xl border bg-card shadow-sm text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-muted">
+    <div className="group focus-within:ring-ring bg-card relative flex flex-col overflow-hidden rounded-2xl border text-left shadow-sm transition-shadow hover:shadow-md focus-within:ring-2">
+      {/* Full-card click target (opens the details dialog). Sits beneath the CTA. */}
+      <button
+        type="button"
+        onClick={() => onOpen(event)}
+        aria-label={`View details for ${event.title}`}
+        className="absolute inset-0 z-10 focus:outline-none"
+      />
+      <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
         {imageSrc ? (
           <ImageWithFallback
             src={imageSrc}
@@ -44,23 +48,35 @@ export function EventCard({ event, onOpen }: Props) {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="text-4xl font-semibold text-muted-foreground/30">
+            <span className="text-muted-foreground/30 text-4xl font-semibold">
               {event.title.charAt(0)}
             </span>
           </div>
         )}
       </div>
       <div className="flex flex-col gap-1.5 p-4">
-        <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+        <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
           {event.shop.name}
         </span>
-        <h4 className="line-clamp-2 text-sm font-semibold text-foreground">
+        <h4 className="text-foreground line-clamp-2 text-sm font-semibold">
           {event.title}
         </h4>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {format(new Date(event.startDate), "MMM d, yyyy")}
         </p>
+        {event.callToActionLink && (
+          <a
+            href={event.callToActionLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-primary relative z-20 mt-1 inline-flex w-fit items-center gap-1 text-xs font-medium hover:underline"
+          >
+            Learn more
+            <ExternalLink className="size-3" />
+          </a>
+        )}
       </div>
-    </button>
+    </div>
   );
 }
