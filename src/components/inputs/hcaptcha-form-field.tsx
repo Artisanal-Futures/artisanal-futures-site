@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef, useImperativeHandle, useRef } from "react";
-
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { env } from "~/env";
@@ -35,10 +34,10 @@ export const HCaptchaField = forwardRef<HCaptchaHandle, HCaptchaFieldProps>(
       },
     }));
 
-    if (!siteKey || process.env.NODE_ENV === "development") {
-      console.warn("NEXT_PUBLIC_HCAPTCHA_SITE_KEY not configured");
-      return null;
-    }
+    // if (!siteKey || process.env.NODE_ENV === "development") {
+    //   console.warn("NEXT_PUBLIC_HCAPTCHA_SITE_KEY not configured");
+    //   return null;
+    // }
 
     return (
       <div className="space-y-2">

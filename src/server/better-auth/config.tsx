@@ -14,10 +14,11 @@ const hostName = !useSecureCookies
   ? new URL(env.BETTER_AUTH_URL).hostname
   : env.HOSTNAME;
 
-// Mirror the client captcha guard in `src/providers/providers.tsx`, which
-// enables the better-auth-ui captcha (sign-in / password-reset) only in
-// production. Keeping the server gate identical ensures the client always sends
-// `x-captcha-response` whenever the server requires it, on every endpoint.
+// Captcha is enforced on sign-up only (see the `endpoints` option below).
+// Sign-in and password reset are intentionally captcha-free: this is a closed,
+// invite-only platform, so those flows don't render a captcha widget. The
+// gate is limited to production where both hCaptcha keys are available, since
+// the sign-up captcha token is supplied by the custom invite forms.
 const captchaEnabled =
   process.env.NODE_ENV === "production" &&
   !!env.HCAPTCHA_SECRET_KEY &&
@@ -92,6 +93,8 @@ export const auth = betterAuth({
             provider: "hcaptcha",
             secretKey: env.HCAPTCHA_SECRET_KEY,
             siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+            // Only sign-up is protected; sign-in & password reset are captcha-free.
+            endpoints: ["/sign-up/email"],
           }),
         ]
       : []),
