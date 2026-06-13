@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 "use client";
 
+import type { ProviderIcon } from "@daveyplate/better-auth-ui";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ThemeProvider } from "~/providers/theme-provider";
-import { authClient } from "~/server/better-auth/client";
+import { AuthUIProvider } from "@daveyplate/better-auth-ui";
+import { IconBrandAuth0 } from "@tabler/icons-react";
 import { auth0 } from "better-auth/plugins";
 import { useRouter } from "nextjs-toploader/app";
 
-import type { ProviderIcon } from "@daveyplate/better-auth-ui";
-import { AuthUIProvider } from "@daveyplate/better-auth-ui";
-import { IconBrandAuth0 } from "@tabler/icons-react";
-
 import { env } from "~/env";
+import { authClient } from "~/server/better-auth/client";
 import { Toaster } from "~/components/ui/sonner";
+import { ThemeProvider } from "~/providers/theme-provider";
 
 export function SiteProviders({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -51,14 +50,16 @@ export function SiteProviders({ children }: { children: ReactNode }) {
           },
         }}
         Link={Link}
-        captcha={
-          process.env.NODE_ENV === "production"
-            ? {
-                provider: "hcaptcha",
-                siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
-              }
-            : undefined
-        }
+        // captcha={
+        //   process.env.NODE_ENV === "development"
+        //     ? {
+        //         provider: "hcaptcha",
+        //         siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+        //         hideBadge: true,
+
+        //       }
+        //     : undefined
+        // }
         viewPaths={{
           SIGN_UP: "join",
         }}
