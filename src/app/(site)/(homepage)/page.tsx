@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Cog, GraduationCap, Store } from "lucide-react";
 
-import { api } from "~/trpc/server";
 import { selectHomepageEvents } from "~/lib/select-homepage-events";
+import { api } from "~/trpc/server";
+
 import { EventsBoard } from "./_components/events-board";
 import { Hero } from "./_components/hero";
 import { HomePageCard } from "./_components/homepage-card";
@@ -15,7 +16,7 @@ const CARD_DATA = [
     description: "Browse our artisan's shops and sites",
   },
   {
-    link: "/forum",
+    link: "/forums",
     title: "Share Knowledge",
     icon: <GraduationCap className="text-muted-foreground h-8 w-8" />,
     description: "Share your artisanal knowledge with others",
