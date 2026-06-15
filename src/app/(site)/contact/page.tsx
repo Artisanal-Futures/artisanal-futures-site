@@ -32,8 +32,8 @@ export default async function ContactPage() {
           <div className="relative flex flex-col items-center justify-end lg:col-span-1 lg:justify-center">
             <div className="relative h-full w-full">
               <Image
-                src={"/placeholder.svg"}
-                alt=""
+                src={"/img/contact-us.png"}
+                alt="Group of artisans discussing a project"
                 fill
                 className="object-cover object-bottom"
                 sizes="100vw"
