@@ -336,7 +336,7 @@ export function DashboardClient({
                 </Link>
               </Button>
               <Button asChild>
-                <Link href={`/admin/shops/${selectedArtisan?.id}/edit`}>
+                <Link href={`/admin/shops/${selectedArtisan?.id}`}>
                   <Edit className="mr-2 size-4" />
                   Edit Shop
                 </Link>

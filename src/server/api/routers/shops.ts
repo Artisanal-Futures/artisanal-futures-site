@@ -7,12 +7,11 @@ import {
   adminArtisanProcedure,
   adminOnlyProcedure,
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const shopsRouter = createTRPCRouter({
-  getAllWithWebsites: protectedProcedure.query(async ({ ctx }) => {
+  getAllWithWebsites: adminOnlyProcedure.query(async ({ ctx }) => {
     const shops = ctx.db.shop.findMany({
       include: { websiteProvision: true },
       orderBy: { name: "asc" },
@@ -124,6 +123,19 @@ export const shopsRouter = createTRPCRouter({
         include: { address: true, products: true, services: true },
       });
 
+      // Public storefront reads go through this procedure, so it stays public.
+      // But a non-public shop (with its contact fields) must only be readable by
+      // its owner or an admin — otherwise anyone can enumerate hidden shops by id.
+      if (shop && !shop.isPublic) {
+        const isOwnerOrAdmin =
+          ctx.session?.user?.role === "ADMIN" ||
+          (!!ctx.session?.user?.id && shop.ownerId === ctx.session.user.id);
+
+        if (!isOwnerOrAdmin) {
+          return null;
+        }
+      }
+
       return shop;
     }),
 
@@ -132,7 +144,10 @@ export const shopsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.create({
         data: {
-          ownerId: input.ownerId ?? ctx.session.user.id,
+          ownerId:
+            ctx.session.user.role === "ADMIN"
+              ? (input.ownerId ?? ctx.session.user.id)
+              : ctx.session.user.id,
           name: input.name,
           ownerName: input.ownerName
             ? input.ownerName
@@ -194,7 +209,9 @@ export const shopsRouter = createTRPCRouter({
         const updatedShop = await tx.shop.update({
           where: { id: input.id },
           data: {
-            ownerId: input?.ownerId ?? ctx.session.user.id,
+            ...(ctx.session.user.role === "ADMIN" && input.ownerId
+              ? { ownerId: input.ownerId }
+              : {}),
 
             name: input.name,
             ownerName: input.ownerName,

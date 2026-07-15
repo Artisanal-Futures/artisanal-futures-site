@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { surveySchema } from "~/lib/validators/survey";
 import {
   adminArtisanProcedure,
@@ -110,7 +111,9 @@ export const surveysRouter = createTRPCRouter({
         },
         data: {
           shopId: input.shopId,
-          ownerId: input.ownerId,
+          ...(ctx.session.user.role === "ADMIN" && input.ownerId
+            ? { ownerId: input.ownerId }
+            : {}),
           processes: input.processes,
           materials: input.materials,
           principles: input.principles,
@@ -162,6 +165,18 @@ export const surveysRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       let shop;
       if (input.shopId) {
+        const isUserAuthorized = await checkUserShopPermissions(
+          ctx.session,
+          input.shopId,
+        );
+
+        if (!isUserAuthorized) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Shop does not belong to current user",
+          });
+        }
+
         shop = await ctx.db.shop.upsert({
           where: { id: input?.shopId ?? undefined },
           create: {
@@ -299,6 +314,18 @@ export const surveysRouter = createTRPCRouter({
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Not authorized to modify this survey",
+        });
+      }
+
+      const isShopAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        shop.id,
+      );
+
+      if (!isShopAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
         });
       }
 

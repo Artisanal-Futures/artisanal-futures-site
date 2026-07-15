@@ -118,6 +118,18 @@ export const productRouter = createTRPCRouter({
   }),
 
   get: adminArtisanProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const isUserAuthorized = await checkUserProductPermissions(
+      ctx.session,
+      input,
+    );
+
+    if (!isUserAuthorized) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Product does not belong to current user",
+      });
+    }
+
     const product = await ctx.db.product.findUnique({
       where: { id: input },
       include: { shop: true, categories: true },
