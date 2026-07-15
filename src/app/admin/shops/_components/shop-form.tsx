@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import type { Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -39,6 +40,7 @@ import {
 import { Checkbox } from "~/components/ui/checkbox";
 import { Form, FormLabel } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
+import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
@@ -90,6 +92,7 @@ export function ShopForm({
     country: initialData?.address?.country ?? "US",
     attributeTags: initialData?.attributeTags ?? [],
     ownerId: initialData?.ownerId ?? "",
+    isPublic: initialData?.isPublic ?? true,
 
     ownerPhotoUrl: initialData?.ownerPhoto
       ? handleImageUrl(initialData.ownerPhoto)
@@ -103,7 +106,7 @@ export function ShopForm({
   };
 
   const form = useForm<ShopFormData>({
-    resolver: zodResolver(shopFormSchema),
+    resolver: zodResolver(shopFormSchema) as Resolver<ShopFormData>,
     defaultValues: initialFormValues,
   });
 
@@ -321,6 +324,18 @@ export function ShopForm({
             <div className="flex flex-col gap-4 p-1 md:grid md:grid-cols-12">
               {/* Left Column */}
               <div className="col-span-6 flex flex-col gap-4">
+                {/* Visibility Section */}
+                <Card>
+                  <CardContent>
+                    <FancySwitchFormField
+                      form={form}
+                      name="isPublic"
+                      label="Publicly visible"
+                      description="Hidden shops don't appear in the directory or at their page URL."
+                    />
+                  </CardContent>
+                </Card>
+
                 {/* Basic Info Section */}
 
                 <Card>

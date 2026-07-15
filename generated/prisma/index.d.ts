@@ -19645,6 +19645,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     name: string | null
+    isPublic: boolean | null
   }
 
   export type ShopMaxAggregateOutputType = {
@@ -19662,6 +19663,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     name: string | null
+    isPublic: boolean | null
   }
 
   export type ShopCountAggregateOutputType = {
@@ -19680,6 +19682,7 @@ export namespace Prisma {
     updatedAt: number
     attributeTags: number
     name: number
+    isPublic: number
     _all: number
   }
 
@@ -19699,6 +19702,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     name?: true
+    isPublic?: true
   }
 
   export type ShopMaxAggregateInputType = {
@@ -19716,6 +19720,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     name?: true
+    isPublic?: true
   }
 
   export type ShopCountAggregateInputType = {
@@ -19734,6 +19739,7 @@ export namespace Prisma {
     updatedAt?: true
     attributeTags?: true
     name?: true
+    isPublic?: true
     _all?: true
   }
 
@@ -19825,6 +19831,7 @@ export namespace Prisma {
     updatedAt: Date
     attributeTags: string[]
     name: string
+    isPublic: boolean
     _count: ShopCountAggregateOutputType | null
     _min: ShopMinAggregateOutputType | null
     _max: ShopMaxAggregateOutputType | null
@@ -19860,6 +19867,7 @@ export namespace Prisma {
     updatedAt?: boolean
     attributeTags?: boolean
     name?: boolean
+    isPublic?: boolean
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
     services?: boolean | Shop$servicesArgs<ExtArgs>
@@ -19885,6 +19893,7 @@ export namespace Prisma {
     updatedAt?: boolean
     attributeTags?: boolean
     name?: boolean
+    isPublic?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19904,6 +19913,7 @@ export namespace Prisma {
     updatedAt?: boolean
     attributeTags?: boolean
     name?: boolean
+    isPublic?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19923,9 +19933,10 @@ export namespace Prisma {
     updatedAt?: boolean
     attributeTags?: boolean
     name?: boolean
+    isPublic?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -19968,6 +19979,7 @@ export namespace Prisma {
       updatedAt: Date
       attributeTags: string[]
       name: string
+      isPublic: boolean
     }, ExtArgs["result"]["shop"]>
     composites: {}
   }
@@ -20412,6 +20424,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"Shop", 'DateTime'>
     readonly attributeTags: FieldRef<"Shop", 'String[]'>
     readonly name: FieldRef<"Shop", 'String'>
+    readonly isPublic: FieldRef<"Shop", 'Boolean'>
   }
     
 
@@ -69537,7 +69550,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     attributeTags: 'attributeTags',
-    name: 'name'
+    name: 'name',
+    isPublic: 'isPublic'
   };
 
   export type ShopScalarFieldEnum = (typeof ShopScalarFieldEnum)[keyof typeof ShopScalarFieldEnum]
@@ -71515,6 +71529,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
+    isPublic?: BoolFilter<"Shop"> | boolean
     events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
@@ -71539,6 +71554,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     attributeTags?: SortOrder
     name?: SortOrder
+    isPublic?: SortOrder
     events?: EventOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
     services?: ServiceOrderByRelationAggregateInput
@@ -71566,6 +71582,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
+    isPublic?: BoolFilter<"Shop"> | boolean
     events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
@@ -71590,6 +71607,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     attributeTags?: SortOrder
     name?: SortOrder
+    isPublic?: SortOrder
     _count?: ShopCountOrderByAggregateInput
     _max?: ShopMaxOrderByAggregateInput
     _min?: ShopMinOrderByAggregateInput
@@ -71614,6 +71632,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringWithAggregatesFilter<"Shop"> | string
+    isPublic?: BoolWithAggregatesFilter<"Shop"> | boolean
   }
 
   export type ShopAddressWhereInput = {
@@ -76160,6 +76179,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
@@ -76184,6 +76204,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
@@ -76206,6 +76227,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
@@ -76230,6 +76252,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
@@ -76253,6 +76276,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
   }
 
   export type ShopUpdateManyMutationInput = {
@@ -76270,6 +76294,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ShopUncheckedUpdateManyInput = {
@@ -76288,6 +76313,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ShopAddressCreateInput = {
@@ -81203,6 +81229,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     attributeTags?: SortOrder
     name?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type ShopMaxOrderByAggregateInput = {
@@ -81220,6 +81247,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     name?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type ShopMinOrderByAggregateInput = {
@@ -81237,6 +81265,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     name?: SortOrder
+    isPublic?: SortOrder
   }
 
   export type ShopAddressCountOrderByAggregateInput = {
@@ -89294,6 +89323,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
@@ -89317,6 +89347,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
@@ -89354,6 +89385,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
@@ -89377,6 +89409,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
@@ -91109,6 +91142,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
@@ -91132,6 +91166,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
@@ -91192,6 +91227,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
@@ -91215,6 +91251,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
@@ -91252,6 +91289,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
@@ -91275,6 +91313,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
@@ -91335,6 +91374,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
@@ -91358,6 +91398,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
@@ -91979,6 +92020,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
@@ -92002,6 +92044,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
@@ -92039,6 +92082,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
@@ -92062,6 +92106,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
@@ -99570,6 +99615,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
@@ -99593,6 +99639,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
@@ -99701,6 +99748,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
@@ -99724,6 +99772,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
@@ -100479,6 +100528,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
@@ -100501,6 +100551,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
@@ -101223,6 +101274,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Shop"> | Date | string
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
+    isPublic?: BoolFilter<"Shop"> | boolean
   }
 
   export type SubredditUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -103843,6 +103895,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
+    isPublic?: boolean
   }
 
   export type SubredditCreateManyCreatorInput = {
@@ -104299,6 +104352,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
@@ -104321,6 +104375,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
@@ -104343,6 +104398,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type SubredditUpdateWithoutCreatorInput = {
