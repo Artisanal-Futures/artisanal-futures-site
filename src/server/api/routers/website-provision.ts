@@ -14,7 +14,10 @@ import {
   createProvisionSchema,
 } from "~/lib/validators/website-provision";
 import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
-import { provisionSimplePressSite } from "~/server/lib/simplepress-client";
+import {
+  checkSimplePressConnection,
+  provisionSimplePressSite,
+} from "~/server/lib/simplepress-client";
 
 import { adminOnlyProcedure, artisanProcedure, createTRPCRouter } from "../trpc";
 
@@ -96,6 +99,7 @@ function toSafeProvision(provision: {
   claimedAt: Date | null;
   errorMessage: string | null;
   createdAt: Date;
+  updatedAt: Date;
   framework: string;
 }) {
   return {
@@ -106,6 +110,7 @@ function toSafeProvision(provision: {
     claimedAt: provision.claimedAt,
     errorMessage: provision.errorMessage,
     createdAt: provision.createdAt,
+    updatedAt: provision.updatedAt,
     framework: provision.framework,
   };
 }
@@ -327,20 +332,44 @@ export const websiteProvisionRouter = createTRPCRouter({
     let provision: Awaited<ReturnType<typeof ctx.db.websiteProvision.create>>;
 
     if (existingProvision) {
-      if (existingProvision.status !== "FAILED") {
+      // WordPress/Coolify provisions are admin-managed; never re-dispatch them.
+      if (existingProvision.framework !== "NEXTJS") {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "A website has already been requested for your shop.",
+          message:
+            "Your shop already has a website provision managed by our admins. Contact us if you need changes.",
         });
       }
 
-      // Reuse the FAILED row and its accessToken so the SP call stays
-      // idempotent on afProvisionCode.
+      // A claimed site is live and owned on SimplePress — nothing to redo.
+      if (existingProvision.claimedAt) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Your website has already been claimed and is live.",
+        });
+      }
+
+      // Statuses outside the SimplePress request lifecycle (SUSPENDED,
+      // DELETING, ...) need an admin.
+      const redispatchable = ["FAILED", "PROVISIONING", "ACTIVE", "PENDING"];
+      if (!redispatchable.includes(existingProvision.status)) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message:
+            "Your website can't be rebuilt automatically right now. Contact us for help.",
+        });
+      }
+
+      // Re-dispatch is always safe: SimplePress is idempotent on the
+      // accessToken (afProvisionCode), so this either finishes a stale /
+      // legacy row (pre-claim-flow rows have no claimUrl) or acts as a
+      // "resend claim email" for an ACTIVE-but-unclaimed site.
       provision = await ctx.db.websiteProvision.update({
         where: { id: existingProvision.id },
         data: {
           status: "PROVISIONING",
           errorMessage: null,
+          // Legacy rows may have no accessToken — mint one.
           accessToken: existingProvision.accessToken ?? generateInviteCode(),
           accessTokenExpiresAt: new Date(Date.now() + ACCESS_TOKEN_TTL_MS),
         },
@@ -443,6 +472,16 @@ export const websiteProvisionRouter = createTRPCRouter({
     }
 
     return toSafeProvision(provision);
+  }),
+
+  // Live AF ↔ SP connectivity/credential check for the /admin/website page.
+  // Diagnostic detail is admin-only; artisans just get a boolean.
+  checkSimplePressConnection: artisanProcedure.query(async ({ ctx }) => {
+    const result = await checkSimplePressConnection();
+    return {
+      connected: result.connected,
+      detail: ctx.session.user.role === "ADMIN" ? result.detail : null,
+    };
   }),
 
   delete: adminOnlyProcedure

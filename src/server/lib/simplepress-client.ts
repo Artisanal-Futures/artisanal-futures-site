@@ -162,3 +162,73 @@ export async function provisionSimplePressSite(
     `SimplePress request failed (HTTP ${res.status}).`;
   return { ok: false, status: res.status, message };
 }
+
+export type ConnectionCheckResult = {
+  connected: boolean;
+  /** Diagnostic detail — safe to show admins; don't surface to artisans. */
+  detail: string;
+};
+
+/**
+ * Verify the AF → SP partner link end to end by calling SP's signed
+ * `GET /api/partner/health` endpoint. A 200 proves the URL, network path,
+ * bearer token, HMAC secret, and clock skew (±300s) all agree — i.e. a real
+ * provisioning call would authenticate. Never throws.
+ *
+ * GET signature convention: HMAC over the canonical query string; the health
+ * endpoint takes no params, so the signature is over the empty string.
+ */
+export async function checkSimplePressConnection(): Promise<ConnectionCheckResult> {
+  const { timestamp, signature } = signPartnerRequest(
+    "",
+    env.AF_SP_WEBHOOK_SECRET,
+  );
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10_000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${env.SIMPLEPRESS_API_URL}/api/partner/health`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${env.SIMPLEPRESS_API_TOKEN}`,
+        "X-Partner-Timestamp": String(timestamp),
+        "X-Partner-Signature": signature,
+      },
+      signal: controller.signal,
+    });
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "AbortError";
+    return {
+      connected: false,
+      detail: timedOut
+        ? `SimplePress did not respond within 10s (${env.SIMPLEPRESS_API_URL}).`
+        : `Could not reach SimplePress at ${env.SIMPLEPRESS_API_URL} — check the URL and that the app is up.`,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+
+  if (res.ok) {
+    return { connected: true, detail: "Connected — credentials verified." };
+  }
+  if (res.status === 401) {
+    return {
+      connected: false,
+      detail:
+        "SimplePress is reachable but rejected our credentials — check that SIMPLEPRESS_API_TOKEN matches SP's AF_PARTNER_API_TOKEN, AF_SP_WEBHOOK_SECRET matches on both apps, and both servers' clocks are in sync.",
+    };
+  }
+  if (res.status === 404) {
+    return {
+      connected: false,
+      detail:
+        "SimplePress is reachable but the partner API isn't there (HTTP 404) — is the new SimplePress code deployed?",
+    };
+  }
+  return {
+    connected: false,
+    detail: `SimplePress health check failed (HTTP ${res.status}).`,
+  };
+}

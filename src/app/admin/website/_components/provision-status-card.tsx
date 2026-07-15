@@ -30,8 +30,13 @@ export function ProvisionStatusCard() {
   );
 
   const retryMutation = api.websiteProvision.requestMySite.useMutation({
-    onSuccess: () => {
-      toast.success("Rebuilding your website...");
+    onSuccess: (result) => {
+      toast.success(
+        result?.claimUrl
+          ? "Done - we've emailed you a fresh claim link."
+          : "Rebuilding your website...",
+      );
+      utils.websiteProvision.getMyProvision.setData(undefined, result);
       void utils.websiteProvision.getMyProvision.invalidate();
     },
     onError: (error) => {
@@ -45,7 +50,29 @@ export function ProvisionStatusCard() {
     return null;
   }
 
+  const retryButton = (label: string, pendingLabel: string) => (
+    <Button
+      onClick={() => retryMutation.mutate()}
+      disabled={retryMutation.isPending}
+    >
+      {retryMutation.isPending ? (
+        <>
+          <Spinner className="mr-2 size-4" />
+          {pendingLabel}
+        </>
+      ) : (
+        label
+      )}
+    </Button>
+  );
+
   if (provision.status === "PROVISIONING") {
+    // A genuinely in-flight build resolves in well under a minute; anything
+    // older is a stuck/legacy row the owner can safely restart (SimplePress
+    // is idempotent on the provision token).
+    const stale =
+      Date.now() - new Date(provision.updatedAt).getTime() > 2 * 60 * 1000;
+
     return (
       <Card className="mb-10">
         <CardHeader>
@@ -54,17 +81,49 @@ export function ProvisionStatusCard() {
             Building your website...
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-muted-foreground text-sm">
             This usually only takes a moment. Feel free to leave this page -
             we&apos;ll email you as soon as your site is ready.
           </p>
+          {stale && (
+            <>
+              <p className="text-muted-foreground text-sm">
+                This is taking longer than expected. You can safely restart the
+                build.
+              </p>
+              {retryButton("Restart the build", "Restarting...")}
+            </>
+          )}
         </CardContent>
       </Card>
     );
   }
 
   if (provision.status === "ACTIVE" && !provision.claimedAt) {
+    // Legacy rows (pre-claim-flow) are ACTIVE but never got a claim link -
+    // offer to finish setup instead of dead-ending.
+    if (!provision.claimUrl) {
+      return (
+        <Card className="mb-10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Sparkles className="text-amber-600 size-5" />
+              Finish setting up your website
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground text-sm">
+              Your website was reserved earlier, but setup was never completed.
+              Click below and we&apos;ll build it on SimplePress and email your
+              shop&apos;s contact address a link to claim it.
+            </p>
+            {retryButton("Finish setup", "Building your website...")}
+          </CardContent>
+        </Card>
+      );
+    }
+
     return (
       <Card className="mb-10">
         <CardHeader>
@@ -78,7 +137,7 @@ export function ProvisionStatusCard() {
             We emailed you a claim link. Sign up on SimplePress using your shop
             email address to take ownership of your new site.
           </p>
-          {provision.claimUrl && (
+          <div className="flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
               <a
                 href={provision.claimUrl}
@@ -89,7 +148,21 @@ export function ProvisionStatusCard() {
                 <ExternalLink className="ml-2 size-4" />
               </a>
             </Button>
-          )}
+            <Button
+              variant="outline"
+              onClick={() => retryMutation.mutate()}
+              disabled={retryMutation.isPending}
+            >
+              {retryMutation.isPending ? (
+                <>
+                  <Spinner className="mr-2 size-4" />
+                  Resending...
+                </>
+              ) : (
+                "Resend claim email"
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );

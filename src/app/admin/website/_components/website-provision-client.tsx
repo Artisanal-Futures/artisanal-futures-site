@@ -36,6 +36,53 @@ import { ProvisionStatusCard } from "./provision-status-card";
 type SiteType = "wordpress" | "simplepress" | null;
 type ProvisionStep = "choose" | "confirm" | "provisioning" | "complete";
 
+/**
+ * Live AF ↔ SimplePress link check. Green means a signed health call
+ * round-tripped — URL, network, tokens, HMAC secret, and clock skew all
+ * agree, so a real build request would authenticate. Admins also see the
+ * failure diagnostic.
+ */
+function ConnectionIndicator() {
+  const connectionQuery =
+    api.websiteProvision.checkSimplePressConnection.useQuery(undefined, {
+      retry: false,
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    });
+
+  if (connectionQuery.isPending) {
+    return (
+      <div className="text-muted-foreground mb-6 flex items-center gap-2 text-xs">
+        <span className="size-2 animate-pulse rounded-full bg-gray-400" />
+        Checking connection to SimplePress...
+      </div>
+    );
+  }
+
+  const data = connectionQuery.data;
+  const connected = data?.connected === true;
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-2 text-xs">
+        <span
+          className={`size-2 rounded-full ${
+            connected ? "bg-green-500" : "bg-red-500"
+          }`}
+        />
+        <span className={connected ? "text-muted-foreground" : "text-red-600"}>
+          {connected
+            ? "Connected to SimplePress"
+            : "Can't reach SimplePress right now"}
+        </span>
+      </div>
+      {!connected && data?.detail && (
+        <p className="mt-1 pl-4 text-xs text-red-600/80">{data.detail}</p>
+      )}
+    </div>
+  );
+}
+
 const siteOptions = {
   wordpress: {
     name: "WordPress",
@@ -195,14 +242,31 @@ export function WebsiteProvisionClient() {
     },
   });
 
+  // Don't flash the chooser while we're still finding out whether a
+  // provision already exists.
+  if (provisionQuery.isPending) {
+    return (
+      <div className="text-muted-foreground flex items-center gap-2 py-12 text-sm">
+        <Spinner className="size-4" />
+        Checking your website status...
+      </div>
+    );
+  }
+
   // An existing provision (of any status) means the artisan already went
   // through the chooser - show the live status card instead.
   if (provisionQuery.data) {
-    return <ProvisionStatusCard />;
+    return (
+      <>
+        <ConnectionIndicator />
+        <ProvisionStatusCard />
+      </>
+    );
   }
 
   return (
     <>
+      <ConnectionIndicator />
       {/* What's included */}
       {step === "choose" && (
         <div className="border-border bg-card mb-10 rounded-2xl border p-6 sm:p-8">
