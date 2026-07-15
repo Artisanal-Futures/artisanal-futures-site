@@ -17,6 +17,17 @@ import {
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 
@@ -292,35 +303,80 @@ export function WebsiteProvisionClient() {
             </div>
           </div>
 
-          <Button
-            onClick={() => {
-              if (selectedType === "simplepress") {
-                requestSiteMutation.mutate();
-                return;
-              }
-              router.push("/contact");
-            }}
-            disabled={!selectedType || requestSiteMutation.isPending}
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            {requestSiteMutation.isPending ? (
-              <>
-                <Spinner className="mr-2 size-4" />
-                Building your website...
-              </>
-            ) : selectedType === "simplepress" ? (
-              <>
-                Build my free website
-                <ArrowRight className="ml-2 size-4" />
-              </>
-            ) : (
-              <>
-                Contact us to get started
-                <ArrowRight className="ml-2 size-4" />
-              </>
-            )}
-          </Button>
+          {selectedType === "simplepress" ? (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  disabled={requestSiteMutation.isPending}
+                  size="lg"
+                  className="w-full sm:w-auto"
+                >
+                  {requestSiteMutation.isPending ? (
+                    <>
+                      <Spinner className="mr-2 size-4" />
+                      Building your website...
+                    </>
+                  ) : (
+                    <>
+                      Build my free website
+                      <ArrowRight className="ml-2 size-4" />
+                    </>
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Build your SimplePress website?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription asChild>
+                    <div className="space-y-3">
+                      <p>Here&apos;s what happens when you continue:</p>
+                      <ul className="list-disc space-y-1.5 pl-5">
+                        <li>
+                          We&apos;ll build your website on SimplePress right
+                          away using your shop&apos;s name, logo, and contact
+                          email — it usually takes under half a minute.
+                        </li>
+                        <li>
+                          Your site starts in &quot;coming soon&quot; mode, so
+                          nothing is public yet.
+                        </li>
+                        <li>
+                          We&apos;ll email your shop&apos;s contact address a
+                          link to claim the site. You&apos;ll create your
+                          SimplePress account with that same email — that&apos;s
+                          what makes the site yours and takes it live.
+                        </li>
+                        <li>
+                          You can watch the progress on this page while you
+                          wait.
+                        </li>
+                      </ul>
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Not yet</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => requestSiteMutation.mutate()}
+                  >
+                    Build my website
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ) : (
+            <Button
+              onClick={() => router.push("/contact")}
+              disabled={!selectedType}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Contact us to get started
+              <ArrowRight className="ml-2 size-4" />
+            </Button>
+          )}
           {requestSiteMutation.isPending && (
             <p className="text-muted-foreground mt-3 text-sm">
               Building your website... this can take up to half a minute.
