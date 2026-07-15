@@ -1,12 +1,9 @@
 "use client";
 
-import type { WebsiteProvision } from "generated/prisma";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
-  ArrowLeft,
   ArrowRight,
   Check,
   Code,
@@ -17,8 +14,13 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { toast } from "sonner";
 
+import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
+
+import { ProvisionStatusCard } from "./provision-status-card";
 
 type SiteType = "wordpress" | "simplepress" | null;
 type ProvisionStep = "choose" | "confirm" | "provisioning" | "complete";
@@ -164,9 +166,29 @@ function SiteOptionCard({
 
 export function WebsiteProvisionClient() {
   const router = useRouter();
+  const utils = api.useUtils();
 
   const [step] = useState<ProvisionStep>("choose");
   const [selectedType, setSelectedType] = useState<SiteType>(null);
+
+  const provisionQuery = api.websiteProvision.getMyProvision.useQuery();
+
+  const requestSiteMutation = api.websiteProvision.requestMySite.useMutation({
+    onSuccess: (result) => {
+      toast.success("Your website is ready!");
+      utils.websiteProvision.getMyProvision.setData(undefined, result);
+      void utils.websiteProvision.getMyProvision.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // An existing provision (of any status) means the artisan already went
+  // through the chooser - show the live status card instead.
+  if (provisionQuery.data) {
+    return <ProvisionStatusCard />;
+  }
 
   return (
     <>
@@ -271,14 +293,39 @@ export function WebsiteProvisionClient() {
           </div>
 
           <Button
-            onClick={() => router.push("/contact")}
-            disabled={!selectedType}
+            onClick={() => {
+              if (selectedType === "simplepress") {
+                requestSiteMutation.mutate();
+                return;
+              }
+              router.push("/contact");
+            }}
+            disabled={!selectedType || requestSiteMutation.isPending}
             size="lg"
             className="w-full sm:w-auto"
           >
-            Contact us to get started
-            <ArrowRight className="ml-2 size-4" />
+            {requestSiteMutation.isPending ? (
+              <>
+                <Spinner className="mr-2 size-4" />
+                Building your website...
+              </>
+            ) : selectedType === "simplepress" ? (
+              <>
+                Build my free website
+                <ArrowRight className="ml-2 size-4" />
+              </>
+            ) : (
+              <>
+                Contact us to get started
+                <ArrowRight className="ml-2 size-4" />
+              </>
+            )}
           </Button>
+          {requestSiteMutation.isPending && (
+            <p className="text-muted-foreground mt-3 text-sm">
+              Building your website... this can take up to half a minute.
+            </p>
+          )}
         </>
       )}
     </>

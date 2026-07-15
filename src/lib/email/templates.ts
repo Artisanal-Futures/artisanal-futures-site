@@ -1,5 +1,7 @@
 import ContactFormEmail from "~/emails/contact-form";
 import { PlatformInviteEmail } from "~/emails/platform-invite";
+import { WebsiteReadyEmail } from "~/emails/website-ready";
+import { env } from "~/env";
 
 import { EMAIL_FROM, sendEmail } from "./send";
 
@@ -65,5 +67,41 @@ export async function sendPlatformInviteEmail({
       logoUrl,
     }),
     tags: [{ name: "category", value: "platform_invite" }],
+  });
+}
+
+export async function sendWebsiteReadyEmail({
+  to,
+  businessName,
+  subdomain,
+  storefrontUrl,
+  claimUrl,
+  expiresAt,
+  logoUrl,
+}: {
+  to: string;
+  businessName: string;
+  subdomain: string;
+  storefrontUrl: string;
+  claimUrl: string;
+  expiresAt: Date | string;
+  logoUrl?: string;
+}) {
+  return sendEmail({
+    from: EMAIL_FROM.NOREPLY,
+    fromName: "Artisanal Futures",
+    to,
+    subject: `Your website for ${businessName} is ready to claim`,
+    react: WebsiteReadyEmail({
+      businessName,
+      recipientEmail: to,
+      subdomain,
+      storefrontUrl,
+      claimUrl,
+      expiresAt,
+      logoUrl,
+      welcomeGuideUrl: env.SIMPLEPRESS_WELCOME_GUIDE_URL,
+    }),
+    tags: [{ name: "category", value: "website_ready" }],
   });
 }

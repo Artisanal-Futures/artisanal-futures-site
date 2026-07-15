@@ -1,7 +1,9 @@
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
+import { PrismaClient } from "generated/prisma";
 import { z } from "zod";
 
+import { sendWebsiteReadyEmail } from "~/lib/email/templates";
 import {
   createCoolifyDeployment,
   deleteCoolifyDeployment,
@@ -12,12 +14,100 @@ import {
   createProvisionSchema,
 } from "~/lib/validators/website-provision";
 import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
-import { generateSimplePressLink } from "~/lib/website-provisions/generate-sp-link";
+import { provisionSimplePressSite } from "~/server/lib/simplepress-client";
 
-import { adminOnlyProcedure, createTRPCRouter } from "../trpc";
+import { adminOnlyProcedure, artisanProcedure, createTRPCRouter } from "../trpc";
+
+const ACCESS_TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 function generateInviteCode(): string {
   return createId().slice(0, 8).toUpperCase();
+}
+
+/**
+ * Create the SimplePress `WebsiteProvision` row (framework NEXTJS, siteType
+ * BUSINESS) with a unique `accessToken` — the idempotency key sent to SP as
+ * `afProvisionCode`. Retries on the `accessToken @unique` collision (P2002).
+ * Also stamps `accessTokenExpiresAt` 14 days out (fix B). Shared by the admin
+ * `createNextJs` flow and the artisan `requestMySite` flow.
+ */
+async function createSimplePressProvisionRow(
+  db: PrismaClient,
+  {
+    userId,
+    shopId,
+    businessName,
+    contactEmail,
+    contactPhone,
+  }: {
+    userId: string;
+    shopId: string;
+    businessName: string;
+    contactEmail: string;
+    contactPhone?: string;
+  },
+) {
+  let attempts = 0;
+  const maxAttempts = 5;
+
+  while (true) {
+    const code = generateInviteCode();
+    try {
+      return await db.websiteProvision.create({
+        data: {
+          userId,
+          shopId,
+          framework: "NEXTJS",
+          siteType: "BUSINESS",
+          status: "PROVISIONING",
+          businessName,
+          contactEmail,
+          contactPhone,
+          hasCustomDomain: false,
+          accessToken: code,
+          accessTokenExpiresAt: new Date(Date.now() + ACCESS_TOKEN_TTL_MS),
+          config: {},
+        },
+      });
+    } catch (err) {
+      const isUniqueViolation =
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        (err as { code?: string }).code === "P2002";
+      if (isUniqueViolation && attempts < maxAttempts) {
+        attempts++;
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
+/**
+ * UI-safe projection of a provision row. Never exposes `accessToken`,
+ * `config`, `adminPasswordEncrypted`, or any Coolify fields.
+ */
+function toSafeProvision(provision: {
+  status: string;
+  subdomain: string | null;
+  deploymentUrl: string | null;
+  claimUrl: string | null;
+  claimedAt: Date | null;
+  errorMessage: string | null;
+  createdAt: Date;
+  framework: string;
+}) {
+  return {
+    status: provision.status,
+    subdomain: provision.subdomain,
+    deploymentUrl: provision.deploymentUrl,
+    claimUrl: provision.claimUrl,
+    claimedAt: provision.claimedAt,
+    errorMessage: provision.errorMessage,
+    createdAt: provision.createdAt,
+    framework: provision.framework,
+  };
 }
 
 export const websiteProvisionRouter = createTRPCRouter({
@@ -194,48 +284,166 @@ export const websiteProvisionRouter = createTRPCRouter({
         });
       }
 
-      let code: string;
-      let provision: Awaited<ReturnType<typeof ctx.db.websiteProvision.create>>;
-      let attempts = 0;
-      const maxAttempts = 5;
+      const provision = await createSimplePressProvisionRow(ctx.db, {
+        userId: input.userId,
+        shopId: input.shopId,
+        businessName: input.businessName,
+        contactEmail: input.contactEmail,
+        contactPhone: input.contactPhone,
+      });
 
-      while (true) {
-        code = generateInviteCode();
-        try {
-          provision = await ctx.db.websiteProvision.create({
-            data: {
-              userId: input.userId,
-              shopId: input.shopId,
-              framework: input.framework,
-              siteType: input.siteType,
-              status: "PROVISIONING",
-              businessName: input.businessName,
-              contactEmail: input.contactEmail,
-              hasCustomDomain: false,
-              accessToken: code,
-              config: {},
-            },
-            include: { user: true },
-          });
-          break;
-        } catch (err) {
-          const isUniqueViolation =
-            err &&
-            typeof err === "object" &&
-            "code" in err &&
-            (err as { code?: string }).code === "P2002";
-          if (isUniqueViolation && attempts < maxAttempts) {
-            attempts++;
-            continue;
-          }
-          throw err;
-        }
-      }
       return {
         provision,
-        redirectUrl: `https://simplepress.dev/platform/signup?aftoken=${code}`,
+        redirectUrl: `https://simplepress.dev/platform/signup?aftoken=${provision.accessToken}`,
       };
     }),
+
+  requestMySite: artisanProcedure.mutation(async ({ ctx }) => {
+    const shop = await ctx.db.shop.findFirst({
+      where: { ownerId: ctx.session.user.id },
+      include: { owner: true },
+    });
+
+    if (!shop) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "You need a shop before requesting a website.",
+      });
+    }
+
+    const contactEmail = shop.email ?? shop.owner.email;
+
+    if (!contactEmail) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Your shop needs a contact email before requesting a website.",
+      });
+    }
+
+    const existingProvision = await ctx.db.websiteProvision.findUnique({
+      where: { shopId: shop.id },
+    });
+
+    let provision: Awaited<ReturnType<typeof ctx.db.websiteProvision.create>>;
+
+    if (existingProvision) {
+      if (existingProvision.status !== "FAILED") {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A website has already been requested for your shop.",
+        });
+      }
+
+      // Reuse the FAILED row and its accessToken so the SP call stays
+      // idempotent on afProvisionCode.
+      provision = await ctx.db.websiteProvision.update({
+        where: { id: existingProvision.id },
+        data: {
+          status: "PROVISIONING",
+          errorMessage: null,
+          accessToken: existingProvision.accessToken ?? generateInviteCode(),
+          accessTokenExpiresAt: new Date(Date.now() + ACCESS_TOKEN_TTL_MS),
+        },
+      });
+    } else {
+      provision = await createSimplePressProvisionRow(ctx.db, {
+        userId: ctx.session.user.id,
+        shopId: shop.id,
+        businessName: shop.name,
+        contactEmail,
+        contactPhone: shop.phone ?? undefined,
+      });
+    }
+
+    const afProvisionCode = provision.accessToken;
+    if (!afProvisionCode) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "We couldn't reach SimplePress to build your site. Please try again in a few minutes.",
+      });
+    }
+
+    const result = await provisionSimplePressSite({
+      afProvisionCode,
+      businessName: shop.name,
+      email: contactEmail,
+      phone: shop.phone ?? undefined,
+      logoUrl: shop.logoPhoto ?? undefined,
+    });
+
+    if (!result.ok) {
+      // Persist the failure, then surface a generic message (no internals).
+      await ctx.db.websiteProvision.update({
+        where: { id: provision.id },
+        data: {
+          status: "FAILED",
+          errorMessage: result.message,
+        },
+      });
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "We couldn't reach SimplePress to build your site. Please try again in a few minutes.",
+      });
+    }
+
+    const { data } = result;
+
+    const updated = await ctx.db.websiteProvision.update({
+      where: { id: provision.id },
+      data: {
+        status: "ACTIVE",
+        subdomain: data.subdomain,
+        deploymentUrl: data.storefrontUrl,
+        claimUrl: data.claimUrl,
+        hasCustomDomain: false,
+        // Replay of an already-claimed site: stamp claimedAt if not already set.
+        ...(data.claimed && provision.claimedAt === null
+          ? { claimedAt: new Date() }
+          : {}),
+      },
+    });
+
+    // Fire-and-forget: never fail the mutation on an email error, and skip
+    // entirely when there is no claim link (already-claimed replay).
+    if (data.claimUrl) {
+      void sendWebsiteReadyEmail({
+        to: contactEmail,
+        businessName: shop.name,
+        subdomain: data.subdomain,
+        storefrontUrl: data.storefrontUrl,
+        claimUrl: data.claimUrl,
+        expiresAt: data.claimExpiresAt,
+        logoUrl: shop.logoPhoto ?? undefined,
+      }).catch((err) =>
+        console.error("Failed to send website-ready email:", err),
+      );
+    }
+
+    return toSafeProvision(updated);
+  }),
+
+  getMyProvision: artisanProcedure.query(async ({ ctx }) => {
+    const shop = await ctx.db.shop.findFirst({
+      where: { ownerId: ctx.session.user.id },
+      select: { id: true },
+    });
+
+    if (!shop) {
+      return null;
+    }
+
+    const provision = await ctx.db.websiteProvision.findUnique({
+      where: { shopId: shop.id },
+    });
+
+    if (!provision) {
+      return null;
+    }
+
+    return toSafeProvision(provision);
+  }),
 
   delete: adminOnlyProcedure
     .input(cancelProvisionSchema)

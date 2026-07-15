@@ -40,6 +40,16 @@ export const env = createEnv({
     COOLIFY_API: z.string().url(),
     COOLIFY_UUID: z.string().min(1),
     WORDPRESS_DOCKER_REGISTRY: z.string().min(1),
+
+    // SimplePress integration
+    SIMPLEPRESS_API_URL: z.string().url(),
+    SIMPLEPRESS_API_TOKEN: z.string().min(1),
+    SIMPLEPRESS_CALLBACK_TOKEN: z.string().min(1),
+    AF_SP_WEBHOOK_SECRET: z.string().min(1),
+    // Optional link to the SimplePress welcome guide (e.g. a Google Doc),
+    // included in the website-ready email when set.
+    SIMPLEPRESS_WELCOME_GUIDE_URL: z.string().url().optional(),
+    // DEPRECATED: replaced by SIMPLEPRESS_CALLBACK_TOKEN + AF_SP_WEBHOOK_SECRET; remove at cutover
     SIMPLEPRESS_HASH_SECRET: z.string().min(1),
 
     HCAPTCHA_SECRET_KEY: z.string(),
@@ -98,6 +108,12 @@ export const env = createEnv({
     COOLIFY_ADMIN_SAFE_API_TOKEN: process.env.COOLIFY_ADMIN_SAFE_API_TOKEN,
     COOLIFY_UUID: process.env.COOLIFY_UUID,
     WORDPRESS_DOCKER_REGISTRY: process.env.WORDPRESS_DOCKER_REGISTRY,
+
+    SIMPLEPRESS_API_URL: process.env.SIMPLEPRESS_API_URL,
+    SIMPLEPRESS_API_TOKEN: process.env.SIMPLEPRESS_API_TOKEN,
+    SIMPLEPRESS_CALLBACK_TOKEN: process.env.SIMPLEPRESS_CALLBACK_TOKEN,
+    SIMPLEPRESS_WELCOME_GUIDE_URL: process.env.SIMPLEPRESS_WELCOME_GUIDE_URL,
+    AF_SP_WEBHOOK_SECRET: process.env.AF_SP_WEBHOOK_SECRET,
     SIMPLEPRESS_HASH_SECRET: process.env.SIMPLEPRESS_HASH_SECRET,
 
     STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,

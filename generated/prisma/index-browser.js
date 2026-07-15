@@ -761,7 +761,10 @@ exports.Prisma.WebsiteProvisionScalarFieldEnum = {
   coolifyServiceUuid: 'coolifyServiceUuid',
   adminPasswordEncrypted: 'adminPasswordEncrypted',
   adminUser: 'adminUser',
-  accessToken: 'accessToken'
+  accessToken: 'accessToken',
+  accessTokenExpiresAt: 'accessTokenExpiresAt',
+  claimedAt: 'claimedAt',
+  claimUrl: 'claimUrl'
 };
 
 exports.Prisma.ExampleScalarFieldEnum = {

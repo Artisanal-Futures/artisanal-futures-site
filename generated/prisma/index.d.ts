@@ -62024,6 +62024,9 @@ export namespace Prisma {
     adminPasswordEncrypted: string | null
     adminUser: string | null
     accessToken: string | null
+    accessTokenExpiresAt: Date | null
+    claimedAt: Date | null
+    claimUrl: string | null
   }
 
   export type WebsiteProvisionMaxAggregateOutputType = {
@@ -62060,6 +62063,9 @@ export namespace Prisma {
     adminPasswordEncrypted: string | null
     adminUser: string | null
     accessToken: string | null
+    accessTokenExpiresAt: Date | null
+    claimedAt: Date | null
+    claimUrl: string | null
   }
 
   export type WebsiteProvisionCountAggregateOutputType = {
@@ -62099,6 +62105,9 @@ export namespace Prisma {
     adminPasswordEncrypted: number
     adminUser: number
     accessToken: number
+    accessTokenExpiresAt: number
+    claimedAt: number
+    claimUrl: number
     _all: number
   }
 
@@ -62137,6 +62146,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: true
     adminUser?: true
     accessToken?: true
+    accessTokenExpiresAt?: true
+    claimedAt?: true
+    claimUrl?: true
   }
 
   export type WebsiteProvisionMaxAggregateInputType = {
@@ -62173,6 +62185,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: true
     adminUser?: true
     accessToken?: true
+    accessTokenExpiresAt?: true
+    claimedAt?: true
+    claimUrl?: true
   }
 
   export type WebsiteProvisionCountAggregateInputType = {
@@ -62212,6 +62227,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: true
     adminUser?: true
     accessToken?: true
+    accessTokenExpiresAt?: true
+    claimedAt?: true
+    claimUrl?: true
     _all?: true
   }
 
@@ -62324,6 +62342,9 @@ export namespace Prisma {
     adminPasswordEncrypted: string | null
     adminUser: string | null
     accessToken: string | null
+    accessTokenExpiresAt: Date | null
+    claimedAt: Date | null
+    claimUrl: string | null
     _count: WebsiteProvisionCountAggregateOutputType | null
     _min: WebsiteProvisionMinAggregateOutputType | null
     _max: WebsiteProvisionMaxAggregateOutputType | null
@@ -62380,6 +62401,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
     accessToken?: boolean
+    accessTokenExpiresAt?: boolean
+    claimedAt?: boolean
+    claimUrl?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62421,6 +62445,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
     accessToken?: boolean
+    accessTokenExpiresAt?: boolean
+    claimedAt?: boolean
+    claimUrl?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62462,6 +62489,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
     accessToken?: boolean
+    accessTokenExpiresAt?: boolean
+    claimedAt?: boolean
+    claimUrl?: boolean
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["websiteProvision"]>
@@ -62503,9 +62533,12 @@ export namespace Prisma {
     adminPasswordEncrypted?: boolean
     adminUser?: boolean
     accessToken?: boolean
+    accessTokenExpiresAt?: boolean
+    claimedAt?: boolean
+    claimUrl?: boolean
   }
 
-  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "framework" | "siteType" | "status" | "hasCustomDomain" | "customDomain" | "subdomain" | "businessName" | "businessTagline" | "contactEmail" | "contactPhone" | "businessAddress" | "socialLinks" | "coolifyProjectUuid" | "coolifyServerUuid" | "deploymentUrl" | "lastDeploymentAt" | "lastHealthCheck" | "healthCheckStatus" | "config" | "cpuLimit" | "memoryLimit" | "errorMessage" | "deploymentLogs" | "notes" | "isTest" | "deletedAt" | "shopId" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser" | "accessToken", ExtArgs["result"]["websiteProvision"]>
+  export type WebsiteProvisionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "framework" | "siteType" | "status" | "hasCustomDomain" | "customDomain" | "subdomain" | "businessName" | "businessTagline" | "contactEmail" | "contactPhone" | "businessAddress" | "socialLinks" | "coolifyProjectUuid" | "coolifyServerUuid" | "deploymentUrl" | "lastDeploymentAt" | "lastHealthCheck" | "healthCheckStatus" | "config" | "cpuLimit" | "memoryLimit" | "errorMessage" | "deploymentLogs" | "notes" | "isTest" | "deletedAt" | "shopId" | "coolifyDatabaseUuid" | "coolifyServiceUuid" | "adminPasswordEncrypted" | "adminUser" | "accessToken" | "accessTokenExpiresAt" | "claimedAt" | "claimUrl", ExtArgs["result"]["websiteProvision"]>
   export type WebsiteProvisionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -62562,6 +62595,9 @@ export namespace Prisma {
       adminPasswordEncrypted: string | null
       adminUser: string | null
       accessToken: string | null
+      accessTokenExpiresAt: Date | null
+      claimedAt: Date | null
+      claimUrl: string | null
     }, ExtArgs["result"]["websiteProvision"]>
     composites: {}
   }
@@ -63023,6 +63059,9 @@ export namespace Prisma {
     readonly adminPasswordEncrypted: FieldRef<"WebsiteProvision", 'String'>
     readonly adminUser: FieldRef<"WebsiteProvision", 'String'>
     readonly accessToken: FieldRef<"WebsiteProvision", 'String'>
+    readonly accessTokenExpiresAt: FieldRef<"WebsiteProvision", 'DateTime'>
+    readonly claimedAt: FieldRef<"WebsiteProvision", 'DateTime'>
+    readonly claimUrl: FieldRef<"WebsiteProvision", 'String'>
   }
     
 
@@ -70158,7 +70197,10 @@ export namespace Prisma {
     coolifyServiceUuid: 'coolifyServiceUuid',
     adminPasswordEncrypted: 'adminPasswordEncrypted',
     adminUser: 'adminUser',
-    accessToken: 'accessToken'
+    accessToken: 'accessToken',
+    accessTokenExpiresAt: 'accessTokenExpiresAt',
+    claimedAt: 'claimedAt',
+    claimUrl: 'claimUrl'
   };
 
   export type WebsiteProvisionScalarFieldEnum = (typeof WebsiteProvisionScalarFieldEnum)[keyof typeof WebsiteProvisionScalarFieldEnum]
@@ -74683,6 +74725,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
     accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessTokenExpiresAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -74724,6 +74769,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
     accessToken?: SortOrderInput | SortOrder
+    accessTokenExpiresAt?: SortOrderInput | SortOrder
+    claimedAt?: SortOrderInput | SortOrder
+    claimUrl?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -74768,6 +74816,9 @@ export namespace Prisma {
     coolifyDatabaseUuid?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessTokenExpiresAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
     shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "customDomain" | "subdomain" | "coolifyProjectUuid" | "shopId" | "coolifyServiceUuid" | "accessToken">
@@ -74809,6 +74860,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: SortOrderInput | SortOrder
     adminUser?: SortOrderInput | SortOrder
     accessToken?: SortOrderInput | SortOrder
+    accessTokenExpiresAt?: SortOrderInput | SortOrder
+    claimedAt?: SortOrderInput | SortOrder
+    claimUrl?: SortOrderInput | SortOrder
     _count?: WebsiteProvisionCountOrderByAggregateInput
     _max?: WebsiteProvisionMaxOrderByAggregateInput
     _min?: WebsiteProvisionMinOrderByAggregateInput
@@ -74854,6 +74908,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
     accessToken?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
+    accessTokenExpiresAt?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
+    claimedAt?: DateTimeNullableWithAggregatesFilter<"WebsiteProvision"> | Date | string | null
+    claimUrl?: StringNullableWithAggregatesFilter<"WebsiteProvision"> | string | null
   }
 
   export type ExampleWhereInput = {
@@ -79684,6 +79741,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
     shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
@@ -79725,6 +79785,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
   }
 
   export type WebsiteProvisionUpdateInput = {
@@ -79762,6 +79825,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
     user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
@@ -79803,6 +79869,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionCreateManyInput = {
@@ -79842,6 +79911,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
   }
 
   export type WebsiteProvisionUpdateManyMutationInput = {
@@ -79879,6 +79951,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUncheckedUpdateManyInput = {
@@ -79918,6 +79993,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ExampleCreateInput = {
@@ -83493,6 +83571,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
     accessToken?: SortOrder
+    accessTokenExpiresAt?: SortOrder
+    claimedAt?: SortOrder
+    claimUrl?: SortOrder
   }
 
   export type WebsiteProvisionMaxOrderByAggregateInput = {
@@ -83529,6 +83610,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
     accessToken?: SortOrder
+    accessTokenExpiresAt?: SortOrder
+    claimedAt?: SortOrder
+    claimUrl?: SortOrder
   }
 
   export type WebsiteProvisionMinOrderByAggregateInput = {
@@ -83565,6 +83649,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: SortOrder
     adminUser?: SortOrder
     accessToken?: SortOrder
+    accessTokenExpiresAt?: SortOrder
+    claimedAt?: SortOrder
+    claimUrl?: SortOrder
   }
 
   export type EnumFrameworkWithAggregatesFilter<$PrismaModel = never> = {
@@ -91696,6 +91783,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
     user: UserCreateNestedOneWithoutWebsiteProvisionInput
   }
 
@@ -91735,6 +91825,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
@@ -91964,6 +92057,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
 
@@ -92003,6 +92099,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopCreateWithoutAddressInput = {
@@ -100826,6 +100925,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
     shop: ShopCreateNestedOneWithoutWebsiteProvisionInput
   }
 
@@ -100865,6 +100967,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
   }
 
   export type WebsiteProvisionCreateOrConnectWithoutUserInput = {
@@ -101454,6 +101559,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: StringNullableFilter<"WebsiteProvision"> | string | null
     adminUser?: StringNullableFilter<"WebsiteProvision"> | string | null
     accessToken?: StringNullableFilter<"WebsiteProvision"> | string | null
+    accessTokenExpiresAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimedAt?: DateTimeNullableFilter<"WebsiteProvision"> | Date | string | null
+    claimUrl?: StringNullableFilter<"WebsiteProvision"> | string | null
   }
 
   export type DepotUpsertWithWhereUniqueWithoutUserInput = {
@@ -104009,6 +104117,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: string | null
     adminUser?: string | null
     accessToken?: string | null
+    accessTokenExpiresAt?: Date | string | null
+    claimedAt?: Date | string | null
+    claimUrl?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -104673,6 +104784,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneRequiredWithoutWebsiteProvisionNestedInput
   }
 
@@ -104712,6 +104826,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUncheckedUpdateManyWithoutUserInput = {
@@ -104750,6 +104867,9 @@ export namespace Prisma {
     adminPasswordEncrypted?: NullableStringFieldUpdateOperationsInput | string | null
     adminUser?: NullableStringFieldUpdateOperationsInput | string | null
     accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DepotUpdateWithoutUserInput = {

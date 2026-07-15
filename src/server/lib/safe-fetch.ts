@@ -112,15 +112,23 @@ export function assertPublicHttpUrl(rawUrl: string): URL {
 
 /** Resolve a hostname and throw if any address is private/reserved. */
 export async function assertHostResolvesPublic(hostname: string): Promise<void> {
-  if (net.isIP(hostname)) {
-    if (isBlockedAddress(hostname)) {
+  // `URL.hostname` keeps the brackets around IPv6 literals (e.g. "[::1]");
+  // strip them before checking with `net.isIP`, or a bracketed private
+  // literal would fall through to DNS resolution instead of being blocked.
+  const literal =
+    hostname.startsWith("[") && hostname.endsWith("]")
+      ? hostname.slice(1, -1)
+      : hostname;
+
+  if (net.isIP(literal)) {
+    if (isBlockedAddress(literal)) {
       throw new SafeFetchError("Refusing to fetch a private/reserved address.");
     }
     return;
   }
   let records: { address: string }[];
   try {
-    records = await dns.lookup(hostname, { all: true });
+    records = await dns.lookup(literal, { all: true });
   } catch {
     throw new SafeFetchError(`Could not resolve host "${hostname}".`);
   }
