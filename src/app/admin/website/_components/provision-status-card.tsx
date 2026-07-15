@@ -11,6 +11,8 @@ import { Spinner } from "~/components/ui/spinner";
 
 type Provision = NonNullable<RouterOutputs["websiteProvision"]["getMyProvision"]>;
 
+const HELP_EMAIL = "csdt@generativejustice.org";
+
 function needsPolling(provision: Provision | null | undefined) {
   if (!provision) return false;
   return (
@@ -19,11 +21,29 @@ function needsPolling(provision: Provision | null | undefined) {
   );
 }
 
-export function ProvisionStatusCard() {
+/**
+ * Consistent muted footer shown at the bottom of every status-card state so
+ * artisans always have a way to reach a human.
+ */
+function HelpFooter() {
+  return (
+    <p className="text-muted-foreground pt-2 text-xs">
+      Need help? Contact us at{" "}
+      <a
+        href={`mailto:${HELP_EMAIL}`}
+        className="underline underline-offset-2 hover:text-foreground"
+      >
+        {HELP_EMAIL}
+      </a>
+    </p>
+  );
+}
+
+export function ProvisionStatusCard({ shopId }: { shopId: string }) {
   const utils = api.useUtils();
 
   const provisionQuery = api.websiteProvision.getMyProvision.useQuery(
-    undefined,
+    { shopId },
     {
       refetchInterval: (query) => (needsPolling(query.state.data) ? 5000 : false),
     },
@@ -36,7 +56,7 @@ export function ProvisionStatusCard() {
           ? "Done - we've emailed you a fresh claim link."
           : "Rebuilding your website...",
       );
-      utils.websiteProvision.getMyProvision.setData(undefined, result);
+      utils.websiteProvision.getMyProvision.setData({ shopId }, result);
       void utils.websiteProvision.getMyProvision.invalidate();
     },
     onError: (error) => {
@@ -52,7 +72,7 @@ export function ProvisionStatusCard() {
 
   const retryButton = (label: string, pendingLabel: string) => (
     <Button
-      onClick={() => retryMutation.mutate()}
+      onClick={() => retryMutation.mutate({ shopId })}
       disabled={retryMutation.isPending}
     >
       {retryMutation.isPending ? (
@@ -95,6 +115,7 @@ export function ProvisionStatusCard() {
               {retryButton("Restart the build", "Restarting...")}
             </>
           )}
+          <HelpFooter />
         </CardContent>
       </Card>
     );
@@ -119,6 +140,7 @@ export function ProvisionStatusCard() {
               shop&apos;s contact address a link to claim it.
             </p>
             {retryButton("Finish setup", "Building your website...")}
+            <HelpFooter />
           </CardContent>
         </Card>
       );
@@ -150,7 +172,7 @@ export function ProvisionStatusCard() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => retryMutation.mutate()}
+              onClick={() => retryMutation.mutate({ shopId })}
               disabled={retryMutation.isPending}
             >
               {retryMutation.isPending ? (
@@ -163,12 +185,18 @@ export function ProvisionStatusCard() {
               )}
             </Button>
           </div>
+          <HelpFooter />
         </CardContent>
       </Card>
     );
   }
 
   if (provision.status === "ACTIVE" && provision.claimedAt) {
+    const claimedDate = new Date(provision.claimedAt).toLocaleDateString(
+      undefined,
+      { year: "numeric", month: "long", day: "numeric" },
+    );
+
     return (
       <Card className="mb-10">
         <CardHeader>
@@ -177,23 +205,56 @@ export function ProvisionStatusCard() {
             Your website is live
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
-          {provision.deploymentUrl && (
-            <Button asChild variant="outline">
-              <a
-                href={provision.deploymentUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Visit your site
-                <ExternalLink className="ml-2 size-4" />
-              </a>
-            </Button>
-          )}
+        <CardContent className="space-y-4">
           <p className="text-muted-foreground text-sm">
-            You manage your site&apos;s content and design directly on
-            SimplePress.
+            Your business is live on SimplePress. You manage your site&apos;s
+            content and design directly there.
           </p>
+          <dl className="grid gap-3 sm:grid-cols-2">
+            {provision.subdomain && (
+              <div>
+                <dt className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  Subdomain
+                </dt>
+                <dd className="text-foreground text-sm font-medium">
+                  {provision.subdomain}
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                Claimed on
+              </dt>
+              <dd className="text-foreground text-sm font-medium">
+                {claimedDate}
+              </dd>
+            </div>
+          </dl>
+          {provision.deploymentUrl && (
+            <div className="flex flex-wrap items-center gap-3">
+              <Button asChild variant="outline">
+                <a
+                  href={provision.deploymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit your storefront
+                  <ExternalLink className="ml-2 size-4" />
+                </a>
+              </Button>
+              <Button asChild variant="outline">
+                <a
+                  href={`${provision.deploymentUrl}/admin`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Manage your site
+                  <ExternalLink className="ml-2 size-4" />
+                </a>
+              </Button>
+            </div>
+          )}
+          <HelpFooter />
         </CardContent>
       </Card>
     );
@@ -214,7 +275,7 @@ export function ProvisionStatusCard() {
               "We couldn't finish building your website."}
           </p>
           <Button
-            onClick={() => retryMutation.mutate()}
+            onClick={() => retryMutation.mutate({ shopId })}
             disabled={retryMutation.isPending}
           >
             {retryMutation.isPending ? (
@@ -226,6 +287,7 @@ export function ProvisionStatusCard() {
               "Try again"
             )}
           </Button>
+          <HelpFooter />
         </CardContent>
       </Card>
     );
@@ -241,10 +303,11 @@ export function ProvisionStatusCard() {
           <Badge variant="secondary">{provision.status}</Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <p className="text-muted-foreground text-sm">
           Your website is currently {provision.status.toLowerCase()}.
         </p>
+        <HelpFooter />
       </CardContent>
     </Card>
   );
