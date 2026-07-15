@@ -24,8 +24,6 @@ export const env = createEnv({
     AUTH0_CLIENT_SECRET: z.string().min(1),
     AUTH0_ISSUER: z.string().min(1),
     HOSTNAME: z.string(),
-    GUEST_CODE: z.string(),
-    ARTISAN_CODE: z.string(),
 
     RESEND_API_KEY: z.string(),
 
@@ -67,7 +65,6 @@ export const env = createEnv({
       z.boolean().optional().default(false),
     ),
 
-    NEXT_PUBLIC_PASSWORD_PROTECT: z.string().min(1),
     NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
     NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
     NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
@@ -95,10 +92,7 @@ export const env = createEnv({
     AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
     AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
     AUTH0_ISSUER: process.env.AUTH0_ISSUER,
-    NEXT_PUBLIC_PASSWORD_PROTECT: process.env.NEXT_PUBLIC_PASSWORD_PROTECT,
     HOSTNAME: process.env.HOSTNAME,
-    GUEST_CODE: process.env.GUEST_CODE,
-    ARTISAN_CODE: process.env.ARTISAN_CODE,
 
     COOLIFY_API: process.env.COOLIFY_API,
     COOLIFY_ADMIN_SAFE_API_TOKEN: process.env.COOLIFY_ADMIN_SAFE_API_TOKEN,

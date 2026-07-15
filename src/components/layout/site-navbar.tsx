@@ -94,6 +94,15 @@ export const SiteNavbar = () => {
               },
             ]
           : []),
+        ...(user.role === "ARTISAN"
+          ? [
+              {
+                icon: <Store className="h-4 w-4" />,
+                label: "My Shop",
+                href: "/admin",
+              },
+            ]
+          : []),
       ]}
     />
   );

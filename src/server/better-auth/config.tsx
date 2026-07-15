@@ -161,9 +161,6 @@ export const auth = betterAuth({
         }
       }
 
-      if (ctx.path === "/sign-in/social") {
-      }
-
       if (ctx.path === "/error") {
         const queryString = new URLSearchParams(
           ctx.query as
@@ -179,78 +176,6 @@ export const auth = betterAuth({
     }),
 
     after: createAuthMiddleware(async (ctx) => {
-      if (ctx.path === "/sign-in/social") {
-      }
-
-      // if (
-      //   ctx.path.startsWith("/callback/discord") ||
-      //   ctx.path.startsWith("/callback/google") ||
-      //   ctx.path.startsWith("/callback/auth0")
-      // ) {
-      //   const user = ctx.context.newSession?.user;
-      //   if (!user) return;
-
-      //   console.log(user);
-
-      //   const existingUser = await db.user.findUnique({
-      //     where: { id: user.id },
-      //     select: { createdAt: true },
-      //   });
-
-      //   const isNewUser =
-      //     existingUser && Date.now() - existingUser.createdAt.getTime() < 5000;
-
-      //   if (isNewUser) {
-      //     const code = await ctx.getSignedCookie(
-      //       "signup-code",
-      //       ctx.context.secret,
-      //     );
-
-      //     if (!code) {
-      //       await db.user.delete({ where: { id: user.id } });
-      //       throw new APIError("UNAUTHORIZED", {
-      //         message:
-      //           "New accounts require an invitation code. Please visit the sign-up page with a valid code.",
-      //       });
-      //     }
-
-      //     const invite = await db.platformInvite.findUnique({
-      //       where: { code },
-      //     });
-
-      //     if (!invite) {
-      //       await db.user.delete({ where: { id: user.id } });
-      //       throw new APIError("UNAUTHORIZED", {
-      //         message: "Invalid invitation code",
-      //       });
-      //     }
-
-      //     if (invite.used) {
-      //       await db.user.delete({ where: { id: user.id } });
-      //       throw new APIError("UNAUTHORIZED", {
-      //         message: "This invitation code has already been used",
-      //       });
-      //     }
-
-      //     if (invite.expiresAt <= new Date()) {
-      //       await db.user.delete({ where: { id: user.id } });
-      //       throw new APIError("UNAUTHORIZED", {
-      //         message: "This invitation code has expired",
-      //       });
-      //     }
-
-      //     const userEmail = user.email?.trim().toLowerCase();
-      //     if (invite.email.toLowerCase() !== userEmail) {
-      //       await db.user.delete({ where: { id: user.id } });
-      //       throw new APIError("UNAUTHORIZED", {
-      //         message: "This invitation is for a different email address.",
-      //       });
-      //     }
-
-      //     ctx.setCookie("signup-code", "", { maxAge: 0 });
-      //   }
-      // }
-
       // 4. CUSTOM REDIRECTS (allow env.HOSTNAME redirects)
       if (
         (ctx.path.startsWith("/sign-in") || ctx.path.startsWith("/callback")) &&

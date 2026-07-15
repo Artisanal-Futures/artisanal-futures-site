@@ -61,33 +61,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: true });
     }
 
-    // Admin invites require a real PlatformInvite — no env-code fallback
-    if (type === "admin") {
-      return NextResponse.json(
-        { error: "Invalid invitation code" },
-        { status: 400 },
-      );
-    }
-
-    // Fall back to environment variable for artisan/guest
-    const validCode =
-      type === "artisan" ? process.env.ARTISAN_CODE : process.env.GUEST_CODE;
-
-    if (!validCode) {
-      return NextResponse.json(
-        { error: "Invitation system not configured" },
-        { status: 500 },
-      );
-    }
-
-    if (code !== validCode.toUpperCase()) {
-      return NextResponse.json(
-        { error: "Invalid invitation code" },
-        { status: 400 },
-      );
-    }
-
-    return NextResponse.json({ valid: true });
+    // No matching PlatformInvite — invalid for all types.
+    return NextResponse.json(
+      { error: "Invalid invitation code" },
+      { status: 400 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

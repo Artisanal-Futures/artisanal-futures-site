@@ -80,6 +80,11 @@ export const shopsRouter = createTRPCRouter({
   }),
 
   getMetrics: adminOnlyProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const sevenDaysFromNow = new Date(
+      new Date().setDate(new Date().getDate() + 7),
+    );
+
     const products = await ctx.db.product.count();
     const services = await ctx.db.service.count();
     const websites = await ctx.db.websiteProvision.count();
@@ -103,6 +108,33 @@ export const shopsRouter = createTRPCRouter({
       },
     });
 
+    // "Needs attention" counts — actionable items for a platform admin.
+    const pendingProvisions = await ctx.db.websiteProvision.count({
+      where: {
+        status: { in: ["PENDING", "PROVISIONING", "BUILDING", "DEPLOYING"] },
+      },
+    });
+
+    const failedProvisions = await ctx.db.websiteProvision.count({
+      where: { status: "FAILED" },
+    });
+
+    const pendingInvites = await ctx.db.platformInvite.count({
+      where: { used: false, expiresAt: { gt: now } },
+    });
+
+    const expiringInvites = await ctx.db.platformInvite.count({
+      where: { used: false, expiresAt: { gt: now, lte: sevenDaysFromNow } },
+    });
+
+    const shopsWithoutProducts = await ctx.db.shop.count({
+      where: { products: { none: {} } },
+    });
+
+    const hiddenShops = await ctx.db.shop.count({
+      where: { isPublic: false },
+    });
+
     return {
       products,
       services,
@@ -112,6 +144,12 @@ export const shopsRouter = createTRPCRouter({
       shops,
       newArtisansThisMonth,
       productsAddedThisWeek,
+      pendingProvisions,
+      failedProvisions,
+      pendingInvites,
+      expiringInvites,
+      shopsWithoutProducts,
+      hiddenShops,
     };
   }),
 

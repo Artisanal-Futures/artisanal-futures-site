@@ -13,11 +13,8 @@ import {
 } from "~/server/api/trpc";
 
 function isValidArtisanCode(
-  code: string,
-  envCode: string | undefined,
   invite: { role: string; used: boolean; expiresAt: Date } | null,
 ) {
-  if (code === envCode?.toUpperCase()) return true;
   return (
     invite?.role === "ARTISAN" && !invite.used && invite.expiresAt > new Date()
   );
@@ -32,11 +29,8 @@ function isValidAdminCode(
 }
 
 function isValidGuestCode(
-  code: string,
-  envCode: string | undefined,
   invite: { role: string; used: boolean; expiresAt: Date } | null,
 ) {
-  if (code === envCode?.toUpperCase()) return true;
   return (
     invite?.role === "GUEST" && !invite.used && invite.expiresAt > new Date()
   );
@@ -47,12 +41,11 @@ export const onboardingRouter = createTRPCRouter({
     .input(artisanOnboardingSchema)
     .mutation(async ({ ctx, input }) => {
       const code = input.invitationCode.trim().toUpperCase();
-      const validEnvCode = process.env.ARTISAN_CODE;
       const invite = await ctx.db.platformInvite.findUnique({
         where: { code },
       });
 
-      if (!isValidArtisanCode(code, validEnvCode, invite)) {
+      if (!isValidArtisanCode(invite)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid invitation code",
@@ -133,12 +126,11 @@ export const onboardingRouter = createTRPCRouter({
     .input(guestOnboardingSchema)
     .mutation(async ({ ctx, input }) => {
       const code = input.invitationCode.trim().toUpperCase();
-      const validEnvCode = process.env.GUEST_CODE;
       const invite = await ctx.db.platformInvite.findUnique({
         where: { code },
       });
 
-      if (!isValidGuestCode(code, validEnvCode, invite)) {
+      if (!isValidGuestCode(invite)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid invitation code",
