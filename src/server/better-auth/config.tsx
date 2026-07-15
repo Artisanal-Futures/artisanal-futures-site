@@ -108,6 +108,40 @@ export const auth = betterAuth({
   },
 
   user: {
+    changeEmail: {
+      enabled: true,
+      // Only sent when the current email is verified: better-auth emails the
+      // existing address to approve the change. When the current email is
+      // unverified (the default here), the new email is applied directly.
+      sendChangeEmailVerification: async ({
+        user,
+        newEmail,
+        url,
+      }: {
+        user: { email: string; name: string };
+        newEmail: string;
+        url: string;
+      }) => {
+        void resend.emails.send({
+          from: EMAIL_FROM.NOREPLY,
+          to: user.email,
+          subject: "Approve your email change",
+          react: EmailTemplate({
+            action: "Approve Email Change",
+            heading: "Confirm your new email",
+            content: (
+              <>
+                <p>{`Hello ${user.name},`}</p>
+                <p>{`Click the button below to change your account email to ${newEmail}. If you didn't request this, you can ignore this message.`}</p>
+              </>
+            ),
+            siteName: "SimplePress",
+            baseUrl: env.BETTER_AUTH_URL,
+            url,
+          }),
+        });
+      },
+    },
     additionalFields: {
       role: {
         type: "string",

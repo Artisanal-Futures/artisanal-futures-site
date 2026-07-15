@@ -80,7 +80,7 @@ export function AdminWelcomeDashboard({
         ? "We offer free hosting for your existing website"
         : "Get a simple, beautiful site to start selling online",
       completed: hasHostedWebsite,
-      href: hasWebsite ? "/hosting" : "/sites/create",
+      href: "/admin/website",
       action: hasWebsite ? "Learn More" : "Get Started",
     },
   ];
@@ -246,7 +246,7 @@ export function AdminWelcomeDashboard({
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Forum */}
             <Link
-              href="/forum"
+              href="/forums"
               className="group border-border bg-card hover:border-ring/30 flex flex-col gap-4 rounded-xl border p-6 transition-all hover:shadow-md"
             >
               <div className="bg-secondary flex size-11 items-center justify-center rounded-lg">
