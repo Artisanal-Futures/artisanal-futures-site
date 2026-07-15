@@ -35,6 +35,7 @@ export const shopsRouter = createTRPCRouter({
 
   getAllPublic: publicProcedure.query(({ ctx }) => {
     return ctx.db.shop.findMany({
+      where: { isPublic: true },
       select: {
         id: true,
         name: true,
@@ -141,6 +142,7 @@ export const shopsRouter = createTRPCRouter({
           description: input.description ?? "",
           logoPhoto: input.logoPhotoUrl,
           attributeTags: input.attributeTags ?? [],
+          isPublic: input.isPublic,
           address: {
             create: {
               address: input.address ?? "",
@@ -204,6 +206,7 @@ export const shopsRouter = createTRPCRouter({
             email: input?.email ?? "",
             website: input?.website ?? "",
             attributeTags: input?.attributeTags ?? [],
+            isPublic: input?.isPublic,
           },
         });
 

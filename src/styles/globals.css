@@ -317,7 +317,7 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
     @apply text-foreground text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl;
   }
   header.site-header p.tagline {
-    @apply text-muted-foreground text-sm font-medium tracking-widest uppercase;
+    @apply text-muted-foreground hidden text-sm font-medium tracking-widest uppercase;
   }
 
   header.site-header p.description {

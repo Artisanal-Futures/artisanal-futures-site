@@ -261,7 +261,8 @@ exports.Prisma.ShopScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   attributeTags: 'attributeTags',
-  name: 'name'
+  name: 'name',
+  isPublic: 'isPublic'
 };
 
 exports.Prisma.ShopAddressScalarFieldEnum = {

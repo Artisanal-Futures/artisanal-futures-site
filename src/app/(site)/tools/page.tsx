@@ -1,6 +1,6 @@
 import { TOOLS_DATA } from "~/data/tools";
-import { getSession } from "~/server/better-auth/server";
 
+import { getSession } from "~/server/better-auth/server";
 import { ToolCard } from "~/app/(site)/tools/_components/tool-card";
 
 export const metadata = {
@@ -22,8 +22,8 @@ export default async function ToolsPage() {
             <h1>Artisanal Futures Tools</h1>
           </div>
           <p className="description">
-            Explore our collection of free, open-source tools designed to
-            enhance your artisanal business workflow and boost productivity
+            Explore our collection of free to use tools designed to enhance your
+            artisanal business workflow and boost productivity
           </p>
         </div>
       </header>

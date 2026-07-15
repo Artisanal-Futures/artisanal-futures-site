@@ -199,6 +199,7 @@ model Shop {
   updatedAt        DateTime          @updatedAt
   attributeTags    String[]
   name             String
+  isPublic         Boolean           @default(true)
   events           Event[]
   products         Product[]
   services         Service[]

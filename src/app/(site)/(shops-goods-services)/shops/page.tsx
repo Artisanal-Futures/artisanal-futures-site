@@ -12,16 +12,16 @@ export default async function ShopsPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <p className="tagline">Local Artisans</p>
-            <h1>Discover Our Makers</h1>
+            <h1>Meet Our Makers and Providers</h1>
           </div>
           <p className="description">
-            Meet the talented artisans in our community. Browse their profiles,
-            explore their unique products and services, and support small
-            businesses directly.
+            Meet the talented artisans and providers in our community. Browse
+            their profiles, explore their products and services, and support
+            small businesses directly.
           </p>
           <p className="text-muted-foreground text-sm">
-            {shops?.length} {shops?.length === 1 ? "artisan" : "artisans"} in
-            the directory
+            {shops?.length} {shops?.length === 1 ? "member" : "members"} in the
+            directory
           </p>
         </div>
       </header>

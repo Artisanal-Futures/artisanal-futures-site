@@ -12,9 +12,15 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const { shopId } = await params;
   const shop = await api.shop.get(shopId);
+  if (!shop || !shop.isPublic) {
+    return {
+      title: "Artisan Profile",
+      description: "View an artisan's profile and products",
+    };
+  }
   return {
-    title: shop?.name ?? "Artisan Profile",
-    description: `View ${shop?.name}'s profile and products`,
+    title: shop.name,
+    description: `View ${shop.name}'s profile and products`,
   };
 }
 
@@ -22,7 +28,7 @@ export default async function ShopProfilePage({ params }: Props) {
   const { shopId } = await params;
   const shop = await api.shop.get(shopId);
 
-  if (!shop) {
+  if (!shop || !shop.isPublic) {
     return notFound();
   }
 

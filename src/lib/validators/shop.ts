@@ -23,6 +23,7 @@ export const shopSchema = z.object({
 
   ownerPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
+  isPublic: z.boolean().default(true),
 });
 
 export const shopFormSchema = shopSchema.extend({
