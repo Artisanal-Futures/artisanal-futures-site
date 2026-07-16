@@ -1,8 +1,10 @@
 "use client";
 
+import { Info } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import type { SignupFormData } from "~/lib/validators/onboarding";
+import { Alert, AlertDescription } from "~/components/ui/alert";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TagSelectFormField } from "~/components/inputs/tag-select-form-field";
@@ -86,7 +88,7 @@ const BUSINESS_FIELD_NAMES: (keyof SignupFormData)[] = [
 
 export function BusinessInfoStep() {
   const form = useFormContext<SignupFormData>();
-  const { goNext, goBack, currentStep } = useArtisanSignup();
+  const { goNext, goBack, currentStep, attachedShop } = useArtisanSignup();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +110,21 @@ export function BusinessInfoStep() {
             <p className="text-muted-foreground mt-2">
               Help us understand your business and what makes it special
             </p>
+
+            {attachedShop && (
+              <Alert className="mt-4">
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  {"You're taking ownership of "}
+                  <strong className="text-foreground font-medium">
+                    {attachedShop.name}
+                  </strong>
+                  {
+                    ". We've pre-filled its details — review and edit anything below."
+                  }
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
 
           <div className="space-y-6">

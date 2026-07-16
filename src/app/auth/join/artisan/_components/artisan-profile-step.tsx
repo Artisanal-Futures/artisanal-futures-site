@@ -145,8 +145,8 @@ export function ArtisanProfileStep() {
       ...values,
       logoFile: undefined,
       ownerPhotoFile: undefined,
-      logoPhotoUrl: logoPhotoUrl ?? undefined,
-      ownerPhotoUrl: ownerPhotoUrl ?? undefined,
+      logoPhotoUrl: logoPhotoUrl ?? values.logoPhotoUrl ?? undefined,
+      ownerPhotoUrl: ownerPhotoUrl ?? values.ownerPhotoUrl ?? undefined,
     };
 
     onboarding.mutate(completeFormData);
@@ -154,6 +154,9 @@ export function ArtisanProfileStep() {
 
   const isPending =
     onboarding.isPending || imageUploader.isPending || isCreatingAccount;
+
+  const existingLogoUrl = form.watch("logoPhotoUrl");
+  const existingOwnerPhotoUrl = form.watch("ownerPhotoUrl");
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
@@ -187,6 +190,7 @@ export function ArtisanProfileStep() {
                 description="Upload your business logo. Shown on your store and in listings."
                 disabled={isPending}
                 inputRef={logoInputRef}
+                existingPreviewUrl={existingLogoUrl ?? undefined}
                 className="col-span-1"
               />
 
@@ -197,6 +201,7 @@ export function ArtisanProfileStep() {
                 description="A photo of you or an image that represents your business."
                 disabled={isPending}
                 inputRef={ownerPhotoInputRef}
+                existingPreviewUrl={existingOwnerPhotoUrl ?? undefined}
                 className="col-span-1"
               />
             </div>

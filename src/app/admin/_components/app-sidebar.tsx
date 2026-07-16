@@ -68,6 +68,11 @@ const getNavData = (session: Session | null) => {
       url: "/admin/website",
       icon: IconGlobe,
     },
+    {
+      title: "My Shop",
+      url: "/admin/shops",
+      icon: IconShoppingCart,
+    },
   ];
 
   const navPlatformAdmin:

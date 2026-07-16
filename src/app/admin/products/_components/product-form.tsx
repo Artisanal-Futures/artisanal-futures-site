@@ -371,7 +371,7 @@ export function ProductForm({
                       name="productUrl"
                       label="Product URL"
                     />
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
                         name="priceInCents"
@@ -405,18 +405,6 @@ export function ProductForm({
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
-                      <SelectFormField
-                        form={form}
-                        name="currency"
-                        label="Currency"
-                        className="col-span-1"
-                        values={[
-                          { label: "USD", value: "USD" },
-                          { label: "CAD", value: "CAD" },
-                          { label: "EUR", value: "EUR" },
-                          { label: "GBP", value: "GBP" },
-                        ]}
                       />
                     </div>
                     <TextareaFormField

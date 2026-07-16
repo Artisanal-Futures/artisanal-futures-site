@@ -4,15 +4,9 @@ export const serviceSchema = z.object({
   name: z.string().min(1, "Name is required."),
   description: z.string().min(1, "Description is required."),
   priceInCents: z.coerce.number().int("Price must be a whole number of cents.").min(0, "Price cannot be negative.").max(100_000_000, "Price is too large.").optional().nullable(),
-  // Constrain to supported currencies for the UI, but normalize unknown/null
-  // values (e.g. from migration imports) to USD instead of failing validation.
-  currency: z.preprocess(
-    (v) =>
-      typeof v === "string" && ["USD", "CAD", "EUR", "GBP"].includes(v)
-        ? v
-        : "USD",
-    z.enum(["USD", "CAD", "EUR", "GBP"]),
-  ),
+  // Only USD is offered. Force every value (including legacy import currencies
+  // like CAD/EUR/GBP) to USD, while keeping the enum type stable for the forms.
+  currency: z.preprocess(() => "USD", z.enum(["USD", "CAD", "EUR", "GBP"])),
   imageUrl: z.string().url().optional().nullable().or(z.literal("")),
   durationInMinutes: z.coerce.number().int("Duration must be a whole number of minutes.").min(0, "Duration cannot be negative.").max(100_000, "Duration is too large.").optional().nullable(),
   locationType: z.string().optional().nullable(),

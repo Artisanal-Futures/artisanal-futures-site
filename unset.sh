@@ -66,16 +66,6 @@ unset NEXT_PUBLIC_STORAGE_URL
 
 
 
-
-
-
-
-unset NEXT_PUBLIC_PASSWORD_PROTECT
-
-
-
-
-
 unset NEXTAUTH_URL
 unset NEXTAUTH_SECRET
 

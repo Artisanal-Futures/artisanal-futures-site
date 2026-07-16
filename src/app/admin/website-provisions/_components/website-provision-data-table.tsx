@@ -3,7 +3,7 @@
 import type { Shop, WebsiteProvision } from "generated/prisma";
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MailIcon, TrashIcon } from "lucide-react";
+import { LinkIcon, MailIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import type { RouterOutputs } from "~/trpc/react";
@@ -129,6 +129,20 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
             />
           ) : (
             <>
+              {shop.websiteProvision?.claimUrl &&
+                !shop.websiteProvision.claimedAt && (
+                  <Button
+                    className="h-8 text-xs"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      window.open(shop.websiteProvision!.claimUrl!, "_blank")
+                    }
+                  >
+                    <LinkIcon className="mr-1 h-4 w-4" />
+                    Claim Link
+                  </Button>
+                )}
               <Button
                 className="h-8 text-xs"
                 size="sm"

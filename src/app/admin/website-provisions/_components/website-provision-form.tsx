@@ -1,20 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SiteType } from "generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
-import type { WebsiteCreateFormData } from "~/lib/validators/website-provision";
-import { cn } from "~/lib/utils";
-import { websiteCreateFormSchema } from "~/lib/validators/website-provision";
 import { api } from "~/trpc/react";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Form, FormField } from "~/components/ui/form";
+import { Form } from "~/components/ui/form";
+import { Skeleton } from "~/components/ui/skeleton";
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
+
+// NOTE: WordPress provisioning was intentionally removed from this form.
+// The router still supports it (see `websiteProvisionRouter.create`), but the
+// product decision is to only offer the SimplePress headless flow here for
+// now. WordPress may return as an option later.
 
 type Props = {
   initialData?: {
@@ -23,183 +27,146 @@ type Props = {
     name?: string;
     email?: string;
   } | null;
-  onSuccess?: () => void;
+  onSuccessCallback?: () => void;
 };
 
-const TEMPLATES = [
-  {
-    id: "WORDPRESS",
-    name: "WordPress",
-    description: "A templated WordPress site for e-commerce / blog purposes.",
-  },
-  {
-    id: "NEXTJS",
-    name: "SimplePress",
-    description:
-      "A minimalistic e-commerce platform to get you started quickly.",
-  },
-];
+const formSchema = z.object({
+  shopId: z.string().min(1, "Select a shop"),
+  contactEmail: z.string().email("Invalid email address"),
+});
 
-export function WebsiteProvisionForm({ initialData, onSuccess }: Props) {
-  console.log(initialData);
-  const utils = api.useUtils();
+type FormValues = z.infer<typeof formSchema>;
+
+export function WebsiteProvisionForm({ initialData, onSuccessCallback }: Props) {
   const router = useRouter();
+  const utils = api.useUtils();
 
-  const form = useForm<WebsiteCreateFormData>({
-    resolver: zodResolver(websiteCreateFormSchema),
+  const preselectedShopId = initialData?.shopId ?? "";
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      ownerId: initialData?.ownerId ?? "",
-      shopId: initialData?.shopId ?? "",
-      websiteType: "ECOMMERCE",
-      framework: "WORDPRESS",
-      businessName: initialData?.name ?? "",
+      shopId: preselectedShopId,
       contactEmail: initialData?.email ?? "",
-      subdomain: "",
     },
   });
 
-  const createMutation = api.websiteProvision.create.useMutation({
-    onSuccess: () => {
+  const shopId = form.watch("shopId");
+
+  // Only needed when this form is opened without a pre-selected shop (the
+  // top-level "Create New Website" button) — the row-level entry point
+  // already supplies `initialData.shopId`.
+  const { data: shops, isLoading: isLoadingShops } =
+    api.websiteProvision.listMyShops.useQuery(undefined, {
+      enabled: !preselectedShopId,
+    });
+
+  const { data: shopData, isLoading: isLoadingShopData } =
+    api.websiteProvision.getShopForProvision.useQuery(
+      { shopId },
+      { enabled: !!shopId },
+    );
+
+  // Prefill the contact email from the shop's onboarding data whenever the
+  // selected shop changes, but never stomp on an admin's manual edit.
+  useEffect(() => {
+    if (!shopData) return;
+    if (form.formState.dirtyFields.contactEmail) return;
+    form.setValue("contactEmail", shopData.onboardingData.contactEmail ?? "");
+  }, [shopData, form]);
+
+  const requestMySite = api.websiteProvision.requestMySite.useMutation({
+    onSuccess: (_data, variables) => {
       toast.dismiss();
-      toast.success("Website provision created successfully!");
-      void utils.shop.invalidate();
-      router.refresh();
-      onSuccess?.();
+      toast.success(
+        `Site built — claim email sent to ${variables?.contactEmailOverride ?? "the shop's contact email"}`,
+      );
+      onSuccessCallback?.();
     },
     onError: (error) => {
       toast.dismiss();
-      toast.error(`Error creating website provision: ${error.message}`);
+      toast.error(error.message);
     },
     onMutate: () => {
-      toast.loading("Creating website provision...");
+      toast.loading("Building the site on SimplePress...");
     },
-  });
-
-  const createNextJsMutation = api.websiteProvision.createNextJs.useMutation({
-    onSuccess: (data) => {
-      toast.dismiss();
-      toast.success("SimplePress provision created successfully! ");
-      void utils.shop.invalidate();
-      if (data?.redirectUrl) {
-        window.open(data.redirectUrl, "_blank");
-      }
+    onSettled: () => {
+      void utils.shop.getAllWithWebsites.invalidate();
+      void utils.websiteProvision.invalidate();
       router.refresh();
-      onSuccess?.();
-    },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(`Error creating SimplePress website: ${error.message}`);
-    },
-    onMutate: () => {
-      toast.loading("Creating SimplePress website...");
     },
   });
 
-  const onSubmit = (data: WebsiteCreateFormData) => {
-    if (data.framework === "NEXTJS") {
-      createNextJsMutation.mutate({
-        shopId: data.shopId,
-        userId: data.ownerId,
-        siteType: data.websiteType,
-        framework: data.framework,
-        businessName: data.businessName,
-        contactEmail: data.contactEmail,
-      });
-    } else {
-      createMutation.mutate({
-        shopId: data.shopId,
-        userId: data.ownerId,
-        siteType: data.websiteType,
-        framework: data.framework,
-        businessName: data.businessName,
-        contactEmail: data.contactEmail,
-      });
-    }
+  const onSubmit = (values: FormValues) => {
+    requestMySite.mutate({
+      shopId: values.shopId,
+      contactEmailOverride: values.contactEmail,
+    });
   };
+
+  const businessName =
+    shopData?.onboardingData.businessName ?? initialData?.name ?? "";
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-        onChange={() => console.log(form.formState.errors)}
-      >
-        <FormField
-          control={form.control}
-          name="framework"
-          render={({ field }) => (
-            <div className="grid gap-4 md:grid-cols-2">
-              {TEMPLATES.map((template) => (
-                <button
-                  key={template.id}
-                  type="button"
-                  onClick={() => field.onChange(template.id)}
-                  className={cn(
-                    "relative rounded-lg border-2 p-4 text-left transition-all hover:border-blue-300",
-                    form.watch("framework") === template.id
-                      ? "border-blue-600 bg-blue-50"
-                      : "border-gray-200 bg-white",
-                  )}
-                >
-                  {/* Selected Indicator */}
-                  {form.watch("framework") === template.id && (
-                    <div className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                  )}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {!preselectedShopId && (
+          <SelectFormField
+            form={form}
+            name="shopId"
+            label="Shop"
+            description="Which shop is this site for?"
+            placeholder={isLoadingShops ? "Loading shops..." : "Select a shop"}
+            disabled={isLoadingShops}
+            values={(shops ?? []).map((shop) => ({
+              value: shop.id,
+              label: shop.websiteProvision
+                ? `${shop.name} (${shop.websiteProvision.status})`
+                : shop.name,
+            }))}
+          />
+        )}
 
-                  {/* Template Preview */}
-                  <div className="mb-3 flex aspect-video items-center justify-center rounded bg-linear-to-br from-gray-100 to-gray-200">
-                    <span className="text-xs font-medium text-gray-500">
-                      {template.name}
-                    </span>
-                  </div>
-
-                  {/* Template Info */}
-                  <h3 className="mb-1 text-sm font-semibold">
-                    {template.name}
-                  </h3>
-                  <p className="line-clamp-2 text-xs text-gray-600">
-                    {template.description}
-                  </p>
-                </button>
-              ))}
-            </div>
-          )}
-        />
-
-        <InputFormField
-          form={form}
-          name="businessName"
-          label="What is the name of your business?"
-          description="This will be used as the name of the business and will be displayed on the website."
-          placeholder="e.g. My Awesome Store"
-          required
-        />
+        {shopId && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Business</p>
+            {isLoadingShopData ? (
+              <Skeleton className="h-5 w-40" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-sm">
+                  {businessName || "—"}
+                </span>
+                {shopData?.hasProvision && (
+                  <Badge variant="secondary">
+                    Existing provision: {shopData.shop.websiteProvision?.status}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <InputFormField
           form={form}
           name="contactEmail"
-          label="What email will be used to sign in to the website?"
-          description="This is the email that will be used to sign in to the website. "
+          label="Contact email"
+          description="Claim link and SimplePress invite go to this address. Change it if the shop was created by an admin — the owner, not the admin, must receive it."
           placeholder="e.g. hello@example.com"
           type="email"
           required
         />
+
         <div className="flex justify-end space-x-4">
-          <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? "Creating..." : "Create Website"}
+          <Button type="submit" disabled={requestMySite.isPending || !shopId}>
+            {requestMySite.isPending
+              ? "Building..."
+              : shopData?.hasProvision
+                ? "Rebuild / Resend Claim Email"
+                : "Build Site"}
           </Button>
         </div>
       </form>
     </Form>
   );
-}
-
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 }

@@ -120,10 +120,13 @@ model PlatformInvite {
   usedAt    DateTime?
   usedBy    String?
   createdBy String?
+  shopId    String?
   creator   User?     @relation("CreatedInvites", fields: [createdBy], references: [id])
+  shop      Shop?     @relation("ShopInvites", fields: [shopId], references: [id], onDelete: SetNull)
 
   @@index([email])
   @@index([code])
+  @@index([shopId])
 }
 
 model Service {
@@ -203,6 +206,7 @@ model Shop {
   events           Event[]
   products         Product[]
   services         Service[]
+  invites          PlatformInvite[]  @relation("ShopInvites")
   owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address          ShopAddress?
   websiteProvision WebsiteProvision?
@@ -953,6 +957,9 @@ model WebsiteProvision {
   adminPasswordEncrypted String?
   adminUser              String?
   accessToken            String?         @unique
+  accessTokenExpiresAt   DateTime? // aftoken/claim validity window
+  claimedAt              DateTime? // set by SimplePress "claimed" callback
+  claimUrl               String? // SimplePress claim link (status page + email)
   shop                   Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
   user                   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 

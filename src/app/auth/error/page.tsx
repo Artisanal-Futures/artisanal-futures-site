@@ -5,7 +5,6 @@ import { AuthView } from "@daveyplate/better-auth-ui";
 import { ArrowLeft } from "lucide-react";
 
 import type { ErrorCode } from "../_components/auth-error-card";
-import { setSignupCode } from "~/lib/actions";
 import { cn } from "~/lib/utils";
 import { auth } from "~/server/better-auth/config";
 import { Button, buttonVariants } from "~/components/ui/button";

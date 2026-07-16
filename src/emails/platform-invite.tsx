@@ -7,6 +7,7 @@ interface PlatformInviteEmailProps {
   inviteCode: string;
   role: "ARTISAN" | "GUEST" | "ADMIN";
   logoUrl?: string;
+  shopName?: string;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -23,22 +24,36 @@ export function PlatformInviteEmail({
   inviteCode,
   role,
   logoUrl,
+  shopName,
 }: PlatformInviteEmailProps) {
   const label = roleLabel(role);
+  const previewText = shopName
+    ? `You're invited to take ownership of ${shopName} on Artisanal Futures`
+    : `You're invited to join Artisanal Futures as a ${label}`;
+  const headingText = shopName
+    ? `Take ownership of ${shopName} on Artisanal Futures`
+    : `You're invited to join Artisanal Futures`;
+
   return (
     <EmailLayout
-      previewText={`You're invited to join Artisanal Futures as a ${label}`}
+      previewText={previewText}
       businessName="Artisanal Futures"
       logoUrl={logoUrl}
     >
-      <Text style={heading}>You&apos;re invited to join Artisanal Futures</Text>
+      <Text style={heading}>{headingText}</Text>
 
       <Text style={text}>Hi there,</Text>
 
-      <Text style={text}>
-        You&apos;ve been invited to join Artisanal Futures as a <strong>{label}</strong>.
-        Use the link or code below to get started.
-      </Text>
+      {shopName ? (
+        <Text style={text}>
+          You&apos;ve been invited to join Artisanal Futures as an <strong>Artisan</strong> and take ownership of <strong>{shopName}</strong>. Your shop profile has already been set up — you&apos;ll review and edit its details when you sign up. Use the link or code below to get started.
+        </Text>
+      ) : (
+        <Text style={text}>
+          You&apos;ve been invited to join Artisanal Futures as a <strong>{label}</strong>.
+          Use the link or code below to get started.
+        </Text>
+      )}
 
       <Section style={codeBlockContainer}>
         <Text style={codeLabel}>Your invitation code</Text>

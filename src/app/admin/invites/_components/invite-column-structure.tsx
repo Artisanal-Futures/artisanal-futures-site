@@ -1,12 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontalIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
+import { InviteShopDialog } from "./invite-shop-dialog";
+
 export type InviteRow = RouterOutputs["invite"]["listInvites"][number];
+
+function InviteRowActions({ invite }: { invite: InviteRow }) {
+  const [shopDialogOpen, setShopDialogOpen] = useState(false);
+
+  const canAttach = invite.status === "pending" && invite.role === "ARTISAN";
+  const hasShop = !!invite.shop;
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontalIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onSelect={() => setShopDialogOpen(true)}
+            disabled={!canAttach}
+          >
+            {hasShop ? "Change or detach shop" : "Attach shop"}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <InviteShopDialog
+        open={shopDialogOpen}
+        onOpenChange={setShopDialogOpen}
+        inviteId={invite.id}
+        inviteEmail={invite.email}
+        currentShop={invite.shop}
+      />
+    </>
+  );
+}
 
 export const inviteColumns: ColumnDef<InviteRow>[] = [
   {
@@ -52,6 +99,17 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
     ),
     cell: ({ row }) => (
       <span className="text-sm capitalize">{row.original.role.toLowerCase()}</span>
+    ),
+  },
+  {
+    id: "shop",
+    size: 160,
+    accessorFn: (row) => row.shop?.name ?? "",
+    header: ({ column }) => (
+      <AdvancedDataTableColumnHeader column={column} title="Shop" />
+    ),
+    cell: ({ row }) => (
+      <span className="text-sm">{row.original.shop?.name ?? "—"}</span>
     ),
   },
   {
@@ -123,5 +181,13 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
         {row.original.creator?.name ?? row.original.creator?.email ?? "—"}
       </span>
     ),
+  },
+  {
+    id: "options",
+    size: 60,
+    header: "",
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => <InviteRowActions invite={row.original} />,
   },
 ];

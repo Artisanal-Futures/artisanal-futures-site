@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { db } from "~/server/db";
 
 export async function POST(req: NextRequest) {
@@ -58,36 +59,49 @@ export async function POST(req: NextRequest) {
           { status: 400 },
         );
       }
+
+      // If an artisan invite has a pre-created shop attached, return its
+      // details so the onboarding wizard can be pre-filled.
+      if (invite.shopId && invite.role === "ARTISAN") {
+        const shop = await db.shop.findUnique({
+          where: { id: invite.shopId },
+          select: {
+            id: true,
+            name: true,
+            ownerName: true,
+            bio: true,
+            description: true,
+            logoPhoto: true,
+            ownerPhoto: true,
+            phone: true,
+            email: true,
+            website: true,
+            attributeTags: true,
+          },
+        });
+
+        if (shop) {
+          return NextResponse.json({
+            valid: true,
+            shop: {
+              ...shop,
+              logoPhoto: shop.logoPhoto ? handleImageUrl(shop.logoPhoto) : null,
+              ownerPhoto: shop.ownerPhoto
+                ? handleImageUrl(shop.ownerPhoto)
+                : null,
+            },
+          });
+        }
+      }
+
       return NextResponse.json({ valid: true });
     }
 
-    // Admin invites require a real PlatformInvite — no env-code fallback
-    if (type === "admin") {
-      return NextResponse.json(
-        { error: "Invalid invitation code" },
-        { status: 400 },
-      );
-    }
-
-    // Fall back to environment variable for artisan/guest
-    const validCode =
-      type === "artisan" ? process.env.ARTISAN_CODE : process.env.GUEST_CODE;
-
-    if (!validCode) {
-      return NextResponse.json(
-        { error: "Invitation system not configured" },
-        { status: 500 },
-      );
-    }
-
-    if (code !== validCode.toUpperCase()) {
-      return NextResponse.json(
-        { error: "Invalid invitation code" },
-        { status: 400 },
-      );
-    }
-
-    return NextResponse.json({ valid: true });
+    // No matching PlatformInvite — invalid for all types.
+    return NextResponse.json(
+      { error: "Invalid invitation code" },
+      { status: 400 },
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

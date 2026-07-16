@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { InputFormField } from "~/components/inputs/input-form-field";
 
+import type { ShopPrefill } from "../../_components/artisan-signup-form-provider";
 import { useArtisanSignup } from "../../_components/artisan-signup-form-provider";
 
 export function InvitationCodeStep() {
@@ -20,6 +21,7 @@ export function InvitationCodeStep() {
     markAutoAdvancedFromInvite,
     setIsAnimating,
     setIsCodeVerified,
+    applyShopPrefill,
   } = useArtisanSignup();
   const code = form.watch("invitationCode");
   const [isVerifying, setIsVerifying] = useState(false);
@@ -54,12 +56,16 @@ export function InvitationCodeStep() {
           }),
         });
 
-        const data = (await response.json()) as { error?: string };
+        const data = (await response.json()) as {
+          error?: string;
+          shop?: ShopPrefill;
+        };
 
         if (response.ok) {
           hasAutoAdvancedRef.current = true;
           setAutoVerified(true);
           markAutoAdvancedFromInvite();
+          if (data.shop) applyShopPrefill(data.shop);
           handleCodeVerified();
         } else {
           setError(data.error ?? "Invalid invitation code");
@@ -79,6 +85,7 @@ export function InvitationCodeStep() {
     goNext,
     markAutoAdvancedFromInvite,
     didAutoAdvanceFromInvite,
+    applyShopPrefill,
   ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,13 +108,17 @@ export function InvitationCodeStep() {
         body: JSON.stringify({ invitationCode, type: "artisan" }),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as {
+        error?: string;
+        shop?: ShopPrefill;
+      };
 
       if (!response.ok) {
         setError(data.error ?? "Invalid invitation code");
         return;
       }
 
+      if (data.shop) applyShopPrefill(data.shop);
       handleCodeVerified();
     } catch (err) {
       console.error(err);

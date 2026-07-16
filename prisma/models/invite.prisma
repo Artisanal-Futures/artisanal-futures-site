@@ -9,8 +9,11 @@ model PlatformInvite {
   usedAt    DateTime?
   usedBy    String?
   createdBy String?
+  shopId    String?
   creator   User?     @relation("CreatedInvites", fields: [createdBy], references: [id])
+  shop      Shop?     @relation("ShopInvites", fields: [shopId], references: [id], onDelete: SetNull)
 
   @@index([email])
   @@index([code])
+  @@index([shopId])
 }

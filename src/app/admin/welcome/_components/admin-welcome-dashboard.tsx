@@ -9,6 +9,7 @@ import {
   Circle,
   ExternalLink,
   Globe,
+  KeyRound,
   Lightbulb,
   MessageSquare,
   Package,
@@ -53,7 +54,7 @@ export function AdminWelcomeDashboard({
       description:
         "Add a bio, photo, and shop details to help customers find you",
       completed: hasProfile,
-      href: `/admin/shops/${shopData?.shop?.id}/edit`,
+      href: `/admin/shops/${shopData?.shop?.id}`,
       action: "Edit Shop",
     },
     {
@@ -79,7 +80,7 @@ export function AdminWelcomeDashboard({
         ? "We offer free hosting for your existing website"
         : "Get a simple, beautiful site to start selling online",
       completed: hasHostedWebsite,
-      href: hasWebsite ? "/hosting" : "/sites/create",
+      href: "/admin/website",
       action: hasWebsite ? "Learn More" : "Get Started",
     },
   ];
@@ -245,7 +246,7 @@ export function AdminWelcomeDashboard({
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Forum */}
             <Link
-              href="/forum"
+              href="/forums"
               className="group border-border bg-card hover:border-ring/30 flex flex-col gap-4 rounded-xl border p-6 transition-all hover:shadow-md"
             >
               <div className="bg-secondary flex size-11 items-center justify-center rounded-lg">
@@ -314,6 +315,36 @@ export function AdminWelcomeDashboard({
                 <ArrowRight className="ml-1.5 size-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>
+          </div>
+        </section>
+
+        {/* Account Security Section */}
+        <section className="mb-12">
+          <div className="border-border bg-card rounded-xl border p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="bg-secondary flex size-10 shrink-0 items-center justify-center rounded-lg">
+                  <KeyRound className="text-foreground size-5" />
+                </div>
+                <div>
+                  <h3 className="text-foreground font-semibold">
+                    Sign in faster next time
+                  </h3>
+                  <p className="text-muted-foreground mt-1 max-w-md text-sm">
+                    You signed up with email and password, but you can also
+                    link a Google, Discord, or Auth0 account so you can sign
+                    in with one click going forward. Use the same email you
+                    signed up with.
+                  </p>
+                </div>
+              </div>
+              <Button variant="outline" asChild className="shrink-0">
+                <Link href="/account/security">
+                  Connect an account
+                  <ArrowRight className="ml-1.5 size-3.5" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 

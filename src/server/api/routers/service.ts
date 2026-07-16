@@ -11,25 +11,47 @@ import {
 import { serviceSchema } from "~/lib/validators/services";
 import {
   adminArtisanProcedure,
-  adminOnlyProcedure,
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
 
 export const serviceRouter = createTRPCRouter({
-  get: adminOnlyProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const service = await ctx.db.service.findUnique({
-      where: { id: input },
-      include: { shop: true, categories: true },
-    });
-    return addFullServiceImageUrl(service);
-  }),
-  getAll: adminOnlyProcedure.query(async ({ ctx }) => {
+  get: adminArtisanProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const isUserAuthorized = await checkUserServicePermissions(
+        ctx.session,
+        input,
+      );
+
+      if (!isUserAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Service does not belong to current user",
+        });
+      }
+
+      const service = await ctx.db.service.findUnique({
+        where: { id: input },
+        include: { shop: true, categories: true },
+      });
+      return addFullServiceImageUrl(service);
+    }),
+  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const services = await ctx.db.service.findMany({
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
-    return services.map(addFullServiceImageUrl);
+
+    let servicesWithFullUrls = services.map(addFullServiceImageUrl);
+
+    if (ctx.session.user.role !== "ADMIN") {
+      servicesWithFullUrls = servicesWithFullUrls.filter(
+        (service) => service?.shop?.ownerId === ctx.session.user.id,
+      );
+    }
+
+    return servicesWithFullUrls;
   }),
 
   getAllByCategory: publicProcedure
@@ -175,7 +197,7 @@ export const serviceRouter = createTRPCRouter({
   // import them from), so there is intentionally no `importServices` procedure.
   // Migration is products-only — see `product.importProducts`.
 
-  bulkUpdate: adminOnlyProcedure
+  bulkUpdate: adminArtisanProcedure
     .input(
       z.object({
         serviceIds: z
