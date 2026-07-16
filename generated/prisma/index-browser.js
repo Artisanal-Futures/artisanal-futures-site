@@ -201,7 +201,8 @@ exports.Prisma.PlatformInviteScalarFieldEnum = {
   used: 'used',
   usedAt: 'usedAt',
   usedBy: 'usedBy',
-  createdBy: 'createdBy'
+  createdBy: 'createdBy',
+  shopId: 'shopId'
 };
 
 exports.Prisma.ServiceScalarFieldEnum = {

@@ -10,6 +10,20 @@ import { Form } from "~/components/ui/form";
 
 export type StepDef = { id: number; name: string };
 
+export type ShopPrefill = {
+  id: string;
+  name: string;
+  ownerName: string;
+  bio: string | null;
+  description: string | null;
+  logoPhoto: string | null;
+  ownerPhoto: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  attributeTags: string[];
+};
+
 const STEPS: readonly StepDef[] = [
   { id: 0, name: "Account" },
   { id: 1, name: "Business" },
@@ -36,6 +50,9 @@ type ArtisanSignupContextValue = {
   setIsCodeVerified: (isCodeVerified: boolean) => void;
   progress: number;
   isComplete: boolean;
+
+  attachedShop: { id: string; name: string } | null;
+  applyShopPrefill: (shop: ShopPrefill) => void;
 
   STEPS: readonly StepDef[];
 };
@@ -102,6 +119,10 @@ export function ArtisanSignupFormProvider({
     useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [attachedShop, setAttachedShop] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const [isComplete, setIsComplete] = useState(false);
   const progress = isComplete ? 100 : ((currentStep + 1) / STEPS.length) * 100;
@@ -129,6 +150,26 @@ export function ArtisanSignupFormProvider({
     setDidAutoAdvanceFromInvite(true);
   }, []);
 
+  const applyShopPrefill = useCallback(
+    (shop: ShopPrefill) => {
+      setAttachedShop({ id: shop.id, name: shop.name });
+      form.reset({
+        ...form.getValues(),
+        businessName: shop.name,
+        businessEmail: shop.email ?? "",
+        businessTelephone: shop.phone ?? "",
+        websiteLink: shop.website ?? "",
+        principles: shop.attributeTags,
+        ownerName: shop.ownerName,
+        ownerBio: shop.bio ?? "",
+        publicDescription: shop.description ?? "",
+        logoPhotoUrl: shop.logoPhoto ?? "",
+        ownerPhotoUrl: shop.ownerPhoto ?? "",
+      });
+    },
+    [form],
+  );
+
   const value: ArtisanSignupContextValue = {
     currentStep,
     steps: STEPS,
@@ -142,6 +183,9 @@ export function ArtisanSignupFormProvider({
     setIsCodeVerified,
     progress,
     isComplete,
+
+    attachedShop,
+    applyShopPrefill,
 
     STEPS,
   };

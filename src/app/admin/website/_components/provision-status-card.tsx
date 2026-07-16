@@ -64,26 +64,49 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
     },
   });
 
+  // Shares the ConnectionIndicator's query (same key + options), so this adds
+  // no extra network call. Every retry path here hits the SimplePress API, so
+  // the buttons stay disabled until the health check comes back green.
+  const connectionQuery =
+    api.websiteProvision.checkSimplePressConnection.useQuery(undefined, {
+      retry: false,
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    });
+  const simplePressConnected = connectionQuery.data?.connected === true;
+  const simplePressUnreachable =
+    !connectionQuery.isPending && !simplePressConnected;
+
   const provision = provisionQuery.data;
 
   if (!provision) {
     return null;
   }
 
+  const connectionNotice = simplePressUnreachable ? (
+    <p className="text-sm text-red-600">
+      We can&apos;t connect to SimplePress right now, so this isn&apos;t
+      available. Please try again later.
+    </p>
+  ) : null;
+
   const retryButton = (label: string, pendingLabel: string) => (
-    <Button
-      onClick={() => retryMutation.mutate({ shopId })}
-      disabled={retryMutation.isPending}
-    >
-      {retryMutation.isPending ? (
-        <>
-          <Spinner className="mr-2 size-4" />
-          {pendingLabel}
-        </>
-      ) : (
-        label
-      )}
-    </Button>
+    <>
+      <Button
+        onClick={() => retryMutation.mutate({ shopId })}
+        disabled={retryMutation.isPending || !simplePressConnected}
+      >
+        {retryMutation.isPending ? (
+          <>
+            <Spinner className="mr-2 size-4" />
+            {pendingLabel}
+          </>
+        ) : (
+          label
+        )}
+      </Button>
+      {connectionNotice}
+    </>
   );
 
   if (provision.status === "PROVISIONING") {
@@ -173,7 +196,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
             <Button
               variant="outline"
               onClick={() => retryMutation.mutate({ shopId })}
-              disabled={retryMutation.isPending}
+              disabled={retryMutation.isPending || !simplePressConnected}
             >
               {retryMutation.isPending ? (
                 <>
@@ -185,6 +208,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
               )}
             </Button>
           </div>
+          {connectionNotice}
           <HelpFooter />
         </CardContent>
       </Card>
@@ -276,7 +300,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
           </p>
           <Button
             onClick={() => retryMutation.mutate({ shopId })}
-            disabled={retryMutation.isPending}
+            disabled={retryMutation.isPending || !simplePressConnected}
           >
             {retryMutation.isPending ? (
               <>
@@ -287,6 +311,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
               "Try again"
             )}
           </Button>
+          {connectionNotice}
           <HelpFooter />
         </CardContent>
       </Card>

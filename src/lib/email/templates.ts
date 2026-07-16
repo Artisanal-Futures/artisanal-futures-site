@@ -42,12 +42,14 @@ export async function sendPlatformInviteEmail({
   inviteUrl,
   inviteCode,
   logoUrl,
+  shopName,
 }: {
   to: string;
   role: "ARTISAN" | "GUEST" | "ADMIN";
   inviteUrl: string;
   inviteCode: string;
   logoUrl?: string;
+  shopName?: string;
 }) {
   const roleLabels: Record<string, string> = {
     ARTISAN: "Artisan",
@@ -55,16 +57,20 @@ export async function sendPlatformInviteEmail({
     ADMIN: "Admin",
   };
   const label = roleLabels[role] ?? role;
+  const subject = shopName
+    ? `You're invited to take ownership of ${shopName} on Artisanal Futures`
+    : `You're invited to join Artisanal Futures as a ${label}`;
   return sendEmail({
     from: EMAIL_FROM.NOREPLY,
     fromName: "Artisanal Futures",
     to,
-    subject: `You're invited to join Artisanal Futures as a ${label}`,
+    subject,
     react: PlatformInviteEmail({
       inviteUrl,
       inviteCode,
       role,
       logoUrl,
+      shopName,
     }),
     tags: [{ name: "category", value: "platform_invite" }],
   });

@@ -37,7 +37,7 @@ export function InvitesClient({ invites }: InvitesClientProps) {
         searchKey="email"
         searchPlaceholder="Search by email..."
         columns={inviteColumns}
-        mobileHiddenColumnIds={["code", "expiresAt", "createdAt", "creator"]}
+        mobileHiddenColumnIds={["shop", "code", "expiresAt", "createdAt", "creator"]}
         data={invites}
         filters={inviteFilters}
         addButton={<SendInviteDialog />}

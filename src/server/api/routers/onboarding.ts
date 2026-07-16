@@ -53,22 +53,38 @@ export const onboardingRouter = createTRPCRouter({
       }
 
       const business = await ctx.db.$transaction(async (tx) => {
-        // 1. Create business
-        const newShop = await tx.shop.create({
-          data: {
-            ownerName: input.ownerName,
-            bio: input.ownerBio ?? "",
-            description: input.publicDescription ?? "",
-            logoPhoto: input.logoPhotoUrl ?? "",
-            ownerPhoto: input.ownerPhotoUrl ?? "",
-            website: input.websiteLink ?? "",
-            attributeTags: input.principles ?? [],
-            email: input.businessEmail ?? "",
-            phone: input.businessTelephone ?? "",
-            name: input.businessName,
-            ownerId: ctx.session.user.id,
-          },
-        });
+        // 1. Create or update business
+        const shopData = {
+          ownerName: input.ownerName,
+          bio: input.ownerBio ?? "",
+          description: input.publicDescription ?? "",
+          logoPhoto: input.logoPhotoUrl ?? "",
+          ownerPhoto: input.ownerPhotoUrl ?? "",
+          website: input.websiteLink ?? "",
+          attributeTags: input.principles ?? [],
+          email: input.businessEmail ?? "",
+          phone: input.businessTelephone ?? "",
+          name: input.businessName,
+        };
+
+        // If a shop was pre-attached to the invite, take ownership of it and
+        // update its details instead of creating a new one. Unmapped fields
+        // (coverPhoto, isPublic, address, relations) are preserved by update.
+        let newShop;
+        const attachedShop = invite?.shopId
+          ? await tx.shop.findUnique({ where: { id: invite.shopId } })
+          : null;
+
+        if (attachedShop) {
+          newShop = await tx.shop.update({
+            where: { id: attachedShop.id },
+            data: { ...shopData, ownerId: ctx.session.user.id },
+          });
+        } else {
+          newShop = await tx.shop.create({
+            data: { ...shopData, ownerId: ctx.session.user.id },
+          });
+        }
 
         // 2. Create shop survey
         const newArtisanSurvey = await tx.artisanSurvey.create({

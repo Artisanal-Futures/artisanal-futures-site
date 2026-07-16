@@ -1,4 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
+import { TRPCError } from "@trpc/server";
+import type { PrismaClient } from "generated/prisma";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -12,15 +14,54 @@ function generateInviteCode(): string {
   return createId().slice(0, 8).toUpperCase();
 }
 
+async function assertShopAttachable(
+  db: PrismaClient,
+  shopId: string,
+  opts: { excludeInviteId?: string } = {},
+) {
+  const shop = await db.shop.findUnique({ where: { id: shopId } });
+  if (!shop) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Shop not found" });
+  }
+
+  const pendingInvite = await db.platformInvite.findFirst({
+    where: {
+      shopId,
+      used: false,
+      expiresAt: { gt: new Date() },
+      ...(opts.excludeInviteId ? { id: { not: opts.excludeInviteId } } : {}),
+    },
+  });
+  if (pendingInvite) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "This shop is already attached to another pending invite",
+    });
+  }
+
+  return shop;
+}
+
 export const inviteRouter = createTRPCRouter({
   createInvite: adminOnlyProcedure
     .input(
       z.object({
         email: z.string().email(),
         role: z.enum(["ARTISAN", "GUEST", "ADMIN"]),
+        shopId: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.shopId && input.role !== "ARTISAN") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Shops can only be attached to Artisan invites",
+        });
+      }
+      const shop = input.shopId
+        ? await assertShopAttachable(ctx.db, input.shopId)
+        : null;
+
       const baseUrl = env.BETTER_AUTH_URL ?? "https://localhost:3000";
       const rolePaths: Record<string, string> = {
         ARTISAN: "/auth/join/artisan",
@@ -45,6 +86,7 @@ export const inviteRouter = createTRPCRouter({
               role: input.role,
               expiresAt,
               createdBy: ctx.session.user.id,
+              shopId: input.shopId,
             },
           });
           break;
@@ -68,9 +110,47 @@ export const inviteRouter = createTRPCRouter({
         role: input.role,
         inviteUrl,
         inviteCode: code,
+        shopName: shop?.name,
       });
 
       return invite;
+    }),
+
+  updateInviteShop: adminOnlyProcedure
+    .input(z.object({ inviteId: z.string(), shopId: z.string().nullable() }))
+    .mutation(async ({ ctx, input }) => {
+      const invite = await ctx.db.platformInvite.findUnique({
+        where: { id: input.inviteId },
+      });
+      if (!invite) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Invite not found" });
+      }
+      if (invite.used || invite.expiresAt <= new Date()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only pending invites can have a shop attached or detached",
+        });
+      }
+      if (input.shopId !== null) {
+        if (invite.role !== "ARTISAN") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Shops can only be attached to Artisan invites",
+          });
+        }
+        await assertShopAttachable(ctx.db, input.shopId, {
+          excludeInviteId: input.inviteId,
+        });
+      }
+
+      await ctx.db.platformInvite.update({
+        where: { id: input.inviteId },
+        data: { shopId: input.shopId },
+      });
+
+      return {
+        message: input.shopId ? "Shop attached" : "Shop detached",
+      };
     }),
 
   deleteInvite: adminOnlyProcedure
@@ -103,6 +183,9 @@ export const inviteRouter = createTRPCRouter({
           creator: {
             select: { id: true, name: true, email: true },
           },
+          shop: {
+            select: { id: true, name: true },
+          },
         },
       });
 
@@ -122,4 +205,29 @@ export const inviteRouter = createTRPCRouter({
         status: i.used ? "used" : i.expiresAt <= now ? "expired" : "pending",
       }));
     }),
+
+  listAttachableShops: adminOnlyProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const shops = await ctx.db.shop.findMany({
+      select: {
+        id: true,
+        name: true,
+        ownerName: true,
+        owner: { select: { name: true, email: true } },
+        invites: {
+          where: { used: false, expiresAt: { gt: now } },
+          select: { id: true },
+        },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    return shops.map((s) => ({
+      id: s.id,
+      name: s.name,
+      ownerName: s.ownerName,
+      ownerLabel: s.owner.name ?? s.owner.email ?? "",
+      pendingInviteId: s.invites[0]?.id ?? null,
+    }));
+  }),
 });

@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { handleImageUrl } from "~/lib/handle-image-url";
 import { db } from "~/server/db";
 
 export async function POST(req: NextRequest) {
@@ -58,6 +59,41 @@ export async function POST(req: NextRequest) {
           { status: 400 },
         );
       }
+
+      // If an artisan invite has a pre-created shop attached, return its
+      // details so the onboarding wizard can be pre-filled.
+      if (invite.shopId && invite.role === "ARTISAN") {
+        const shop = await db.shop.findUnique({
+          where: { id: invite.shopId },
+          select: {
+            id: true,
+            name: true,
+            ownerName: true,
+            bio: true,
+            description: true,
+            logoPhoto: true,
+            ownerPhoto: true,
+            phone: true,
+            email: true,
+            website: true,
+            attributeTags: true,
+          },
+        });
+
+        if (shop) {
+          return NextResponse.json({
+            valid: true,
+            shop: {
+              ...shop,
+              logoPhoto: shop.logoPhoto ? handleImageUrl(shop.logoPhoto) : null,
+              ownerPhoto: shop.ownerPhoto
+                ? handleImageUrl(shop.ownerPhoto)
+                : null,
+            },
+          });
+        }
+      }
+
       return NextResponse.json({ valid: true });
     }
 

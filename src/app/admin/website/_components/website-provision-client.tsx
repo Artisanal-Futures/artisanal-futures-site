@@ -241,6 +241,19 @@ function ProvisionGate({ shopId }: { shopId: string }) {
     shopId,
   });
 
+  // Shares the ConnectionIndicator's query (same key + options), so this adds
+  // no extra network call. A build request would fail without the link, so
+  // the CTA stays disabled until the health check comes back green.
+  const connectionQuery =
+    api.websiteProvision.checkSimplePressConnection.useQuery(undefined, {
+      retry: false,
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    });
+  const simplePressConnected = connectionQuery.data?.connected === true;
+  const simplePressUnreachable =
+    !connectionQuery.isPending && !simplePressConnected;
+
   const requestSiteMutation = api.websiteProvision.requestMySite.useMutation({
     onSuccess: (result) => {
       toast.success("Your website is ready!");
@@ -359,7 +372,7 @@ function ProvisionGate({ shopId }: { shopId: string }) {
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
-            disabled={requestSiteMutation.isPending}
+            disabled={requestSiteMutation.isPending || !simplePressConnected}
             size="lg"
             className="w-full sm:w-auto"
           >
@@ -417,6 +430,12 @@ function ProvisionGate({ shopId }: { shopId: string }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {simplePressUnreachable && (
+        <p className="mt-3 text-sm text-red-600">
+          We can&apos;t connect to SimplePress right now, so new websites
+          can&apos;t be built. Please try again later.
+        </p>
+      )}
       {requestSiteMutation.isPending && (
         <p className="text-muted-foreground mt-3 text-sm">
           Building your website... this can take up to half a minute.
