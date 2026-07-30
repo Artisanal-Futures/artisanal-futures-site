@@ -158,23 +158,49 @@ export const shopsRouter = createTRPCRouter({
     .query(async ({ ctx, input: shopId }) => {
       const shop = await ctx.db.shop.findUnique({
         where: { id: shopId },
-        include: { address: true, products: true, services: true },
+        include: { address: true },
       });
+
+      if (!shop) return null;
 
       // Public storefront reads go through this procedure, so it stays public.
       // But a non-public shop (with its contact fields) must only be readable by
       // its owner or an admin — otherwise anyone can enumerate hidden shops by id.
-      if (shop && !shop.isPublic) {
-        const isOwnerOrAdmin =
-          ctx.session?.user?.role === "ADMIN" ||
-          (!!ctx.session?.user?.id && shop.ownerId === ctx.session.user.id);
+      const isOwnerOrAdmin =
+        ctx.session?.user?.role === "ADMIN" ||
+        (!!ctx.session?.user?.id && shop.ownerId === ctx.session.user.id);
 
-        if (!isOwnerOrAdmin) {
-          return null;
-        }
+      if (!shop.isPublic && !isOwnerOrAdmin) {
+        return null;
       }
 
-      return shop;
+      // Products and services carry their own `isPublic` flag, and it has to be
+      // honoured here too. These used to be loaded with a bare `products: true`
+      // include, so every hidden item on a *public* shop was rendered on the
+      // storefront at /shops/[shopId] for anyone — while the same items were
+      // correctly excluded from browse and search, which do filter on isPublic.
+      //
+      // Owners and admins still see everything, so they can preview; the page
+      // tells them which items visitors cannot see.
+      const visibility = isOwnerOrAdmin ? {} : { isPublic: true };
+
+      const [products, services] = await Promise.all([
+        ctx.db.product.findMany({
+          where: { shopId, ...visibility },
+          orderBy: { name: "asc" },
+        }),
+        ctx.db.service.findMany({
+          where: { shopId, ...visibility },
+          orderBy: { name: "asc" },
+        }),
+      ]);
+
+      const hiddenItemCount = isOwnerOrAdmin
+        ? products.filter((product) => !product.isPublic).length +
+          services.filter((service) => !service.isPublic).length
+        : 0;
+
+      return { ...shop, products, services, hiddenItemCount };
     }),
 
   create: adminArtisanProcedure

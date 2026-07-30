@@ -1,14 +1,21 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { type Category } from "generated/prisma";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { type ProductWithRelations } from "~/types/product";
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { FilterControls } from "~/app/(site)/(shops-goods-services)/_components/filter-controls";
 import { Pagination } from "~/app/(site)/(shops-goods-services)/_components/pagination";
+import {
+  ActiveFilterChips,
+  FuzzyNotice,
+  NoResults,
+  ResultsSkeleton,
+} from "~/app/(site)/(shops-goods-services)/_components/search-results-status";
 
 import { ProductCard } from "../../../_components/product-card";
 import { ProductDetailDialog } from "../../../_components/product-detail-dialog";
@@ -21,6 +28,8 @@ type Props = {
   subcategories?: Category[];
   totalCount: number;
   totalPages: number;
+  isFuzzy?: boolean;
+  suggestions?: string[];
 };
 
 export function CategoryClient({
@@ -28,14 +37,24 @@ export function CategoryClient({
   subcategories,
   totalCount,
   totalPages,
+  isFuzzy = false,
+  suggestions = [],
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
   const rawPage = parseInt(searchParams.get("page") ?? "1", 10);
   const itemsPerPage = parseInt(searchParams.get("limit") ?? "20", 10);
-  const currentPage = Math.max(1, Math.min(totalPages, rawPage));
+  // Guard against totalPages === 0 (an empty result), which previously clamped
+  // the page number to 0 and rendered "Showing 0–0 of 0".
+  const currentPage = Math.max(1, Math.min(Math.max(totalPages, 1), rawPage));
+
+  const searchTerm = searchParams.get("search") ?? "";
+  const hasFilters = ["search", "store", "attributes", "subcategory"].some(
+    (key) => !!searchParams.get(key),
+  );
 
   const updateSearchParams = useCallback(
     (newParams: Record<string, string | number | null>) => {
@@ -60,14 +79,19 @@ export function CategoryClient({
         params.delete("page");
       }
 
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      // Wrapped in a transition so `isPending` can drive a loading state —
+      // previously a filter change gave no feedback at all while the server
+      // round trip was in flight.
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      });
     },
     [pathname, router, searchParams],
   );
 
   const { data: stores } = api.shop.getAllPublic.useQuery();
   const resetFilters = useCallback(
-    () => router.push(pathname, { scroll: false }),
+    () => startTransition(() => router.push(pathname, { scroll: false })),
     [router, pathname],
   );
   const [selectedItem, setSelectedItem] = useState<Product | Service | null>(
@@ -90,11 +114,21 @@ export function CategoryClient({
         />
       </aside>
       <section className="flex-1 space-y-6 px-4 md:px-8">
+        <ActiveFilterChips
+          updateSearchParams={updateSearchParams}
+          resetFilters={resetFilters}
+          stores={stores}
+        />
+
+        {isFuzzy && searchTerm && <FuzzyNotice query={searchTerm} />}
+
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-muted-foreground text-sm">
-            Showing {totalCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}–
-            {(currentPage - 1) * itemsPerPage + initialProducts.length} of{" "}
-            {totalCount} products
+            {totalCount > 0
+              ? `Showing ${(currentPage - 1) * itemsPerPage + 1}–${
+                  (currentPage - 1) * itemsPerPage + initialProducts.length
+                } of ${totalCount} products`
+              : "No products to show"}
           </p>
           <div className="flex items-center gap-2">
             <label htmlFor="itemsPerPage" className="text-sm font-medium">
@@ -116,27 +150,39 @@ export function CategoryClient({
           </div>
         </div>
 
-        <div
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          style={{ gridAutoRows: "min-content" }}
-        >
-          {initialProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              item={product as Product}
-              onClick={() => handleItemClick(product as Product)}
-              createdBy={product?.shop?.name ?? ""}
-              shopPrinciples={product?.shop?.attributeTags ?? []}
-              fallbackImage={product?.shop?.logoPhoto}
-              showPrice={false}
-            />
-          ))}
-        </div>
+        {isPending && initialProducts.length === 0 ? (
+          <ResultsSkeleton />
+        ) : (
+          <div
+            className={cn(
+              "grid grid-cols-1 gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3",
+              isPending && "opacity-60",
+            )}
+            style={{ gridAutoRows: "min-content" }}
+          >
+            {initialProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                item={product as Product}
+                onClick={() => handleItemClick(product as Product)}
+                createdBy={product?.shop?.name ?? ""}
+                shopPrinciples={product?.shop?.attributeTags ?? []}
+                fallbackImage={product?.shop?.logoPhoto}
+                showPrice={false}
+              />
+            ))}
+          </div>
+        )}
 
-        {initialProducts.length === 0 && (
-          <p className="text-muted-foreground text-center">
-            No products found for the selected filters.
-          </p>
+        {initialProducts.length === 0 && !isPending && (
+          <NoResults
+            noun="products"
+            query={searchTerm}
+            hasFilters={hasFilters}
+            suggestions={suggestions}
+            resetFilters={resetFilters}
+            updateSearchParams={updateSearchParams}
+          />
         )}
 
         <ProductDetailDialog

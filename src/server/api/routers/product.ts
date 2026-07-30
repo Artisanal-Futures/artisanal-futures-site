@@ -1,4 +1,5 @@
-import type { Prisma, PrismaClient } from "generated/prisma";
+import type { Category, Prisma, PrismaClient } from "generated/prisma";
+import type { ProductWithRelations } from "~/types/product";
 import {
   adminArtisanProcedure,
   createTRPCRouter,
@@ -16,7 +17,13 @@ import {
   checkUserProductPermissions,
   checkUserShopPermissions,
 } from "~/lib/check-user-permissions";
+import {
+  catalogSearchInput,
+  SEARCH_CANDIDATE_CAP,
+  searchCatalog,
+} from "~/lib/search/catalog-search";
 import { productSchema } from "~/lib/validators/products";
+import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 // --- WordPress featured-media resolution (server-side) ---------------------
 // WordPress exposes a product's image on a *separate* media endpoint, not on
@@ -138,18 +145,7 @@ export const productRouter = createTRPCRouter({
   }),
 
   getAllByCategory: publicProcedure
-    .input(
-      z.object({
-        categoryName: z.string(),
-        subcategoryName: z.string().optional(),
-        storeId: z.string().optional(),
-        attributes: z.array(z.string()).optional(),
-        sort: z.enum(["asc", "desc"]).default("asc"),
-        search: z.string().optional(),
-        page: z.number().default(1),
-        limit: z.number().default(20),
-      }),
-    )
+    .input(catalogSearchInput)
     .query(async ({ ctx, input }) => {
       const {
         categoryName,
@@ -161,119 +157,135 @@ export const productRouter = createTRPCRouter({
         page,
         limit,
       } = input;
-      const skip = (page - 1) * limit;
 
-      // If categoryName is "all", return all products (with filters)
-      if (categoryName.toLowerCase() === "all-products") {
-        const where: Prisma.ProductWhereInput = {
-          isPublic: true,
-        };
+      const empty = (subcategories: Category[] = []) => ({
+        products: [] as ProductWithRelations[],
+        totalCount: 0,
+        totalPages: 0,
+        subcategories,
+        isFuzzy: false,
+        appliedTerms: [] as string[],
+        suggestions: [] as string[],
+      });
 
-        if (search) {
-          where.OR = [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
+      // Resolve which categories to filter by. `null` means "every category".
+      let categoryIdsToFilter: string[] | null = null;
+      let subcategories: Category[] = [];
+
+      if (categoryName.toLowerCase() !== "all-products") {
+        const parentCategory = await ctx.db.category.findFirst({
+          where: { name: { equals: categoryName, mode: "insensitive" } },
+          include: { children: true },
+        });
+
+        if (!parentCategory) return empty();
+        subcategories = parentCategory.children;
+
+        if (subcategoryName) {
+          const subcategory = parentCategory.children.find(
+            (child) =>
+              child.name.toLowerCase() === subcategoryName.toLowerCase(),
+          );
+          if (!subcategory) return empty(parentCategory.children);
+          categoryIdsToFilter = [subcategory.id];
+        } else {
+          categoryIdsToFilter = [
+            parentCategory.id,
+            ...parentCategory.children.map((child) => child.id),
           ];
         }
-        if (storeId && storeId !== "all") {
-          where.shopId = storeId;
-        }
-        if (attributes && attributes.length > 0) {
-          where.shop = {
-            attributeTags: { hasEvery: attributes },
-          };
-        }
+      }
 
+      // Build the structural filters as an AND array. Previously each filter
+      // assigned `where.shop = {...}`, so filters silently clobbered each
+      // other as more of them were added.
+      const and: Prisma.ProductWhereInput[] = [
+        { isPublic: true },
+        fromVisibleShop,
+      ];
+      if (categoryIdsToFilter) {
+        and.push({ categories: { some: { id: { in: categoryIdsToFilter } } } });
+      }
+      if (storeId && storeId !== "all") {
+        and.push({ shopId: storeId });
+      }
+      if (attributes && attributes.length > 0) {
+        // `hasSome`, not `hasEvery`: these checkboxes read as a facet list, so
+        // ticking a second attribute should widen the results, not require a
+        // shop to carry every selected attribute at once.
+        and.push({ shop: { attributeTags: { hasSome: attributes } } });
+      }
+      const where: Prisma.ProductWhereInput = { AND: and };
+
+      // Browse path (no query): unchanged SQL ordering and pagination.
+      if (!search) {
         const [products, totalCount] = await ctx.db.$transaction([
           ctx.db.product.findMany({
             where,
             include: { shop: true, categories: true },
-            orderBy: { name: sort },
-            skip,
+            orderBy: { name: sort === "desc" ? "desc" : "asc" },
+            skip: (page - 1) * limit,
             take: limit,
           }),
           ctx.db.product.count({ where }),
         ]);
 
-        // For "all", subcategories is always empty
         return {
           products: products.map(addFullProductImageUrl),
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
-          subcategories: [],
+          subcategories,
+          isFuzzy: false,
+          appliedTerms: [] as string[],
+          suggestions: [] as string[],
         };
       }
 
-      // Otherwise, filter by category as before
-      const parentCategory = await ctx.db.category.findFirst({
-        where: { name: { equals: categoryName, mode: "insensitive" } },
-        include: { children: true },
+      // Search path: text matching and relevance ranking happen in Node. See
+      // src/lib/search/catalog-search.ts for why they can't happen in SQL.
+      const candidates = await ctx.db.product.findMany({
+        where,
+        include: { shop: true, categories: true },
+        orderBy: { name: "asc" },
+        take: SEARCH_CANDIDATE_CAP,
       });
 
-      if (!parentCategory) {
-        return {
-          products: [],
-          totalCount: 0,
-          totalPages: 0,
-          subcategories: [],
-        };
-      }
-
-      let categoryIdsToFilter: string[] = [parentCategory.id];
-      if (subcategoryName) {
-        const subcategory = parentCategory.children.find(
-          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase(),
+      if (candidates.length === SEARCH_CANDIDATE_CAP) {
+        console.warn(
+          `[search] product candidate cap (${SEARCH_CANDIDATE_CAP}) reached; ` +
+            `results and totalCount are truncated. Time to move search into Postgres.`,
         );
-        if (subcategory) {
-          categoryIdsToFilter = [subcategory.id];
-        } else {
-          return {
-            products: [],
-            totalCount: 0,
-            totalPages: 0,
-            subcategories: parentCategory.children,
-          };
-        }
-      } else {
-        categoryIdsToFilter.push(...parentCategory.children.map((c) => c.id));
       }
 
-      const where: Prisma.ProductWhereInput = {
-        categories: { some: { id: { in: categoryIdsToFilter } } },
-        isPublic: true,
-      };
+      const { ranked, isFuzzy, appliedTerms, suggestions } = searchCatalog(
+        candidates,
+        search,
+      );
 
-      if (search) {
-        where.OR = [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-        ];
-      }
-      if (storeId && storeId !== "all") {
-        where.shopId = storeId;
-      }
-      if (attributes && attributes.length > 0) {
-        where.shop = {
-          attributeTags: { hasEvery: attributes },
-        };
-      }
+      // Relevance is the default while searching, but an explicit A-Z/Z-A
+      // choice still wins.
+      const ordered =
+        sort === "relevance"
+          ? ranked
+          : [...ranked].sort((a, b) =>
+              sort === "desc"
+                ? b.name.localeCompare(a.name)
+                : a.name.localeCompare(b.name),
+            );
 
-      const [products, totalCount] = await ctx.db.$transaction([
-        ctx.db.product.findMany({
-          where,
-          include: { shop: true, categories: true },
-          orderBy: { name: sort },
-          skip,
-          take: limit,
-        }),
-        ctx.db.product.count({ where }),
-      ]);
+      const totalCount = ordered.length;
+      const start = (page - 1) * limit;
 
       return {
-        products: products.map(addFullProductImageUrl),
+        products: ordered
+          .slice(start, start + limit)
+          .map(addFullProductImageUrl),
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
-        subcategories: parentCategory.children,
+        subcategories,
+        isFuzzy,
+        appliedTerms,
+        suggestions,
       };
     }),
 
