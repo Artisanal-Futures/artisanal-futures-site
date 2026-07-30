@@ -14,6 +14,8 @@ export default defineConfig({
   outputDir: "./test-results",
   fullyParallel: false,
   workers: 1,
+  // Dev-mode cold compiles on first visit can exceed Playwright's default 30s.
+  timeout: 90_000,
   use: {
     baseURL: "http://localhost:3009",
     viewport: { width: 1440, height: 900 },

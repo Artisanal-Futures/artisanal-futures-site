@@ -18,7 +18,15 @@ const OUT_DIR = path.resolve(
 );
 
 async function captureShot(page: import("@playwright/test").Page, shot: Shot) {
-  await page.goto(shot.path, { waitUntil: "networkidle" });
+  // "load" instead of "networkidle": dev-mode cold compiles and image
+  // optimization can keep the network busy past any strict idle budget.
+  // The 60s timeout absorbs first-visit route compilation.
+  await page.goto(shot.path, { waitUntil: "load", timeout: 60_000 });
+
+  // Best-effort idle wait so images/fonts settle — capped, never fatal.
+  await page
+    .waitForLoadState("networkidle", { timeout: 5_000 })
+    .catch(() => undefined);
 
   if (shot.waitFor) {
     await expect(page.locator(shot.waitFor).first()).toBeVisible();

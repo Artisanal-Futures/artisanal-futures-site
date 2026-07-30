@@ -100,6 +100,35 @@ check(
   JSON.stringify(expandTerm("zzzqqq")) === '["zzzqqq"]',
 );
 
+// Cross-category groups from src/lib/search/synonyms.ts.
+check(
+  'expandTerm("paper") includes "tissue"',
+  expandTerm("paper").includes("tissue"),
+  JSON.stringify(expandTerm("paper")),
+);
+check(
+  "synonym groups are bidirectional",
+  expandTerm("tissue").includes("paper"),
+  JSON.stringify(expandTerm("tissue")),
+);
+check(
+  'expandTerm("womens") includes "ladies"',
+  expandTerm("womens").includes("ladies"),
+);
+check('expandTerm("grey") includes "gray"', expandTerm("grey").includes("gray"));
+
+// Apostrophes are dropped, not treated as separators.
+check(
+  'normalize("Women\'s") === "womens"',
+  normalize("Women's") === "womens",
+  normalize("Women's"),
+);
+check(
+  '"men" must not match inside "women"',
+  !/(^|[^a-z0-9])men/.test(normalize("Women's Sneakers")),
+  normalize("Women's Sneakers"),
+);
+
 section("interleaveByShop (fairness)");
 
 const bucketed = [
@@ -355,6 +384,48 @@ if (snapshot) {
       `searched "${unaccented}" -> ${accentResult.ranked.length} result(s)`,
     );
   }
+
+  // The case that prompted the synonym file: "toilet paper" vs the catalog's
+  // "Toilet Tissue". Both spellings must reach the same products.
+  const tissueRows = products.filter((r) => proseOf(r).includes("tissue"));
+  const paperQuery = show("cross-category synonym", "toilet paper");
+  const tissueQuery = run("toilet tissue");
+  check(
+    `"toilet paper" and "toilet tissue" return the same products`,
+    paperQuery.ranked.map((r) => r.id).join(",") ===
+      tissueQuery.ranked.map((r) => r.id).join(","),
+    `${paperQuery.ranked.length} vs ${tissueQuery.ranked.length}`,
+  );
+  check(
+    '"toilet paper" reaches the Toilet Tissue products',
+    paperQuery.ranked.some((r) => /toilet tissue/i.test(r.name)),
+  );
+  // Honest bound: items whose copy never mentions the concept stay unreachable.
+  // Three "Value Pack" rolls say neither "toilet" nor any synonym of it, so no
+  // synonym list can surface them. That is a product-copy gap, not a search one.
+  const unreachable = tissueRows.filter((r) => {
+    const prose = proseOf(r);
+    return !["toilet", "bathroom", "restroom", "lavatory"].some((w) =>
+      startsWord(prose, w),
+    );
+  });
+  console.log(
+    `\n  note: ${unreachable.length} of ${tissueRows.length} tissue products mention no` +
+      ` "toilet"-family word at all and cannot be reached by any query using it:`,
+  );
+  for (const r of unreachable) console.log(`     - ${r.name}`);
+
+  // Audience synonyms: the catalog says "Ladies"/"Mens"/"Youth".
+  const womens = show("audience synonym", "womens");
+  check(
+    '"womens" reaches "Ladies ..." and "Women\'s ..." items',
+    womens.ranked.length > 0 && !womens.isFuzzy,
+    `${womens.ranked.length} results`,
+  );
+  check(
+    '"womens" does not drag in "Mens ..." items by mistake',
+    !womens.ranked.every((r) => /\bmens\b/i.test(r.name)),
+  );
 
   // Nonsense query: no results, no crash.
   const nonsense = show("nonsense", "qzxwvu nonsense term");

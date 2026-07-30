@@ -5,6 +5,7 @@ import { z } from "zod";
 // npm `prisma` package under webpack, even though tsconfig's baseUrl maps it
 // to the local prisma/ directory. tsc accepts it; the build does not.
 import { categoriesWithKeywords } from "../../../prisma/category-data";
+import { SYNONYM_GROUPS } from "./synonyms";
 
 /**
  * Catalog search for products and services.
@@ -54,6 +55,11 @@ export function normalize(input: string): string {
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase()
+    // Drop apostrophes rather than treating them as separators, so "Women's"
+    // becomes "womens". Without this a shopper typing "womens" matches nothing,
+    // because the stored text is "Women's" and word-start matching needs the
+    // token to be a literal prefix.
+    .replace(/['‘’]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -102,10 +108,14 @@ export function tokenize(raw: string): string[] {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Reverse index built once at module load from the `keywords` arrays that
- * already exist in prisma/category-data.ts. Those lists are hand-written per
- * subcategory and even include common misspellings ("pendent" for "pendant"),
- * so they are a much better synonym source than anything we would invent.
+ * Reverse index built once at module load from two sources:
+ *
+ *  1. The `keywords` arrays in prisma/category-data.ts. Those lists are
+ *     hand-written per subcategory and even include common misspellings
+ *     ("pendent" for "pendant"), so they are a better source than anything we
+ *     would invent — but they only relate terms that share a category.
+ *  2. SYNONYM_GROUPS in ./synonyms.ts, for relationships that cut across
+ *     categories: paper/tissue, ladies/womens, grey/gray.
  *
  * keyword -> sibling keywords + the category name it belongs to
  */
@@ -148,6 +158,12 @@ const synonymIndex: Map<string, Set<string>> = (() => {
     for (const keyword of parentKeywords) {
       add(keyword, [parent.name, ...parentKeywords]);
     }
+  }
+
+  // Cross-category synonyms. Every member of a group relates to every other,
+  // in both directions; `add` skips the self-reference.
+  for (const group of SYNONYM_GROUPS) {
+    for (const term of group) add(term, group);
   }
 
   return index;
