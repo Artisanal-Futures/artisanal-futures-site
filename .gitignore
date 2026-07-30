@@ -52,3 +52,10 @@ yarn-error.log*
 **/public/sw.js.map
 **/public/workbox-.js.map
 **/public/worker-.js.map
+
+# docs screenshot pipeline (local-only)
+/e2e/.auth/
+/test-results/
+/playwright-report/
+/docs-assets/
+.env.docs

@@ -33,7 +33,6 @@ export const env = createEnv({
     MINIO_SECRET_KEY: z.string(),
     MINIO_ENDPOINT: z.string(),
 
-    STRIPE_PUBLISHABLE_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
 
     COOLIFY_ADMIN_SAFE_API_TOKEN: z.string().min(1),
@@ -70,11 +69,6 @@ export const env = createEnv({
       (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
-    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED: z.preprocess(
-      (str) => str === "true" || str === true,
-      z.boolean().optional().default(false),
-    ),
-
     NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
     NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
     NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
@@ -116,7 +110,6 @@ export const env = createEnv({
     AF_SP_WEBHOOK_SECRET: process.env.AF_SP_WEBHOOK_SECRET,
     SIMPLEPRESS_HASH_SECRET: process.env.SIMPLEPRESS_HASH_SECRET,
 
-    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
 
     HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
@@ -136,8 +129,6 @@ export const env = createEnv({
     NEXT_PUBLIC_VOTE_DISABLED: process.env.NEXT_PUBLIC_VOTE_DISABLED,
     NEXT_PUBLIC_HEART_VOTE_DISABLED:
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
-    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED:
-      process.env.NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED,
 
     NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
   },

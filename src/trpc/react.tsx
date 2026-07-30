@@ -8,6 +8,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import SuperJSON from "superjson";
 
+import { env } from "~/env";
 import { type AppRouter } from "~/server/api/root";
 
 import { createQueryClient } from "./query-client";
@@ -74,7 +75,10 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 }
 
 function getBaseUrl() {
+  // The window check must stay first and `env.BETTER_AUTH_URL` must stay inside
+  // this function. This is a "use client" module, and BETTER_AUTH_URL is a
+  // server-only var, so reading it through the env proxy in the browser throws.
+  // The server branch only runs during SSR, where the real value is present.
   if (typeof window !== "undefined") return window.location.origin;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return env.BETTER_AUTH_URL;
 }
