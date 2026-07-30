@@ -23,7 +23,10 @@ model TrainingDataSet {
   setType         LoraType        @default(UNKNOWN)
   triggerWord     String          @default("TOK")
   trainingModel   TrainingModel?  @relation(fields: [trainingModelId], references: [id])
-  user            User            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // userId is required, so SetNull was unsatisfiable. Training data belongs to
+  // the user: deleting the user hard-deletes their datasets, which in turn
+  // cascade-delete their TrainingImage rows.
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   images          TrainingImage[]
 }
 

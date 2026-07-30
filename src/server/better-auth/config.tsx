@@ -27,6 +27,10 @@ const captchaEnabled =
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
 
+  onAPIError: {
+    errorURL: "/auth/error",
+  },
+
   trustedOrigins: ["http://localhost:3000", `${env.BETTER_AUTH_URL}`],
 
   database: prismaAdapter(db, {
@@ -52,7 +56,7 @@ export const auth = betterAuth({
               <p>Click the button below to reset your password.</p>
             </>
           ),
-          siteName: "SimplePress",
+          siteName: "Artisanal Futures",
           baseUrl: env.BETTER_AUTH_URL,
           url,
         }),
@@ -72,6 +76,7 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/google`,
       disableImplicitSignUp: true,
+      prompt: "select_account",
     },
   },
   plugins: [
@@ -110,10 +115,12 @@ export const auth = betterAuth({
   user: {
     changeEmail: {
       enabled: true,
-      // Only sent when the current email is verified: better-auth emails the
-      // existing address to approve the change. When the current email is
-      // unverified (the default here), the new email is applied directly.
-      sendChangeEmailVerification: async ({
+      // If the user's current email is unverified, the change is applied
+      // directly (no confirmation email). If it's verified, better-auth
+      // calls this to send a confirmation link to the *current* address
+      // before applying the change to newEmail.
+      updateEmailWithoutVerification: true,
+      sendChangeEmailConfirmation: async ({
         user,
         newEmail,
         url,
@@ -121,6 +128,7 @@ export const auth = betterAuth({
         user: { email: string; name: string };
         newEmail: string;
         url: string;
+        token?: string;
       }) => {
         void resend.emails.send({
           from: EMAIL_FROM.NOREPLY,
@@ -135,7 +143,7 @@ export const auth = betterAuth({
                 <p>{`Click the button below to change your account email to ${newEmail}. If you didn't request this, you can ignore this message.`}</p>
               </>
             ),
-            siteName: "SimplePress",
+            siteName: "Artisanal Futures",
             baseUrl: env.BETTER_AUTH_URL,
             url,
           }),
@@ -195,17 +203,6 @@ export const auth = betterAuth({
         }
       }
 
-      if (ctx.path === "/error") {
-        const queryString = new URLSearchParams(
-          ctx.query as
-            | string
-            | Record<string, string>
-            | string[][]
-            | URLSearchParams
-            | undefined,
-        ).toString();
-        throw ctx.redirect(`/auth/error?${queryString}`);
-      }
       return ctx;
     }),
 

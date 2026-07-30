@@ -12,7 +12,7 @@ model Service {
   aiGeneratedTags   String[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
-  isPublic          Boolean    @default(false)
+  isPublic          Boolean    @default(true)
   shopId            String?
   isFeatured        Boolean    @default(false)
   serviceUrl        String?

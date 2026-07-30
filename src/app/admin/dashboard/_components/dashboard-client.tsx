@@ -19,6 +19,7 @@ import {
   FolderTree,
   Globe,
   HeartHandshake,
+  ImageOff,
   MessageSquare,
   Package,
   PackageX,
@@ -513,6 +514,16 @@ export function DashboardClient({
   const productCount = selectedArtisan?.products?.length ?? 0;
   const hasWebsite = !!selectedArtisan?.website;
   const hasProducts = productCount > 0;
+  const hiddenServicesCount =
+    selectedArtisan?.services?.filter((service) => !service.isPublic)
+      .length ?? 0;
+  const hiddenProductsCount =
+    selectedArtisan?.products?.filter((product) => !product.isPublic)
+      .length ?? 0;
+  const productsMissingImagesCount =
+    selectedArtisan?.products?.filter(
+      (product) => product.isPublic && !product.imageUrl,
+    ).length ?? 0;
 
   const isAdmin = user.role === "ADMIN";
 
@@ -634,6 +645,39 @@ export function DashboardClient({
             actionLabel="Add Products"
             href="/admin/products"
             variant="highlight"
+          />
+        )}
+
+        {/* Hidden services nudge */}
+        {hiddenServicesCount > 0 && (
+          <NudgeCard
+            icon={EyeOff}
+            title="Hidden services"
+            description={`${hiddenServicesCount} service(s) are hidden from buyers — mark them public so they show up.`}
+            actionLabel="Manage Services"
+            href="/admin/services"
+          />
+        )}
+
+        {/* Hidden products nudge */}
+        {hiddenProductsCount > 0 && (
+          <NudgeCard
+            icon={EyeOff}
+            title="Hidden products"
+            description={`${hiddenProductsCount} product(s) are hidden from buyers — mark them public so they show up.`}
+            actionLabel="Manage Products"
+            href="/admin/products"
+          />
+        )}
+
+        {/* Products missing images nudge */}
+        {productsMissingImagesCount > 0 && (
+          <NudgeCard
+            icon={ImageOff}
+            title="Products missing photos"
+            description={`${productsMissingImagesCount} product(s) have no photo — products with photos get far more attention.`}
+            actionLabel="Manage Products"
+            href="/admin/products"
           />
         )}
 

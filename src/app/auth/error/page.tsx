@@ -1,13 +1,10 @@
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
-import { AuthView } from "@daveyplate/better-auth-ui";
 import { ArrowLeft } from "lucide-react";
 
 import type { ErrorCode } from "../_components/auth-error-card";
 import { cn } from "~/lib/utils";
-import { auth } from "~/server/better-auth/config";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 
 import { defaultError, errorConfigs } from "../_components/auth-error-card";
 
@@ -15,10 +12,15 @@ export const metadata = {
   title: "Error",
 };
 type Props = {
-  searchParams: Promise<{ callbackUrl?: string; errorCode?: string }>;
+  searchParams: Promise<{
+    callbackUrl?: string;
+    error?: string;
+    errorCode?: string;
+  }>;
 };
 export default async function SignInPage({ searchParams }: Props) {
-  const { errorCode } = await searchParams;
+  const { error, errorCode: legacyErrorCode } = await searchParams;
+  const errorCode = error ?? legacyErrorCode;
 
   const config = !!errorCode
     ? errorConfigs[errorCode as ErrorCode]
