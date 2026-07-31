@@ -51,8 +51,17 @@ const DEFAULT_HEADERS = {
 /** Statuses worth waiting out rather than failing on. */
 const RETRYABLE_STATUSES = new Set([429, 503]);
 const MAX_RETRIES = 3;
-/** Cap on how long we'll honour a `Retry-After` before giving up instead. */
-const MAX_RETRY_DELAY_MS = 30_000;
+/**
+ * Cap on how long we'll honour a `Retry-After` before giving up instead.
+ *
+ * Shopify's storefront throttle answers with `Retry-After: 60` and a
+ * `local_rate_limited` body — a short, cooperative "come back in a minute".
+ * Product syncing is background work (weekly, and hand-triggered at most once
+ * per shop per 15 minutes), so a minute of patience costs nothing and is the
+ * difference between a shop syncing and not. Two minutes leaves headroom above
+ * the common 60s ask while still refusing an open-ended wait.
+ */
+const MAX_RETRY_DELAY_MS = 120_000;
 
 export class SafeFetchError extends Error {
   /** HTTP status, when the failure was an HTTP response rather than a network error. */
@@ -459,9 +468,14 @@ export async function safeFetchText(
       const delay = retryDelayMs(err.retryAfter, attempt);
       if (delay === null) {
         console.warn(
-          `[safeFetch] ${url.href} asked us to wait longer than we're willing to hold; giving up.`,
+          `[safeFetch] ${url.href} asked us to wait ${err.retryAfter}s — longer than the ${
+            MAX_RETRY_DELAY_MS / 1000
+          }s we're willing to hold a request open; giving up.`,
         );
-        throw err;
+        throw new SafeFetchError(
+          `The store asked us to wait ${err.retryAfter} seconds before trying again — longer than we hold a request open. The next scheduled sync should pick it up.`,
+          { status: err.status, retryAfter: err.retryAfter },
+        );
       }
       console.warn(
         `[safeFetch] ${url.href} returned HTTP ${err.status}; retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES}).`,

@@ -65,6 +65,8 @@ const INTERESTING_HEADERS = [
  * Raw single request, bypassing retries, so we see the *first* status rather
  * than the outcome after backoff.
  */
+let retryAfterSeconds: number | null = null;
+
 async function rawProbe(url: string) {
   console.log(`\n1. Raw probe  ${url}`);
   console.log(`   User-Agent: ${SAFE_FETCH_USER_AGENT}`);
@@ -81,6 +83,12 @@ async function rawProbe(url: string) {
     for (const name of INTERESTING_HEADERS) {
       const value = res.headers.get(name);
       if (value) console.log(`      ${name}: ${value}`);
+    }
+
+    const retryAfter = res.headers.get("retry-after");
+    if (retryAfter) {
+      const parsed = Number(retryAfter);
+      if (Number.isFinite(parsed)) retryAfterSeconds = parsed;
     }
 
     const body = await res.text();
@@ -135,7 +143,20 @@ function verdict(probeStatus: number | null, feedOk: boolean) {
     return 0;
   }
   if (probeStatus === 429) {
-    console.log("VERDICT: HTTP 429 — throttled.");
+    // A 429 that names its own cooldown is cooperative throttling, not a
+    // refusal — the store is telling us exactly when to come back.
+    if (retryAfterSeconds !== null) {
+      console.log(
+        `VERDICT: HTTP 429 — ordinary throttling, ${retryAfterSeconds}s cooldown.`,
+      );
+      console.log(
+        "The store is not blocking us; it asked us to come back shortly.\n" +
+          `Wait ${retryAfterSeconds}s and re-run this command — it should pass.\n` +
+          "The sync honours this automatically and will retry on its own.",
+      );
+      return 1;
+    }
+    console.log("VERDICT: HTTP 429 with no Retry-After — throttled, duration unknown.");
     console.log(
       "Run this from a second machine on a different network.\n" +
         "  200 there -> this machine's IP is in a cooldown; wait it out.\n" +

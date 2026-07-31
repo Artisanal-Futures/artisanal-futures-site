@@ -227,6 +227,20 @@ async function main() {
     retryDelayMs(null, 2),
     4000,
   );
+  // Regression: Shopify's storefront throttle answers `Retry-After: 60` with a
+  // `local_rate_limited` body. An earlier 30s ceiling refused that and failed
+  // the sync outright, throwing away a request that would have succeeded a
+  // minute later. Waiting a minute is nothing for weekly background work.
+  assertEq(
+    "Shopify's 60s cooldown is waited out, not refused",
+    retryDelayMs("60", 0),
+    60_000,
+  );
+  assertEq(
+    "a two-minute cooldown is still honoured",
+    retryDelayMs("120", 0),
+    120_000,
+  );
   assertEq(
     "an unreasonably long Retry-After gives up instead of stalling",
     retryDelayMs("3600", 0),
@@ -235,7 +249,7 @@ async function main() {
   assertEq(
     "backoff is capped even at high attempt counts",
     retryDelayMs(null, 20),
-    30_000,
+    120_000,
   );
 
   const throttled = new SafeFetchError("rate limited", {

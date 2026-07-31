@@ -13,7 +13,7 @@ import {
   StoreUrlError,
   type FetchablePlatform,
 } from "~/server/lib/store-feed";
-import { SafeFetchError } from "~/server/lib/safe-fetch";
+import { SafeFetchError, sleep } from "~/server/lib/safe-fetch";
 
 /**
  * Scheduled product sync.
@@ -804,6 +804,18 @@ export type SyncSweepSummary = {
 };
 
 /**
+ * Pause between shops in a sweep.
+ *
+ * Storefront throttling is per client IP, and a server's datacenter IP is
+ * treated far more harshly than a home connection — the same request that
+ * succeeds from a laptop can come back 429 from Coolify. Since a sweep hits
+ * many shops from that one IP, the throttle accumulates across the run even
+ * when each shop individually is fine. A few seconds between shops costs
+ * nothing on a weekly 4am job and keeps the whole sweep under the limit.
+ */
+const SHOP_DELAY_MS = 3_000;
+
+/**
  * Visit every shop configured for automatic syncing and plan a run for each.
  *
  * Shared by the weekly cron (`POST /api/cron/sync-products`) and the admin
@@ -846,6 +858,7 @@ export async function runScheduledSync(
     results: [],
   };
 
+  let visited = 0;
   for (const shop of shops) {
     // Square and manual platforms have no public feed; skip without noise.
     if (!toFetchablePlatform(shop.syncPlatform)) {
@@ -858,6 +871,11 @@ export async function runScheduledSync(
       });
       continue;
     }
+
+    // Space out shops that actually hit the network (skipped ones cost
+    // nothing, so they don't earn a delay).
+    if (visited > 0 && !opts.fetchFeed) await sleep(SHOP_DELAY_MS);
+    visited++;
 
     try {
       const result = await planShopSync(db, shop.id, {
