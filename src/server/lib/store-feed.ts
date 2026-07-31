@@ -1,4 +1,13 @@
-import { SafeFetchError, safeFetchText } from "~/server/lib/safe-fetch";
+import { SafeFetchError, safeFetchText, sleep } from "~/server/lib/safe-fetch";
+
+/**
+ * Pause between paginated requests to the same storefront.
+ *
+ * Hosted storefronts throttle a burst of back-to-back requests even when each
+ * one is individually fine. A small deliberate gap keeps a large catalog's
+ * import from looking like a scrape, at a cost of a few seconds per shop.
+ */
+const PAGE_DELAY_MS = 500;
 
 /**
  * Fetches a shop's public product feed from its own storefront.
@@ -205,6 +214,7 @@ export async function fetchStoreFeed({
     const MAX_PAGES = 40; // 40 * 250 = up to 10k products
     const products: unknown[] = [];
     for (let page = 1; page <= MAX_PAGES; page++) {
+      if (page > 1) await sleep(PAGE_DELAY_MS);
       const text = await safeFetchText(
         `${origin}/products.json?limit=250&page=${page}`,
         { allowInsecureTLSFallback: true, onInsecureTLSFallback },
@@ -254,6 +264,7 @@ export async function fetchStoreFeed({
     const items: unknown[] = [];
     let offset: number | undefined;
     for (let page = 0; page < MAX_PAGES; page++) {
+      if (page > 0) await sleep(PAGE_DELAY_MS);
       const pageUrl = new URL(storeUrl.href);
       pageUrl.searchParams.set("format", "json");
       if (offset !== undefined) {
@@ -291,6 +302,7 @@ export async function fetchStoreFeed({
   const MAX_PAGES = 50; // 50 * 100 = up to 5k products
   const products: WpFetchedProduct[] = [];
   for (let page = 1; page <= MAX_PAGES; page++) {
+    if (page > 1) await sleep(PAGE_DELAY_MS);
     const fetchUrl = `${origin}/wp-json/wp/v2/product?per_page=100&page=${page}&_embed=wp:featuredmedia`;
     console.log(`[store-feed] WordPress fetch URL: ${fetchUrl}`);
     let text: string;

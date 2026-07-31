@@ -30,11 +30,82 @@ import net from "node:net";
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_MAX_BYTES = 8 * 1024 * 1024; // 8 MB
 
+/**
+ * Identify ourselves honestly on every outbound store request.
+ *
+ * Without a User-Agent, Node sends none, and the bot protection in front of
+ * hosted storefronts (Shopify/Cloudflare in particular) answers `/products.json`
+ * with a 429 on the very first request. Saying plainly who we are and linking a
+ * contact page is both the thing that gets us served and the correct way to
+ * behave: a shop owner reading their logs can see exactly what this is and who
+ * to talk to. Never impersonate a browser here.
+ */
+export const SAFE_FETCH_USER_AGENT =
+  "ArtisanalFuturesBot/1.0 (+https://artisanalfutures.org; product sync on behalf of the shop owner)";
+
+const DEFAULT_HEADERS = {
+  accept: "application/json, text/plain;q=0.9, */*;q=0.5",
+  "user-agent": SAFE_FETCH_USER_AGENT,
+} as const;
+
+/** Statuses worth waiting out rather than failing on. */
+const RETRYABLE_STATUSES = new Set([429, 503]);
+const MAX_RETRIES = 3;
+/** Cap on how long we'll honour a `Retry-After` before giving up instead. */
+const MAX_RETRY_DELAY_MS = 30_000;
+
 export class SafeFetchError extends Error {
-  constructor(message: string) {
+  /** HTTP status, when the failure was an HTTP response rather than a network error. */
+  readonly status?: number;
+  /** Raw `Retry-After` header, when the server sent one. */
+  readonly retryAfter?: string | null;
+
+  constructor(
+    message: string,
+    opts: { status?: number; retryAfter?: string | null } = {},
+  ) {
     super(message);
     this.name = "SafeFetchError";
+    this.status = opts.status;
+    this.retryAfter = opts.retryAfter;
   }
+
+  /** True when waiting and trying again is worth doing. */
+  get isRetryable(): boolean {
+    return this.status !== undefined && RETRYABLE_STATUSES.has(this.status);
+  }
+}
+
+export const sleep = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** node:http gives a header as string | string[] | undefined; flatten it. */
+function headerValue(raw: string | string[] | undefined): string | null {
+  if (Array.isArray(raw)) return raw[0] ?? null;
+  return raw ?? null;
+}
+
+/**
+ * How long to wait before retrying a throttled request. Prefers the server's
+ * own `Retry-After` (seconds, or an HTTP date), falling back to exponential
+ * backoff. Returns null when the wait would be longer than we're willing to
+ * hold the request open.
+ */
+export function retryDelayMs(
+  retryAfter: string | null | undefined,
+  attempt: number,
+): number | null {
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    const ms = Number.isFinite(seconds)
+      ? seconds * 1000
+      : new Date(retryAfter).getTime() - Date.now();
+    if (Number.isFinite(ms) && ms > 0) {
+      return ms <= MAX_RETRY_DELAY_MS ? ms : null;
+    }
+  }
+  // 1s, 2s, 4s — enough to clear a short throttle without stalling a sweep.
+  return Math.min(1000 * 2 ** attempt, MAX_RETRY_DELAY_MS);
 }
 
 function ipv4ToInt(ip: string): number {
@@ -199,7 +270,7 @@ async function fetchSecureText(
     const res = await fetch(url, {
       signal: controller.signal,
       redirect: "manual",
-      headers: { accept: "application/json, text/plain;q=0.9, */*;q=0.5" },
+      headers: DEFAULT_HEADERS,
     });
 
     if (res.status >= 300 && res.status < 400) {
@@ -227,7 +298,12 @@ async function fetchSecureText(
           bodySnippet || "(empty)"
         }`,
       );
-      throw new SafeFetchError(`Store responded with HTTP ${res.status}.`);
+      throw new SafeFetchError(
+        res.status === 429
+          ? "The store is rate limiting us (HTTP 429). Try again in a few minutes."
+          : `Store responded with HTTP ${res.status}.`,
+        { status: res.status, retryAfter: res.headers.get("retry-after") },
+      );
     }
 
     const contentLength = Number(res.headers.get("content-length") ?? "0");
@@ -284,7 +360,7 @@ function fetchInsecureText(
         method: "GET",
         rejectUnauthorized: false,
         timeout: timeoutMs,
-        headers: { accept: "application/json, text/plain;q=0.9, */*;q=0.5" },
+        headers: DEFAULT_HEADERS,
       },
       (res) => {
         const status = res.statusCode ?? 0;
@@ -322,7 +398,14 @@ function fetchInsecureText(
                 body.slice(0, 500) || "(empty)"
               }`,
             );
-            reject(new SafeFetchError(`Store responded with HTTP ${status}.`));
+            reject(
+              new SafeFetchError(
+                status === 429
+                  ? "The store is rate limiting us (HTTP 429). Try again in a few minutes."
+                  : `Store responded with HTTP ${status}.`,
+                { status, retryAfter: headerValue(res.headers["retry-after"]) },
+              ),
+            );
             return;
           }
           resolve(body);
@@ -361,6 +444,33 @@ export async function safeFetchText(
   const url = assertPublicHttpUrl(rawUrl);
   await assertHostResolvesPublic(url.hostname);
 
+  // Wait out transient throttling (429/503) rather than failing the whole
+  // import. Honours the store's own `Retry-After` when it sends one; a wait
+  // longer than we're prepared to hold open is treated as a hard failure so a
+  // sweep can move on to the next shop.
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await attemptFetch();
+    } catch (err) {
+      const retryable =
+        err instanceof SafeFetchError && err.isRetryable && attempt < MAX_RETRIES;
+      if (!retryable) throw err;
+
+      const delay = retryDelayMs(err.retryAfter, attempt);
+      if (delay === null) {
+        console.warn(
+          `[safeFetch] ${url.href} asked us to wait longer than we're willing to hold; giving up.`,
+        );
+        throw err;
+      }
+      console.warn(
+        `[safeFetch] ${url.href} returned HTTP ${err.status}; retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES}).`,
+      );
+      await sleep(delay);
+    }
+  }
+
+  async function attemptFetch(): Promise<string> {
   try {
     return await fetchSecureText(url, timeoutMs, maxBytes);
   } catch (err) {
@@ -384,5 +494,6 @@ export async function safeFetchText(
     // Other network-level failures (DNS, ECONNREFUSED, etc.).
     console.error(`[safeFetch] ${url.href} failed:`, err);
     throw new SafeFetchError("Failed to fetch store data.");
+  }
   }
 }

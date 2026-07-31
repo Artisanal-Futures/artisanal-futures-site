@@ -22,6 +22,8 @@ import dns from "node:dns/promises";
 import {
   assertHostResolvesPublic,
   assertPublicHttpUrl,
+  retryDelayMs,
+  SAFE_FETCH_USER_AGENT,
   SafeFetchError,
 } from "../src/server/lib/safe-fetch";
 
@@ -187,6 +189,88 @@ async function main() {
     "assertHostResolvesPublic rejects a hostname resolving to a private address",
     () => assertHostResolvesPublic("sneaky.example.com"),
     /private|reserved/i,
+  );
+
+  // --- Rate-limit backoff --------------------------------------------------
+  // Hosted storefronts (Shopify behind Cloudflare especially) answer with 429
+  // and often a `Retry-After`. These assert we wait the amount we're told,
+  // fall back to sane exponential backoff when we're told nothing, and refuse
+  // to hold a request open for an unreasonably long cooldown.
+
+  function assertEq(label: string, actual: unknown, expected: unknown) {
+    if (actual === expected) ok(label);
+    else fail(label, `expected ${String(expected)}, got ${String(actual)}`);
+  }
+
+  function assertTrue(label: string, value: boolean, detail?: unknown) {
+    if (value) ok(label);
+    else fail(label, detail);
+  }
+
+  assertEq(
+    "Retry-After in seconds is honoured",
+    retryDelayMs("2", 0),
+    2000,
+  );
+  assertEq(
+    "Retry-After of 0 falls through to backoff",
+    retryDelayMs("0", 0),
+    1000,
+  );
+  assertEq(
+    "no Retry-After backs off exponentially (attempt 0)",
+    retryDelayMs(null, 0),
+    1000,
+  );
+  assertEq(
+    "no Retry-After backs off exponentially (attempt 2)",
+    retryDelayMs(null, 2),
+    4000,
+  );
+  assertEq(
+    "an unreasonably long Retry-After gives up instead of stalling",
+    retryDelayMs("3600", 0),
+    null,
+  );
+  assertEq(
+    "backoff is capped even at high attempt counts",
+    retryDelayMs(null, 20),
+    30_000,
+  );
+
+  const throttled = new SafeFetchError("rate limited", {
+    status: 429,
+    retryAfter: "5",
+  });
+  assertEq("a 429 is marked retryable", throttled.isRetryable, true);
+  assertEq("its status is preserved", throttled.status, 429);
+  assertEq(
+    "a 404 is not retryable",
+    new SafeFetchError("gone", { status: 404 }).isRetryable,
+    false,
+  );
+  assertEq(
+    "a network-level failure is not retryable",
+    new SafeFetchError("network").isRetryable,
+    false,
+  );
+
+  // We must identify ourselves — a missing User-Agent is what gets us 429'd in
+  // the first place — and must never claim to be a browser.
+  assertTrue(
+    "the user agent names this bot",
+    /ArtisanalFuturesBot/.test(SAFE_FETCH_USER_AGENT),
+    SAFE_FETCH_USER_AGENT,
+  );
+  assertTrue(
+    "the user agent carries a contact URL",
+    /https:\/\/artisanalfutures\.org/.test(SAFE_FETCH_USER_AGENT),
+    SAFE_FETCH_USER_AGENT,
+  );
+  assertTrue(
+    "the user agent does not impersonate a browser",
+    !/Mozilla|Chrome|Safari|AppleWebKit/i.test(SAFE_FETCH_USER_AGENT),
+    SAFE_FETCH_USER_AGENT,
   );
 
   console.log(`\n${passes} passed, ${failures} failed`);
