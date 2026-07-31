@@ -25,8 +25,18 @@ export function NavMain({
   }[];
 }) {
   const pathname = usePathname();
-  const isActive = (url: string) =>
+  const matches = (url: string) =>
     pathname === url || pathname.startsWith(url + "/");
+
+  // Only the *most specific* matching entry lights up. Nested routes otherwise
+  // activate their parent too — /admin/products/sync matches both "Products"
+  // and "Product Sync" — which reads as two places at once.
+  const activeUrl = items
+    .map((item) => item.url)
+    .filter(matches)
+    .sort((a, b) => b.length - a.length)[0];
+
+  const isActive = (url: string) => url === activeUrl;
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
