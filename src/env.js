@@ -52,6 +52,16 @@ export const env = createEnv({
     SIMPLEPRESS_HASH_SECRET: z.string().min(1),
 
     HCAPTCHA_SECRET_KEY: z.string(),
+
+    // Bearer token for POST /api/cron/sync-products, called by the Coolify
+    // Scheduled Task that runs the weekly product sync. Generate with
+    // `openssl rand -hex 32`.
+    //
+    // Optional so a deploy never fails just because the secret hasn't been
+    // added in Coolify yet — the route returns 503 until it is set, rather
+    // than the whole build refusing to start. When present it must be long
+    // enough to be worth having.
+    CRON_SECRET: z.string().min(32).optional(),
   },
 
   /**
@@ -114,6 +124,8 @@ export const env = createEnv({
 
     HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
     NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+
+    CRON_SECRET: process.env.CRON_SECRET,
 
     NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
     NEXT_PUBLIC_STORAGE_BUCKET_NAME:

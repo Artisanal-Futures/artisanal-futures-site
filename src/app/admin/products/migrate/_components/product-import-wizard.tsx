@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import type { ProductData } from "../../_utils/convert-to-product";
+import type { ProductData } from "~/lib/product-import/convert-to-product";
 import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
@@ -44,7 +44,7 @@ import { Textarea } from "~/components/ui/textarea";
 
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { ImageWithFallback } from "~/components/image-with-fallback";
-import { mapProducts } from "../../_utils/convert-to-product";
+import { mapProducts } from "~/lib/product-import/convert-to-product";
 
 // Platforms we can pull from automatically. Square (square.site) has no public
 // product feed, so it's paste-only and excluded here.

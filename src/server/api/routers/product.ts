@@ -5,7 +5,13 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
-import { SafeFetchError, safeFetchText } from "~/server/lib/safe-fetch";
+import { SafeFetchError } from "~/server/lib/safe-fetch";
+import { SYNCED_FIELDS } from "~/server/lib/product-sync";
+import {
+  fetchStoreFeed,
+  StoreFeedFormatError,
+  StoreUrlError,
+} from "~/server/lib/store-feed";
 import { $Enums } from "generated/prisma";
 import { z } from "zod";
 
@@ -24,81 +30,6 @@ import {
 } from "~/lib/search/catalog-search";
 import { productSchema } from "~/lib/validators/products";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
-
-// --- WordPress featured-media resolution (server-side) ---------------------
-// WordPress exposes a product's image on a *separate* media endpoint, not on
-// the product object. We resolve it here on the server (no CORS, and one
-// request per page when `_embed` is honored) and inject a flat
-// `featured_image_url` field that the client import parser reads directly.
-type WpMedia = { source_url?: string; guid?: { rendered?: string } };
-type WpFetchedProduct = {
-  featured_media?: number;
-  _embedded?: { "wp:featuredmedia"?: WpMedia[] };
-  _links?: { "wp:featuredmedia"?: Array<{ href?: string }> };
-  [key: string]: unknown;
-};
-
-function imageFromEmbedded(product: WpFetchedProduct): string | null {
-  const media = product._embedded?.["wp:featuredmedia"]?.[0];
-  return media?.source_url ?? media?.guid?.rendered ?? null;
-}
-
-/**
- * Resolve each WordPress product's featured image into a flat
- * `featured_image_url`. Prefers the `_embedded` media that `_embed` returns
- * inline; for installs that ignore `_embed`, falls back to fetching the
- * product's media href server-side, with bounded concurrency and a hard cap so
- * a no-embed store can't trigger thousands of outbound requests.
- */
-async function resolveWordPressImages(
-  products: WpFetchedProduct[],
-  onInsecureTLSFallback?: (certCode: string) => void,
-): Promise<Array<WpFetchedProduct & { featured_image_url: string | null }>> {
-  const MAX_HREF_FETCHES = 100;
-  const CONCURRENCY = 6;
-  let hrefFetches = 0;
-  let cursor = 0;
-  const results = new Array<
-    WpFetchedProduct & { featured_image_url: string | null }
-  >(products.length);
-
-  async function worker() {
-    while (cursor < products.length) {
-      const i = cursor++;
-      const product = products[i]!;
-      let imageUrl = imageFromEmbedded(product);
-      if (!imageUrl) {
-        const href = product._links?.["wp:featuredmedia"]?.[0]?.href;
-        const hasMedia =
-          typeof product.featured_media === "number" &&
-          product.featured_media > 0;
-        if (href && hasMedia && hrefFetches < MAX_HREF_FETCHES) {
-          hrefFetches++;
-          try {
-            const media = JSON.parse(
-              await safeFetchText(href, {
-                allowInsecureTLSFallback: true,
-                onInsecureTLSFallback,
-              }),
-            ) as WpMedia;
-            imageUrl = media.source_url ?? media.guid?.rendered ?? null;
-          } catch (err) {
-            console.error(
-              `[fetchFromStore] Failed to resolve WP media ${href}:`,
-              err,
-            );
-          }
-        }
-      }
-      results[i] = { ...product, featured_image_url: imageUrl };
-    }
-  }
-
-  await Promise.all(
-    Array.from({ length: Math.min(CONCURRENCY, products.length) }, worker),
-  );
-  return results;
-}
 
 export const productRouter = createTRPCRouter({
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
@@ -289,18 +220,13 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  // Server-side "fetch from my store" for the migration wizard. Fetches the
-  // shop's public product feed so artisans don't have to copy-paste JSON.
+  // Server-side "fetch from my store" for the migration wizard. Thin wrapper
+  // around `fetchStoreFeed` (see ~/server/lib/store-feed) which owns every
+  // platform's feed URL, pagination caps and TLS handling — the scheduled
+  // product sync calls that same helper directly.
   //
-  // Shopify (`/products.json`) and WordPress (`/wp-json/wp/v2/product`) have a
-  // fixed feed path we can derive from the shop's domain. Squarespace has no
-  // site-wide feed — instead any page returns its data as JSON when you append
-  // `?format=json`. So Squarespace only works if the shop's stored website is
-  // the *page that lists products* (e.g. business.com/store), not just the
-  // homepage; the wizard warns the artisan about this.
-  //
-  // The returned `json` is shaped exactly like the manual export so the
-  // existing client-side `mapProducts` parser handles it unchanged.
+  // The returned `json` is shaped exactly like the manual export so the shared
+  // `mapProducts` parser handles it unchanged.
   fetchFromStore: adminArtisanProcedure
     .input(
       z.object({
@@ -327,10 +253,12 @@ export const productRouter = createTRPCRouter({
 
       const shop = await ctx.db.shop.findUnique({
         where: { id: input.shopId },
-        select: { website: true },
+        select: { website: true, syncUrl: true, allowInsecureOrigin: true },
       });
 
-      if (!shop?.website?.trim()) {
+      const website = shop?.syncUrl?.trim() ?? shop?.website?.trim();
+
+      if (!website) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
@@ -338,182 +266,16 @@ export const productRouter = createTRPCRouter({
         });
       }
 
-      // Parse the stored website once, forcing https. `origin` (no path/query)
-      // is used by Shopify/WordPress; `storeUrl` keeps the full path for
-      // Squarespace, whose feed lives at the products page itself.
-      let storeUrl: URL;
       try {
-        const trimmed = shop.website.trim();
-        const withScheme = /^https?:\/\//i.test(trimmed)
-          ? trimmed
-          : `https://${trimmed}`;
-        storeUrl = new URL(withScheme);
-        storeUrl.protocol = "https:";
-      } catch {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `The shop website "${shop.website}" is not a valid URL.`,
+        return await fetchStoreFeed({
+          website,
+          platform: input.platform,
+          allowInsecureOrigin: shop?.allowInsecureOrigin ?? false,
         });
-      }
-      const origin = storeUrl.origin;
-
-      // Set when a fetch had to fall back to skipping TLS verification because
-      // the store's certificate is invalid/expired. Surfaced to the client so
-      // the artisan gets a heads-up to renew their certificate.
-      let insecureTLSCode: string | null = null;
-      const onInsecureTLSFallback = (certCode: string) => {
-        insecureTLSCode ??= certCode;
-      };
-
-      try {
-        if (input.platform === "shopify") {
-          // Shopify exposes /products.json with page-based pagination.
-          const MAX_PAGES = 40; // 40 * 250 = up to 10k products
-          const products: unknown[] = [];
-          for (let page = 1; page <= MAX_PAGES; page++) {
-            const text = await safeFetchText(
-              `${origin}/products.json?limit=250&page=${page}`,
-              { allowInsecureTLSFallback: true, onInsecureTLSFallback },
-            );
-            const parsed = JSON.parse(text) as { products?: unknown[] };
-            const batch = parsed.products ?? [];
-            products.push(...batch);
-            if (batch.length < 250) break;
-          }
-          return {
-            json: JSON.stringify({ products }),
-            count: products.length,
-            insecureTLSCode,
-          };
-        }
-
-        if (input.platform === "simplepress") {
-          // SimplePress exposes a single flat product feed at /api/products
-          // (no pagination). The response is { business, products }; we hand
-          // back just `{ products }` to match the client-side parser.
-          const text = await safeFetchText(`${origin}/api/products`, {
-            allowInsecureTLSFallback: true,
-            onInsecureTLSFallback,
-          });
-          const parsed = JSON.parse(text) as { products?: unknown[] };
-          const products = Array.isArray(parsed.products)
-            ? parsed.products
-            : [];
-          console.log(
-            `[fetchFromStore] SimplePress import for shop ${input.shopId} (${origin}) collected ${products.length} products.`,
-          );
-          return {
-            json: JSON.stringify({ products }),
-            count: products.length,
-            insecureTLSCode,
-          };
-        }
-
-        if (input.platform === "squarespace") {
-          // Squarespace renders any page as JSON when you append
-          // `?format=json`. There's no site-wide product feed, so we fetch the
-          // exact page the artisan saved as their website (path preserved) and
-          // paginate via the `pagination` offset the response hands back.
-          type SquarespaceFeed = {
-            items?: unknown[];
-            pagination?: { nextPage?: boolean; nextPageOffset?: number };
-          };
-          const MAX_PAGES = 30; // ~20 items/page -> up to ~600 products
-          const items: unknown[] = [];
-          let offset: number | undefined;
-          for (let page = 0; page < MAX_PAGES; page++) {
-            const pageUrl = new URL(storeUrl.href);
-            pageUrl.searchParams.set("format", "json");
-            if (offset !== undefined) {
-              pageUrl.searchParams.set("offset", String(offset));
-            }
-            const text = await safeFetchText(pageUrl.href, {
-              allowInsecureTLSFallback: true,
-              onInsecureTLSFallback,
-            });
-            const feed = JSON.parse(text) as SquarespaceFeed;
-            const batch = Array.isArray(feed.items) ? feed.items : [];
-            items.push(...batch);
-            if (
-              batch.length === 0 ||
-              !feed.pagination?.nextPage ||
-              typeof feed.pagination.nextPageOffset !== "number"
-            ) {
-              break;
-            }
-            offset = feed.pagination.nextPageOffset;
-          }
-          console.log(
-            `[fetchFromStore] Squarespace import for shop ${input.shopId} (${storeUrl.href}) collected ${items.length} products.`,
-          );
-          return {
-            json: JSON.stringify({ items }),
-            count: items.length,
-            insecureTLSCode,
-          };
-        }
-
-        // WordPress REST API: /wp-json/wp/v2/product with per_page/page.
-        // `_embed=wp:featuredmedia` asks WP to inline each product's featured
-        // image so we don't have to make a separate request per product.
-        const MAX_PAGES = 50; // 50 * 100 = up to 5k products
-        const products: WpFetchedProduct[] = [];
-        for (let page = 1; page <= MAX_PAGES; page++) {
-          const fetchUrl = `${origin}/wp-json/wp/v2/product?per_page=100&page=${page}&_embed=wp:featuredmedia`;
-          console.log(`[fetchFromStore] WordPress fetch URL: ${fetchUrl}`);
-          let text: string;
-          try {
-            text = await safeFetchText(fetchUrl, {
-              allowInsecureTLSFallback: true,
-              onInsecureTLSFallback,
-            });
-          } catch (err) {
-            // WP returns a 400 once you page past the end; stop gracefully if
-            // we've already collected something, otherwise surface the error.
-            if (page > 1 && err instanceof SafeFetchError) break;
-            console.error(
-              `[fetchFromStore] WordPress fetch failed (shop ${input.shopId}, ${fetchUrl}):`,
-              err,
-            );
-            throw err;
-          }
-          const parsed = JSON.parse(text) as unknown;
-          if (!Array.isArray(parsed)) {
-            // A 200 that isn't an array is almost always a WP error object
-            // ({"code":"rest_no_route",...}) or an unexpected payload shape.
-            console.error(
-              `[fetchFromStore] WordPress returned a non-array payload (shop ${input.shopId}, ${fetchUrl}): ${text.slice(
-                0,
-                500,
-              )}`,
-            );
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message:
-                "The store didn't return a product list. This site may not expose products at /wp-json/wp/v2/product — try the manual paste flow.",
-            });
-          }
-          const batch = parsed as WpFetchedProduct[];
-          if (batch.length === 0) break;
-          products.push(...batch);
-          if (batch.length < 100) break;
-        }
-        const withImages = await resolveWordPressImages(
-          products,
-          onInsecureTLSFallback,
-        );
-        const resolvedCount = withImages.filter(
-          (p) => p.featured_image_url,
-        ).length;
-        console.log(
-          `[fetchFromStore] WordPress import for shop ${input.shopId} (${origin}) collected ${withImages.length} products (${resolvedCount} with images).`,
-        );
-        return {
-          json: JSON.stringify(withImages),
-          count: withImages.length,
-          insecureTLSCode,
-        };
       } catch (err) {
+        if (err instanceof StoreUrlError || err instanceof StoreFeedFormatError) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: err.message });
+        }
         if (err instanceof SafeFetchError) {
           throw new TRPCError({ code: "BAD_REQUEST", message: err.message });
         }
@@ -524,6 +286,10 @@ export const productRouter = createTRPCRouter({
               "The store responded but the data wasn't in the expected format. Try the manual paste flow.",
           });
         }
+        console.error(
+          `[fetchFromStore] Feed fetch failed for shop ${input.shopId}:`,
+          err,
+        );
         throw err;
       }
     }),
@@ -761,11 +527,51 @@ export const productRouter = createTRPCRouter({
 
       const formattedTags = tags.map((tag) => tag.text);
 
+      // Record which sync-owned fields a human has now edited, so the scheduled
+      // product sync stops proposing to overwrite them. Union rather than
+      // replace: a field stays claimed once someone has curated it, even if a
+      // later edit leaves it untouched.
+      const existing = await ctx.db.product.findUnique({
+        where: { id },
+        select: {
+          manualFields: true,
+          name: true,
+          description: true,
+          priceInCents: true,
+          currency: true,
+          imageUrl: true,
+          productUrl: true,
+          isPublic: true,
+        },
+      });
+
+      const manualFields = new Set(existing?.manualFields ?? []);
+      if (existing) {
+        for (const field of SYNCED_FIELDS) {
+          const before = existing[field] ?? null;
+          const after = productData[field] ?? null;
+          // Compare loosely: the form round-trips numbers as strings and empty
+          // inputs as "", neither of which is a real edit. Every synced field is
+          // a scalar, so string/number is the whole domain here.
+          const normalize = (v: string | number | null | undefined) =>
+            v === null || v === undefined || v === "" ? null : String(v);
+          if (normalize(before) !== normalize(after)) {
+            manualFields.add(field);
+          }
+        }
+        // Visibility isn't a synced field, but a deliberate hide has to outrank
+        // the sync's "it's back upstream, unhide it" rule — so record it too.
+        if (existing.isPublic !== productData.isPublic) {
+          manualFields.add("isPublic");
+        }
+      }
+
       const product = await ctx.db.product.update({
         where: { id },
         data: {
           ...productData,
           tags: formattedTags,
+          manualFields: [...manualFields],
           categories: { set: allCategoryIds.map((id) => ({ id })) },
         },
       });

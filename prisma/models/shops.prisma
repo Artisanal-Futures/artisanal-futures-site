@@ -15,6 +15,20 @@ model Shop {
   attributeTags    String[]
   name             String
   isPublic         Boolean           @default(true)
+
+  /// Scheduled product-sync configuration. `syncPlatform` reuses the
+  /// per-product scrape enum so there is one platform vocabulary; shops on
+  /// SQUARE or MANUAL simply leave `syncEnabled` false and the cron skips them.
+  syncPlatform        ProductScrapeMethod?
+  syncEnabled         Boolean             @default(false)
+  /// Overrides `website` for feed fetching. Squarespace in particular needs the
+  /// *products page* URL, not the homepage.
+  syncUrl             String?
+  /// Permits a plain-HTTP origin for storefronts without a working certificate.
+  /// safe-fetch's private-IP, redirect and size guards still apply.
+  allowInsecureOrigin Boolean             @default(false)
+  lastSyncedAt        DateTime?
+
   events           Event[]
   products         Product[]
   services         Service[]
@@ -22,6 +36,7 @@ model Shop {
   owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address          ShopAddress?
   websiteProvision WebsiteProvision?
+  syncRuns         ProductSyncRun[]
 }
 
 model ShopAddress {

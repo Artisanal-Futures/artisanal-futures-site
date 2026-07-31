@@ -8,7 +8,7 @@ import type {
   SquareSpaceData,
   SquareSpaceProduct,
   WordPressProduct,
-} from "../_validators/types";
+} from "./types";
 import type { ProductWithRelations } from "~/types/product";
 
 export type ProductData =

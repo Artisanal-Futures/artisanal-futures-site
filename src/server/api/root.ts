@@ -10,6 +10,7 @@ import { forumSubredditRouter } from "./routers/forum-subreddit";
 import { migrationRouter } from "./routers/migration";
 import { onboardingRouter } from "./routers/onboarding";
 import { productRouter } from "./routers/product";
+import { productSyncRouter } from "./routers/product-sync";
 import { serviceRouter } from "./routers/service";
 import { shopsRouter } from "./routers/shops";
 import { surveysRouter } from "./routers/surveys";
@@ -29,6 +30,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   user: userRouter,
   product: productRouter,
+  productSync: productSyncRouter,
   service: serviceRouter,
   migration: migrationRouter,
   category: categoryRouter,

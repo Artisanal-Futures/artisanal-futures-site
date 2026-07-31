@@ -8,6 +8,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
@@ -19,6 +20,8 @@ export function NavMain({
     title: string;
     url: string;
     icon?: Icon | React.ComponentType<unknown>;
+    /** Count shown alongside the item; hidden when zero or undefined. */
+    badge?: number;
   }[];
 }) {
   const pathname = usePathname();
@@ -45,6 +48,14 @@ export function NavMain({
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
+              {!!item.badge && item.badge > 0 && (
+                <SidebarMenuBadge
+                  className="bg-primary text-primary-foreground rounded-full px-1.5"
+                  aria-label={`${item.badge} awaiting review`}
+                >
+                  {item.badge}
+                </SidebarMenuBadge>
+              )}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

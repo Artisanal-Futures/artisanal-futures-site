@@ -129,6 +129,101 @@ model PlatformInvite {
   @@index([shopId])
 }
 
+/// A single scheduled (or manually triggered) attempt to re-read a shop's
+/// storefront and work out what changed. A run never touches the live catalog
+/// on its own — it only records proposals for an admin to review and approve.
+model ProductSyncRun {
+  id       String              @id @default(cuid())
+  shopId   String
+  platform ProductScrapeMethod
+  status   SyncRunStatus       @default(RUNNING)
+
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  reviewedAt   DateTime?
+  /// User id of the admin who applied or discarded the run.
+  reviewedById String?
+
+  /// How many products the storefront feed returned.
+  fetchedCount      Int     @default(0)
+  /// Populated when status is FAILED (fetch error, or a safety guard tripped).
+  errorMessage      String?
+  /// Set when the storefront's TLS certificate had to be bypassed, so the
+  /// review UI can tell the artisan to renew it.
+  insecureTLSCode   String?
+  /// True when the run was started by hand rather than by the weekly cron.
+  triggeredManually Boolean @default(false)
+
+  shop      Shop                  @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  proposals ProductSyncProposal[]
+
+  @@index([shopId, status])
+  @@index([status, startedAt])
+}
+
+/// One proposed change to one product. `payload` holds the normalized product
+/// as read from the source; `diff` holds the field-level before/after the
+/// review UI renders. Neither ever contains categories, tag arrays or
+/// isFeatured — that curated data is AF's own and is never overwritten.
+model ProductSyncProposal {
+  id    String @id @default(cuid())
+  runId String
+
+  /// Null for CREATE — there is no local product yet.
+  productId     String?
+  /// The external id from the source feed.
+  shopProductId String
+
+  changeType SyncChangeType
+  status     ProposalStatus @default(PENDING)
+
+  /// How the incoming product was matched to a local row: "shopProductId",
+  /// "productUrl" or "name". Null for CREATE and MISSING.
+  matchedBy String?
+
+  /// Normalized product from the source (Json).
+  payload Json
+  /// [{ field, before, after, protected }] (Json).
+  diff    Json
+
+  run     ProductSyncRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  product Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([runId, status])
+  @@index([productId])
+}
+
+enum SyncRunStatus {
+  /// Currently fetching/planning.
+  RUNNING
+  /// Has proposals waiting for an admin.
+  PENDING_REVIEW
+  /// Ran cleanly and found nothing to change.
+  EMPTY
+  /// An admin approved/rejected its proposals.
+  APPLIED
+  /// Fetch failed, or a safety guard refused to plan against a suspect feed.
+  FAILED
+  /// An admin threw the run away without applying it.
+  DISCARDED
+}
+
+enum SyncChangeType {
+  /// Product exists on the storefront but not on AF.
+  CREATE
+  /// Product matched an existing AF row and some fields differ.
+  UPDATE
+  /// Product exists on AF but is gone from the storefront. Approving hides it
+  /// (isPublic = false); it is never deleted.
+  MISSING
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Service {
   id                String     @id @default(cuid())
   name              String
@@ -171,8 +266,15 @@ model Product {
   tags              String[]
   isPublic          Boolean             @default(true)
   isFeatured        Boolean             @default(false)
-  shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  categories        Category[]          @relation("CategoryToProduct")
+
+  /// Sync-owned fields a human has edited by hand (e.g. ["description",
+  /// "imageUrl"]). The scheduled product sync never proposes changes to a field
+  /// listed here, so curated copy and photos survive upstream changes.
+  manualFields String[]
+
+  shop          Shop?                 @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  categories    Category[]            @relation("CategoryToProduct")
+  syncProposals ProductSyncProposal[]
 
   @@unique([shopId, shopProductId])
 }
@@ -187,22 +289,36 @@ enum ProductScrapeMethod {
 }
 
 model Shop {
-  id               String            @id @default(cuid())
-  ownerName        String
-  bio              String?
-  description      String?
-  ownerPhoto       String?
-  logoPhoto        String?
-  coverPhoto       String?
-  phone            String?
-  email            String?
-  website          String?
-  ownerId          String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  attributeTags    String[]
-  name             String
-  isPublic         Boolean           @default(true)
+  id            String   @id @default(cuid())
+  ownerName     String
+  bio           String?
+  description   String?
+  ownerPhoto    String?
+  logoPhoto     String?
+  coverPhoto    String?
+  phone         String?
+  email         String?
+  website       String?
+  ownerId       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  attributeTags String[]
+  name          String
+  isPublic      Boolean  @default(true)
+
+  /// Scheduled product-sync configuration. `syncPlatform` reuses the
+  /// per-product scrape enum so there is one platform vocabulary; shops on
+  /// SQUARE or MANUAL simply leave `syncEnabled` false and the cron skips them.
+  syncPlatform        ProductScrapeMethod?
+  syncEnabled         Boolean              @default(false)
+  /// Overrides `website` for feed fetching. Squarespace in particular needs the
+  /// *products page* URL, not the homepage.
+  syncUrl             String?
+  /// Permits a plain-HTTP origin for storefronts without a working certificate.
+  /// safe-fetch's private-IP, redirect and size guards still apply.
+  allowInsecureOrigin Boolean              @default(false)
+  lastSyncedAt        DateTime?
+
   events           Event[]
   products         Product[]
   services         Service[]
@@ -210,6 +326,7 @@ model Shop {
   owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address          ShopAddress?
   websiteProvision WebsiteProvision?
+  syncRuns         ProductSyncRun[]
 }
 
 model ShopAddress {

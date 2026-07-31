@@ -13,7 +13,7 @@ import type {
   ShopifyData,
   SquareSpaceData,
   WordPressProduct,
-} from "../_validators/types";
+} from "~/lib/product-import/types";
 import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
 import { api } from "~/trpc/react";
@@ -37,7 +37,7 @@ import {
 } from "~/components/ui/table";
 import { Textarea } from "~/components/ui/textarea";
 
-import { mapProducts } from "../_utils/convert-to-product";
+import { mapProducts } from "~/lib/product-import/convert-to-product";
 import { ProductPagination } from "../migrate/_components/product-pagination";
 
 const ROWS_PER_PAGE = 10;

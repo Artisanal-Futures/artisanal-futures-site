@@ -9,7 +9,7 @@
     "db:gen": "prisma generate --schema ./prisma",
     "db:pull": "prisma db pull --schema ./prisma",
     "db:generate": "prisma generate --schema ./prisma",
-    "db:migrate": "prisma migrate deploy",
+    "db:migrate": "prisma migrate deploy --schema ./prisma",
     "db:migrate-create": "prisma migrate dev --create-only --schema ./prisma",
     "db:push": "prisma db push  --schema ./prisma",
     "db:studio": "prisma studio --schema ./prisma",
@@ -18,6 +18,8 @@
     "lint": "next lint",
     "start": "next start",
     "db:export-prod": "tsx scripts/export-production.ts",
+    "test:sync": "tsx scripts/test-product-sync.ts",
+    "dedupe-products": "tsx scripts/dedupe-products.ts",
     "docs:seed": "tsx --env-file=.env --env-file=.env.docs scripts/docs/seed-demo.ts",
     "docs:shots": "dotenv -e .env.docs -e .env -- playwright test --config playwright.config.ts"
   },

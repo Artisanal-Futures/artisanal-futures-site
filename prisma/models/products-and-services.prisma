@@ -40,8 +40,15 @@ model Product {
   tags              String[]
   isPublic          Boolean             @default(true)
   isFeatured        Boolean             @default(false)
+
+  /// Sync-owned fields a human has edited by hand (e.g. ["description",
+  /// "imageUrl"]). The scheduled product sync never proposes changes to a field
+  /// listed here, so curated copy and photos survive upstream changes.
+  manualFields      String[]
+
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[]          @relation("CategoryToProduct")
+  syncProposals     ProductSyncProposal[]
 
   @@unique([shopId, shopProductId])
 }
