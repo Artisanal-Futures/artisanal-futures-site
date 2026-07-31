@@ -18,6 +18,7 @@ import {
   IconMessageCircle,
   IconNotebook,
   IconPackage,
+  IconRefresh,
   IconSettings,
   IconShoppingCart,
   IconSparkles,
@@ -27,6 +28,7 @@ import {
 
 import type { Session } from "~/server/better-auth/config";
 import { env } from "~/env";
+import { api } from "~/trpc/react";
 import {
   Sidebar,
   SidebarContent,
@@ -40,8 +42,15 @@ import { NavMain } from "~/app/admin/_components/nav-main";
 import { NavSecondary } from "~/app/admin/_components/nav-secondary";
 import { NavUser } from "~/app/admin/_components/nav-user";
 
-const getNavData = (session: Session | null) => {
-  const navMain = [
+const getNavData = (session: Session | null, pendingSyncCount = 0) => {
+  const isAdmin = session?.user.role === "ADMIN";
+
+  const navMain: {
+    title: string;
+    url: string;
+    icon: React.ComponentType<any>;
+    badge?: number;
+  }[] = [
     {
       title: "Dashboard",
       url: "/admin/dashboard",
@@ -52,6 +61,13 @@ const getNavData = (session: Session | null) => {
       title: "Products",
       url: "/admin/products",
       icon: IconPackage,
+    },
+    {
+      // Artisans see this too — scoped to their own shops by the router.
+      title: "Product Sync",
+      url: "/admin/products/sync",
+      icon: IconRefresh,
+      badge: pendingSyncCount,
     },
     {
       title: "Services",
@@ -68,11 +84,19 @@ const getNavData = (session: Session | null) => {
       url: "/admin/website",
       icon: IconGlobe,
     },
-    {
-      title: "My Shop",
-      url: "/admin/shops",
-      icon: IconShoppingCart,
-    },
+    // Artisans get "My Shop" here; admins get the same /admin/shops route as
+    // "Shops" in the platform-admin group below. Listing it in both arrays
+    // rendered the link twice and lit both entries up at once, so an admin only
+    // ever sees the platform-admin one.
+    ...(isAdmin
+      ? []
+      : [
+          {
+            title: "My Shop",
+            url: "/admin/shops",
+            icon: IconShoppingCart,
+          },
+        ]),
   ];
 
   const navPlatformAdmin:
@@ -80,9 +104,9 @@ const getNavData = (session: Session | null) => {
         title: string;
         url: string;
         icon: React.ComponentType<any>;
+        badge?: number;
       }[]
-    | [] =
-    session?.user.role === "ADMIN"
+    | [] = isAdmin
       ? [
           {
             title: "Shops",
@@ -156,7 +180,19 @@ export function AppSidebar({
 
   ...props
 }: AppSidebarProps) {
-  const navData = getNavData(session ?? null);
+  // Badge for the Product Sync entry. The count is scoped server-side — admins
+  // see every shop's pending runs, artisans only their own. A stale count is
+  // harmless, so this refetches on a slow interval rather than on every render.
+  const role = session?.user.role;
+  const { data: pendingSyncCount } = api.productSync.pendingCount.useQuery(
+    undefined,
+    {
+      enabled: role === "ADMIN" || role === "ARTISAN",
+      refetchInterval: 5 * 60 * 1000,
+      staleTime: 60 * 1000,
+    },
+  );
+  const navData = getNavData(session ?? null, pendingSyncCount ?? 0);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>

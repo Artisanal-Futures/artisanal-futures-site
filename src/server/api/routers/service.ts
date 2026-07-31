@@ -1,4 +1,10 @@
-import { type Prisma, type PrismaClient } from "generated/prisma";
+import {
+  type Category,
+  type Prisma,
+  type PrismaClient,
+  type Service,
+  type Shop,
+} from "generated/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -8,7 +14,18 @@ import {
   checkUserServicePermissions,
   checkUserShopPermissions,
 } from "~/lib/check-user-permissions";
+import {
+  catalogSearchInput,
+  SEARCH_CANDIDATE_CAP,
+  searchCatalog,
+} from "~/lib/search/catalog-search";
 import { serviceSchema } from "~/lib/validators/services";
+import { fromVisibleShop } from "~/server/api/shared/visibility";
+
+type ServiceWithRelations = Service & {
+  shop: Shop | null;
+  categories: Category[];
+};
 import {
   adminArtisanProcedure,
   createTRPCRouter,
@@ -55,18 +72,7 @@ export const serviceRouter = createTRPCRouter({
   }),
 
   getAllByCategory: publicProcedure
-    .input(
-      z.object({
-        categoryName: z.string(),
-        subcategoryName: z.string().optional(),
-        storeId: z.string().optional(),
-        attributes: z.array(z.string()).optional(),
-        sort: z.enum(["asc", "desc"]).default("asc"),
-        search: z.string().optional(),
-        page: z.number().default(1),
-        limit: z.number().default(20),
-      }),
-    )
+    .input(catalogSearchInput)
     .query(async ({ ctx, input }) => {
       const {
         categoryName,
@@ -78,118 +84,129 @@ export const serviceRouter = createTRPCRouter({
         page,
         limit,
       } = input;
-      const skip = (page - 1) * limit;
 
-      // If categoryName is "all-services", return all services (with filters)
-      if (categoryName.toLowerCase() === "all-services") {
-        const where: Prisma.ServiceWhereInput = {
-          isPublic: true,
-        };
+      const empty = (subcategories: Category[] = []) => ({
+        services: [] as ServiceWithRelations[],
+        totalCount: 0,
+        totalPages: 0,
+        subcategories,
+        isFuzzy: false,
+        appliedTerms: [] as string[],
+        suggestions: [] as string[],
+      });
 
-        if (search) {
-          where.OR = [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
+      // Resolve which categories to filter by. `null` means "every category".
+      let categoryIdsToFilter: string[] | null = null;
+      let subcategories: Category[] = [];
+
+      if (categoryName.toLowerCase() !== "all-services") {
+        const parentCategory = await ctx.db.category.findFirst({
+          where: { name: { equals: categoryName, mode: "insensitive" } },
+          include: { children: true },
+        });
+
+        if (!parentCategory) return empty();
+        subcategories = parentCategory.children;
+
+        if (subcategoryName) {
+          const subcategory = parentCategory.children.find(
+            (child) =>
+              child.name.toLowerCase() === subcategoryName.toLowerCase(),
+          );
+          if (!subcategory) return empty(parentCategory.children);
+          categoryIdsToFilter = [subcategory.id];
+        } else {
+          categoryIdsToFilter = [
+            parentCategory.id,
+            ...parentCategory.children.map((child) => child.id),
           ];
         }
-        if (storeId && storeId !== "all") {
-          where.shopId = storeId;
-        }
-        if (attributes && attributes.length > 0) {
-          where.shop = {
-            attributeTags: { hasEvery: attributes },
-          };
-        }
+      }
 
+      // Structural filters as an AND array — see the matching comment in
+      // product.ts for why this replaced the previous `where.shop = {...}`.
+      const and: Prisma.ServiceWhereInput[] = [
+        { isPublic: true },
+        fromVisibleShop,
+      ];
+      if (categoryIdsToFilter) {
+        and.push({ categories: { some: { id: { in: categoryIdsToFilter } } } });
+      }
+      if (storeId && storeId !== "all") {
+        and.push({ shopId: storeId });
+      }
+      if (attributes && attributes.length > 0) {
+        // `hasSome`, not `hasEvery`: ticking more attributes widens results.
+        and.push({ shop: { attributeTags: { hasSome: attributes } } });
+      }
+      const where: Prisma.ServiceWhereInput = { AND: and };
+
+      // Browse path (no query): unchanged SQL ordering and pagination.
+      if (!search) {
         const [services, totalCount] = await ctx.db.$transaction([
           ctx.db.service.findMany({
             where,
             include: { shop: true, categories: true },
-            orderBy: { name: sort },
-            skip,
+            orderBy: { name: sort === "desc" ? "desc" : "asc" },
+            skip: (page - 1) * limit,
             take: limit,
           }),
           ctx.db.service.count({ where }),
         ]);
 
-        // For "all-services", subcategories is always empty
         return {
           services: services.map(addFullServiceImageUrl),
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
-          subcategories: [],
+          subcategories,
+          isFuzzy: false,
+          appliedTerms: [] as string[],
+          suggestions: [] as string[],
         };
       }
 
-      const parentCategory = await ctx.db.category.findFirst({
-        where: { name: { equals: categoryName, mode: "insensitive" } },
-        include: { children: true },
+      // Search path: ranking happens in Node. See src/lib/search/catalog-search.ts.
+      const candidates = await ctx.db.service.findMany({
+        where,
+        include: { shop: true, categories: true },
+        orderBy: { name: "asc" },
+        take: SEARCH_CANDIDATE_CAP,
       });
 
-      if (!parentCategory) {
-        return {
-          services: [],
-          totalCount: 0,
-          totalPages: 0,
-          subcategories: [],
-        };
-      }
-
-      let categoryIdsToFilter: string[] = [parentCategory.id];
-      if (subcategoryName) {
-        const subcategory = parentCategory.children.find(
-          (child) => child.name.toLowerCase() === subcategoryName.toLowerCase(),
+      if (candidates.length === SEARCH_CANDIDATE_CAP) {
+        console.warn(
+          `[search] service candidate cap (${SEARCH_CANDIDATE_CAP}) reached; ` +
+            `results and totalCount are truncated. Time to move search into Postgres.`,
         );
-        if (subcategory) {
-          categoryIdsToFilter = [subcategory.id];
-        } else {
-          return {
-            services: [],
-            totalCount: 0,
-            totalPages: 0,
-            subcategories: parentCategory.children,
-          };
-        }
-      } else {
-        categoryIdsToFilter.push(...parentCategory.children.map((c) => c.id));
       }
 
-      const where: Prisma.ServiceWhereInput = {
-        categories: { some: { id: { in: categoryIdsToFilter } } },
-        isPublic: true,
-      };
+      const { ranked, isFuzzy, appliedTerms, suggestions } = searchCatalog(
+        candidates,
+        search,
+      );
 
-      if (search) {
-        where.OR = [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-        ];
-      }
-      if (storeId && storeId !== "all") {
-        where.shopId = storeId;
-      }
-      if (attributes && attributes.length > 0) {
-        where.shop = {
-          attributeTags: { hasEvery: attributes },
-        };
-      }
+      const ordered =
+        sort === "relevance"
+          ? ranked
+          : [...ranked].sort((a, b) =>
+              sort === "desc"
+                ? b.name.localeCompare(a.name)
+                : a.name.localeCompare(b.name),
+            );
 
-      const [services, totalCount] = await ctx.db.$transaction([
-        ctx.db.service.findMany({
-          where,
-          include: { shop: true, categories: true },
-          orderBy: { name: sort },
-          skip,
-          take: limit,
-        }),
-        ctx.db.service.count({ where }),
-      ]);
+      const totalCount = ordered.length;
+      const start = (page - 1) * limit;
 
       return {
-        services: services.map(addFullServiceImageUrl),
+        services: ordered
+          .slice(start, start + limit)
+          .map(addFullServiceImageUrl),
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
-        subcategories: parentCategory.children,
+        subcategories,
+        isFuzzy,
+        appliedTerms,
+        suggestions,
       };
     }),
 

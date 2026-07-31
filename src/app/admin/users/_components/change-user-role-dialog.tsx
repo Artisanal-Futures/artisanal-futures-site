@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -50,6 +51,7 @@ export function ChangeUserRoleDialog({
 }: Props) {
   const [role, setRole] = useState<RoleValue>(currentRole);
 
+  const router = useRouter();
   const apiUtils = api.useUtils();
 
   const setUserRole = api.user.setUserRole.useMutation({
@@ -58,6 +60,9 @@ export function ChangeUserRoleDialog({
       onOpenChange(false);
       void apiUtils.user.listUsers.invalidate();
       void apiUtils.user.getUserDetail.invalidate({ userId });
+      // The admin tables are fed by RSC props, so the cache invalidation alone
+      // does not repaint them.
+      router.refresh();
     },
     onError: (error) => {
       toast.error(error.message ?? "Failed to update role.");

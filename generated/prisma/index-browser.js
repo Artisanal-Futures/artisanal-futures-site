@@ -205,6 +205,33 @@ exports.Prisma.PlatformInviteScalarFieldEnum = {
   shopId: 'shopId'
 };
 
+exports.Prisma.ProductSyncRunScalarFieldEnum = {
+  id: 'id',
+  shopId: 'shopId',
+  platform: 'platform',
+  status: 'status',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  reviewedAt: 'reviewedAt',
+  reviewedById: 'reviewedById',
+  fetchedCount: 'fetchedCount',
+  errorMessage: 'errorMessage',
+  insecureTLSCode: 'insecureTLSCode',
+  triggeredManually: 'triggeredManually'
+};
+
+exports.Prisma.ProductSyncProposalScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  productId: 'productId',
+  shopProductId: 'shopProductId',
+  changeType: 'changeType',
+  status: 'status',
+  matchedBy: 'matchedBy',
+  payload: 'payload',
+  diff: 'diff'
+};
+
 exports.Prisma.ServiceScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -244,7 +271,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   shopId: 'shopId',
   tags: 'tags',
   isPublic: 'isPublic',
-  isFeatured: 'isFeatured'
+  isFeatured: 'isFeatured',
+  manualFields: 'manualFields'
 };
 
 exports.Prisma.ShopScalarFieldEnum = {
@@ -263,7 +291,12 @@ exports.Prisma.ShopScalarFieldEnum = {
   updatedAt: 'updatedAt',
   attributeTags: 'attributeTags',
   name: 'name',
-  isPublic: 'isPublic'
+  isPublic: 'isPublic',
+  syncPlatform: 'syncPlatform',
+  syncEnabled: 'syncEnabled',
+  syncUrl: 'syncUrl',
+  allowInsecureOrigin: 'allowInsecureOrigin',
+  lastSyncedAt: 'lastSyncedAt'
 };
 
 exports.Prisma.ShopAddressScalarFieldEnum = {
@@ -880,6 +913,27 @@ exports.ProductScrapeMethod = exports.$Enums.ProductScrapeMethod = {
   SQUARE: 'SQUARE'
 };
 
+exports.SyncRunStatus = exports.$Enums.SyncRunStatus = {
+  RUNNING: 'RUNNING',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  EMPTY: 'EMPTY',
+  APPLIED: 'APPLIED',
+  FAILED: 'FAILED',
+  DISCARDED: 'DISCARDED'
+};
+
+exports.SyncChangeType = exports.$Enums.SyncChangeType = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  MISSING: 'MISSING'
+};
+
+exports.ProposalStatus = exports.$Enums.ProposalStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.MemberRole = exports.$Enums.MemberRole = {
   ADMIN: 'ADMIN',
   MODERATOR: 'MODERATOR',
@@ -1023,6 +1077,8 @@ exports.Prisma.ModelName = {
   Vote: 'Vote',
   CommentVote: 'CommentVote',
   PlatformInvite: 'PlatformInvite',
+  ProductSyncRun: 'ProductSyncRun',
+  ProductSyncProposal: 'ProductSyncProposal',
   Service: 'Service',
   Product: 'Product',
   Shop: 'Shop',

@@ -80,7 +80,7 @@ export function ServiceForm({
     durationInMinutes: initialData?.durationInMinutes ?? 0,
     locationType: initialData?.locationType ?? "",
     isFeatured: initialData?.isFeatured ?? false,
-    isPublic: initialData?.isPublic ?? false,
+    isPublic: initialData?.isPublic ?? true,
     categoryIds: initialData?.categories?.map((cat) => cat.id) ?? [],
     serviceUrl: initialData?.serviceUrl ?? "",
 

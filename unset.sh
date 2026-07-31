@@ -1,13 +1,15 @@
 #!/bin/bash
 
-# With Cursor AI, I notice that sometimes the variables are not updated / unset. 
+# With Cursor AI, I notice that sometimes the variables are not updated / unset.
 # This script is a workaround to ensure that the variables are unset.
 # To fix the issue, you would need to uninstall Cursor AI, remove all files associated with it,
 # and then re-install it.
-# Questions? Just email Andrew. 
+# Questions? Just email Andrew.
 
 # This script needs to be sourced, not executed directly
 # Usage: source unset.sh
+
+# Keep this list in sync with /src/env.js and .env.example.
 
 # Check if the script is being sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -16,78 +18,66 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 1
 fi
 
-# Unset environment variables
-unset MINIO_ENDPOINT
-unset NEXTAUTH_SECRET
-unset NEXTAUTH_URL
-
+# Database
 unset DATABASE_URL
+unset PROD_DATABASE_URL
 
-unset RESEND_API_KEY
-unset NEXT_PUBLIC_PAYMENT_ADMIN_EMAIL
-unset NEXT_PUBLIC_ADMIN_EMAIL
+# AI agent
+unset AI_AGENT_BACKEND_URL
 
-
-
-
-unset NEXT_PUBLIC_SITE_NAME
-unset NEXT_PUBLIC_STORAGE_URL
-unset NEXT_PUBLIC_VOTE_DISABLED
-unset NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED
-unset NEXT_PUBLIC_HEART_VOTE_DISABLED
-unset MINIO_SECRET_KEY
-unset NST_URL
-unset MINIO_KEY
-unset BACKEND_URL
-unset GOOGLE_AUTH_CLIENT_ID
-unset DISCORD_CLIENT_SECRET
-unset NEXT_PUBLIC_NST_URL
-unset AUTH0_CLIENT_ID
-
-unset MINIO_ACCESS_KEY
-unset REPLICATE_WEBHOOK_SECRET
-unset GOOGLE_CLIENT_SECRET
-unset REPLICATE_API_TOKEN
-unset AWS_ACCESS_KEY_ID
-unset AWS_SECRET_ACCESS_KEY
-unset AWS_ENDPOINT
+# Auth
+unset BETTER_AUTH_SECRET
+unset BETTER_AUTH_URL
+unset BETTER_AUTH_DISCORD_ID
+unset BETTER_AUTH_DISCORD_SECRET
 unset GOOGLE_CLIENT_ID
 unset GOOGLE_CLIENT_SECRET
-unset AWS_BUCKET_NAME
-
-
-
-
-
-
-unset NEXT_PUBLIC_STORAGE_URL
-
-
-
-
-
-unset NEXTAUTH_URL
-unset NEXTAUTH_SECRET
-
+unset AUTH0_CLIENT_ID
+unset AUTH0_CLIENT_SECRET
+unset AUTH0_ISSUER
 unset HOSTNAME
 
-unset GOOGLE_CLIENT_SECRET
-unset GOOGLE_CLIENT_ID
+# Email
+unset RESEND_API_KEY
+unset NEXT_PUBLIC_EMAIL_FROM_NOREPLY
+unset NEXT_PUBLIC_EMAIL_FROM_SUPPORT
 
+# Website provisioning
+unset COOLIFY_API
+unset COOLIFY_ADMIN_SAFE_API_TOKEN
+unset COOLIFY_UUID
+unset WORDPRESS_DOCKER_REGISTRY
 
+# SimplePress integration
+unset SIMPLEPRESS_API_URL
+unset SIMPLEPRESS_API_TOKEN
+unset SIMPLEPRESS_CALLBACK_TOKEN
+unset SIMPLEPRESS_WELCOME_GUIDE_URL
+unset AF_SP_WEBHOOK_SECRET
+unset SIMPLEPRESS_HASH_SECRET
 
+# Stripe
+unset STRIPE_SECRET_KEY
 
+# HCaptcha
+unset HCAPTCHA_SECRET_KEY
+unset NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
+# Storage
+unset NEXT_PUBLIC_STORAGE_URL
+unset NEXT_PUBLIC_STORAGE_BUCKET_NAME
+unset MINIO_ACCESS_KEY
+unset MINIO_SECRET_KEY
+unset MINIO_ENDPOINT
 
+# Voting
+unset NEXT_PUBLIC_VOTE_DISABLED
+unset NEXT_PUBLIC_HEART_VOTE_DISABLED
 
-unset AUTH0_ISSUER
-unset AUTH0_CLIENT_SECRET
-unset AUTH0_CLIENT_ID
+# Help docs
+unset NEXT_PUBLIC_HELP_DOCS_URL
 
-
-unset AI_AGENT_BACKEND_URL
 # You can add more variables to unset if needed
 # unset ANOTHER_VARIABLE
-# unset YET_ANOTHER_VARIABLE
 
 echo "Variables have been unset."

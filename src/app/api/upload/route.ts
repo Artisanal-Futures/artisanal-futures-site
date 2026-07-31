@@ -79,6 +79,28 @@ const router: Router = {
       },
     }),
 
+    avatar: route({
+      fileTypes: ["image/*"],
+      multipleFiles: false,
+      onBeforeUpload: async ({ req, file }) => {
+        const session = await auth.api.getSession({ headers: req.headers });
+        if (!session) {
+          throw new RejectUpload("Not logged in!");
+        }
+        return {
+          objectInfo: {
+            key: `avatars/${session.user.id}/${file.name}`,
+            metadata: {
+              pathname: `https://${env.MINIO_ENDPOINT}/${env.NEXT_PUBLIC_STORAGE_BUCKET_NAME}/avatars/${session.user.id}/${file.name}`,
+            },
+          },
+        };
+      },
+      onAfterSignedUrl: async ({ metadata }) => {
+        return { metadata: { ...metadata } };
+      },
+    }),
+
     onboardingArtisan: route({
       fileTypes: ["image/*"],
       multipleFiles: true,

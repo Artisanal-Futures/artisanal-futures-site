@@ -59,6 +59,21 @@ export type CommentVote = $Result.DefaultSelection<Prisma.$CommentVotePayload>
  */
 export type PlatformInvite = $Result.DefaultSelection<Prisma.$PlatformInvitePayload>
 /**
+ * Model ProductSyncRun
+ * A single scheduled (or manually triggered) attempt to re-read a shop's
+ * storefront and work out what changed. A run never touches the live catalog
+ * on its own — it only records proposals for an admin to review and approve.
+ */
+export type ProductSyncRun = $Result.DefaultSelection<Prisma.$ProductSyncRunPayload>
+/**
+ * Model ProductSyncProposal
+ * One proposed change to one product. `payload` holds the normalized product
+ * as read from the source; `diff` holds the field-level before/after the
+ * review UI renders. Neither ever contains categories, tag arrays or
+ * isFeatured — that curated data is AF's own and is never overwritten.
+ */
+export type ProductSyncProposal = $Result.DefaultSelection<Prisma.$ProductSyncProposalPayload>
+/**
  * Model Service
  * 
  */
@@ -299,6 +314,36 @@ export const VoteType: {
 export type VoteType = (typeof VoteType)[keyof typeof VoteType]
 
 
+export const SyncRunStatus: {
+  RUNNING: 'RUNNING',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  EMPTY: 'EMPTY',
+  APPLIED: 'APPLIED',
+  FAILED: 'FAILED',
+  DISCARDED: 'DISCARDED'
+};
+
+export type SyncRunStatus = (typeof SyncRunStatus)[keyof typeof SyncRunStatus]
+
+
+export const SyncChangeType: {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  MISSING: 'MISSING'
+};
+
+export type SyncChangeType = (typeof SyncChangeType)[keyof typeof SyncChangeType]
+
+
+export const ProposalStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type ProposalStatus = (typeof ProposalStatus)[keyof typeof ProposalStatus]
+
+
 export const ProductScrapeMethod: {
   MANUAL: 'MANUAL',
   WORDPRESS: 'WORDPRESS',
@@ -515,6 +560,18 @@ export const CategoryType: typeof $Enums.CategoryType
 export type VoteType = $Enums.VoteType
 
 export const VoteType: typeof $Enums.VoteType
+
+export type SyncRunStatus = $Enums.SyncRunStatus
+
+export const SyncRunStatus: typeof $Enums.SyncRunStatus
+
+export type SyncChangeType = $Enums.SyncChangeType
+
+export const SyncChangeType: typeof $Enums.SyncChangeType
+
+export type ProposalStatus = $Enums.ProposalStatus
+
+export const ProposalStatus: typeof $Enums.ProposalStatus
 
 export type ProductScrapeMethod = $Enums.ProductScrapeMethod
 
@@ -799,6 +856,26 @@ export class PrismaClient<
     * ```
     */
   get platformInvite(): Prisma.PlatformInviteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.productSyncRun`: Exposes CRUD operations for the **ProductSyncRun** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProductSyncRuns
+    * const productSyncRuns = await prisma.productSyncRun.findMany()
+    * ```
+    */
+  get productSyncRun(): Prisma.ProductSyncRunDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.productSyncProposal`: Exposes CRUD operations for the **ProductSyncProposal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProductSyncProposals
+    * const productSyncProposals = await prisma.productSyncProposal.findMany()
+    * ```
+    */
+  get productSyncProposal(): Prisma.ProductSyncProposalDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.service`: Exposes CRUD operations for the **Service** model.
@@ -1689,6 +1766,8 @@ export namespace Prisma {
     Vote: 'Vote',
     CommentVote: 'CommentVote',
     PlatformInvite: 'PlatformInvite',
+    ProductSyncRun: 'ProductSyncRun',
+    ProductSyncProposal: 'ProductSyncProposal',
     Service: 'Service',
     Product: 'Product',
     Shop: 'Shop',
@@ -1751,7 +1830,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "service" | "product" | "shop" | "shopAddress" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
+      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "shop" | "shopAddress" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2418,6 +2497,154 @@ export namespace Prisma {
           count: {
             args: Prisma.PlatformInviteCountArgs<ExtArgs>
             result: $Utils.Optional<PlatformInviteCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProductSyncRun: {
+        payload: Prisma.$ProductSyncRunPayload<ExtArgs>
+        fields: Prisma.ProductSyncRunFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductSyncRunFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductSyncRunFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductSyncRunFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductSyncRunFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          findMany: {
+            args: Prisma.ProductSyncRunFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>[]
+          }
+          create: {
+            args: Prisma.ProductSyncRunCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          createMany: {
+            args: Prisma.ProductSyncRunCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProductSyncRunCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>[]
+          }
+          delete: {
+            args: Prisma.ProductSyncRunDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          update: {
+            args: Prisma.ProductSyncRunUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductSyncRunDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductSyncRunUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProductSyncRunUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProductSyncRunUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncRunPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductSyncRunAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProductSyncRun>
+          }
+          groupBy: {
+            args: Prisma.ProductSyncRunGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductSyncRunGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductSyncRunCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductSyncRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProductSyncProposal: {
+        payload: Prisma.$ProductSyncProposalPayload<ExtArgs>
+        fields: Prisma.ProductSyncProposalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductSyncProposalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductSyncProposalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductSyncProposalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductSyncProposalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          findMany: {
+            args: Prisma.ProductSyncProposalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>[]
+          }
+          create: {
+            args: Prisma.ProductSyncProposalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          createMany: {
+            args: Prisma.ProductSyncProposalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProductSyncProposalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>[]
+          }
+          delete: {
+            args: Prisma.ProductSyncProposalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          update: {
+            args: Prisma.ProductSyncProposalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductSyncProposalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductSyncProposalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProductSyncProposalUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProductSyncProposalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductSyncProposalPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductSyncProposalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProductSyncProposal>
+          }
+          groupBy: {
+            args: Prisma.ProductSyncProposalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductSyncProposalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductSyncProposalCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductSyncProposalCountAggregateOutputType> | number
           }
         }
       }
@@ -5782,6 +6009,8 @@ export namespace Prisma {
     vote?: VoteOmit
     commentVote?: CommentVoteOmit
     platformInvite?: PlatformInviteOmit
+    productSyncRun?: ProductSyncRunOmit
+    productSyncProposal?: ProductSyncProposalOmit
     service?: ServiceOmit
     product?: ProductOmit
     shop?: ShopOmit
@@ -6071,6 +6300,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ProductSyncRunCountOutputType
+   */
+
+  export type ProductSyncRunCountOutputType = {
+    proposals: number
+  }
+
+  export type ProductSyncRunCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    proposals?: boolean | ProductSyncRunCountOutputTypeCountProposalsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductSyncRunCountOutputType without action
+   */
+  export type ProductSyncRunCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRunCountOutputType
+     */
+    select?: ProductSyncRunCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductSyncRunCountOutputType without action
+   */
+  export type ProductSyncRunCountOutputTypeCountProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductSyncProposalWhereInput
+  }
+
+
+  /**
    * Count Type ServiceCountOutputType
    */
 
@@ -6107,10 +6367,12 @@ export namespace Prisma {
 
   export type ProductCountOutputType = {
     categories: number
+    syncProposals: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | ProductCountOutputTypeCountCategoriesArgs
+    syncProposals?: boolean | ProductCountOutputTypeCountSyncProposalsArgs
   }
 
   // Custom InputTypes
@@ -6131,6 +6393,13 @@ export namespace Prisma {
     where?: CategoryWhereInput
   }
 
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountSyncProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductSyncProposalWhereInput
+  }
+
 
   /**
    * Count Type ShopCountOutputType
@@ -6141,6 +6410,7 @@ export namespace Prisma {
     products: number
     services: number
     invites: number
+    syncRuns: number
   }
 
   export type ShopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6148,6 +6418,7 @@ export namespace Prisma {
     products?: boolean | ShopCountOutputTypeCountProductsArgs
     services?: boolean | ShopCountOutputTypeCountServicesArgs
     invites?: boolean | ShopCountOutputTypeCountInvitesArgs
+    syncRuns?: boolean | ShopCountOutputTypeCountSyncRunsArgs
   }
 
   // Custom InputTypes
@@ -6187,6 +6458,13 @@ export namespace Prisma {
    */
   export type ShopCountOutputTypeCountInvitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PlatformInviteWhereInput
+  }
+
+  /**
+   * ShopCountOutputType without action
+   */
+  export type ShopCountOutputTypeCountSyncRunsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductSyncRunWhereInput
   }
 
 
@@ -17078,6 +17356,2380 @@ export namespace Prisma {
 
 
   /**
+   * Model ProductSyncRun
+   */
+
+  export type AggregateProductSyncRun = {
+    _count: ProductSyncRunCountAggregateOutputType | null
+    _avg: ProductSyncRunAvgAggregateOutputType | null
+    _sum: ProductSyncRunSumAggregateOutputType | null
+    _min: ProductSyncRunMinAggregateOutputType | null
+    _max: ProductSyncRunMaxAggregateOutputType | null
+  }
+
+  export type ProductSyncRunAvgAggregateOutputType = {
+    fetchedCount: number | null
+  }
+
+  export type ProductSyncRunSumAggregateOutputType = {
+    fetchedCount: number | null
+  }
+
+  export type ProductSyncRunMinAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    platform: $Enums.ProductScrapeMethod | null
+    status: $Enums.SyncRunStatus | null
+    startedAt: Date | null
+    finishedAt: Date | null
+    reviewedAt: Date | null
+    reviewedById: string | null
+    fetchedCount: number | null
+    errorMessage: string | null
+    insecureTLSCode: string | null
+    triggeredManually: boolean | null
+  }
+
+  export type ProductSyncRunMaxAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    platform: $Enums.ProductScrapeMethod | null
+    status: $Enums.SyncRunStatus | null
+    startedAt: Date | null
+    finishedAt: Date | null
+    reviewedAt: Date | null
+    reviewedById: string | null
+    fetchedCount: number | null
+    errorMessage: string | null
+    insecureTLSCode: string | null
+    triggeredManually: boolean | null
+  }
+
+  export type ProductSyncRunCountAggregateOutputType = {
+    id: number
+    shopId: number
+    platform: number
+    status: number
+    startedAt: number
+    finishedAt: number
+    reviewedAt: number
+    reviewedById: number
+    fetchedCount: number
+    errorMessage: number
+    insecureTLSCode: number
+    triggeredManually: number
+    _all: number
+  }
+
+
+  export type ProductSyncRunAvgAggregateInputType = {
+    fetchedCount?: true
+  }
+
+  export type ProductSyncRunSumAggregateInputType = {
+    fetchedCount?: true
+  }
+
+  export type ProductSyncRunMinAggregateInputType = {
+    id?: true
+    shopId?: true
+    platform?: true
+    status?: true
+    startedAt?: true
+    finishedAt?: true
+    reviewedAt?: true
+    reviewedById?: true
+    fetchedCount?: true
+    errorMessage?: true
+    insecureTLSCode?: true
+    triggeredManually?: true
+  }
+
+  export type ProductSyncRunMaxAggregateInputType = {
+    id?: true
+    shopId?: true
+    platform?: true
+    status?: true
+    startedAt?: true
+    finishedAt?: true
+    reviewedAt?: true
+    reviewedById?: true
+    fetchedCount?: true
+    errorMessage?: true
+    insecureTLSCode?: true
+    triggeredManually?: true
+  }
+
+  export type ProductSyncRunCountAggregateInputType = {
+    id?: true
+    shopId?: true
+    platform?: true
+    status?: true
+    startedAt?: true
+    finishedAt?: true
+    reviewedAt?: true
+    reviewedById?: true
+    fetchedCount?: true
+    errorMessage?: true
+    insecureTLSCode?: true
+    triggeredManually?: true
+    _all?: true
+  }
+
+  export type ProductSyncRunAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductSyncRun to aggregate.
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncRuns to fetch.
+     */
+    orderBy?: ProductSyncRunOrderByWithRelationInput | ProductSyncRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductSyncRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProductSyncRuns
+    **/
+    _count?: true | ProductSyncRunCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProductSyncRunAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProductSyncRunSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductSyncRunMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductSyncRunMaxAggregateInputType
+  }
+
+  export type GetProductSyncRunAggregateType<T extends ProductSyncRunAggregateArgs> = {
+        [P in keyof T & keyof AggregateProductSyncRun]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProductSyncRun[P]>
+      : GetScalarType<T[P], AggregateProductSyncRun[P]>
+  }
+
+
+
+
+  export type ProductSyncRunGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductSyncRunWhereInput
+    orderBy?: ProductSyncRunOrderByWithAggregationInput | ProductSyncRunOrderByWithAggregationInput[]
+    by: ProductSyncRunScalarFieldEnum[] | ProductSyncRunScalarFieldEnum
+    having?: ProductSyncRunScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductSyncRunCountAggregateInputType | true
+    _avg?: ProductSyncRunAvgAggregateInputType
+    _sum?: ProductSyncRunSumAggregateInputType
+    _min?: ProductSyncRunMinAggregateInputType
+    _max?: ProductSyncRunMaxAggregateInputType
+  }
+
+  export type ProductSyncRunGroupByOutputType = {
+    id: string
+    shopId: string
+    platform: $Enums.ProductScrapeMethod
+    status: $Enums.SyncRunStatus
+    startedAt: Date
+    finishedAt: Date | null
+    reviewedAt: Date | null
+    reviewedById: string | null
+    fetchedCount: number
+    errorMessage: string | null
+    insecureTLSCode: string | null
+    triggeredManually: boolean
+    _count: ProductSyncRunCountAggregateOutputType | null
+    _avg: ProductSyncRunAvgAggregateOutputType | null
+    _sum: ProductSyncRunSumAggregateOutputType | null
+    _min: ProductSyncRunMinAggregateOutputType | null
+    _max: ProductSyncRunMaxAggregateOutputType | null
+  }
+
+  type GetProductSyncRunGroupByPayload<T extends ProductSyncRunGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductSyncRunGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductSyncRunGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductSyncRunGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductSyncRunGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductSyncRunSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    platform?: boolean
+    status?: boolean
+    startedAt?: boolean
+    finishedAt?: boolean
+    reviewedAt?: boolean
+    reviewedById?: boolean
+    fetchedCount?: boolean
+    errorMessage?: boolean
+    insecureTLSCode?: boolean
+    triggeredManually?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    proposals?: boolean | ProductSyncRun$proposalsArgs<ExtArgs>
+    _count?: boolean | ProductSyncRunCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncRun"]>
+
+  export type ProductSyncRunSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    platform?: boolean
+    status?: boolean
+    startedAt?: boolean
+    finishedAt?: boolean
+    reviewedAt?: boolean
+    reviewedById?: boolean
+    fetchedCount?: boolean
+    errorMessage?: boolean
+    insecureTLSCode?: boolean
+    triggeredManually?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncRun"]>
+
+  export type ProductSyncRunSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    platform?: boolean
+    status?: boolean
+    startedAt?: boolean
+    finishedAt?: boolean
+    reviewedAt?: boolean
+    reviewedById?: boolean
+    fetchedCount?: boolean
+    errorMessage?: boolean
+    insecureTLSCode?: boolean
+    triggeredManually?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncRun"]>
+
+  export type ProductSyncRunSelectScalar = {
+    id?: boolean
+    shopId?: boolean
+    platform?: boolean
+    status?: boolean
+    startedAt?: boolean
+    finishedAt?: boolean
+    reviewedAt?: boolean
+    reviewedById?: boolean
+    fetchedCount?: boolean
+    errorMessage?: boolean
+    insecureTLSCode?: boolean
+    triggeredManually?: boolean
+  }
+
+  export type ProductSyncRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "platform" | "status" | "startedAt" | "finishedAt" | "reviewedAt" | "reviewedById" | "fetchedCount" | "errorMessage" | "insecureTLSCode" | "triggeredManually", ExtArgs["result"]["productSyncRun"]>
+  export type ProductSyncRunInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    proposals?: boolean | ProductSyncRun$proposalsArgs<ExtArgs>
+    _count?: boolean | ProductSyncRunCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ProductSyncRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ProductSyncRunIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+
+  export type $ProductSyncRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProductSyncRun"
+    objects: {
+      shop: Prisma.$ShopPayload<ExtArgs>
+      proposals: Prisma.$ProductSyncProposalPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      shopId: string
+      platform: $Enums.ProductScrapeMethod
+      status: $Enums.SyncRunStatus
+      startedAt: Date
+      finishedAt: Date | null
+      reviewedAt: Date | null
+      /**
+       * User id of the admin who applied or discarded the run.
+       */
+      reviewedById: string | null
+      /**
+       * How many products the storefront feed returned.
+       */
+      fetchedCount: number
+      /**
+       * Populated when status is FAILED (fetch error, or a safety guard tripped).
+       */
+      errorMessage: string | null
+      /**
+       * Set when the storefront's TLS certificate had to be bypassed, so the
+       * review UI can tell the artisan to renew it.
+       */
+      insecureTLSCode: string | null
+      /**
+       * True when the run was started by hand rather than by the weekly cron.
+       */
+      triggeredManually: boolean
+    }, ExtArgs["result"]["productSyncRun"]>
+    composites: {}
+  }
+
+  type ProductSyncRunGetPayload<S extends boolean | null | undefined | ProductSyncRunDefaultArgs> = $Result.GetResult<Prisma.$ProductSyncRunPayload, S>
+
+  type ProductSyncRunCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductSyncRunFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductSyncRunCountAggregateInputType | true
+    }
+
+  export interface ProductSyncRunDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProductSyncRun'], meta: { name: 'ProductSyncRun' } }
+    /**
+     * Find zero or one ProductSyncRun that matches the filter.
+     * @param {ProductSyncRunFindUniqueArgs} args - Arguments to find a ProductSyncRun
+     * @example
+     * // Get one ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductSyncRunFindUniqueArgs>(args: SelectSubset<T, ProductSyncRunFindUniqueArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProductSyncRun that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductSyncRunFindUniqueOrThrowArgs} args - Arguments to find a ProductSyncRun
+     * @example
+     * // Get one ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductSyncRunFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductSyncRunFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductSyncRun that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunFindFirstArgs} args - Arguments to find a ProductSyncRun
+     * @example
+     * // Get one ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductSyncRunFindFirstArgs>(args?: SelectSubset<T, ProductSyncRunFindFirstArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductSyncRun that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunFindFirstOrThrowArgs} args - Arguments to find a ProductSyncRun
+     * @example
+     * // Get one ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductSyncRunFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductSyncRunFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProductSyncRuns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProductSyncRuns
+     * const productSyncRuns = await prisma.productSyncRun.findMany()
+     * 
+     * // Get first 10 ProductSyncRuns
+     * const productSyncRuns = await prisma.productSyncRun.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productSyncRunWithIdOnly = await prisma.productSyncRun.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductSyncRunFindManyArgs>(args?: SelectSubset<T, ProductSyncRunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProductSyncRun.
+     * @param {ProductSyncRunCreateArgs} args - Arguments to create a ProductSyncRun.
+     * @example
+     * // Create one ProductSyncRun
+     * const ProductSyncRun = await prisma.productSyncRun.create({
+     *   data: {
+     *     // ... data to create a ProductSyncRun
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductSyncRunCreateArgs>(args: SelectSubset<T, ProductSyncRunCreateArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProductSyncRuns.
+     * @param {ProductSyncRunCreateManyArgs} args - Arguments to create many ProductSyncRuns.
+     * @example
+     * // Create many ProductSyncRuns
+     * const productSyncRun = await prisma.productSyncRun.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductSyncRunCreateManyArgs>(args?: SelectSubset<T, ProductSyncRunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProductSyncRuns and returns the data saved in the database.
+     * @param {ProductSyncRunCreateManyAndReturnArgs} args - Arguments to create many ProductSyncRuns.
+     * @example
+     * // Create many ProductSyncRuns
+     * const productSyncRun = await prisma.productSyncRun.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProductSyncRuns and only return the `id`
+     * const productSyncRunWithIdOnly = await prisma.productSyncRun.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductSyncRunCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductSyncRunCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProductSyncRun.
+     * @param {ProductSyncRunDeleteArgs} args - Arguments to delete one ProductSyncRun.
+     * @example
+     * // Delete one ProductSyncRun
+     * const ProductSyncRun = await prisma.productSyncRun.delete({
+     *   where: {
+     *     // ... filter to delete one ProductSyncRun
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductSyncRunDeleteArgs>(args: SelectSubset<T, ProductSyncRunDeleteArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProductSyncRun.
+     * @param {ProductSyncRunUpdateArgs} args - Arguments to update one ProductSyncRun.
+     * @example
+     * // Update one ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductSyncRunUpdateArgs>(args: SelectSubset<T, ProductSyncRunUpdateArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProductSyncRuns.
+     * @param {ProductSyncRunDeleteManyArgs} args - Arguments to filter ProductSyncRuns to delete.
+     * @example
+     * // Delete a few ProductSyncRuns
+     * const { count } = await prisma.productSyncRun.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductSyncRunDeleteManyArgs>(args?: SelectSubset<T, ProductSyncRunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductSyncRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProductSyncRuns
+     * const productSyncRun = await prisma.productSyncRun.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductSyncRunUpdateManyArgs>(args: SelectSubset<T, ProductSyncRunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductSyncRuns and returns the data updated in the database.
+     * @param {ProductSyncRunUpdateManyAndReturnArgs} args - Arguments to update many ProductSyncRuns.
+     * @example
+     * // Update many ProductSyncRuns
+     * const productSyncRun = await prisma.productSyncRun.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProductSyncRuns and only return the `id`
+     * const productSyncRunWithIdOnly = await prisma.productSyncRun.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductSyncRunUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductSyncRunUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProductSyncRun.
+     * @param {ProductSyncRunUpsertArgs} args - Arguments to update or create a ProductSyncRun.
+     * @example
+     * // Update or create a ProductSyncRun
+     * const productSyncRun = await prisma.productSyncRun.upsert({
+     *   create: {
+     *     // ... data to create a ProductSyncRun
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProductSyncRun we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductSyncRunUpsertArgs>(args: SelectSubset<T, ProductSyncRunUpsertArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProductSyncRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunCountArgs} args - Arguments to filter ProductSyncRuns to count.
+     * @example
+     * // Count the number of ProductSyncRuns
+     * const count = await prisma.productSyncRun.count({
+     *   where: {
+     *     // ... the filter for the ProductSyncRuns we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductSyncRunCountArgs>(
+      args?: Subset<T, ProductSyncRunCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductSyncRunCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProductSyncRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductSyncRunAggregateArgs>(args: Subset<T, ProductSyncRunAggregateArgs>): Prisma.PrismaPromise<GetProductSyncRunAggregateType<T>>
+
+    /**
+     * Group by ProductSyncRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncRunGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductSyncRunGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductSyncRunGroupByArgs['orderBy'] }
+        : { orderBy?: ProductSyncRunGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductSyncRunGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductSyncRunGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProductSyncRun model
+   */
+  readonly fields: ProductSyncRunFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProductSyncRun.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductSyncRunClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shop<T extends ShopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShopDefaultArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    proposals<T extends ProductSyncRun$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, ProductSyncRun$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProductSyncRun model
+   */
+  interface ProductSyncRunFieldRefs {
+    readonly id: FieldRef<"ProductSyncRun", 'String'>
+    readonly shopId: FieldRef<"ProductSyncRun", 'String'>
+    readonly platform: FieldRef<"ProductSyncRun", 'ProductScrapeMethod'>
+    readonly status: FieldRef<"ProductSyncRun", 'SyncRunStatus'>
+    readonly startedAt: FieldRef<"ProductSyncRun", 'DateTime'>
+    readonly finishedAt: FieldRef<"ProductSyncRun", 'DateTime'>
+    readonly reviewedAt: FieldRef<"ProductSyncRun", 'DateTime'>
+    readonly reviewedById: FieldRef<"ProductSyncRun", 'String'>
+    readonly fetchedCount: FieldRef<"ProductSyncRun", 'Int'>
+    readonly errorMessage: FieldRef<"ProductSyncRun", 'String'>
+    readonly insecureTLSCode: FieldRef<"ProductSyncRun", 'String'>
+    readonly triggeredManually: FieldRef<"ProductSyncRun", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProductSyncRun findUnique
+   */
+  export type ProductSyncRunFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncRun to fetch.
+     */
+    where: ProductSyncRunWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncRun findUniqueOrThrow
+   */
+  export type ProductSyncRunFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncRun to fetch.
+     */
+    where: ProductSyncRunWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncRun findFirst
+   */
+  export type ProductSyncRunFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncRun to fetch.
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncRuns to fetch.
+     */
+    orderBy?: ProductSyncRunOrderByWithRelationInput | ProductSyncRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductSyncRuns.
+     */
+    cursor?: ProductSyncRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductSyncRuns.
+     */
+    distinct?: ProductSyncRunScalarFieldEnum | ProductSyncRunScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncRun findFirstOrThrow
+   */
+  export type ProductSyncRunFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncRun to fetch.
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncRuns to fetch.
+     */
+    orderBy?: ProductSyncRunOrderByWithRelationInput | ProductSyncRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductSyncRuns.
+     */
+    cursor?: ProductSyncRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductSyncRuns.
+     */
+    distinct?: ProductSyncRunScalarFieldEnum | ProductSyncRunScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncRun findMany
+   */
+  export type ProductSyncRunFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncRuns to fetch.
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncRuns to fetch.
+     */
+    orderBy?: ProductSyncRunOrderByWithRelationInput | ProductSyncRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProductSyncRuns.
+     */
+    cursor?: ProductSyncRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncRuns.
+     */
+    skip?: number
+    distinct?: ProductSyncRunScalarFieldEnum | ProductSyncRunScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncRun create
+   */
+  export type ProductSyncRunCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProductSyncRun.
+     */
+    data: XOR<ProductSyncRunCreateInput, ProductSyncRunUncheckedCreateInput>
+  }
+
+  /**
+   * ProductSyncRun createMany
+   */
+  export type ProductSyncRunCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProductSyncRuns.
+     */
+    data: ProductSyncRunCreateManyInput | ProductSyncRunCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProductSyncRun createManyAndReturn
+   */
+  export type ProductSyncRunCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProductSyncRuns.
+     */
+    data: ProductSyncRunCreateManyInput | ProductSyncRunCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductSyncRun update
+   */
+  export type ProductSyncRunUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProductSyncRun.
+     */
+    data: XOR<ProductSyncRunUpdateInput, ProductSyncRunUncheckedUpdateInput>
+    /**
+     * Choose, which ProductSyncRun to update.
+     */
+    where: ProductSyncRunWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncRun updateMany
+   */
+  export type ProductSyncRunUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProductSyncRuns.
+     */
+    data: XOR<ProductSyncRunUpdateManyMutationInput, ProductSyncRunUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductSyncRuns to update
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * Limit how many ProductSyncRuns to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductSyncRun updateManyAndReturn
+   */
+  export type ProductSyncRunUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * The data used to update ProductSyncRuns.
+     */
+    data: XOR<ProductSyncRunUpdateManyMutationInput, ProductSyncRunUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductSyncRuns to update
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * Limit how many ProductSyncRuns to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductSyncRun upsert
+   */
+  export type ProductSyncRunUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProductSyncRun to update in case it exists.
+     */
+    where: ProductSyncRunWhereUniqueInput
+    /**
+     * In case the ProductSyncRun found by the `where` argument doesn't exist, create a new ProductSyncRun with this data.
+     */
+    create: XOR<ProductSyncRunCreateInput, ProductSyncRunUncheckedCreateInput>
+    /**
+     * In case the ProductSyncRun was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductSyncRunUpdateInput, ProductSyncRunUncheckedUpdateInput>
+  }
+
+  /**
+   * ProductSyncRun delete
+   */
+  export type ProductSyncRunDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    /**
+     * Filter which ProductSyncRun to delete.
+     */
+    where: ProductSyncRunWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncRun deleteMany
+   */
+  export type ProductSyncRunDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductSyncRuns to delete
+     */
+    where?: ProductSyncRunWhereInput
+    /**
+     * Limit how many ProductSyncRuns to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductSyncRun.proposals
+   */
+  export type ProductSyncRun$proposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    where?: ProductSyncProposalWhereInput
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    cursor?: ProductSyncProposalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncRun without action
+   */
+  export type ProductSyncRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProductSyncProposal
+   */
+
+  export type AggregateProductSyncProposal = {
+    _count: ProductSyncProposalCountAggregateOutputType | null
+    _min: ProductSyncProposalMinAggregateOutputType | null
+    _max: ProductSyncProposalMaxAggregateOutputType | null
+  }
+
+  export type ProductSyncProposalMinAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    productId: string | null
+    shopProductId: string | null
+    changeType: $Enums.SyncChangeType | null
+    status: $Enums.ProposalStatus | null
+    matchedBy: string | null
+  }
+
+  export type ProductSyncProposalMaxAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    productId: string | null
+    shopProductId: string | null
+    changeType: $Enums.SyncChangeType | null
+    status: $Enums.ProposalStatus | null
+    matchedBy: string | null
+  }
+
+  export type ProductSyncProposalCountAggregateOutputType = {
+    id: number
+    runId: number
+    productId: number
+    shopProductId: number
+    changeType: number
+    status: number
+    matchedBy: number
+    payload: number
+    diff: number
+    _all: number
+  }
+
+
+  export type ProductSyncProposalMinAggregateInputType = {
+    id?: true
+    runId?: true
+    productId?: true
+    shopProductId?: true
+    changeType?: true
+    status?: true
+    matchedBy?: true
+  }
+
+  export type ProductSyncProposalMaxAggregateInputType = {
+    id?: true
+    runId?: true
+    productId?: true
+    shopProductId?: true
+    changeType?: true
+    status?: true
+    matchedBy?: true
+  }
+
+  export type ProductSyncProposalCountAggregateInputType = {
+    id?: true
+    runId?: true
+    productId?: true
+    shopProductId?: true
+    changeType?: true
+    status?: true
+    matchedBy?: true
+    payload?: true
+    diff?: true
+    _all?: true
+  }
+
+  export type ProductSyncProposalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductSyncProposal to aggregate.
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncProposals to fetch.
+     */
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductSyncProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncProposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncProposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProductSyncProposals
+    **/
+    _count?: true | ProductSyncProposalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductSyncProposalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductSyncProposalMaxAggregateInputType
+  }
+
+  export type GetProductSyncProposalAggregateType<T extends ProductSyncProposalAggregateArgs> = {
+        [P in keyof T & keyof AggregateProductSyncProposal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProductSyncProposal[P]>
+      : GetScalarType<T[P], AggregateProductSyncProposal[P]>
+  }
+
+
+
+
+  export type ProductSyncProposalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductSyncProposalWhereInput
+    orderBy?: ProductSyncProposalOrderByWithAggregationInput | ProductSyncProposalOrderByWithAggregationInput[]
+    by: ProductSyncProposalScalarFieldEnum[] | ProductSyncProposalScalarFieldEnum
+    having?: ProductSyncProposalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductSyncProposalCountAggregateInputType | true
+    _min?: ProductSyncProposalMinAggregateInputType
+    _max?: ProductSyncProposalMaxAggregateInputType
+  }
+
+  export type ProductSyncProposalGroupByOutputType = {
+    id: string
+    runId: string
+    productId: string | null
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status: $Enums.ProposalStatus
+    matchedBy: string | null
+    payload: JsonValue
+    diff: JsonValue
+    _count: ProductSyncProposalCountAggregateOutputType | null
+    _min: ProductSyncProposalMinAggregateOutputType | null
+    _max: ProductSyncProposalMaxAggregateOutputType | null
+  }
+
+  type GetProductSyncProposalGroupByPayload<T extends ProductSyncProposalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductSyncProposalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductSyncProposalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductSyncProposalGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductSyncProposalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductSyncProposalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    productId?: boolean
+    shopProductId?: boolean
+    changeType?: boolean
+    status?: boolean
+    matchedBy?: boolean
+    payload?: boolean
+    diff?: boolean
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncProposal"]>
+
+  export type ProductSyncProposalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    productId?: boolean
+    shopProductId?: boolean
+    changeType?: boolean
+    status?: boolean
+    matchedBy?: boolean
+    payload?: boolean
+    diff?: boolean
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncProposal"]>
+
+  export type ProductSyncProposalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    productId?: boolean
+    shopProductId?: boolean
+    changeType?: boolean
+    status?: boolean
+    matchedBy?: boolean
+    payload?: boolean
+    diff?: boolean
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }, ExtArgs["result"]["productSyncProposal"]>
+
+  export type ProductSyncProposalSelectScalar = {
+    id?: boolean
+    runId?: boolean
+    productId?: boolean
+    shopProductId?: boolean
+    changeType?: boolean
+    status?: boolean
+    matchedBy?: boolean
+    payload?: boolean
+    diff?: boolean
+  }
+
+  export type ProductSyncProposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "runId" | "productId" | "shopProductId" | "changeType" | "status" | "matchedBy" | "payload" | "diff", ExtArgs["result"]["productSyncProposal"]>
+  export type ProductSyncProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }
+  export type ProductSyncProposalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }
+  export type ProductSyncProposalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    run?: boolean | ProductSyncRunDefaultArgs<ExtArgs>
+    product?: boolean | ProductSyncProposal$productArgs<ExtArgs>
+  }
+
+  export type $ProductSyncProposalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProductSyncProposal"
+    objects: {
+      run: Prisma.$ProductSyncRunPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      runId: string
+      /**
+       * Null for CREATE — there is no local product yet.
+       */
+      productId: string | null
+      /**
+       * The external id from the source feed.
+       */
+      shopProductId: string
+      changeType: $Enums.SyncChangeType
+      status: $Enums.ProposalStatus
+      /**
+       * How the incoming product was matched to a local row: "shopProductId",
+       * "productUrl" or "name". Null for CREATE and MISSING.
+       */
+      matchedBy: string | null
+      /**
+       * Normalized product from the source (Json).
+       */
+      payload: Prisma.JsonValue
+      /**
+       * [{ field, before, after, protected }] (Json).
+       */
+      diff: Prisma.JsonValue
+    }, ExtArgs["result"]["productSyncProposal"]>
+    composites: {}
+  }
+
+  type ProductSyncProposalGetPayload<S extends boolean | null | undefined | ProductSyncProposalDefaultArgs> = $Result.GetResult<Prisma.$ProductSyncProposalPayload, S>
+
+  type ProductSyncProposalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductSyncProposalFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductSyncProposalCountAggregateInputType | true
+    }
+
+  export interface ProductSyncProposalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProductSyncProposal'], meta: { name: 'ProductSyncProposal' } }
+    /**
+     * Find zero or one ProductSyncProposal that matches the filter.
+     * @param {ProductSyncProposalFindUniqueArgs} args - Arguments to find a ProductSyncProposal
+     * @example
+     * // Get one ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductSyncProposalFindUniqueArgs>(args: SelectSubset<T, ProductSyncProposalFindUniqueArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProductSyncProposal that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductSyncProposalFindUniqueOrThrowArgs} args - Arguments to find a ProductSyncProposal
+     * @example
+     * // Get one ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductSyncProposalFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductSyncProposalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductSyncProposal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalFindFirstArgs} args - Arguments to find a ProductSyncProposal
+     * @example
+     * // Get one ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductSyncProposalFindFirstArgs>(args?: SelectSubset<T, ProductSyncProposalFindFirstArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductSyncProposal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalFindFirstOrThrowArgs} args - Arguments to find a ProductSyncProposal
+     * @example
+     * // Get one ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductSyncProposalFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductSyncProposalFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProductSyncProposals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProductSyncProposals
+     * const productSyncProposals = await prisma.productSyncProposal.findMany()
+     * 
+     * // Get first 10 ProductSyncProposals
+     * const productSyncProposals = await prisma.productSyncProposal.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productSyncProposalWithIdOnly = await prisma.productSyncProposal.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductSyncProposalFindManyArgs>(args?: SelectSubset<T, ProductSyncProposalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProductSyncProposal.
+     * @param {ProductSyncProposalCreateArgs} args - Arguments to create a ProductSyncProposal.
+     * @example
+     * // Create one ProductSyncProposal
+     * const ProductSyncProposal = await prisma.productSyncProposal.create({
+     *   data: {
+     *     // ... data to create a ProductSyncProposal
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductSyncProposalCreateArgs>(args: SelectSubset<T, ProductSyncProposalCreateArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProductSyncProposals.
+     * @param {ProductSyncProposalCreateManyArgs} args - Arguments to create many ProductSyncProposals.
+     * @example
+     * // Create many ProductSyncProposals
+     * const productSyncProposal = await prisma.productSyncProposal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductSyncProposalCreateManyArgs>(args?: SelectSubset<T, ProductSyncProposalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProductSyncProposals and returns the data saved in the database.
+     * @param {ProductSyncProposalCreateManyAndReturnArgs} args - Arguments to create many ProductSyncProposals.
+     * @example
+     * // Create many ProductSyncProposals
+     * const productSyncProposal = await prisma.productSyncProposal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProductSyncProposals and only return the `id`
+     * const productSyncProposalWithIdOnly = await prisma.productSyncProposal.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductSyncProposalCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductSyncProposalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProductSyncProposal.
+     * @param {ProductSyncProposalDeleteArgs} args - Arguments to delete one ProductSyncProposal.
+     * @example
+     * // Delete one ProductSyncProposal
+     * const ProductSyncProposal = await prisma.productSyncProposal.delete({
+     *   where: {
+     *     // ... filter to delete one ProductSyncProposal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductSyncProposalDeleteArgs>(args: SelectSubset<T, ProductSyncProposalDeleteArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProductSyncProposal.
+     * @param {ProductSyncProposalUpdateArgs} args - Arguments to update one ProductSyncProposal.
+     * @example
+     * // Update one ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductSyncProposalUpdateArgs>(args: SelectSubset<T, ProductSyncProposalUpdateArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProductSyncProposals.
+     * @param {ProductSyncProposalDeleteManyArgs} args - Arguments to filter ProductSyncProposals to delete.
+     * @example
+     * // Delete a few ProductSyncProposals
+     * const { count } = await prisma.productSyncProposal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductSyncProposalDeleteManyArgs>(args?: SelectSubset<T, ProductSyncProposalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductSyncProposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProductSyncProposals
+     * const productSyncProposal = await prisma.productSyncProposal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductSyncProposalUpdateManyArgs>(args: SelectSubset<T, ProductSyncProposalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductSyncProposals and returns the data updated in the database.
+     * @param {ProductSyncProposalUpdateManyAndReturnArgs} args - Arguments to update many ProductSyncProposals.
+     * @example
+     * // Update many ProductSyncProposals
+     * const productSyncProposal = await prisma.productSyncProposal.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProductSyncProposals and only return the `id`
+     * const productSyncProposalWithIdOnly = await prisma.productSyncProposal.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductSyncProposalUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductSyncProposalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProductSyncProposal.
+     * @param {ProductSyncProposalUpsertArgs} args - Arguments to update or create a ProductSyncProposal.
+     * @example
+     * // Update or create a ProductSyncProposal
+     * const productSyncProposal = await prisma.productSyncProposal.upsert({
+     *   create: {
+     *     // ... data to create a ProductSyncProposal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProductSyncProposal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductSyncProposalUpsertArgs>(args: SelectSubset<T, ProductSyncProposalUpsertArgs<ExtArgs>>): Prisma__ProductSyncProposalClient<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProductSyncProposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalCountArgs} args - Arguments to filter ProductSyncProposals to count.
+     * @example
+     * // Count the number of ProductSyncProposals
+     * const count = await prisma.productSyncProposal.count({
+     *   where: {
+     *     // ... the filter for the ProductSyncProposals we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductSyncProposalCountArgs>(
+      args?: Subset<T, ProductSyncProposalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductSyncProposalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProductSyncProposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductSyncProposalAggregateArgs>(args: Subset<T, ProductSyncProposalAggregateArgs>): Prisma.PrismaPromise<GetProductSyncProposalAggregateType<T>>
+
+    /**
+     * Group by ProductSyncProposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductSyncProposalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductSyncProposalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductSyncProposalGroupByArgs['orderBy'] }
+        : { orderBy?: ProductSyncProposalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductSyncProposalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductSyncProposalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProductSyncProposal model
+   */
+  readonly fields: ProductSyncProposalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProductSyncProposal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductSyncProposalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    run<T extends ProductSyncRunDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductSyncRunDefaultArgs<ExtArgs>>): Prisma__ProductSyncRunClient<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends ProductSyncProposal$productArgs<ExtArgs> = {}>(args?: Subset<T, ProductSyncProposal$productArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProductSyncProposal model
+   */
+  interface ProductSyncProposalFieldRefs {
+    readonly id: FieldRef<"ProductSyncProposal", 'String'>
+    readonly runId: FieldRef<"ProductSyncProposal", 'String'>
+    readonly productId: FieldRef<"ProductSyncProposal", 'String'>
+    readonly shopProductId: FieldRef<"ProductSyncProposal", 'String'>
+    readonly changeType: FieldRef<"ProductSyncProposal", 'SyncChangeType'>
+    readonly status: FieldRef<"ProductSyncProposal", 'ProposalStatus'>
+    readonly matchedBy: FieldRef<"ProductSyncProposal", 'String'>
+    readonly payload: FieldRef<"ProductSyncProposal", 'Json'>
+    readonly diff: FieldRef<"ProductSyncProposal", 'Json'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProductSyncProposal findUnique
+   */
+  export type ProductSyncProposalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncProposal to fetch.
+     */
+    where: ProductSyncProposalWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncProposal findUniqueOrThrow
+   */
+  export type ProductSyncProposalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncProposal to fetch.
+     */
+    where: ProductSyncProposalWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncProposal findFirst
+   */
+  export type ProductSyncProposalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncProposal to fetch.
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncProposals to fetch.
+     */
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductSyncProposals.
+     */
+    cursor?: ProductSyncProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncProposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncProposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductSyncProposals.
+     */
+    distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncProposal findFirstOrThrow
+   */
+  export type ProductSyncProposalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncProposal to fetch.
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncProposals to fetch.
+     */
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductSyncProposals.
+     */
+    cursor?: ProductSyncProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncProposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncProposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductSyncProposals.
+     */
+    distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncProposal findMany
+   */
+  export type ProductSyncProposalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductSyncProposals to fetch.
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductSyncProposals to fetch.
+     */
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProductSyncProposals.
+     */
+    cursor?: ProductSyncProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductSyncProposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductSyncProposals.
+     */
+    skip?: number
+    distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSyncProposal create
+   */
+  export type ProductSyncProposalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProductSyncProposal.
+     */
+    data: XOR<ProductSyncProposalCreateInput, ProductSyncProposalUncheckedCreateInput>
+  }
+
+  /**
+   * ProductSyncProposal createMany
+   */
+  export type ProductSyncProposalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProductSyncProposals.
+     */
+    data: ProductSyncProposalCreateManyInput | ProductSyncProposalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProductSyncProposal createManyAndReturn
+   */
+  export type ProductSyncProposalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProductSyncProposals.
+     */
+    data: ProductSyncProposalCreateManyInput | ProductSyncProposalCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductSyncProposal update
+   */
+  export type ProductSyncProposalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProductSyncProposal.
+     */
+    data: XOR<ProductSyncProposalUpdateInput, ProductSyncProposalUncheckedUpdateInput>
+    /**
+     * Choose, which ProductSyncProposal to update.
+     */
+    where: ProductSyncProposalWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncProposal updateMany
+   */
+  export type ProductSyncProposalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProductSyncProposals.
+     */
+    data: XOR<ProductSyncProposalUpdateManyMutationInput, ProductSyncProposalUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductSyncProposals to update
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * Limit how many ProductSyncProposals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductSyncProposal updateManyAndReturn
+   */
+  export type ProductSyncProposalUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * The data used to update ProductSyncProposals.
+     */
+    data: XOR<ProductSyncProposalUpdateManyMutationInput, ProductSyncProposalUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductSyncProposals to update
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * Limit how many ProductSyncProposals to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductSyncProposal upsert
+   */
+  export type ProductSyncProposalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProductSyncProposal to update in case it exists.
+     */
+    where: ProductSyncProposalWhereUniqueInput
+    /**
+     * In case the ProductSyncProposal found by the `where` argument doesn't exist, create a new ProductSyncProposal with this data.
+     */
+    create: XOR<ProductSyncProposalCreateInput, ProductSyncProposalUncheckedCreateInput>
+    /**
+     * In case the ProductSyncProposal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductSyncProposalUpdateInput, ProductSyncProposalUncheckedUpdateInput>
+  }
+
+  /**
+   * ProductSyncProposal delete
+   */
+  export type ProductSyncProposalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    /**
+     * Filter which ProductSyncProposal to delete.
+     */
+    where: ProductSyncProposalWhereUniqueInput
+  }
+
+  /**
+   * ProductSyncProposal deleteMany
+   */
+  export type ProductSyncProposalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductSyncProposals to delete
+     */
+    where?: ProductSyncProposalWhereInput
+    /**
+     * Limit how many ProductSyncProposals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductSyncProposal.product
+   */
+  export type ProductSyncProposal$productArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+  }
+
+  /**
+   * ProductSyncProposal without action
+   */
+  export type ProductSyncProposalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Service
    */
 
@@ -18440,6 +21092,7 @@ export namespace Prisma {
     tags: number
     isPublic: number
     isFeatured: number
+    manualFields: number
     _all: number
   }
 
@@ -18506,6 +21159,7 @@ export namespace Prisma {
     tags?: true
     isPublic?: true
     isFeatured?: true
+    manualFields?: true
     _all?: true
   }
 
@@ -18615,6 +21269,7 @@ export namespace Prisma {
     tags: string[]
     isPublic: boolean
     isFeatured: boolean
+    manualFields: string[]
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -18656,8 +21311,10 @@ export namespace Prisma {
     tags?: boolean
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: boolean
     shop?: boolean | Product$shopArgs<ExtArgs>
     categories?: boolean | Product$categoriesArgs<ExtArgs>
+    syncProposals?: boolean | Product$syncProposalsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -18681,6 +21338,7 @@ export namespace Prisma {
     tags?: boolean
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: boolean
     shop?: boolean | Product$shopArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -18704,6 +21362,7 @@ export namespace Prisma {
     tags?: boolean
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: boolean
     shop?: boolean | Product$shopArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -18727,12 +21386,14 @@ export namespace Prisma {
     tags?: boolean
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopProductId" | "name" | "description" | "priceInCents" | "currency" | "imageUrl" | "productUrl" | "attributeTags" | "materialTags" | "environmentalTags" | "aiGeneratedTags" | "createdAt" | "updatedAt" | "scrapeMethod" | "shopId" | "tags" | "isPublic" | "isFeatured", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopProductId" | "name" | "description" | "priceInCents" | "currency" | "imageUrl" | "productUrl" | "attributeTags" | "materialTags" | "environmentalTags" | "aiGeneratedTags" | "createdAt" | "updatedAt" | "scrapeMethod" | "shopId" | "tags" | "isPublic" | "isFeatured" | "manualFields", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | Product$shopArgs<ExtArgs>
     categories?: boolean | Product$categoriesArgs<ExtArgs>
+    syncProposals?: boolean | Product$syncProposalsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18747,6 +21408,7 @@ export namespace Prisma {
     objects: {
       shop: Prisma.$ShopPayload<ExtArgs> | null
       categories: Prisma.$CategoryPayload<ExtArgs>[]
+      syncProposals: Prisma.$ProductSyncProposalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18768,6 +21430,12 @@ export namespace Prisma {
       tags: string[]
       isPublic: boolean
       isFeatured: boolean
+      /**
+       * Sync-owned fields a human has edited by hand (e.g. ["description",
+       * "imageUrl"]). The scheduled product sync never proposes changes to a field
+       * listed here, so curated copy and photos survive upstream changes.
+       */
+      manualFields: string[]
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -19164,6 +21832,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     shop<T extends Product$shopArgs<ExtArgs> = {}>(args?: Subset<T, Product$shopArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     categories<T extends Product$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Product$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    syncProposals<T extends Product$syncProposalsArgs<ExtArgs> = {}>(args?: Subset<T, Product$syncProposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19212,6 +21881,7 @@ export namespace Prisma {
     readonly tags: FieldRef<"Product", 'String[]'>
     readonly isPublic: FieldRef<"Product", 'Boolean'>
     readonly isFeatured: FieldRef<"Product", 'Boolean'>
+    readonly manualFields: FieldRef<"Product", 'String[]'>
   }
     
 
@@ -19651,6 +22321,30 @@ export namespace Prisma {
   }
 
   /**
+   * Product.syncProposals
+   */
+  export type Product$syncProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncProposal
+     */
+    select?: ProductSyncProposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncProposal
+     */
+    omit?: ProductSyncProposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncProposalInclude<ExtArgs> | null
+    where?: ProductSyncProposalWhereInput
+    orderBy?: ProductSyncProposalOrderByWithRelationInput | ProductSyncProposalOrderByWithRelationInput[]
+    cursor?: ProductSyncProposalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
    * Product without action
    */
   export type ProductDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19695,6 +22389,11 @@ export namespace Prisma {
     updatedAt: Date | null
     name: string | null
     isPublic: boolean | null
+    syncPlatform: $Enums.ProductScrapeMethod | null
+    syncEnabled: boolean | null
+    syncUrl: string | null
+    allowInsecureOrigin: boolean | null
+    lastSyncedAt: Date | null
   }
 
   export type ShopMaxAggregateOutputType = {
@@ -19713,6 +22412,11 @@ export namespace Prisma {
     updatedAt: Date | null
     name: string | null
     isPublic: boolean | null
+    syncPlatform: $Enums.ProductScrapeMethod | null
+    syncEnabled: boolean | null
+    syncUrl: string | null
+    allowInsecureOrigin: boolean | null
+    lastSyncedAt: Date | null
   }
 
   export type ShopCountAggregateOutputType = {
@@ -19732,6 +22436,11 @@ export namespace Prisma {
     attributeTags: number
     name: number
     isPublic: number
+    syncPlatform: number
+    syncEnabled: number
+    syncUrl: number
+    allowInsecureOrigin: number
+    lastSyncedAt: number
     _all: number
   }
 
@@ -19752,6 +22461,11 @@ export namespace Prisma {
     updatedAt?: true
     name?: true
     isPublic?: true
+    syncPlatform?: true
+    syncEnabled?: true
+    syncUrl?: true
+    allowInsecureOrigin?: true
+    lastSyncedAt?: true
   }
 
   export type ShopMaxAggregateInputType = {
@@ -19770,6 +22484,11 @@ export namespace Prisma {
     updatedAt?: true
     name?: true
     isPublic?: true
+    syncPlatform?: true
+    syncEnabled?: true
+    syncUrl?: true
+    allowInsecureOrigin?: true
+    lastSyncedAt?: true
   }
 
   export type ShopCountAggregateInputType = {
@@ -19789,6 +22508,11 @@ export namespace Prisma {
     attributeTags?: true
     name?: true
     isPublic?: true
+    syncPlatform?: true
+    syncEnabled?: true
+    syncUrl?: true
+    allowInsecureOrigin?: true
+    lastSyncedAt?: true
     _all?: true
   }
 
@@ -19881,6 +22605,11 @@ export namespace Prisma {
     attributeTags: string[]
     name: string
     isPublic: boolean
+    syncPlatform: $Enums.ProductScrapeMethod | null
+    syncEnabled: boolean
+    syncUrl: string | null
+    allowInsecureOrigin: boolean
+    lastSyncedAt: Date | null
     _count: ShopCountAggregateOutputType | null
     _min: ShopMinAggregateOutputType | null
     _max: ShopMaxAggregateOutputType | null
@@ -19917,6 +22646,11 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    syncPlatform?: boolean
+    syncEnabled?: boolean
+    syncUrl?: boolean
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: boolean
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
     services?: boolean | Shop$servicesArgs<ExtArgs>
@@ -19924,6 +22658,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19944,6 +22679,11 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    syncPlatform?: boolean
+    syncEnabled?: boolean
+    syncUrl?: boolean
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19964,6 +22704,11 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    syncPlatform?: boolean
+    syncEnabled?: boolean
+    syncUrl?: boolean
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: boolean
     owner?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -19984,9 +22729,14 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    syncPlatform?: boolean
+    syncEnabled?: boolean
+    syncUrl?: boolean
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -19995,6 +22745,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
+    syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20014,6 +22765,7 @@ export namespace Prisma {
       owner: Prisma.$UserPayload<ExtArgs>
       address: Prisma.$ShopAddressPayload<ExtArgs> | null
       websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
+      syncRuns: Prisma.$ProductSyncRunPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20032,6 +22784,24 @@ export namespace Prisma {
       attributeTags: string[]
       name: string
       isPublic: boolean
+      /**
+       * Scheduled product-sync configuration. `syncPlatform` reuses the
+       * per-product scrape enum so there is one platform vocabulary; shops on
+       * SQUARE or MANUAL simply leave `syncEnabled` false and the cron skips them.
+       */
+      syncPlatform: $Enums.ProductScrapeMethod | null
+      syncEnabled: boolean
+      /**
+       * Overrides `website` for feed fetching. Squarespace in particular needs the
+       * *products page* URL, not the homepage.
+       */
+      syncUrl: string | null
+      /**
+       * Permits a plain-HTTP origin for storefronts without a working certificate.
+       * safe-fetch's private-IP, redirect and size guards still apply.
+       */
+      allowInsecureOrigin: boolean
+      lastSyncedAt: Date | null
     }, ExtArgs["result"]["shop"]>
     composites: {}
   }
@@ -20433,6 +23203,7 @@ export namespace Prisma {
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     address<T extends Shop$addressArgs<ExtArgs> = {}>(args?: Subset<T, Shop$addressArgs<ExtArgs>>): Prisma__ShopAddressClient<$Result.GetResult<Prisma.$ShopAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    syncRuns<T extends Shop$syncRunsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$syncRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20478,6 +23249,11 @@ export namespace Prisma {
     readonly attributeTags: FieldRef<"Shop", 'String[]'>
     readonly name: FieldRef<"Shop", 'String'>
     readonly isPublic: FieldRef<"Shop", 'Boolean'>
+    readonly syncPlatform: FieldRef<"Shop", 'ProductScrapeMethod'>
+    readonly syncEnabled: FieldRef<"Shop", 'Boolean'>
+    readonly syncUrl: FieldRef<"Shop", 'String'>
+    readonly allowInsecureOrigin: FieldRef<"Shop", 'Boolean'>
+    readonly lastSyncedAt: FieldRef<"Shop", 'DateTime'>
   }
     
 
@@ -21005,6 +23781,30 @@ export namespace Prisma {
      */
     include?: WebsiteProvisionInclude<ExtArgs> | null
     where?: WebsiteProvisionWhereInput
+  }
+
+  /**
+   * Shop.syncRuns
+   */
+  export type Shop$syncRunsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSyncRun
+     */
+    select?: ProductSyncRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSyncRun
+     */
+    omit?: ProductSyncRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSyncRunInclude<ExtArgs> | null
+    where?: ProductSyncRunWhereInput
+    orderBy?: ProductSyncRunOrderByWithRelationInput | ProductSyncRunOrderByWithRelationInput[]
+    cursor?: ProductSyncRunWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductSyncRunScalarFieldEnum | ProductSyncRunScalarFieldEnum[]
   }
 
   /**
@@ -69604,6 +72404,39 @@ export namespace Prisma {
   export type PlatformInviteScalarFieldEnum = (typeof PlatformInviteScalarFieldEnum)[keyof typeof PlatformInviteScalarFieldEnum]
 
 
+  export const ProductSyncRunScalarFieldEnum: {
+    id: 'id',
+    shopId: 'shopId',
+    platform: 'platform',
+    status: 'status',
+    startedAt: 'startedAt',
+    finishedAt: 'finishedAt',
+    reviewedAt: 'reviewedAt',
+    reviewedById: 'reviewedById',
+    fetchedCount: 'fetchedCount',
+    errorMessage: 'errorMessage',
+    insecureTLSCode: 'insecureTLSCode',
+    triggeredManually: 'triggeredManually'
+  };
+
+  export type ProductSyncRunScalarFieldEnum = (typeof ProductSyncRunScalarFieldEnum)[keyof typeof ProductSyncRunScalarFieldEnum]
+
+
+  export const ProductSyncProposalScalarFieldEnum: {
+    id: 'id',
+    runId: 'runId',
+    productId: 'productId',
+    shopProductId: 'shopProductId',
+    changeType: 'changeType',
+    status: 'status',
+    matchedBy: 'matchedBy',
+    payload: 'payload',
+    diff: 'diff'
+  };
+
+  export type ProductSyncProposalScalarFieldEnum = (typeof ProductSyncProposalScalarFieldEnum)[keyof typeof ProductSyncProposalScalarFieldEnum]
+
+
   export const ServiceScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -69646,7 +72479,8 @@ export namespace Prisma {
     shopId: 'shopId',
     tags: 'tags',
     isPublic: 'isPublic',
-    isFeatured: 'isFeatured'
+    isFeatured: 'isFeatured',
+    manualFields: 'manualFields'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -69668,7 +72502,12 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     attributeTags: 'attributeTags',
     name: 'name',
-    isPublic: 'isPublic'
+    isPublic: 'isPublic',
+    syncPlatform: 'syncPlatform',
+    syncEnabled: 'syncEnabled',
+    syncUrl: 'syncUrl',
+    allowInsecureOrigin: 'allowInsecureOrigin',
+    lastSyncedAt: 'lastSyncedAt'
   };
 
   export type ShopScalarFieldEnum = (typeof ShopScalarFieldEnum)[keyof typeof ShopScalarFieldEnum]
@@ -70499,6 +73338,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ProductScrapeMethod'
+   */
+  export type EnumProductScrapeMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductScrapeMethod'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductScrapeMethod[]'
+   */
+  export type ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductScrapeMethod[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SyncRunStatus'
+   */
+  export type EnumSyncRunStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncRunStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SyncRunStatus[]'
+   */
+  export type ListEnumSyncRunStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncRunStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -70513,16 +73380,30 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'ProductScrapeMethod'
+   * Reference to a field of type 'SyncChangeType'
    */
-  export type EnumProductScrapeMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductScrapeMethod'>
+  export type EnumSyncChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncChangeType'>
     
 
 
   /**
-   * Reference to a field of type 'ProductScrapeMethod[]'
+   * Reference to a field of type 'SyncChangeType[]'
    */
-  export type ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductScrapeMethod[]'>
+  export type ListEnumSyncChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SyncChangeType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProposalStatus'
+   */
+  export type EnumProposalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProposalStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProposalStatus[]'
+   */
+  export type ListEnumProposalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProposalStatus[]'>
     
 
 
@@ -71387,6 +74268,179 @@ export namespace Prisma {
     shopId?: StringNullableWithAggregatesFilter<"PlatformInvite"> | string | null
   }
 
+  export type ProductSyncRunWhereInput = {
+    AND?: ProductSyncRunWhereInput | ProductSyncRunWhereInput[]
+    OR?: ProductSyncRunWhereInput[]
+    NOT?: ProductSyncRunWhereInput | ProductSyncRunWhereInput[]
+    id?: StringFilter<"ProductSyncRun"> | string
+    shopId?: StringFilter<"ProductSyncRun"> | string
+    platform?: EnumProductScrapeMethodFilter<"ProductSyncRun"> | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFilter<"ProductSyncRun"> | $Enums.SyncRunStatus
+    startedAt?: DateTimeFilter<"ProductSyncRun"> | Date | string
+    finishedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedById?: StringNullableFilter<"ProductSyncRun"> | string | null
+    fetchedCount?: IntFilter<"ProductSyncRun"> | number
+    errorMessage?: StringNullableFilter<"ProductSyncRun"> | string | null
+    insecureTLSCode?: StringNullableFilter<"ProductSyncRun"> | string | null
+    triggeredManually?: BoolFilter<"ProductSyncRun"> | boolean
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+    proposals?: ProductSyncProposalListRelationFilter
+  }
+
+  export type ProductSyncRunOrderByWithRelationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    platform?: SortOrder
+    status?: SortOrder
+    startedAt?: SortOrder
+    finishedAt?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedById?: SortOrderInput | SortOrder
+    fetchedCount?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    insecureTLSCode?: SortOrderInput | SortOrder
+    triggeredManually?: SortOrder
+    shop?: ShopOrderByWithRelationInput
+    proposals?: ProductSyncProposalOrderByRelationAggregateInput
+  }
+
+  export type ProductSyncRunWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProductSyncRunWhereInput | ProductSyncRunWhereInput[]
+    OR?: ProductSyncRunWhereInput[]
+    NOT?: ProductSyncRunWhereInput | ProductSyncRunWhereInput[]
+    shopId?: StringFilter<"ProductSyncRun"> | string
+    platform?: EnumProductScrapeMethodFilter<"ProductSyncRun"> | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFilter<"ProductSyncRun"> | $Enums.SyncRunStatus
+    startedAt?: DateTimeFilter<"ProductSyncRun"> | Date | string
+    finishedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedById?: StringNullableFilter<"ProductSyncRun"> | string | null
+    fetchedCount?: IntFilter<"ProductSyncRun"> | number
+    errorMessage?: StringNullableFilter<"ProductSyncRun"> | string | null
+    insecureTLSCode?: StringNullableFilter<"ProductSyncRun"> | string | null
+    triggeredManually?: BoolFilter<"ProductSyncRun"> | boolean
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+    proposals?: ProductSyncProposalListRelationFilter
+  }, "id">
+
+  export type ProductSyncRunOrderByWithAggregationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    platform?: SortOrder
+    status?: SortOrder
+    startedAt?: SortOrder
+    finishedAt?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedById?: SortOrderInput | SortOrder
+    fetchedCount?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    insecureTLSCode?: SortOrderInput | SortOrder
+    triggeredManually?: SortOrder
+    _count?: ProductSyncRunCountOrderByAggregateInput
+    _avg?: ProductSyncRunAvgOrderByAggregateInput
+    _max?: ProductSyncRunMaxOrderByAggregateInput
+    _min?: ProductSyncRunMinOrderByAggregateInput
+    _sum?: ProductSyncRunSumOrderByAggregateInput
+  }
+
+  export type ProductSyncRunScalarWhereWithAggregatesInput = {
+    AND?: ProductSyncRunScalarWhereWithAggregatesInput | ProductSyncRunScalarWhereWithAggregatesInput[]
+    OR?: ProductSyncRunScalarWhereWithAggregatesInput[]
+    NOT?: ProductSyncRunScalarWhereWithAggregatesInput | ProductSyncRunScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProductSyncRun"> | string
+    shopId?: StringWithAggregatesFilter<"ProductSyncRun"> | string
+    platform?: EnumProductScrapeMethodWithAggregatesFilter<"ProductSyncRun"> | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusWithAggregatesFilter<"ProductSyncRun"> | $Enums.SyncRunStatus
+    startedAt?: DateTimeWithAggregatesFilter<"ProductSyncRun"> | Date | string
+    finishedAt?: DateTimeNullableWithAggregatesFilter<"ProductSyncRun"> | Date | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"ProductSyncRun"> | Date | string | null
+    reviewedById?: StringNullableWithAggregatesFilter<"ProductSyncRun"> | string | null
+    fetchedCount?: IntWithAggregatesFilter<"ProductSyncRun"> | number
+    errorMessage?: StringNullableWithAggregatesFilter<"ProductSyncRun"> | string | null
+    insecureTLSCode?: StringNullableWithAggregatesFilter<"ProductSyncRun"> | string | null
+    triggeredManually?: BoolWithAggregatesFilter<"ProductSyncRun"> | boolean
+  }
+
+  export type ProductSyncProposalWhereInput = {
+    AND?: ProductSyncProposalWhereInput | ProductSyncProposalWhereInput[]
+    OR?: ProductSyncProposalWhereInput[]
+    NOT?: ProductSyncProposalWhereInput | ProductSyncProposalWhereInput[]
+    id?: StringFilter<"ProductSyncProposal"> | string
+    runId?: StringFilter<"ProductSyncProposal"> | string
+    productId?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    shopProductId?: StringFilter<"ProductSyncProposal"> | string
+    changeType?: EnumSyncChangeTypeFilter<"ProductSyncProposal"> | $Enums.SyncChangeType
+    status?: EnumProposalStatusFilter<"ProductSyncProposal"> | $Enums.ProposalStatus
+    matchedBy?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    payload?: JsonFilter<"ProductSyncProposal">
+    diff?: JsonFilter<"ProductSyncProposal">
+    run?: XOR<ProductSyncRunScalarRelationFilter, ProductSyncRunWhereInput>
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+  }
+
+  export type ProductSyncProposalOrderByWithRelationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    shopProductId?: SortOrder
+    changeType?: SortOrder
+    status?: SortOrder
+    matchedBy?: SortOrderInput | SortOrder
+    payload?: SortOrder
+    diff?: SortOrder
+    run?: ProductSyncRunOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+  }
+
+  export type ProductSyncProposalWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProductSyncProposalWhereInput | ProductSyncProposalWhereInput[]
+    OR?: ProductSyncProposalWhereInput[]
+    NOT?: ProductSyncProposalWhereInput | ProductSyncProposalWhereInput[]
+    runId?: StringFilter<"ProductSyncProposal"> | string
+    productId?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    shopProductId?: StringFilter<"ProductSyncProposal"> | string
+    changeType?: EnumSyncChangeTypeFilter<"ProductSyncProposal"> | $Enums.SyncChangeType
+    status?: EnumProposalStatusFilter<"ProductSyncProposal"> | $Enums.ProposalStatus
+    matchedBy?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    payload?: JsonFilter<"ProductSyncProposal">
+    diff?: JsonFilter<"ProductSyncProposal">
+    run?: XOR<ProductSyncRunScalarRelationFilter, ProductSyncRunWhereInput>
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+  }, "id">
+
+  export type ProductSyncProposalOrderByWithAggregationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    shopProductId?: SortOrder
+    changeType?: SortOrder
+    status?: SortOrder
+    matchedBy?: SortOrderInput | SortOrder
+    payload?: SortOrder
+    diff?: SortOrder
+    _count?: ProductSyncProposalCountOrderByAggregateInput
+    _max?: ProductSyncProposalMaxOrderByAggregateInput
+    _min?: ProductSyncProposalMinOrderByAggregateInput
+  }
+
+  export type ProductSyncProposalScalarWhereWithAggregatesInput = {
+    AND?: ProductSyncProposalScalarWhereWithAggregatesInput | ProductSyncProposalScalarWhereWithAggregatesInput[]
+    OR?: ProductSyncProposalScalarWhereWithAggregatesInput[]
+    NOT?: ProductSyncProposalScalarWhereWithAggregatesInput | ProductSyncProposalScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProductSyncProposal"> | string
+    runId?: StringWithAggregatesFilter<"ProductSyncProposal"> | string
+    productId?: StringNullableWithAggregatesFilter<"ProductSyncProposal"> | string | null
+    shopProductId?: StringWithAggregatesFilter<"ProductSyncProposal"> | string
+    changeType?: EnumSyncChangeTypeWithAggregatesFilter<"ProductSyncProposal"> | $Enums.SyncChangeType
+    status?: EnumProposalStatusWithAggregatesFilter<"ProductSyncProposal"> | $Enums.ProposalStatus
+    matchedBy?: StringNullableWithAggregatesFilter<"ProductSyncProposal"> | string | null
+    payload?: JsonWithAggregatesFilter<"ProductSyncProposal">
+    diff?: JsonWithAggregatesFilter<"ProductSyncProposal">
+  }
+
   export type ServiceWhereInput = {
     AND?: ServiceWhereInput | ServiceWhereInput[]
     OR?: ServiceWhereInput[]
@@ -71530,8 +74584,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     isPublic?: BoolFilter<"Product"> | boolean
     isFeatured?: BoolFilter<"Product"> | boolean
+    manualFields?: StringNullableListFilter<"Product">
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
+    syncProposals?: ProductSyncProposalListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -71554,8 +74610,10 @@ export namespace Prisma {
     tags?: SortOrder
     isPublic?: SortOrder
     isFeatured?: SortOrder
+    manualFields?: SortOrder
     shop?: ShopOrderByWithRelationInput
     categories?: CategoryOrderByRelationAggregateInput
+    syncProposals?: ProductSyncProposalOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -71582,8 +74640,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     isPublic?: BoolFilter<"Product"> | boolean
     isFeatured?: BoolFilter<"Product"> | boolean
+    manualFields?: StringNullableListFilter<"Product">
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
+    syncProposals?: ProductSyncProposalListRelationFilter
   }, "id" | "shopId_shopProductId">
 
   export type ProductOrderByWithAggregationInput = {
@@ -71606,6 +74666,7 @@ export namespace Prisma {
     tags?: SortOrder
     isPublic?: SortOrder
     isFeatured?: SortOrder
+    manualFields?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -71636,6 +74697,7 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     isPublic?: BoolWithAggregatesFilter<"Product"> | boolean
     isFeatured?: BoolWithAggregatesFilter<"Product"> | boolean
+    manualFields?: StringNullableListFilter<"Product">
   }
 
   export type ShopWhereInput = {
@@ -71658,6 +74720,11 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFilter<"Shop"> | boolean
+    syncUrl?: StringNullableFilter<"Shop"> | string | null
+    allowInsecureOrigin?: BoolFilter<"Shop"> | boolean
+    lastSyncedAt?: DateTimeNullableFilter<"Shop"> | Date | string | null
     events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
@@ -71665,6 +74732,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    syncRuns?: ProductSyncRunListRelationFilter
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -71684,6 +74752,11 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    syncPlatform?: SortOrderInput | SortOrder
+    syncEnabled?: SortOrder
+    syncUrl?: SortOrderInput | SortOrder
+    allowInsecureOrigin?: SortOrder
+    lastSyncedAt?: SortOrderInput | SortOrder
     events?: EventOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
     services?: ServiceOrderByRelationAggregateInput
@@ -71691,6 +74764,7 @@ export namespace Prisma {
     owner?: UserOrderByWithRelationInput
     address?: ShopAddressOrderByWithRelationInput
     websiteProvision?: WebsiteProvisionOrderByWithRelationInput
+    syncRuns?: ProductSyncRunOrderByRelationAggregateInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -71713,6 +74787,11 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFilter<"Shop"> | boolean
+    syncUrl?: StringNullableFilter<"Shop"> | string | null
+    allowInsecureOrigin?: BoolFilter<"Shop"> | boolean
+    lastSyncedAt?: DateTimeNullableFilter<"Shop"> | Date | string | null
     events?: EventListRelationFilter
     products?: ProductListRelationFilter
     services?: ServiceListRelationFilter
@@ -71720,6 +74799,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
+    syncRuns?: ProductSyncRunListRelationFilter
   }, "id">
 
   export type ShopOrderByWithAggregationInput = {
@@ -71739,6 +74819,11 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    syncPlatform?: SortOrderInput | SortOrder
+    syncEnabled?: SortOrder
+    syncUrl?: SortOrderInput | SortOrder
+    allowInsecureOrigin?: SortOrder
+    lastSyncedAt?: SortOrderInput | SortOrder
     _count?: ShopCountOrderByAggregateInput
     _max?: ShopMaxOrderByAggregateInput
     _min?: ShopMinOrderByAggregateInput
@@ -71764,6 +74849,11 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringWithAggregatesFilter<"Shop"> | string
     isPublic?: BoolWithAggregatesFilter<"Shop"> | boolean
+    syncPlatform?: EnumProductScrapeMethodNullableWithAggregatesFilter<"Shop"> | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolWithAggregatesFilter<"Shop"> | boolean
+    syncUrl?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    allowInsecureOrigin?: BoolWithAggregatesFilter<"Shop"> | boolean
+    lastSyncedAt?: DateTimeNullableWithAggregatesFilter<"Shop"> | Date | string | null
   }
 
   export type ShopAddressWhereInput = {
@@ -76016,6 +79106,196 @@ export namespace Prisma {
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ProductSyncRunCreateInput = {
+    id?: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+    shop: ShopCreateNestedOneWithoutSyncRunsInput
+    proposals?: ProductSyncProposalCreateNestedManyWithoutRunInput
+  }
+
+  export type ProductSyncRunUncheckedCreateInput = {
+    id?: string
+    shopId: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+    proposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutRunInput
+  }
+
+  export type ProductSyncRunUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+    shop?: ShopUpdateOneRequiredWithoutSyncRunsNestedInput
+    proposals?: ProductSyncProposalUpdateManyWithoutRunNestedInput
+  }
+
+  export type ProductSyncRunUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+    proposals?: ProductSyncProposalUncheckedUpdateManyWithoutRunNestedInput
+  }
+
+  export type ProductSyncRunCreateManyInput = {
+    id?: string
+    shopId: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+  }
+
+  export type ProductSyncRunUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ProductSyncRunUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ProductSyncProposalCreateInput = {
+    id?: string
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+    run: ProductSyncRunCreateNestedOneWithoutProposalsInput
+    product?: ProductCreateNestedOneWithoutSyncProposalsInput
+  }
+
+  export type ProductSyncProposalUncheckedCreateInput = {
+    id?: string
+    runId: string
+    productId?: string | null
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+    run?: ProductSyncRunUpdateOneRequiredWithoutProposalsNestedInput
+    product?: ProductUpdateOneWithoutSyncProposalsNestedInput
+  }
+
+  export type ProductSyncProposalUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalCreateManyInput = {
+    id?: string
+    runId: string
+    productId?: string | null
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
   export type ServiceCreateInput = {
     id?: string
     name: string
@@ -76178,8 +79458,10 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
     shop?: ShopCreateNestedOneWithoutProductsInput
     categories?: CategoryCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -76202,7 +79484,9 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -76224,8 +79508,10 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
     shop?: ShopUpdateOneWithoutProductsNestedInput
     categories?: CategoryUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -76248,7 +79534,9 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -76271,6 +79559,7 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -76292,6 +79581,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -76314,6 +79604,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
   }
 
   export type ShopCreateInput = {
@@ -76332,6 +79623,11 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
@@ -76339,6 +79635,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -76358,12 +79655,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -76382,6 +79685,11 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
@@ -76389,6 +79697,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -76408,12 +79717,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -76433,6 +79748,11 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
   }
 
   export type ShopUpdateManyMutationInput = {
@@ -76451,6 +79771,11 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopUncheckedUpdateManyInput = {
@@ -76470,6 +79795,11 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressCreateInput = {
@@ -81188,6 +84518,255 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
+  export type EnumProductScrapeMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductScrapeMethodFilter<$PrismaModel> | $Enums.ProductScrapeMethod
+  }
+
+  export type EnumSyncRunStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncRunStatus | EnumSyncRunStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncRunStatusFilter<$PrismaModel> | $Enums.SyncRunStatus
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type ProductSyncProposalListRelationFilter = {
+    every?: ProductSyncProposalWhereInput
+    some?: ProductSyncProposalWhereInput
+    none?: ProductSyncProposalWhereInput
+  }
+
+  export type ProductSyncProposalOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductSyncRunCountOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    platform?: SortOrder
+    status?: SortOrder
+    startedAt?: SortOrder
+    finishedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedById?: SortOrder
+    fetchedCount?: SortOrder
+    errorMessage?: SortOrder
+    insecureTLSCode?: SortOrder
+    triggeredManually?: SortOrder
+  }
+
+  export type ProductSyncRunAvgOrderByAggregateInput = {
+    fetchedCount?: SortOrder
+  }
+
+  export type ProductSyncRunMaxOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    platform?: SortOrder
+    status?: SortOrder
+    startedAt?: SortOrder
+    finishedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedById?: SortOrder
+    fetchedCount?: SortOrder
+    errorMessage?: SortOrder
+    insecureTLSCode?: SortOrder
+    triggeredManually?: SortOrder
+  }
+
+  export type ProductSyncRunMinOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    platform?: SortOrder
+    status?: SortOrder
+    startedAt?: SortOrder
+    finishedAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedById?: SortOrder
+    fetchedCount?: SortOrder
+    errorMessage?: SortOrder
+    insecureTLSCode?: SortOrder
+    triggeredManually?: SortOrder
+  }
+
+  export type ProductSyncRunSumOrderByAggregateInput = {
+    fetchedCount?: SortOrder
+  }
+
+  export type EnumProductScrapeMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+    _max?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+  }
+
+  export type EnumSyncRunStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncRunStatus | EnumSyncRunStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncRunStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyncRunStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyncRunStatusFilter<$PrismaModel>
+    _max?: NestedEnumSyncRunStatusFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumSyncChangeTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncChangeType | EnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncChangeTypeFilter<$PrismaModel> | $Enums.SyncChangeType
+  }
+
+  export type EnumProposalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProposalStatus | EnumProposalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProposalStatusFilter<$PrismaModel> | $Enums.ProposalStatus
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type ProductSyncRunScalarRelationFilter = {
+    is?: ProductSyncRunWhereInput
+    isNot?: ProductSyncRunWhereInput
+  }
+
+  export type ProductNullableScalarRelationFilter = {
+    is?: ProductWhereInput | null
+    isNot?: ProductWhereInput | null
+  }
+
+  export type ProductSyncProposalCountOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    productId?: SortOrder
+    shopProductId?: SortOrder
+    changeType?: SortOrder
+    status?: SortOrder
+    matchedBy?: SortOrder
+    payload?: SortOrder
+    diff?: SortOrder
+  }
+
+  export type ProductSyncProposalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    productId?: SortOrder
+    shopProductId?: SortOrder
+    changeType?: SortOrder
+    status?: SortOrder
+    matchedBy?: SortOrder
+  }
+
+  export type ProductSyncProposalMinOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    productId?: SortOrder
+    shopProductId?: SortOrder
+    changeType?: SortOrder
+    status?: SortOrder
+    matchedBy?: SortOrder
+  }
+
+  export type EnumSyncChangeTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncChangeType | EnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncChangeTypeWithAggregatesFilter<$PrismaModel> | $Enums.SyncChangeType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyncChangeTypeFilter<$PrismaModel>
+    _max?: NestedEnumSyncChangeTypeFilter<$PrismaModel>
+  }
+
+  export type EnumProposalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProposalStatus | EnumProposalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProposalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProposalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProposalStatusFilter<$PrismaModel>
+    _max?: NestedEnumProposalStatusFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -81287,13 +84866,6 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type EnumProductScrapeMethodFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    not?: NestedEnumProductScrapeMethodFilter<$PrismaModel> | $Enums.ProductScrapeMethod
-  }
-
   export type ProductShopIdShopProductIdCompoundUniqueInput = {
     shopId: string
     shopProductId: string
@@ -81319,6 +84891,7 @@ export namespace Prisma {
     tags?: SortOrder
     isPublic?: SortOrder
     isFeatured?: SortOrder
+    manualFields?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -81363,14 +84936,11 @@ export namespace Prisma {
     priceInCents?: SortOrder
   }
 
-  export type EnumProductScrapeMethodWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    not?: NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
-    _max?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+  export type EnumProductScrapeMethodNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel> | $Enums.ProductScrapeMethod | null
   }
 
   export type EventListRelationFilter = {
@@ -81395,11 +84965,21 @@ export namespace Prisma {
     isNot?: WebsiteProvisionWhereInput | null
   }
 
+  export type ProductSyncRunListRelationFilter = {
+    every?: ProductSyncRunWhereInput
+    some?: ProductSyncRunWhereInput
+    none?: ProductSyncRunWhereInput
+  }
+
   export type EventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type PlatformInviteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductSyncRunOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -81420,6 +85000,11 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    syncPlatform?: SortOrder
+    syncEnabled?: SortOrder
+    syncUrl?: SortOrder
+    allowInsecureOrigin?: SortOrder
+    lastSyncedAt?: SortOrder
   }
 
   export type ShopMaxOrderByAggregateInput = {
@@ -81438,6 +85023,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    syncPlatform?: SortOrder
+    syncEnabled?: SortOrder
+    syncUrl?: SortOrder
+    allowInsecureOrigin?: SortOrder
+    lastSyncedAt?: SortOrder
   }
 
   export type ShopMinOrderByAggregateInput = {
@@ -81456,6 +85046,21 @@ export namespace Prisma {
     updatedAt?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    syncPlatform?: SortOrder
+    syncEnabled?: SortOrder
+    syncUrl?: SortOrder
+    allowInsecureOrigin?: SortOrder
+    lastSyncedAt?: SortOrder
+  }
+
+  export type EnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
+    _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
   export type ShopAddressCountOrderByAggregateInput = {
@@ -82042,17 +85647,6 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type EnumWeekDayFilter<$PrismaModel = never> = {
     equals?: $Enums.WeekDay | EnumWeekDayFieldRefInput<$PrismaModel>
     in?: $Enums.WeekDay[] | ListEnumWeekDayFieldRefInput<$PrismaModel>
@@ -82095,22 +85689,6 @@ export namespace Prisma {
 
   export type ScheduleSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EnumWeekDayWithAggregatesFilter<$PrismaModel = never> = {
@@ -83255,29 +86833,6 @@ export namespace Prisma {
     _min?: NestedEnumUpcycleThumbFilter<$PrismaModel>
     _max?: NestedEnumUpcycleThumbFilter<$PrismaModel>
   }
-  export type JsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type GenerationJobCountOrderByAggregateInput = {
     id?: SortOrder
@@ -83312,32 +86867,6 @@ export namespace Prisma {
     error?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type EnumLoraTypeFilter<$PrismaModel = never> = {
@@ -84722,6 +88251,116 @@ export namespace Prisma {
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutInvitesInput, ShopUpdateWithoutInvitesInput>, ShopUncheckedUpdateWithoutInvitesInput>
   }
 
+  export type ShopCreateNestedOneWithoutSyncRunsInput = {
+    create?: XOR<ShopCreateWithoutSyncRunsInput, ShopUncheckedCreateWithoutSyncRunsInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutSyncRunsInput
+    connect?: ShopWhereUniqueInput
+  }
+
+  export type ProductSyncProposalCreateNestedManyWithoutRunInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput> | ProductSyncProposalCreateWithoutRunInput[] | ProductSyncProposalUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutRunInput | ProductSyncProposalCreateOrConnectWithoutRunInput[]
+    createMany?: ProductSyncProposalCreateManyRunInputEnvelope
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+  }
+
+  export type ProductSyncProposalUncheckedCreateNestedManyWithoutRunInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput> | ProductSyncProposalCreateWithoutRunInput[] | ProductSyncProposalUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutRunInput | ProductSyncProposalCreateOrConnectWithoutRunInput[]
+    createMany?: ProductSyncProposalCreateManyRunInputEnvelope
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+  }
+
+  export type EnumProductScrapeMethodFieldUpdateOperationsInput = {
+    set?: $Enums.ProductScrapeMethod
+  }
+
+  export type EnumSyncRunStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SyncRunStatus
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ShopUpdateOneRequiredWithoutSyncRunsNestedInput = {
+    create?: XOR<ShopCreateWithoutSyncRunsInput, ShopUncheckedCreateWithoutSyncRunsInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutSyncRunsInput
+    upsert?: ShopUpsertWithoutSyncRunsInput
+    connect?: ShopWhereUniqueInput
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutSyncRunsInput, ShopUpdateWithoutSyncRunsInput>, ShopUncheckedUpdateWithoutSyncRunsInput>
+  }
+
+  export type ProductSyncProposalUpdateManyWithoutRunNestedInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput> | ProductSyncProposalCreateWithoutRunInput[] | ProductSyncProposalUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutRunInput | ProductSyncProposalCreateOrConnectWithoutRunInput[]
+    upsert?: ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput | ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput[]
+    createMany?: ProductSyncProposalCreateManyRunInputEnvelope
+    set?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    disconnect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    delete?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    update?: ProductSyncProposalUpdateWithWhereUniqueWithoutRunInput | ProductSyncProposalUpdateWithWhereUniqueWithoutRunInput[]
+    updateMany?: ProductSyncProposalUpdateManyWithWhereWithoutRunInput | ProductSyncProposalUpdateManyWithWhereWithoutRunInput[]
+    deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+  }
+
+  export type ProductSyncProposalUncheckedUpdateManyWithoutRunNestedInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput> | ProductSyncProposalCreateWithoutRunInput[] | ProductSyncProposalUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutRunInput | ProductSyncProposalCreateOrConnectWithoutRunInput[]
+    upsert?: ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput | ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput[]
+    createMany?: ProductSyncProposalCreateManyRunInputEnvelope
+    set?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    disconnect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    delete?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    update?: ProductSyncProposalUpdateWithWhereUniqueWithoutRunInput | ProductSyncProposalUpdateWithWhereUniqueWithoutRunInput[]
+    updateMany?: ProductSyncProposalUpdateManyWithWhereWithoutRunInput | ProductSyncProposalUpdateManyWithWhereWithoutRunInput[]
+    deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+  }
+
+  export type ProductSyncRunCreateNestedOneWithoutProposalsInput = {
+    create?: XOR<ProductSyncRunCreateWithoutProposalsInput, ProductSyncRunUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutProposalsInput
+    connect?: ProductSyncRunWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutSyncProposalsInput = {
+    create?: XOR<ProductCreateWithoutSyncProposalsInput, ProductUncheckedCreateWithoutSyncProposalsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSyncProposalsInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type EnumSyncChangeTypeFieldUpdateOperationsInput = {
+    set?: $Enums.SyncChangeType
+  }
+
+  export type EnumProposalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ProposalStatus
+  }
+
+  export type ProductSyncRunUpdateOneRequiredWithoutProposalsNestedInput = {
+    create?: XOR<ProductSyncRunCreateWithoutProposalsInput, ProductSyncRunUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutProposalsInput
+    upsert?: ProductSyncRunUpsertWithoutProposalsInput
+    connect?: ProductSyncRunWhereUniqueInput
+    update?: XOR<XOR<ProductSyncRunUpdateToOneWithWhereWithoutProposalsInput, ProductSyncRunUpdateWithoutProposalsInput>, ProductSyncRunUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type ProductUpdateOneWithoutSyncProposalsNestedInput = {
+    create?: XOR<ProductCreateWithoutSyncProposalsInput, ProductUncheckedCreateWithoutSyncProposalsInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutSyncProposalsInput
+    upsert?: ProductUpsertWithoutSyncProposalsInput
+    disconnect?: ProductWhereInput | boolean
+    delete?: ProductWhereInput | boolean
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutSyncProposalsInput, ProductUpdateWithoutSyncProposalsInput>, ProductUncheckedUpdateWithoutSyncProposalsInput>
+  }
+
   export type ServiceCreatetagsInput = {
     set: string[]
   }
@@ -84831,6 +88470,10 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type ProductCreatemanualFieldsInput = {
+    set: string[]
+  }
+
   export type ShopCreateNestedOneWithoutProductsInput = {
     create?: XOR<ShopCreateWithoutProductsInput, ShopUncheckedCreateWithoutProductsInput>
     connectOrCreate?: ShopCreateOrConnectWithoutProductsInput
@@ -84843,10 +88486,24 @@ export namespace Prisma {
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
+  export type ProductSyncProposalCreateNestedManyWithoutProductInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput> | ProductSyncProposalCreateWithoutProductInput[] | ProductSyncProposalUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutProductInput | ProductSyncProposalCreateOrConnectWithoutProductInput[]
+    createMany?: ProductSyncProposalCreateManyProductInputEnvelope
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+  }
+
   export type CategoryUncheckedCreateNestedManyWithoutProductsInput = {
     create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+  }
+
+  export type ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput> | ProductSyncProposalCreateWithoutProductInput[] | ProductSyncProposalUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutProductInput | ProductSyncProposalCreateOrConnectWithoutProductInput[]
+    createMany?: ProductSyncProposalCreateManyProductInputEnvelope
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
   }
 
   export type ProductUpdateattributeTagsInput = {
@@ -84869,11 +88526,12 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type EnumProductScrapeMethodFieldUpdateOperationsInput = {
-    set?: $Enums.ProductScrapeMethod
+  export type ProductUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
-  export type ProductUpdatetagsInput = {
+  export type ProductUpdatemanualFieldsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -84901,6 +88559,20 @@ export namespace Prisma {
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
+  export type ProductSyncProposalUpdateManyWithoutProductNestedInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput> | ProductSyncProposalCreateWithoutProductInput[] | ProductSyncProposalUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutProductInput | ProductSyncProposalCreateOrConnectWithoutProductInput[]
+    upsert?: ProductSyncProposalUpsertWithWhereUniqueWithoutProductInput | ProductSyncProposalUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: ProductSyncProposalCreateManyProductInputEnvelope
+    set?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    disconnect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    delete?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    update?: ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput | ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: ProductSyncProposalUpdateManyWithWhereWithoutProductInput | ProductSyncProposalUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+  }
+
   export type CategoryUncheckedUpdateManyWithoutProductsNestedInput = {
     create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
@@ -84912,6 +88584,20 @@ export namespace Prisma {
     update?: CategoryUpdateWithWhereUniqueWithoutProductsInput | CategoryUpdateWithWhereUniqueWithoutProductsInput[]
     updateMany?: CategoryUpdateManyWithWhereWithoutProductsInput | CategoryUpdateManyWithWhereWithoutProductsInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  }
+
+  export type ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput> | ProductSyncProposalCreateWithoutProductInput[] | ProductSyncProposalUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutProductInput | ProductSyncProposalCreateOrConnectWithoutProductInput[]
+    upsert?: ProductSyncProposalUpsertWithWhereUniqueWithoutProductInput | ProductSyncProposalUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: ProductSyncProposalCreateManyProductInputEnvelope
+    set?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    disconnect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    delete?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+    update?: ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput | ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: ProductSyncProposalUpdateManyWithWhereWithoutProductInput | ProductSyncProposalUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
   }
 
   export type ShopCreateattributeTagsInput = {
@@ -84964,6 +88650,13 @@ export namespace Prisma {
     connect?: WebsiteProvisionWhereUniqueInput
   }
 
+  export type ProductSyncRunCreateNestedManyWithoutShopInput = {
+    create?: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput> | ProductSyncRunCreateWithoutShopInput[] | ProductSyncRunUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutShopInput | ProductSyncRunCreateOrConnectWithoutShopInput[]
+    createMany?: ProductSyncRunCreateManyShopInputEnvelope
+    connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+  }
+
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -85004,9 +88697,20 @@ export namespace Prisma {
     connect?: WebsiteProvisionWhereUniqueInput
   }
 
+  export type ProductSyncRunUncheckedCreateNestedManyWithoutShopInput = {
+    create?: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput> | ProductSyncRunCreateWithoutShopInput[] | ProductSyncRunUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutShopInput | ProductSyncRunCreateOrConnectWithoutShopInput[]
+    createMany?: ProductSyncRunCreateManyShopInputEnvelope
+    connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+  }
+
   export type ShopUpdateattributeTagsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type NullableEnumProductScrapeMethodFieldUpdateOperationsInput = {
+    set?: $Enums.ProductScrapeMethod | null
   }
 
   export type EventUpdateManyWithoutShopNestedInput = {
@@ -85093,6 +88797,20 @@ export namespace Prisma {
     update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
   }
 
+  export type ProductSyncRunUpdateManyWithoutShopNestedInput = {
+    create?: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput> | ProductSyncRunCreateWithoutShopInput[] | ProductSyncRunUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutShopInput | ProductSyncRunCreateOrConnectWithoutShopInput[]
+    upsert?: ProductSyncRunUpsertWithWhereUniqueWithoutShopInput | ProductSyncRunUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: ProductSyncRunCreateManyShopInputEnvelope
+    set?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    disconnect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    delete?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    update?: ProductSyncRunUpdateWithWhereUniqueWithoutShopInput | ProductSyncRunUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: ProductSyncRunUpdateManyWithWhereWithoutShopInput | ProductSyncRunUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
+  }
+
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -85167,6 +88885,20 @@ export namespace Prisma {
     delete?: WebsiteProvisionWhereInput | boolean
     connect?: WebsiteProvisionWhereUniqueInput
     update?: XOR<XOR<WebsiteProvisionUpdateToOneWithWhereWithoutShopInput, WebsiteProvisionUpdateWithoutShopInput>, WebsiteProvisionUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput = {
+    create?: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput> | ProductSyncRunCreateWithoutShopInput[] | ProductSyncRunUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ProductSyncRunCreateOrConnectWithoutShopInput | ProductSyncRunCreateOrConnectWithoutShopInput[]
+    upsert?: ProductSyncRunUpsertWithWhereUniqueWithoutShopInput | ProductSyncRunUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: ProductSyncRunCreateManyShopInputEnvelope
+    set?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    disconnect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    delete?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+    update?: ProductSyncRunUpdateWithWhereUniqueWithoutShopInput | ProductSyncRunUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: ProductSyncRunUpdateManyWithWhereWithoutShopInput | ProductSyncRunUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
   }
 
   export type ShopCreateNestedOneWithoutAddressInput = {
@@ -86241,14 +89973,6 @@ export namespace Prisma {
     upsert?: DriverUpsertWithoutScheduleInput
     connect?: DriverWhereUniqueInput
     update?: XOR<XOR<DriverUpdateToOneWithWhereWithoutScheduleInput, DriverUpdateWithoutScheduleInput>, DriverUncheckedUpdateWithoutScheduleInput>
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type AddressCreateNestedOneWithoutDriverInput = {
@@ -88847,6 +92571,124 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
+  export type NestedEnumProductScrapeMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductScrapeMethodFilter<$PrismaModel> | $Enums.ProductScrapeMethod
+  }
+
+  export type NestedEnumSyncRunStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncRunStatus | EnumSyncRunStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncRunStatusFilter<$PrismaModel> | $Enums.SyncRunStatus
+  }
+
+  export type NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+    _max?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSyncRunStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncRunStatus | EnumSyncRunStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncRunStatus[] | ListEnumSyncRunStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncRunStatusWithAggregatesFilter<$PrismaModel> | $Enums.SyncRunStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyncRunStatusFilter<$PrismaModel>
+    _max?: NestedEnumSyncRunStatusFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumSyncChangeTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncChangeType | EnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncChangeTypeFilter<$PrismaModel> | $Enums.SyncChangeType
+  }
+
+  export type NestedEnumProposalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProposalStatus | EnumProposalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProposalStatusFilter<$PrismaModel> | $Enums.ProposalStatus
+  }
+
+  export type NestedEnumSyncChangeTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SyncChangeType | EnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SyncChangeType[] | ListEnumSyncChangeTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSyncChangeTypeWithAggregatesFilter<$PrismaModel> | $Enums.SyncChangeType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSyncChangeTypeFilter<$PrismaModel>
+    _max?: NestedEnumSyncChangeTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProposalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProposalStatus | EnumProposalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProposalStatus[] | ListEnumProposalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProposalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProposalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProposalStatusFilter<$PrismaModel>
+    _max?: NestedEnumProposalStatusFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -88874,21 +92716,21 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumProductScrapeMethodFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    not?: NestedEnumProductScrapeMethodFilter<$PrismaModel> | $Enums.ProductScrapeMethod
+  export type NestedEnumProductScrapeMethodNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel> | $Enums.ProductScrapeMethod | null
   }
 
-  export type NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel>
-    not?: NestedEnumProductScrapeMethodWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
-    _max?: NestedEnumProductScrapeMethodFilter<$PrismaModel>
+  export type NestedEnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel> | $Enums.ProductScrapeMethod | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
+    _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumMemberRoleFilter<$PrismaModel = never> = {
@@ -88925,17 +92767,6 @@ export namespace Prisma {
     _max?: NestedEnumChannelTypeFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -88957,22 +92788,6 @@ export namespace Prisma {
     in?: $Enums.WeekDay[] | ListEnumWeekDayFieldRefInput<$PrismaModel>
     notIn?: $Enums.WeekDay[] | ListEnumWeekDayFieldRefInput<$PrismaModel>
     not?: NestedEnumWeekDayFilter<$PrismaModel> | $Enums.WeekDay
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedEnumWeekDayWithAggregatesFilter<$PrismaModel = never> = {
@@ -89149,29 +92964,6 @@ export namespace Prisma {
     _min?: NestedEnumUpcycleThumbFilter<$PrismaModel>
     _max?: NestedEnumUpcycleThumbFilter<$PrismaModel>
   }
-  export type NestedJsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type NestedEnumLoraTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.LoraType | EnumLoraTypeFieldRefInput<$PrismaModel>
@@ -89345,7 +93137,9 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
     shop?: ShopCreateNestedOneWithoutProductsInput
+    syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCategoriesInput = {
@@ -89368,6 +93162,8 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
+    syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCategoriesInput = {
@@ -89514,6 +93310,7 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     isPublic?: BoolFilter<"Product"> | boolean
     isFeatured?: BoolFilter<"Product"> | boolean
+    manualFields?: StringNullableListFilter<"Product">
   }
 
   export type ServiceUpsertWithWhereUniqueWithoutCategoriesInput = {
@@ -89571,12 +93368,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -89596,11 +93399,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -89635,12 +93444,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -89660,11 +93475,17 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -91317,12 +95138,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutInvitesInput = {
@@ -91342,11 +95169,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutInvitesInput = {
@@ -91458,12 +95291,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutInvitesInput = {
@@ -91483,11 +95322,404 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+  }
+
+  export type ShopCreateWithoutSyncRunsInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+  }
+
+  export type ShopUncheckedCreateWithoutSyncRunsInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    products?: ProductUncheckedCreateNestedManyWithoutShopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
+    address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+  }
+
+  export type ShopCreateOrConnectWithoutSyncRunsInput = {
+    where: ShopWhereUniqueInput
+    create: XOR<ShopCreateWithoutSyncRunsInput, ShopUncheckedCreateWithoutSyncRunsInput>
+  }
+
+  export type ProductSyncProposalCreateWithoutRunInput = {
+    id?: string
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+    product?: ProductCreateNestedOneWithoutSyncProposalsInput
+  }
+
+  export type ProductSyncProposalUncheckedCreateWithoutRunInput = {
+    id?: string
+    productId?: string | null
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalCreateOrConnectWithoutRunInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    create: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput>
+  }
+
+  export type ProductSyncProposalCreateManyRunInputEnvelope = {
+    data: ProductSyncProposalCreateManyRunInput | ProductSyncProposalCreateManyRunInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShopUpsertWithoutSyncRunsInput = {
+    update: XOR<ShopUpdateWithoutSyncRunsInput, ShopUncheckedUpdateWithoutSyncRunsInput>
+    create: XOR<ShopCreateWithoutSyncRunsInput, ShopUncheckedCreateWithoutSyncRunsInput>
+    where?: ShopWhereInput
+  }
+
+  export type ShopUpdateToOneWithWhereWithoutSyncRunsInput = {
+    where?: ShopWhereInput
+    data: XOR<ShopUpdateWithoutSyncRunsInput, ShopUncheckedUpdateWithoutSyncRunsInput>
+  }
+
+  export type ShopUpdateWithoutSyncRunsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+  }
+
+  export type ShopUncheckedUpdateWithoutSyncRunsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutShopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+  }
+
+  export type ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    update: XOR<ProductSyncProposalUpdateWithoutRunInput, ProductSyncProposalUncheckedUpdateWithoutRunInput>
+    create: XOR<ProductSyncProposalCreateWithoutRunInput, ProductSyncProposalUncheckedCreateWithoutRunInput>
+  }
+
+  export type ProductSyncProposalUpdateWithWhereUniqueWithoutRunInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    data: XOR<ProductSyncProposalUpdateWithoutRunInput, ProductSyncProposalUncheckedUpdateWithoutRunInput>
+  }
+
+  export type ProductSyncProposalUpdateManyWithWhereWithoutRunInput = {
+    where: ProductSyncProposalScalarWhereInput
+    data: XOR<ProductSyncProposalUpdateManyMutationInput, ProductSyncProposalUncheckedUpdateManyWithoutRunInput>
+  }
+
+  export type ProductSyncProposalScalarWhereInput = {
+    AND?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+    OR?: ProductSyncProposalScalarWhereInput[]
+    NOT?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+    id?: StringFilter<"ProductSyncProposal"> | string
+    runId?: StringFilter<"ProductSyncProposal"> | string
+    productId?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    shopProductId?: StringFilter<"ProductSyncProposal"> | string
+    changeType?: EnumSyncChangeTypeFilter<"ProductSyncProposal"> | $Enums.SyncChangeType
+    status?: EnumProposalStatusFilter<"ProductSyncProposal"> | $Enums.ProposalStatus
+    matchedBy?: StringNullableFilter<"ProductSyncProposal"> | string | null
+    payload?: JsonFilter<"ProductSyncProposal">
+    diff?: JsonFilter<"ProductSyncProposal">
+  }
+
+  export type ProductSyncRunCreateWithoutProposalsInput = {
+    id?: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+    shop: ShopCreateNestedOneWithoutSyncRunsInput
+  }
+
+  export type ProductSyncRunUncheckedCreateWithoutProposalsInput = {
+    id?: string
+    shopId: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+  }
+
+  export type ProductSyncRunCreateOrConnectWithoutProposalsInput = {
+    where: ProductSyncRunWhereUniqueInput
+    create: XOR<ProductSyncRunCreateWithoutProposalsInput, ProductSyncRunUncheckedCreateWithoutProposalsInput>
+  }
+
+  export type ProductCreateWithoutSyncProposalsInput = {
+    id?: string
+    shopProductId?: string | null
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    productUrl?: string | null
+    attributeTags?: ProductCreateattributeTagsInput | string[]
+    materialTags?: ProductCreatematerialTagsInput | string[]
+    environmentalTags?: ProductCreateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scrapeMethod?: $Enums.ProductScrapeMethod
+    tags?: ProductCreatetagsInput | string[]
+    isPublic?: boolean
+    isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
+    shop?: ShopCreateNestedOneWithoutProductsInput
+    categories?: CategoryCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductUncheckedCreateWithoutSyncProposalsInput = {
+    id?: string
+    shopProductId?: string | null
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    productUrl?: string | null
+    attributeTags?: ProductCreateattributeTagsInput | string[]
+    materialTags?: ProductCreatematerialTagsInput | string[]
+    environmentalTags?: ProductCreateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scrapeMethod?: $Enums.ProductScrapeMethod
+    shopId?: string | null
+    tags?: ProductCreatetagsInput | string[]
+    isPublic?: boolean
+    isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
+    categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
+  }
+
+  export type ProductCreateOrConnectWithoutSyncProposalsInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutSyncProposalsInput, ProductUncheckedCreateWithoutSyncProposalsInput>
+  }
+
+  export type ProductSyncRunUpsertWithoutProposalsInput = {
+    update: XOR<ProductSyncRunUpdateWithoutProposalsInput, ProductSyncRunUncheckedUpdateWithoutProposalsInput>
+    create: XOR<ProductSyncRunCreateWithoutProposalsInput, ProductSyncRunUncheckedCreateWithoutProposalsInput>
+    where?: ProductSyncRunWhereInput
+  }
+
+  export type ProductSyncRunUpdateToOneWithWhereWithoutProposalsInput = {
+    where?: ProductSyncRunWhereInput
+    data: XOR<ProductSyncRunUpdateWithoutProposalsInput, ProductSyncRunUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type ProductSyncRunUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+    shop?: ShopUpdateOneRequiredWithoutSyncRunsNestedInput
+  }
+
+  export type ProductSyncRunUncheckedUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ProductUpsertWithoutSyncProposalsInput = {
+    update: XOR<ProductUpdateWithoutSyncProposalsInput, ProductUncheckedUpdateWithoutSyncProposalsInput>
+    create: XOR<ProductCreateWithoutSyncProposalsInput, ProductUncheckedCreateWithoutSyncProposalsInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutSyncProposalsInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutSyncProposalsInput, ProductUncheckedUpdateWithoutSyncProposalsInput>
+  }
+
+  export type ProductUpdateWithoutSyncProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attributeTags?: ProductUpdateattributeTagsInput | string[]
+    materialTags?: ProductUpdatematerialTagsInput | string[]
+    environmentalTags?: ProductUpdateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scrapeMethod?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    tags?: ProductUpdatetagsInput | string[]
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
+    shop?: ShopUpdateOneWithoutProductsNestedInput
+    categories?: CategoryUpdateManyWithoutProductsNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutSyncProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attributeTags?: ProductUpdateattributeTagsInput | string[]
+    materialTags?: ProductUpdatematerialTagsInput | string[]
+    environmentalTags?: ProductUpdateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scrapeMethod?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    shopId?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: ProductUpdatetagsInput | string[]
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
+    categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
   }
 
   export type ShopCreateWithoutServicesInput = {
@@ -91506,12 +95738,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -91531,11 +95769,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -91593,12 +95837,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -91618,11 +95868,17 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -91657,12 +95913,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -91682,11 +95944,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -91717,6 +95985,38 @@ export namespace Prisma {
     create: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput>
   }
 
+  export type ProductSyncProposalCreateWithoutProductInput = {
+    id?: string
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+    run: ProductSyncRunCreateNestedOneWithoutProposalsInput
+  }
+
+  export type ProductSyncProposalUncheckedCreateWithoutProductInput = {
+    id?: string
+    runId: string
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalCreateOrConnectWithoutProductInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    create: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput>
+  }
+
+  export type ProductSyncProposalCreateManyProductInputEnvelope = {
+    data: ProductSyncProposalCreateManyProductInput | ProductSyncProposalCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ShopUpsertWithoutProductsInput = {
     update: XOR<ShopUpdateWithoutProductsInput, ShopUncheckedUpdateWithoutProductsInput>
     create: XOR<ShopCreateWithoutProductsInput, ShopUncheckedCreateWithoutProductsInput>
@@ -91744,12 +96044,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -91769,11 +96075,17 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -91790,6 +96102,22 @@ export namespace Prisma {
   export type CategoryUpdateManyWithWhereWithoutProductsInput = {
     where: CategoryScalarWhereInput
     data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutProductsInput>
+  }
+
+  export type ProductSyncProposalUpsertWithWhereUniqueWithoutProductInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    update: XOR<ProductSyncProposalUpdateWithoutProductInput, ProductSyncProposalUncheckedUpdateWithoutProductInput>
+    create: XOR<ProductSyncProposalCreateWithoutProductInput, ProductSyncProposalUncheckedCreateWithoutProductInput>
+  }
+
+  export type ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput = {
+    where: ProductSyncProposalWhereUniqueInput
+    data: XOR<ProductSyncProposalUpdateWithoutProductInput, ProductSyncProposalUncheckedUpdateWithoutProductInput>
+  }
+
+  export type ProductSyncProposalUpdateManyWithWhereWithoutProductInput = {
+    where: ProductSyncProposalScalarWhereInput
+    data: XOR<ProductSyncProposalUpdateManyMutationInput, ProductSyncProposalUncheckedUpdateManyWithoutProductInput>
   }
 
   export type EventCreateWithoutShopInput = {
@@ -91849,7 +96177,9 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutShopInput = {
@@ -91871,7 +96201,9 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutShopInput = {
@@ -92153,6 +96485,46 @@ export namespace Prisma {
   export type WebsiteProvisionCreateOrConnectWithoutShopInput = {
     where: WebsiteProvisionWhereUniqueInput
     create: XOR<WebsiteProvisionCreateWithoutShopInput, WebsiteProvisionUncheckedCreateWithoutShopInput>
+  }
+
+  export type ProductSyncRunCreateWithoutShopInput = {
+    id?: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+    proposals?: ProductSyncProposalCreateNestedManyWithoutRunInput
+  }
+
+  export type ProductSyncRunUncheckedCreateWithoutShopInput = {
+    id?: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
+    proposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutRunInput
+  }
+
+  export type ProductSyncRunCreateOrConnectWithoutShopInput = {
+    where: ProductSyncRunWhereUniqueInput
+    create: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput>
+  }
+
+  export type ProductSyncRunCreateManyShopInputEnvelope = {
+    data: ProductSyncRunCreateManyShopInput | ProductSyncRunCreateManyShopInput[]
+    skipDuplicates?: boolean
   }
 
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
@@ -92457,6 +96829,40 @@ export namespace Prisma {
     claimUrl?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ProductSyncRunUpsertWithWhereUniqueWithoutShopInput = {
+    where: ProductSyncRunWhereUniqueInput
+    update: XOR<ProductSyncRunUpdateWithoutShopInput, ProductSyncRunUncheckedUpdateWithoutShopInput>
+    create: XOR<ProductSyncRunCreateWithoutShopInput, ProductSyncRunUncheckedCreateWithoutShopInput>
+  }
+
+  export type ProductSyncRunUpdateWithWhereUniqueWithoutShopInput = {
+    where: ProductSyncRunWhereUniqueInput
+    data: XOR<ProductSyncRunUpdateWithoutShopInput, ProductSyncRunUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ProductSyncRunUpdateManyWithWhereWithoutShopInput = {
+    where: ProductSyncRunScalarWhereInput
+    data: XOR<ProductSyncRunUpdateManyMutationInput, ProductSyncRunUncheckedUpdateManyWithoutShopInput>
+  }
+
+  export type ProductSyncRunScalarWhereInput = {
+    AND?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
+    OR?: ProductSyncRunScalarWhereInput[]
+    NOT?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
+    id?: StringFilter<"ProductSyncRun"> | string
+    shopId?: StringFilter<"ProductSyncRun"> | string
+    platform?: EnumProductScrapeMethodFilter<"ProductSyncRun"> | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFilter<"ProductSyncRun"> | $Enums.SyncRunStatus
+    startedAt?: DateTimeFilter<"ProductSyncRun"> | Date | string
+    finishedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProductSyncRun"> | Date | string | null
+    reviewedById?: StringNullableFilter<"ProductSyncRun"> | string | null
+    fetchedCount?: IntFilter<"ProductSyncRun"> | number
+    errorMessage?: StringNullableFilter<"ProductSyncRun"> | string | null
+    insecureTLSCode?: StringNullableFilter<"ProductSyncRun"> | string | null
+    triggeredManually?: BoolFilter<"ProductSyncRun"> | boolean
+  }
+
   export type ShopCreateWithoutAddressInput = {
     id?: string
     ownerName: string
@@ -92473,12 +96879,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -92498,11 +96910,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -92537,12 +96955,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -92562,11 +96986,17 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ConversationCreateWithoutMemberOneInput = {
@@ -100072,12 +104502,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -100097,11 +104533,17 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -100207,12 +104649,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -100232,11 +104680,17 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -100991,12 +105445,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventCreateNestedManyWithoutShopInput
     products?: ProductCreateNestedManyWithoutShopInput
     services?: ServiceCreateNestedManyWithoutShopInput
     invites?: PlatformInviteCreateNestedManyWithoutShopInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -101015,12 +105475,18 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
     events?: EventUncheckedCreateNestedManyWithoutShopInput
     products?: ProductUncheckedCreateNestedManyWithoutShopInput
     services?: ServiceUncheckedCreateNestedManyWithoutShopInput
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -101729,6 +106195,11 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFilter<"Shop"> | boolean
+    syncUrl?: StringNullableFilter<"Shop"> | string | null
+    allowInsecureOrigin?: BoolFilter<"Shop"> | boolean
+    lastSyncedAt?: DateTimeNullableFilter<"Shop"> | Date | string | null
   }
 
   export type SubredditUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -101990,7 +106461,9 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
     shop?: ShopUpdateOneWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCategoriesInput = {
@@ -102013,6 +106486,8 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
+    syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutCategoriesInput = {
@@ -102035,6 +106510,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
   }
 
   export type ServiceUpdateWithoutCategoriesInput = {
@@ -102281,6 +106757,50 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type ProductSyncProposalCreateManyRunInput = {
+    id?: string
+    productId?: string | null
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUpdateWithoutRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+    product?: ProductUpdateOneWithoutSyncProposalsNestedInput
+  }
+
+  export type ProductSyncProposalUncheckedUpdateWithoutRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUncheckedUpdateManyWithoutRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
   export type CategoryUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -102306,6 +106826,17 @@ export namespace Prisma {
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   }
 
+  export type ProductSyncProposalCreateManyProductInput = {
+    id?: string
+    runId: string
+    shopProductId: string
+    changeType: $Enums.SyncChangeType
+    status?: $Enums.ProposalStatus
+    matchedBy?: string | null
+    payload: JsonNullValueInput | InputJsonValue
+    diff: JsonNullValueInput | InputJsonValue
+  }
+
   export type CategoryUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -102329,6 +106860,39 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  }
+
+  export type ProductSyncProposalUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+    run?: ProductSyncRunUpdateOneRequiredWithoutProposalsNestedInput
+  }
+
+  export type ProductSyncProposalUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type ProductSyncProposalUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    shopProductId?: StringFieldUpdateOperationsInput | string
+    changeType?: EnumSyncChangeTypeFieldUpdateOperationsInput | $Enums.SyncChangeType
+    status?: EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
+    matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    payload?: JsonNullValueInput | InputJsonValue
+    diff?: JsonNullValueInput | InputJsonValue
   }
 
   export type EventCreateManyShopInput = {
@@ -102364,6 +106928,7 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     isPublic?: boolean
     isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
   }
 
   export type ServiceCreateManyShopInput = {
@@ -102396,6 +106961,20 @@ export namespace Prisma {
     usedAt?: Date | string | null
     usedBy?: string | null
     createdBy?: string | null
+  }
+
+  export type ProductSyncRunCreateManyShopInput = {
+    id?: string
+    platform: $Enums.ProductScrapeMethod
+    status?: $Enums.SyncRunStatus
+    startedAt?: Date | string
+    finishedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewedById?: string | null
+    fetchedCount?: number
+    errorMessage?: string | null
+    insecureTLSCode?: string | null
+    triggeredManually?: boolean
   }
 
   export type EventUpdateWithoutShopInput = {
@@ -102459,7 +107038,9 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutShopInput = {
@@ -102481,7 +107062,9 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutShopInput = {
@@ -102503,6 +107086,7 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     isPublic?: BoolFieldUpdateOperationsInput | boolean
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
   }
 
   export type ServiceUpdateWithoutShopInput = {
@@ -102601,6 +107185,50 @@ export namespace Prisma {
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     usedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProductSyncRunUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+    proposals?: ProductSyncProposalUpdateManyWithoutRunNestedInput
+  }
+
+  export type ProductSyncRunUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+    proposals?: ProductSyncProposalUncheckedUpdateManyWithoutRunNestedInput
+  }
+
+  export type ProductSyncRunUncheckedUpdateManyWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    status?: EnumSyncRunStatusFieldUpdateOperationsInput | $Enums.SyncRunStatus
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    finishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedById?: NullableStringFieldUpdateOperationsInput | string | null
+    fetchedCount?: IntFieldUpdateOperationsInput | number
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
+    triggeredManually?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ConversationCreateManyMemberOneInput = {
@@ -104406,6 +109034,11 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
   }
 
   export type SubredditCreateManyCreatorInput = {
@@ -104869,12 +109502,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUpdateManyWithoutShopNestedInput
     products?: ProductUpdateManyWithoutShopNestedInput
     services?: ServiceUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUpdateManyWithoutShopNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -104893,12 +109532,18 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     events?: EventUncheckedUpdateManyWithoutShopNestedInput
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {
@@ -104917,6 +109562,11 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SubredditUpdateWithoutCreatorInput = {

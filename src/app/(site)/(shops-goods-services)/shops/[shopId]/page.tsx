@@ -39,8 +39,30 @@ export default async function ShopProfilePage({ params }: Props) {
   // it, with a banner making the hidden state clear.
   const isHidden = !shop.isPublic;
 
+  // Hidden products/services are likewise only included for the owner or an
+  // admin. Say so, otherwise a preview looks identical to the public page and
+  // the owner assumes those items are live.
+  const hiddenItemCount = shop.hiddenItemCount;
+
   return (
     <>
+      {hiddenItemCount > 0 && (
+        <div className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+          <div className="border-border bg-secondary text-secondary-foreground flex items-start gap-3 rounded-lg border px-4 py-3 text-sm">
+            <EyeOff className="mt-0.5 size-4 shrink-0" />
+            <p>
+              <strong>
+                {hiddenItemCount} item{hiddenItemCount === 1 ? " is" : "s are"}{" "}
+                hidden.
+              </strong>{" "}
+              You can see {hiddenItemCount === 1 ? "it" : "them"} here because
+              you manage this shop, but visitors cannot, and{" "}
+              {hiddenItemCount === 1 ? "it does" : "they do"} not appear in
+              search or browse.
+            </p>
+          </div>
+        </div>
+      )}
       {isHidden && (
         <div className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
           <div className="border-border bg-secondary text-secondary-foreground flex items-start gap-3 rounded-lg border px-4 py-3 text-sm">

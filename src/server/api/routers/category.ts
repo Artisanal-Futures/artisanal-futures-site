@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { addFullProductImageUrl } from "~/lib/add-full-image-url";
 import { categorySchema } from "~/lib/validators/category";
+import { fromVisibleShop } from "~/server/api/shared/visibility";
 import {
   adminOnlyProcedure,
   createTRPCRouter,
@@ -134,7 +135,12 @@ export const categoryRouter = createTRPCRouter({
             children: true,
             services: {
               take: 4,
-              where: { isFeatured: true },
+              // `isPublic` has to be honoured here as well as `isFeatured`.
+              // This is a public procedure feeding the category landing page,
+              // so without it a hidden service is featured to everyone.
+              where: {
+                AND: [{ isFeatured: true, isPublic: true }, fromVisibleShop],
+              },
               include: { shop: true },
             },
           },
@@ -160,7 +166,11 @@ export const categoryRouter = createTRPCRouter({
           children: true,
           products: {
             take: 4,
-            where: { isFeatured: true },
+            // See the services branch above: public procedure, so `isPublic`
+            // must be filtered alongside `isFeatured`.
+            where: {
+              AND: [{ isFeatured: true, isPublic: true }, fromVisibleShop],
+            },
             include: { shop: true },
           },
         },
@@ -175,11 +185,15 @@ export const categoryRouter = createTRPCRouter({
             // Find more products (non-featured), ignoring those already in products
             const additionalProducts = await ctx.db.product.findMany({
               where: {
-                categories: { some: { id: category.id } },
-                isFeatured: false,
-                id: {
-                  notIn: products.map((p) => p.id),
-                },
+                AND: [
+                  {
+                    categories: { some: { id: category.id } },
+                    isFeatured: false,
+                    isPublic: true,
+                    id: { notIn: products.map((p) => p.id) },
+                  },
+                  fromVisibleShop,
+                ],
               },
               include: { shop: true },
               take: 4 - products.length,

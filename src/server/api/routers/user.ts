@@ -11,6 +11,14 @@ import {
 } from "~/server/api/trpc";
 import { auth } from "~/server/better-auth";
 
+/**
+ * Sentinel account that inherits the forum content (posts + comments) of
+ * deleted users so threads stay readable. Looked up / created by this exact
+ * email — never hand it out to a real person.
+ */
+const DELETED_USER_EMAIL = "deleted-user@artisanalfutures.org";
+const DELETED_USER_NAME = "Deleted User";
+
 const roleEnum = z.enum([
   "USER",
   "ADMIN",
@@ -74,7 +82,7 @@ export const userRouter = createTRPCRouter({
               id: true,
               name: true,
               _count: {
-                select: { products: true, services: true },
+                select: { products: true, services: true, events: true },
               },
             },
           },
@@ -226,16 +234,145 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
+  /**
+   * Hybrid delete: hard-deletes the user's commerce and system data, but
+   * PRESERVES their forum contributions by reassigning posts and comments to
+   * the "Deleted User" sentinel account so threads stay readable.
+   */
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.delete({
-        where: { id: input.id },
+      const { userId } = input;
+
+      if (userId === ctx.session.user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot delete your own account here.",
+        });
+      }
+
+      const target = await ctx.db.user.findUnique({
+        where: { id: userId },
+        select: { id: true, name: true, email: true, role: true },
       });
 
+      if (!target) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+      }
+
+      if (target.email?.toLowerCase() === DELETED_USER_EMAIL) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "The 'Deleted User' placeholder account cannot be deleted. It owns the forum history of previously deleted users.",
+        });
+      }
+
+      if (target.role === "ADMIN") {
+        const adminCount = await ctx.db.user.count({ where: { role: "ADMIN" } });
+        if (adminCount <= 1) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Cannot delete the last admin. Promote another user to ADMIN first.",
+          });
+        }
+      }
+
+      // Find-or-create the sentinel account that will inherit forum content.
+      let sentinel = await ctx.db.user.findUnique({
+        where: { email: DELETED_USER_EMAIL },
+        select: { id: true },
+      });
+
+      sentinel ??= await ctx.db.user.create({
+        data: {
+          email: DELETED_USER_EMAIL,
+          name: DELETED_USER_NAME,
+          role: "GUEST",
+          emailVerified: true,
+        },
+        select: { id: true },
+      });
+
+      const sentinelId = sentinel.id;
+
+      // Event.shopId is RESTRICT, so events must go before their shops.
+      const ownedShops = await ctx.db.shop.findMany({
+        where: { ownerId: userId },
+        select: { id: true },
+      });
+      const shopIds = ownedShops.map((shop) => shop.id);
+
+      const summary = await ctx.db.$transaction(async (tx) => {
+        // a. Reassign forum content to the sentinel so threads survive.
+        const posts = await tx.post.updateMany({
+          where: { authorId: userId },
+          data: { authorId: sentinelId },
+        });
+        const comments = await tx.forumComment.updateMany({
+          where: { authorId: userId },
+          data: { authorId: sentinelId },
+        });
+
+        // b. Their own forum actions die with them. Votes/comments other users
+        // left on the reassigned posts are untouched.
+        const commentVotes = await tx.commentVote.deleteMany({
+          where: { userId },
+        });
+        const votes = await tx.vote.deleteMany({ where: { userId } });
+        const subscriptions = await tx.subscription.deleteMany({
+          where: { userId },
+        });
+
+        // c. Events of the user's shops (RESTRICT on Shop).
+        const events =
+          shopIds.length > 0
+            ? await tx.event.deleteMany({ where: { shopId: { in: shopIds } } })
+            : { count: 0 };
+
+        // d. Shops — cascades products, services, address, shop provision.
+        const shops = await tx.shop.deleteMany({ where: { ownerId: userId } });
+
+        // e. RESTRICT-ing personal data.
+        const notifications = await tx.notification.deleteMany({
+          where: { userId },
+        });
+        const upcycleResults = await tx.upcycleResult.deleteMany({
+          where: { userId },
+        });
+        // TrainingImage cascades from TrainingDataSet.
+        const trainingDataSets = await tx.trainingDataSet.deleteMany({
+          where: { userId },
+        });
+
+        // f. Finally the user — sessions, accounts, messaging profile,
+        // upcy-agent tables and user-scoped website provisions cascade.
+        await tx.user.delete({ where: { id: userId } });
+
+        return {
+          postsReassigned: posts.count,
+          commentsReassigned: comments.count,
+          commentVotesDeleted: commentVotes.count,
+          votesDeleted: votes.count,
+          subscriptionsDeleted: subscriptions.count,
+          eventsDeleted: events.count,
+          shopsDeleted: shops.count,
+          notificationsDeleted: notifications.count,
+          upcycleResultsDeleted: upcycleResults.count,
+          trainingDataSetsDeleted: trainingDataSets.count,
+        };
+      });
+
+      const label = target.name ?? target.email ?? userId;
+      const preserved =
+        summary.postsReassigned > 0 || summary.commentsReassigned > 0
+          ? ` ${summary.postsReassigned} post(s) and ${summary.commentsReassigned} comment(s) were reassigned to '${DELETED_USER_NAME}'.`
+          : "";
+
       return {
-        data: user,
-        message: `User with id '${input.id}' was deleted`,
+        ...summary,
+        message: `${label} was deleted.${preserved}`,
       };
     }),
 

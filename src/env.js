@@ -33,7 +33,6 @@ export const env = createEnv({
     MINIO_SECRET_KEY: z.string(),
     MINIO_ENDPOINT: z.string(),
 
-    STRIPE_PUBLISHABLE_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
 
     COOLIFY_ADMIN_SAFE_API_TOKEN: z.string().min(1),
@@ -53,6 +52,16 @@ export const env = createEnv({
     SIMPLEPRESS_HASH_SECRET: z.string().min(1),
 
     HCAPTCHA_SECRET_KEY: z.string(),
+
+    // Bearer token for POST /api/cron/sync-products, called by the Coolify
+    // Scheduled Task that runs the weekly product sync. Generate with
+    // `openssl rand -hex 32`.
+    //
+    // Optional so a deploy never fails just because the secret hasn't been
+    // added in Coolify yet — the route returns 503 until it is set, rather
+    // than the whole build refusing to start. When present it must be long
+    // enough to be worth having.
+    CRON_SECRET: z.string().min(32).optional(),
   },
 
   /**
@@ -70,11 +79,6 @@ export const env = createEnv({
       (str) => str === "true" || str === true,
       z.boolean().optional().default(false),
     ),
-    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED: z.preprocess(
-      (str) => str === "true" || str === true,
-      z.boolean().optional().default(false),
-    ),
-
     NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
     NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
     NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
@@ -116,11 +120,12 @@ export const env = createEnv({
     AF_SP_WEBHOOK_SECRET: process.env.AF_SP_WEBHOOK_SECRET,
     SIMPLEPRESS_HASH_SECRET: process.env.SIMPLEPRESS_HASH_SECRET,
 
-    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
 
     HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
     NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+
+    CRON_SECRET: process.env.CRON_SECRET,
 
     NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
     NEXT_PUBLIC_STORAGE_BUCKET_NAME:
@@ -136,8 +141,6 @@ export const env = createEnv({
     NEXT_PUBLIC_VOTE_DISABLED: process.env.NEXT_PUBLIC_VOTE_DISABLED,
     NEXT_PUBLIC_HEART_VOTE_DISABLED:
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
-    NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED:
-      process.env.NEXT_PUBLIC_NEGATIVE_VOTE_DISABLED,
 
     NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
   },

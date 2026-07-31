@@ -6,8 +6,10 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { AuthUIProvider } from "@daveyplate/better-auth-ui";
 import { IconBrandAuth0 } from "@tabler/icons-react";
+import { useUploadFile } from "@better-upload/client";
 import { auth0 } from "better-auth/plugins";
 import { useRouter } from "nextjs-toploader/app";
+import { toast } from "sonner";
 
 import { env } from "~/env";
 import { authClient } from "~/server/better-auth/client";
@@ -17,6 +19,12 @@ import { ThemeProvider } from "~/providers/theme-provider";
 export function SiteProviders({ children }: { children: ReactNode }) {
   const router = useRouter();
 
+  const avatarUploader = useUploadFile({
+    api: "/api/upload",
+    route: "avatar",
+    onError: (e) => toast.error(e.message ?? "Avatar upload failed."),
+  });
+
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <AuthUIProvider
@@ -24,7 +32,19 @@ export function SiteProviders({ children }: { children: ReactNode }) {
         navigate={router.push}
         replace={router.replace}
         account={{
-          fields: ["providers", "image", "name"],
+          fields: ["image", "name"],
+        }}
+        avatar={{
+          upload: async (file: File) => {
+            const res = await avatarUploader.upload(file);
+            return (
+              (res.file.objectInfo.metadata?.pathname as
+                | string
+                | undefined) ?? undefined
+            );
+          },
+          size: 256,
+          extension: "png",
         }}
         onSessionChange={() => {
           // Clear router cache (protected routes)

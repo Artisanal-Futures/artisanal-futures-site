@@ -15,9 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { authClient } from "~/server/better-auth/client";
 import { AdvancedDataTableColumnHeader } from "~/components/tables/advanced-data-table-header";
 
 import { ChangeUserRoleDialog } from "./change-user-role-dialog";
+import { DeleteUserDialog } from "./delete-user-dialog";
 import { SendResetPasswordDialog } from "./send-reset-password-dialog";
 
 export type UserRow = RouterOutputs["user"]["listUsers"][number];
@@ -45,6 +47,10 @@ const roleBadge = (role: RoleValue) => {
 function UserRowActions({ user }: { user: UserRow }) {
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const { data: session } = authClient.useSession();
+  const isSelf = session?.user?.id === user.id;
 
   return (
     <>
@@ -69,6 +75,17 @@ function UserRowActions({ user }: { user: UserRow }) {
           >
             Send reset password
           </DropdownMenuItem>
+          {!isSelf && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={() => setDeleteDialogOpen(true)}
+              >
+                Delete user
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -86,6 +103,16 @@ function UserRowActions({ user }: { user: UserRow }) {
         userId={user.id}
         userEmail={user.email}
       />
+
+      {!isSelf && (
+        <DeleteUserDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          userId={user.id}
+          userName={user.name}
+          userEmail={user.email}
+        />
+      )}
     </>
   );
 }
