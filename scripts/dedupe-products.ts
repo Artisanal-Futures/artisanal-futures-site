@@ -24,9 +24,14 @@
  *  - The keeper inherits the union of both rows' categories and tags, so
  *    curation is never lost.
  *
+ *  - The target database host is printed before any write, so an --apply run
+ *    against the wrong DATABASE_URL is visible before it happens.
+ *
  * Matching mirrors the scheduled sync (`src/server/lib/product-sync.ts`): the
  * same normalized-URL then normalized-name keys, so a cluster this script
  * merges is exactly a cluster the sync would otherwise have to disambiguate.
+ * The name pass additionally refuses any bucket whose rows point at two
+ * different product URLs — see `clusterProducts`.
  */
 
 import { writeFileSync } from "node:fs";
@@ -121,14 +126,25 @@ function unique(values: string[]): string[] {
 
 /**
  * Group a shop's products into duplicate clusters. URL is tried first (a
- * stronger signal), then name over whatever is left, so a product that shares a
- * name with a genuinely different item but has its own URL is not swept up.
+ * stronger signal), then name over whatever is left.
+ *
+ * The name pass is deliberately conservative. Two rows that merely share a name
+ * are not evidence of a duplicate — a shop can genuinely sell "Blue Mug" twice
+ * — so a name bucket is only accepted when the rows do not disagree about where
+ * they point: at most one distinct product URL across the whole bucket, plus
+ * the same shop. (Rows that share a URL were already clustered by the first
+ * pass, so in practice this means "the URL-less legacy rows, optionally with
+ * the one row that has a URL".) A bucket with two different URLs is two
+ * different products and is left alone.
  */
 function clusterProducts(products: ProductRow[]): ProductRow[][] {
   const clusters: ProductRow[][] = [];
   const assigned = new Set<string>();
 
-  const groupBy = (keyOf: (p: ProductRow) => string | null) => {
+  const groupBy = (
+    keyOf: (p: ProductRow) => string | null,
+    accept: (bucket: ProductRow[]) => boolean = () => true,
+  ) => {
     const buckets = new Map<string, ProductRow[]>();
     for (const product of products) {
       if (assigned.has(product.id)) continue;
@@ -138,13 +154,25 @@ function clusterProducts(products: ProductRow[]): ProductRow[][] {
     }
     for (const bucket of buckets.values()) {
       if (bucket.length < 2) continue;
+      if (!accept(bucket)) continue;
       bucket.forEach((p) => assigned.add(p.id));
       clusters.push(bucket);
     }
   };
 
   groupBy((p) => normalizeUrlKey(p.productUrl));
-  groupBy((p) => normalizeNameKey(p.name));
+  groupBy(
+    (p) => normalizeNameKey(p.name),
+    (bucket) => {
+      const urlKeys = new Set(
+        bucket
+          .map((p) => normalizeUrlKey(p.productUrl))
+          .filter((key): key is string => key !== null),
+      );
+      const shopIds = new Set(bucket.map((p) => p.shopId));
+      return urlKeys.size <= 1 && shopIds.size === 1;
+    },
+  );
 
   return clusters;
 }
@@ -258,6 +286,22 @@ function describe(merge: Merge) {
   }
 }
 
+/**
+ * Where the writes are about to land, in a form that is safe to print: host and
+ * port from `DATABASE_URL`, never the user, password or the raw string.
+ */
+function describeDatabaseTarget(): string {
+  const raw = process.env.DATABASE_URL;
+  if (!raw) return "(no DATABASE_URL set)";
+  try {
+    const { hostname, port } = new URL(raw);
+    if (!hostname) return "(DATABASE_URL has no host)";
+    return port ? `${hostname}:${port}` : hostname;
+  } catch {
+    return "(DATABASE_URL could not be parsed)";
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -345,6 +389,10 @@ async function main() {
       );
       return;
     }
+
+    // Say out loud which database is about to be written to. Host only — the
+    // connection string carries credentials and must never be printed.
+    console.log(`\nTarget database: ${describeDatabaseTarget()}`);
 
     // Backup every row about to be touched, before touching any of it.
     const stamp = new Date().toISOString().replace(/[:.]/g, "-");

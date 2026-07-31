@@ -13,7 +13,11 @@
  *      bug being fixed: `URL.hostname` keeps the brackets, so
  *      `net.isIP("[::1]")` used to return 0 and fall through to a real DNS
  *      lookup instead of being blocked outright), and
- *   2. a normal public hostname still resolves via the (mocked) DNS path.
+ *   2. a normal public hostname still resolves via the (mocked) DNS path, and
+ *   3. every textual spelling of a private IPv6 address is blocked — the
+ *      IPv4-mapped forms (dotted-quad *and* hex), the ::ffff:0:0/96 and NAT64
+ *      64:ff9b::/96 wrappers, 6to4, and the whole of fe80::/10 rather than the
+ *      literal characters "fe80".
  *
  * No real network calls are made.
  */
@@ -22,6 +26,7 @@ import dns from "node:dns/promises";
 import {
   assertHostResolvesPublic,
   assertPublicHttpUrl,
+  assertStaticallyPublicHttpUrl,
   retryDelayMs,
   SAFE_FETCH_USER_AGENT,
   SafeFetchError,
@@ -133,6 +138,83 @@ async function main() {
     fail("unbracketed ::1 must not call dns.lookup", dnsLookupCallCount);
   } else {
     ok("unbracketed ::1 never calls dns.lookup");
+  }
+
+  // --- IPv6 has many spellings for the same private address ----------------
+  // The old string-prefix checks only caught the dotted-quad form of an
+  // IPv4-mapped address and the literal four characters "fe80". Each entry
+  // below is a private/reserved address written in a form that slipped through.
+  const blockedV6 = [
+    ["::ffff:7f00:1", "IPv4-mapped 127.0.0.1 in hex form"],
+    ["::ffff:a9fe:a9fe", "IPv4-mapped 169.254.169.254 (cloud metadata) in hex"],
+    ["0:0:0:0:0:ffff:127.0.0.1", "fully-expanded IPv4-mapped 127.0.0.1"],
+    ["::ffff:0:7f00:1", "IPv4-translated ::ffff:0:0/96 form of 127.0.0.1"],
+    ["::ffff:0:169.254.169.254", "IPv4-translated cloud metadata"],
+    ["64:ff9b::7f00:1", "NAT64 well-known prefix wrapping 127.0.0.1"],
+    ["64:ff9b::169.254.169.254", "NAT64 wrapping cloud metadata"],
+    ["64:ff9b:1::1", "NAT64 local-use prefix"],
+    ["2002:7f00:1::1", "6to4 wrapping 127.0.0.1"],
+    ["fe8f::1", "link-local fe80::/10 that does not start with the text fe80"],
+    ["febf:ffff::1", "the very top of fe80::/10"],
+    ["fc00::1", "ULA fc00::/7 (fc half)"],
+    ["fdff::1", "ULA fc00::/7 (fd half)"],
+    ["::", "unspecified"],
+    ["::1", "loopback"],
+    ["::127.0.0.1", "deprecated IPv4-compatible loopback"],
+    ["ff02::1", "multicast"],
+  ] as const;
+
+  for (const [literal, why] of blockedV6) {
+    dnsLookupCallCount = 0;
+    await expectRejects(
+      `assertHostResolvesPublic blocks ${literal} (${why})`,
+      () => assertHostResolvesPublic(literal),
+      /private|reserved/i,
+    );
+    if (dnsLookupCallCount !== 0) {
+      fail(`${literal} must not reach dns.lookup`, dnsLookupCallCount);
+    }
+    // Bracketed, as a URL hostname would deliver it.
+    await expectRejects(
+      `assertHostResolvesPublic blocks bracketed [${literal}]`,
+      () => assertHostResolvesPublic(new URL(`https://[${literal}]/x`).hostname),
+      /private|reserved/i,
+    );
+  }
+
+  // The same addresses must be refused by the static (no-DNS) boundary check
+  // the API uses before storing a syncUrl.
+  for (const [literal] of blockedV6) {
+    await expectRejects(
+      `assertStaticallyPublicHttpUrl rejects https://[${literal}]/products.json`,
+      async () => assertStaticallyPublicHttpUrl(`https://[${literal}]/products.json`),
+      /private|reserved/i,
+    );
+  }
+  await expectResolves(
+    "assertStaticallyPublicHttpUrl accepts a normal store URL",
+    async () => assertStaticallyPublicHttpUrl("https://teststore.com/products.json"),
+  );
+  await expectRejects(
+    "assertStaticallyPublicHttpUrl rejects a non-standard port",
+    async () => assertStaticallyPublicHttpUrl("http://example.com:8080/x"),
+    /port/i,
+  );
+
+  // Public IPv6 — including an IPv4-mapped *public* address — still passes.
+  const allowedV6 = [
+    ["2001:4860:4860::8888", "Google public DNS"],
+    ["::ffff:93.184.216.34", "IPv4-mapped public address"],
+    ["::ffff:5db8:d822", "the same public address in hex form"],
+    ["64:ff9b::5db8:d822", "NAT64 wrapping a public address"],
+    ["2002:5db8:d822::1", "6to4 wrapping a public address"],
+  ] as const;
+  for (const [literal, why] of allowedV6) {
+    dnsLookupCallCount = 0;
+    await expectResolves(
+      `assertHostResolvesPublic still allows ${literal} (${why})`,
+      () => assertHostResolvesPublic(literal),
+    );
   }
 
   // --- A public bracketed IPv6 literal is NOT blocked ----------------------

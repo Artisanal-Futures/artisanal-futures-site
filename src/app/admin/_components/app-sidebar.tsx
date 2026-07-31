@@ -43,7 +43,14 @@ import { NavSecondary } from "~/app/admin/_components/nav-secondary";
 import { NavUser } from "~/app/admin/_components/nav-user";
 
 const getNavData = (session: Session | null, pendingSyncCount = 0) => {
-  const navMain = [
+  const isAdmin = session?.user.role === "ADMIN";
+
+  const navMain: {
+    title: string;
+    url: string;
+    icon: React.ComponentType<any>;
+    badge?: number;
+  }[] = [
     {
       title: "Dashboard",
       url: "/admin/dashboard",
@@ -77,11 +84,19 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
       url: "/admin/website",
       icon: IconGlobe,
     },
-    {
-      title: "My Shop",
-      url: "/admin/shops",
-      icon: IconShoppingCart,
-    },
+    // Artisans get "My Shop" here; admins get the same /admin/shops route as
+    // "Shops" in the platform-admin group below. Listing it in both arrays
+    // rendered the link twice and lit both entries up at once, so an admin only
+    // ever sees the platform-admin one.
+    ...(isAdmin
+      ? []
+      : [
+          {
+            title: "My Shop",
+            url: "/admin/shops",
+            icon: IconShoppingCart,
+          },
+        ]),
   ];
 
   const navPlatformAdmin:
@@ -91,8 +106,7 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
         icon: React.ComponentType<any>;
         badge?: number;
       }[]
-    | [] =
-    session?.user.role === "ADMIN"
+    | [] = isAdmin
       ? [
           {
             title: "Shops",

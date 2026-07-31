@@ -39,6 +39,11 @@ BETTER_AUTH_URL="http://localhost:3009"
 
 ## Refresh workflow
 
+> **After pulling commits that change the Prisma schema**, re-run the
+> `db push` command from the one-time setup above against `af_docs` first —
+> otherwise the dev server queries columns the local DB doesn't have yet and
+> every screenshot fails with a Prisma error.
+
 1. `docker compose up -d`
 2. `pnpm docs:seed` — creates the demo users and demo content, idempotently
    (safe to re-run; every step is create-if-not-exists)

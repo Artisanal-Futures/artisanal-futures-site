@@ -294,7 +294,12 @@ function ShopSyncCard({
       toast.success(data.message);
       router.refresh();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => {
+      // A rejected feed URL comes back as a field-level zod issue; show that
+      // sentence rather than the serialized issue list.
+      const fieldErrors = err.data?.zodError?.fieldErrors;
+      toast.error(fieldErrors?.syncUrl?.[0] ?? err.message);
+    },
   });
 
   const runNow = api.productSync.runNow.useMutation({

@@ -164,7 +164,7 @@ export function SyncReviewClient({ run }: { run: Run }) {
           />
           <ProposalGroup
             title="Updated products"
-            description="Matched to a product already on AF. Categories and tags are never touched."
+            description="Matched to a product already on AF. Categories, tags and visibility are never touched — a hidden product stays hidden until you publish it yourself."
             icon={<RefreshCw className="h-4 w-4" />}
             proposals={groups.UPDATE}
             selected={selected}

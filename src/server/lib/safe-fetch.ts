@@ -148,22 +148,126 @@ function isPrivateIPv4(ip: string): boolean {
   );
 }
 
-function isPrivateIPv6(ip: string): boolean {
-  const lower = ip.toLowerCase();
-  // IPv4-mapped (::ffff:a.b.c.d) — validate the embedded IPv4.
-  const mapped = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/.exec(lower);
-  if (mapped) return isPrivateIPv4(mapped[1]!);
+/**
+ * Expand an IPv6 literal into its eight 16-bit groups, or null if it isn't a
+ * parseable IPv6 address.
+ *
+ * Textual IPv6 has far too many spellings for prefix matching on the string to
+ * be safe: `::ffff:127.0.0.1`, `::ffff:7f00:1` and `0:0:0:0:0:ffff:127.0.0.1`
+ * are the *same address*, and `fe8f::1` is inside `fe80::/10` despite not
+ * starting with the four characters "fe80". Everything below therefore works on
+ * numbers, never on the original text.
+ */
+export function expandIPv6(ip: string): number[] | null {
+  if (!net.isIPv6(ip)) return null;
 
-  if (lower === "::1" || lower === "::") return true; // loopback / unspecified
-  if (lower.startsWith("fe80") || lower.startsWith("fe9") || lower.startsWith("fea") || lower.startsWith("feb")) {
-    return true; // link-local fe80::/10
+  let text = ip.toLowerCase();
+  // Drop any zone id ("fe80::1%eth0") — it isn't part of the address.
+  const zone = text.indexOf("%");
+  if (zone !== -1) text = text.slice(0, zone);
+
+  // A trailing dotted-quad ("::ffff:127.0.0.1") is the low 32 bits; rewrite it
+  // as two hex groups so the rest of the parse is uniform.
+  const embedded = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/.exec(text);
+  if (embedded) {
+    const octets = embedded[1]!.split(".").map(Number);
+    if (octets.length !== 4) return null;
+    if (octets.some((o) => !Number.isInteger(o) || o < 0 || o > 255)) return null;
+    const hi = ((octets[0]! << 8) | octets[1]!).toString(16);
+    const lo = ((octets[2]! << 8) | octets[3]!).toString(16);
+    text = `${text.slice(0, embedded.index)}${hi}:${lo}`;
   }
-  if (lower.startsWith("fc") || lower.startsWith("fd")) return true; // ULA fc00::/7
-  if (lower.startsWith("ff")) return true; // multicast
+
+  const halves = text.split("::");
+  if (halves.length > 2) return null;
+
+  const toGroups = (part: string): number[] | null => {
+    if (part.length === 0) return [];
+    const groups: number[] = [];
+    for (const chunk of part.split(":")) {
+      if (chunk.length === 0 || chunk.length > 4) return null;
+      const value = Number.parseInt(chunk, 16);
+      if (!Number.isInteger(value) || value < 0 || value > 0xffff) return null;
+      groups.push(value);
+    }
+    return groups;
+  };
+
+  const head = toGroups(halves[0] ?? "");
+  if (!head) return null;
+
+  if (halves.length === 1) {
+    return head.length === 8 ? head : null;
+  }
+
+  const tail = toGroups(halves[1] ?? "");
+  if (!tail) return null;
+  const fill = 8 - head.length - tail.length;
+  if (fill < 0) return null;
+  return [...head, ...Array<number>(fill).fill(0), ...tail];
+}
+
+/** Render two 16-bit groups as the dotted-quad IPv4 they encode. */
+function ipv4FromGroups(hi: number, lo: number): string {
+  return [hi >> 8, hi & 0xff, lo >> 8, lo & 0xff].join(".");
+}
+
+function isPrivateIPv6(ip: string): boolean {
+  const groups = expandIPv6(ip);
+  if (!groups) return true; // unparseable → block
+
+  const [g0, g1, g2, g3, g4, g5, g6, g7] = groups as [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ];
+  const embeddedV4 = () => ipv4FromGroups(g6, g7);
+  const topFiveZero = g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0;
+
+  // ::/64 territory: unspecified (::), loopback (::1), the deprecated
+  // IPv4-compatible form (::a.b.c.d) and IPv4-mapped (::ffff:a.b.c.d, which is
+  // spelled ::ffff:XXXX:XXXX just as often). All of them are decided by the
+  // IPv4 sitting in the low 32 bits — 0.0.0.x falls in 0.0.0.0/8, so :: and ::1
+  // are blocked by the same rule that blocks ::ffff:127.0.0.1.
+  if (topFiveZero && (g5 === 0 || g5 === 0xffff)) {
+    return isPrivateIPv4(embeddedV4());
+  }
+  // IPv4-translated ::ffff:0:0/96 — ::ffff:0:a.b.c.d / ::ffff:0:XXXX:XXXX.
+  if (g0 === 0 && g1 === 0 && g2 === 0 && g3 === 0 && g4 === 0xffff && g5 === 0) {
+    return isPrivateIPv4(embeddedV4());
+  }
+  // NAT64 well-known prefix 64:ff9b::/96 — reaching 64:ff9b::7f00:1 is reaching
+  // 127.0.0.1 through a translator, so judge it by the address it carries.
+  if (
+    g0 === 0x0064 &&
+    g1 === 0xff9b &&
+    g2 === 0 &&
+    g3 === 0 &&
+    g4 === 0 &&
+    g5 === 0
+  ) {
+    return isPrivateIPv4(embeddedV4());
+  }
+  // 64:ff9b:1::/48, the local-use NAT64 prefix (RFC 8215): never public.
+  if (g0 === 0x0064 && g1 === 0xff9b && g2 === 0x0001) return true;
+  // 6to4 2002::/16 carries an IPv4 in the next 32 bits (2002:7f00:1:: is
+  // 127.0.0.1); judge it the same way.
+  if (g0 === 0x2002) return isPrivateIPv4(ipv4FromGroups(g1, g2));
+
+  if ((g0 & 0xfe00) === 0xfc00) return true; // ULA fc00::/7
+  if ((g0 & 0xffc0) === 0xfe80) return true; // link-local fe80::/10 (all of it)
+  if ((g0 & 0xff00) === 0xff00) return true; // multicast ff00::/8
+
   return false;
 }
 
-function isBlockedAddress(ip: string): boolean {
+/** True when an IP literal points somewhere private, reserved or unroutable. */
+export function isBlockedAddress(ip: string): boolean {
   if (net.isIPv4(ip)) return isPrivateIPv4(ip);
   if (net.isIPv6(ip)) return isPrivateIPv6(ip);
   return true; // unknown format → block
@@ -190,15 +294,36 @@ export function assertPublicHttpUrl(rawUrl: string): URL {
   return url;
 }
 
+/**
+ * `URL.hostname` keeps the brackets around IPv6 literals (e.g. "[::1]"); strip
+ * them before checking with `net.isIP`, or a bracketed private literal would
+ * fall through to DNS resolution instead of being blocked.
+ */
+function unbracket(hostname: string): string {
+  return hostname.startsWith("[") && hostname.endsWith("]")
+    ? hostname.slice(1, -1)
+    : hostname;
+}
+
+/**
+ * Everything `safeFetchText` checks *before* touching the network: scheme,
+ * credentials, port, and — when the host is an IP literal — whether that
+ * address is private/reserved. No DNS, so this is safe to call synchronously at
+ * an API boundary to reject a stored URL the moment it is saved, rather than
+ * discovering it is unusable at fetch time.
+ */
+export function assertStaticallyPublicHttpUrl(rawUrl: string): URL {
+  const url = assertPublicHttpUrl(rawUrl);
+  const literal = unbracket(url.hostname);
+  if (net.isIP(literal) && isBlockedAddress(literal)) {
+    throw new SafeFetchError("Refusing to fetch a private/reserved address.");
+  }
+  return url;
+}
+
 /** Resolve a hostname and throw if any address is private/reserved. */
 export async function assertHostResolvesPublic(hostname: string): Promise<void> {
-  // `URL.hostname` keeps the brackets around IPv6 literals (e.g. "[::1]");
-  // strip them before checking with `net.isIP`, or a bracketed private
-  // literal would fall through to DNS resolution instead of being blocked.
-  const literal =
-    hostname.startsWith("[") && hostname.endsWith("]")
-      ? hostname.slice(1, -1)
-      : hostname;
+  const literal = unbracket(hostname);
 
   if (net.isIP(literal)) {
     if (isBlockedAddress(literal)) {

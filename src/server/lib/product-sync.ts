@@ -30,6 +30,9 @@ import { SafeFetchError, sleep } from "~/server/lib/safe-fetch";
  *     payload rather than merely skipped at write time (see SYNCED_FIELDS).
  *  2. **Nothing is ever deleted.** A product that vanished from the storefront
  *     becomes a MISSING proposal that, once approved, sets `isPublic = false`.
+ *  3. **Visibility is only ever taken away, never granted.** Approving a
+ *     MISSING proposal hides a product; nothing the sync does publishes one.
+ *     Whether a product is live on AF is a human decision.
  */
 
 /** The only product fields the sync is allowed to touch. */
@@ -51,6 +54,27 @@ export type SyncedField = (typeof SYNCED_FIELDS)[number];
  * otherwise produce a run proposing to hide most of a shop.
  */
 export const MIN_FEED_RATIO = 0.5;
+
+/**
+ * How long a run may sit in RUNNING before a new sync assumes the process that
+ * started it died. A plan is bounded by the fetch timeout plus retries (a
+ * couple of minutes at worst), so anything older than this is abandoned — and
+ * without this escape a crashed run would wedge the shop permanently, since
+ * only a PENDING_REVIEW run can be discarded from the UI.
+ */
+export const STALE_RUN_MS = 30 * 60 * 1000;
+
+/**
+ * The catalog is USD-only: `productSchema` coerces every hand-entered price to
+ * USD, so an import must not be the one place a "eur" or lowercase "usd" from a
+ * feed slips in. Applied identically on the create and the update path, and at
+ * planning time, so the same value is proposed as is written.
+ */
+export function normalizeCurrency(
+  value: string | null | undefined,
+): string | null {
+  return value?.trim() ? "USD" : null;
+}
 
 export type DiffEntry = {
   field: SyncedField;
@@ -340,14 +364,30 @@ export async function planShopSync(
     );
   }
 
-  // Don't stack review queues week over week — one pending run per shop.
-  const pending = await db.productSyncRun.findFirst({
-    where: { shopId, status: $Enums.SyncRunStatus.PENDING_REVIEW },
-    select: { id: true },
+  // Don't stack review queues week over week — one pending run per shop — and
+  // don't let two syncs of the same shop overlap: a RUNNING run is already
+  // reading this storefront, and a second planner would diff against a catalog
+  // the first is about to propose changes to, producing two conflicting runs.
+  // A RUNNING run older than STALE_RUN_MS is treated as abandoned (see
+  // STALE_RUN_MS) rather than blocking the shop forever.
+  const blocking = await db.productSyncRun.findFirst({
+    where: {
+      shopId,
+      OR: [
+        { status: $Enums.SyncRunStatus.PENDING_REVIEW },
+        {
+          status: $Enums.SyncRunStatus.RUNNING,
+          startedAt: { gt: new Date(Date.now() - STALE_RUN_MS) },
+        },
+      ],
+    },
+    select: { id: true, status: true },
   });
-  if (pending) {
+  if (blocking) {
     throw new SyncAlreadyPendingError(
-      `"${shop.name}" already has a sync waiting for review. Review or discard it first.`,
+      blocking.status === $Enums.SyncRunStatus.RUNNING
+        ? `"${shop.name}" is being synced right now. Wait for that run to finish before starting another.`
+        : `"${shop.name}" already has a sync waiting for review. Review or discard it first.`,
     );
   }
 
@@ -431,9 +471,35 @@ export async function planShopSync(
 
   // Drop anything without a usable external id or name — we can neither key nor
   // display it.
-  const incoming = incomingRaw.filter(
+  const usable = incomingRaw.filter(
     (p) => !!p.shopProductId?.trim() && !!p.name?.trim(),
   );
+
+  // Collapse repeats of the same external id. Feeds do serve a product twice —
+  // a paginated endpoint overlapping, a variant exported as its own row — and
+  // planning both copies means two CREATE proposals carrying one id. The second
+  // insert then violates @@unique([shopId, shopProductId]) and rolls back the
+  // *entire* apply, losing every other approved change with it. First
+  // occurrence wins, which is the copy the feed lists first.
+  const seenShopProductIds = new Set<string>();
+  const incoming: typeof usable = [];
+  let duplicateFeedRows = 0;
+  for (const product of usable) {
+    const key = product.shopProductId!.trim();
+    if (seenShopProductIds.has(key)) {
+      duplicateFeedRows++;
+      continue;
+    }
+    seenShopProductIds.add(key);
+    incoming.push(product);
+  }
+  if (duplicateFeedRows > 0) {
+    console.warn(
+      `[product-sync] Shop ${shopId}: feed carried ${duplicateFeedRows} duplicate product id${
+        duplicateFeedRows === 1 ? "" : "s"
+      }; kept the first copy of each.`,
+    );
+  }
 
   // 3. Load the shop's existing synced products.
   const existingProducts = await db.product.findMany({
@@ -494,7 +560,7 @@ export async function planShopSync(
       name: product.name,
       description: product.description ?? "",
       priceInCents: product.priceInCents ?? null,
-      currency: product.currency ?? null,
+      currency: normalizeCurrency(product.currency),
       imageUrl: product.imageUrl ?? null,
       productUrl: product.productUrl ?? null,
     };
@@ -535,18 +601,12 @@ export async function planShopSync(
     const needsBackfill =
       match.matchedBy !== "shopProductId" ||
       existing.shopProductId !== product.shopProductId;
-    // A product hidden by an earlier sync should come back when it reappears
-    // upstream — but one an admin hid by hand stays hidden. `isPublic` lands in
-    // `manualFields` only when a human toggled it, which is what distinguishes
-    // the two cases.
-    const manuallyHidden = existing.manualFields.includes("isPublic");
-    const needsUnhide = !existing.isPublic && !manuallyHidden;
 
-    if (
-      applicableDiff(diff).length === 0 &&
-      !needsBackfill &&
-      !needsUnhide
-    ) {
+    // Visibility is deliberately *not* a reason to propose anything. Applying a
+    // run never changes `isPublic` (see `applySyncRun`), so a hidden product
+    // that reappears upstream stays hidden until a human unhides it — and
+    // proposing it anyway would queue the same no-op change every single week.
+    if (applicableDiff(diff).length === 0 && !needsBackfill) {
       continue;
     }
 
@@ -636,7 +696,11 @@ export async function planShopSync(
   }
 
   console.log(
-    `[product-sync] Shop ${shopId} (${platform}): ${incoming.length} fetched, ${counts.created} new, ${counts.updated} updated, ${counts.missing} missing.`,
+    `[product-sync] Shop ${shopId} (${platform}): ${incoming.length} fetched, ${counts.created} new, ${counts.updated} updated, ${counts.missing} missing${
+      duplicateFeedRows > 0
+        ? `, ${duplicateFeedRows} duplicate feed row${duplicateFeedRows === 1 ? "" : "s"} collapsed`
+        : ""
+    }.`,
   );
 
   return { runId: run.id, status, fetchedCount: incoming.length, ...counts };
@@ -675,106 +739,114 @@ export async function applySyncRun(
   const approved = new Set(approvedProposalIds);
   const result: ApplyResult = { created: 0, updated: 0, hidden: 0, rejected: 0 };
 
-  // Products an admin hid by hand must not be un-hidden by an approved update.
-  // Loaded up front so the transaction below stays a straight run of writes.
-  const targetIds = run.proposals
-    .filter((p) => approved.has(p.id) && p.productId)
-    .map((p) => p.productId!);
-  const manuallyHidden = new Set(
-    (
-      await db.product.findMany({
-        where: { id: { in: targetIds }, manualFields: { has: "isPublic" } },
-        select: { id: true },
-      })
-    ).map((p) => p.id),
-  );
-
-  await db.$transaction(async (tx) => {
-    for (const proposal of run.proposals) {
-      if (!approved.has(proposal.id)) {
-        result.rejected++;
-        continue;
-      }
-
-      const payload = proposal.payload as unknown as SyncedPayload;
-      const diff = proposal.diff as unknown as DiffEntry[];
-
-      if (proposal.changeType === $Enums.SyncChangeType.CREATE) {
-        await tx.product.create({
-          data: {
-            shopId: run.shopId,
-            shopProductId: proposal.shopProductId,
-            scrapeMethod: run.platform,
-            name: payload.name,
-            description: payload.description || "No description available",
-            priceInCents: payload.priceInCents,
-            // The catalog only offers USD; keep imports consistent with the
-            // coercion in `productSchema`.
-            currency: payload.currency ? "USD" : null,
-            imageUrl: payload.imageUrl,
-            productUrl: payload.productUrl,
-            // Curated data starts empty and is filled in by hand.
-            tags: [],
-            attributeTags: [],
-            materialTags: [],
-            environmentalTags: [],
-            aiGeneratedTags: [],
-            manualFields: [],
-          },
-        });
-        result.created++;
-        continue;
-      }
-
-      if (proposal.changeType === $Enums.SyncChangeType.MISSING) {
-        if (proposal.productId) {
-          await tx.product.update({
-            where: { id: proposal.productId },
-            data: { isPublic: false },
-          });
-          result.hidden++;
+  await db.$transaction(
+    async (tx) => {
+      for (const proposal of run.proposals) {
+        if (!approved.has(proposal.id)) {
+          result.rejected++;
+          continue;
         }
-        continue;
+
+        const payload = proposal.payload as unknown as SyncedPayload;
+        const diff = proposal.diff as unknown as DiffEntry[];
+
+        if (proposal.changeType === $Enums.SyncChangeType.CREATE) {
+          await tx.product.create({
+            data: {
+              shopId: run.shopId,
+              shopProductId: proposal.shopProductId,
+              scrapeMethod: run.platform,
+              name: payload.name,
+              description: payload.description || "No description available",
+              priceInCents: payload.priceInCents,
+              currency: normalizeCurrency(payload.currency),
+              imageUrl: payload.imageUrl,
+              productUrl: payload.productUrl,
+              // Curated data starts empty and is filled in by hand.
+              tags: [],
+              attributeTags: [],
+              materialTags: [],
+              environmentalTags: [],
+              aiGeneratedTags: [],
+              manualFields: [],
+            },
+          });
+          result.created++;
+          continue;
+        }
+
+        if (proposal.changeType === $Enums.SyncChangeType.MISSING) {
+          if (proposal.productId) {
+            await tx.product.update({
+              where: { id: proposal.productId },
+              data: { isPublic: false },
+            });
+            result.hidden++;
+          }
+          continue;
+        }
+
+        // UPDATE — apply only the fields no human has claimed, and backfill the
+        // external id so next week matches on the fast path.
+        //
+        // Visibility is never written here. An update carries the storefront's
+        // *content*, and nothing about a product still being listed upstream is
+        // a decision to publish it on AF: a product hidden by hand, by an
+        // earlier MISSING approval, or never made public in the first place all
+        // stay exactly as they are. Republishing is a deliberate act someone
+        // performs on the product itself.
+        if (!proposal.productId) continue;
+        const data: Record<string, unknown> = {
+          shopProductId: proposal.shopProductId,
+        };
+        for (const entry of applicableDiff(diff)) {
+          // Re-normalize on the way in: a run planned before currency was
+          // normalized at plan time can still be sitting in the review queue.
+          data[entry.field] =
+            entry.field === "currency"
+              ? normalizeCurrency(
+                  entry.after === null ? null : String(entry.after),
+                )
+              : entry.after;
+        }
+        await tx.product.update({
+          where: { id: proposal.productId },
+          data,
+        });
+        result.updated++;
       }
 
-      // UPDATE — apply only the fields no human has claimed, and backfill the
-      // external id so next week matches on the fast path.
-      if (!proposal.productId) continue;
-      const data: Record<string, unknown> = {
-        shopProductId: proposal.shopProductId,
-        ...(manuallyHidden.has(proposal.productId) ? {} : { isPublic: true }),
-      };
-      for (const entry of applicableDiff(diff)) {
-        data[entry.field] = entry.after;
-      }
-      await tx.product.update({
-        where: { id: proposal.productId },
-        data,
+      await tx.productSyncProposal.updateMany({
+        where: { runId, id: { in: [...approved] } },
+        data: { status: $Enums.ProposalStatus.APPROVED },
       });
-      result.updated++;
-    }
-
-    await tx.productSyncProposal.updateMany({
-      where: { runId, id: { in: [...approved] } },
-      data: { status: $Enums.ProposalStatus.APPROVED },
-    });
-    await tx.productSyncProposal.updateMany({
-      where: { runId, id: { notIn: [...approved] } },
-      data: { status: $Enums.ProposalStatus.REJECTED },
-    });
-    await tx.productSyncRun.update({
-      where: { id: runId },
-      data: {
-        status: $Enums.SyncRunStatus.APPLIED,
-        reviewedAt: new Date(),
-        reviewedById,
-      },
-    });
-    await tx.shop.update({
-      where: { id: run.shopId },
-      data: { lastSyncedAt: new Date() },
-    });
-  });
+      await tx.productSyncProposal.updateMany({
+        where: { runId, id: { notIn: [...approved] } },
+        data: { status: $Enums.ProposalStatus.REJECTED },
+      });
+      await tx.productSyncRun.update({
+        where: { id: runId },
+        data: {
+          status: $Enums.SyncRunStatus.APPLIED,
+          reviewedAt: new Date(),
+          reviewedById,
+        },
+      });
+      await tx.shop.update({
+        where: { id: run.shopId },
+        data: { lastSyncedAt: new Date() },
+      });
+    },
+    {
+      // A run can carry hundreds of proposals, each its own write. Prisma's
+      // default interactive-transaction timeout is 5s, which a large shop blows
+      // straight through — and the whole apply then rolls back after doing the
+      // work. Two minutes covers the largest catalogs on the platform; maxWait
+      // is how long we'll queue for a connection before giving up.
+      timeout: 120_000,
+      maxWait: 10_000,
+    },
+  );
 
   console.log(
     `[product-sync] Applied run ${runId}: ${result.created} created, ${result.updated} updated, ${result.hidden} hidden, ${result.rejected} rejected.`,

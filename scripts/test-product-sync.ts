@@ -15,13 +15,20 @@
  * planner's *decisions*, which is where the risk lives: matching legacy rows
  * without blowing up into duplicates, honouring human edits, and refusing to
  * act on a feed that looks broken.
+ *
+ * `applySyncRun` gets the same treatment further down (`makeApplyDb`), which
+ * records each write so a test can assert not just the resulting row but which
+ * columns were written at all — "isPublic was never touched" is a different
+ * claim from "isPublic happens to be false".
  */
 import {
   applicableDiff,
+  applySyncRun,
   buildDiff,
   buildMatchIndex,
   matchIncoming,
   MIN_FEED_RATIO,
+  normalizeCurrency,
   normalizeNameKey,
   normalizeUrlKey,
   planShopSync,
@@ -102,8 +109,9 @@ function makeDb(shop: FakeShop, products: FakeProduct[]) {
   const runs = new Map<string, Record<string, unknown>>();
   const proposals: CapturedProposal[] = [];
   let runSeq = 0;
-  let pendingRun: { id: string } | null = null;
+  let pendingRun: { id: string; status?: string } | null = null;
   const shopUpdates: Record<string, unknown>[] = [];
+  const blockingRunQueries: unknown[] = [];
 
   const db = {
     shop: {
@@ -114,7 +122,10 @@ function makeDb(shop: FakeShop, products: FakeProduct[]) {
       },
     },
     productSyncRun: {
-      findFirst: () => Promise.resolve(pendingRun),
+      findFirst: (args?: { where?: unknown }) => {
+        blockingRunQueries.push(args?.where);
+        return Promise.resolve(pendingRun);
+      },
       create: ({ data }: { data: Record<string, unknown> }) => {
         const id = `run-${++runSeq}`;
         runs.set(id, { id, ...data });
@@ -150,7 +161,9 @@ function makeDb(shop: FakeShop, products: FakeProduct[]) {
     proposals,
     runs,
     shopUpdates,
-    setPendingRun: (r: { id: string } | null) => (pendingRun = r),
+    blockingRunQueries,
+    setPendingRun: (r: { id: string; status?: string } | null) =>
+      (pendingRun = r),
   };
 }
 
@@ -653,6 +666,10 @@ async function testMissing() {
 async function testHiddenProductReturns() {
   section("planShopSync: a product that came back upstream");
 
+  // Visibility is a human decision (see the file's third invariant): a hidden
+  // product that is still on the storefront is not, by itself, a change worth
+  // reviewing. Proposing it would queue a change that applying deliberately
+  // does not make, week after week.
   const { db, proposals } = makeDb(BASE_SHOP, [
     makeProduct({
       id: "p-back",
@@ -680,12 +697,49 @@ async function testHiddenProductReturns() {
   });
 
   assertEqual(
-    "a returning product is proposed for update so it can be unhidden",
-    result.updated,
-    1,
+    "an unchanged hidden product is not proposed just to unhide it",
+    { updated: result.updated, proposals: proposals.length },
+    { updated: 0, proposals: 0 },
   );
   assertEqual("and not proposed as missing", result.missing, 0);
-  assertEqual("it targets the hidden row", proposals[0]?.productId, "p-back");
+  assertEqual("so there is nothing to review", result.status, "EMPTY");
+
+  // A genuine content change on a hidden product is still worth proposing —
+  // applying it updates the fields and leaves the product hidden.
+  const changed = makeDb(BASE_SHOP, [
+    makeProduct({
+      id: "p-back-2",
+      shopProductId: "7",
+      name: "Seasonal Scarf",
+      description: "Seasonal Scarf description",
+      priceInCents: 1000,
+      imageUrl: "https://teststore.com/scarf.jpg",
+      productUrl: "https://teststore.com/products/seasonal-scarf",
+      isPublic: false,
+    }),
+  ]);
+  const changedResult = await planShopSync(changed.db, "shop-1", {
+    fetchFeed: shopifyFeed([
+      shopifyProduct({
+        id: 7,
+        title: "Seasonal Scarf",
+        handle: "seasonal-scarf",
+        body: "Seasonal Scarf description",
+        price: "45.00",
+        image: "https://teststore.com/scarf.jpg",
+      }),
+    ]),
+  });
+  assertEqual(
+    "a hidden product with a real change is still proposed",
+    changedResult.updated,
+    1,
+  );
+  assertEqual(
+    "and only the changed field is in the diff",
+    changed.proposals[0]?.diff.map((d) => d.field),
+    ["priceInCents"],
+  );
 
   // A product an admin hid on purpose carries "isPublic" in manualFields, and
   // must not be resurrected just because it is still on the storefront.
@@ -925,6 +979,30 @@ async function testConfigGuards() {
         (err as Error).message,
       );
     }
+
+    // Two syncs of one shop must not overlap either: the second would diff
+    // against a catalog the first is still reading and produce a rival run.
+    const query = JSON.stringify(fake.blockingRunQueries[0] ?? {});
+    assertTrue(
+      "the guard looks for RUNNING runs as well as PENDING_REVIEW ones",
+      query.includes("PENDING_REVIEW") && query.includes("RUNNING"),
+      query,
+    );
+  }
+
+  {
+    const fake = makeDb(BASE_SHOP, []);
+    fake.setPendingRun({ id: "run-in-flight", status: "RUNNING" });
+    try {
+      await planShopSync(fake.db, "shop-1", { fetchFeed: shopifyFeed([]) });
+      fail("a shop already syncing is refused");
+    } catch (err) {
+      assertTrue(
+        "a shop mid-sync is not synced again concurrently",
+        /being synced right now/i.test((err as Error).message),
+        (err as Error).message,
+      );
+    }
   }
 }
 
@@ -1083,6 +1161,447 @@ async function testSweep() {
   assertEqual("the disabled and Square shops are not considered", summary.shopsConsidered, 3);
 }
 
+async function testFeedDeduplication() {
+  section("planShopSync: a feed that lists the same product twice");
+
+  // Real feeds do this: an overlapping page of a paginated endpoint, or a
+  // variant exported as its own row. Both copies carry the same external id, so
+  // planning both would put two CREATE proposals with one id in the run — and
+  // the second insert would violate @@unique([shopId, shopProductId]) and roll
+  // the whole apply back, taking every other approved change with it.
+  const { db, proposals } = makeDb(BASE_SHOP, []);
+  const result = await planShopSync(db, "shop-1", {
+    fetchFeed: shopifyFeed([
+      shopifyProduct({ id: 1, title: "Mug", handle: "mug", price: "10.00" }),
+      // Same store id, second listing — a different title proves which copy won.
+      shopifyProduct({
+        id: 1,
+        title: "Mug (second listing)",
+        handle: "mug-again",
+        price: "99.00",
+      }),
+      shopifyProduct({ id: 2, title: "Bowl", handle: "bowl", price: "20.00" }),
+    ]),
+  });
+
+  assertEqual(
+    "the repeated store id is planned once, not twice",
+    proposals.filter((p) => p.shopProductId === "1").length,
+    1,
+  );
+  assertEqual("so only the two real products are created", result.created, 2);
+  assertEqual(
+    "every proposal in the run carries a distinct store id",
+    proposals.map((p) => p.shopProductId).sort(),
+    ["1", "2"],
+  );
+  assertEqual(
+    "the first copy is the one kept",
+    proposals.find((p) => p.shopProductId === "1")?.payload.name,
+    "Mug",
+  );
+  assertEqual(
+    "the fetched count reflects what was actually planned",
+    result.fetchedCount,
+    2,
+  );
+
+  // The same collapse has to happen when the duplicate would match an existing
+  // row: one UPDATE, not an UPDATE plus a colliding CREATE.
+  const withExisting = makeDb(BASE_SHOP, [
+    makeProduct({
+      id: "p-mug",
+      shopProductId: "1",
+      name: "Mug",
+      description: "Mug description",
+      priceInCents: 1000,
+      imageUrl: "https://teststore.com/mug.jpg",
+      productUrl: "https://teststore.com/products/mug",
+    }),
+  ]);
+  const existingResult = await planShopSync(withExisting.db, "shop-1", {
+    fetchFeed: shopifyFeed([
+      shopifyProduct({
+        id: 1,
+        title: "Mug",
+        handle: "mug",
+        body: "Mug description",
+        price: "15.00",
+        image: "https://teststore.com/mug.jpg",
+      }),
+      shopifyProduct({
+        id: 1,
+        title: "Mug",
+        handle: "mug",
+        body: "Mug description",
+        price: "15.00",
+        image: "https://teststore.com/mug.jpg",
+      }),
+    ]),
+  });
+  assertEqual(
+    "a duplicated id never becomes an update plus a duplicate create",
+    { created: existingResult.created, updated: existingResult.updated },
+    { created: 0, updated: 1 },
+  );
+}
+
+// --- Applying ---------------------------------------------------------------
+
+type FakeProposal = {
+  id: string;
+  productId: string | null;
+  shopProductId: string;
+  changeType: string;
+  payload: Record<string, unknown>;
+  diff: Array<{
+    field: string;
+    before: string | number | null;
+    after: string | number | null;
+    protected: boolean;
+  }>;
+};
+
+/**
+ * In-memory stand-in for the apply path. Records every write so a test can
+ * assert not only the resulting row but *which columns were written at all* —
+ * the difference between "isPublic ends up false" and "isPublic was never
+ * touched" is the whole point of the visibility rule.
+ */
+function makeApplyDb(
+  run: {
+    id: string;
+    shopId: string;
+    platform: string;
+    status: string;
+    proposals: FakeProposal[];
+  },
+  products: FakeProduct[],
+) {
+  const rows = new Map(products.map((p) => [p.id, { ...p }]));
+  const created: Record<string, unknown>[] = [];
+  const updates: { id: string; data: Record<string, unknown> }[] = [];
+  const proposalStatuses = new Map<string, string>();
+  let transactionOptions: Record<string, unknown> | undefined;
+
+  const tx = {
+    product: {
+      create: ({ data }: { data: Record<string, unknown> }) => {
+        created.push(data);
+        return Promise.resolve(data);
+      },
+      update: ({
+        where,
+        data,
+      }: {
+        where: { id: string };
+        data: Record<string, unknown>;
+      }) => {
+        updates.push({ id: where.id, data });
+        const row = rows.get(where.id);
+        if (row) Object.assign(row, data);
+        return Promise.resolve(row ?? {});
+      },
+      findMany: () => Promise.resolve([...rows.values()]),
+    },
+    productSyncProposal: {
+      updateMany: ({
+        where,
+        data,
+      }: {
+        where: { id?: { in?: string[]; notIn?: string[] } };
+        data: { status: string };
+      }) => {
+        const ids = run.proposals.map((p) => p.id);
+        const targets =
+          where.id?.in ??
+          ids.filter((id) => !(where.id?.notIn ?? []).includes(id));
+        for (const id of targets) proposalStatuses.set(id, data.status);
+        return Promise.resolve({ count: targets.length });
+      },
+    },
+    productSyncRun: { update: () => Promise.resolve({}) },
+    shop: { update: () => Promise.resolve({}) },
+  };
+
+  const db = {
+    ...tx,
+    productSyncRun: {
+      ...tx.productSyncRun,
+      findUnique: () => Promise.resolve(run),
+    },
+    $transaction: (
+      fn: (client: typeof tx) => Promise<unknown>,
+      options?: Record<string, unknown>,
+    ) => {
+      transactionOptions = options;
+      return fn(tx);
+    },
+  };
+
+  return {
+    db: db as unknown as Parameters<typeof applySyncRun>[0],
+    rows,
+    created,
+    updates,
+    proposalStatuses,
+    updateFor: (id: string) => updates.find((u) => u.id === id)?.data,
+    getTransactionOptions: () => transactionOptions,
+  };
+}
+
+async function testApplyPreservesVisibility() {
+  section("applySyncRun: visibility is never granted, only taken away");
+
+  const run = {
+    id: "run-apply",
+    shopId: "shop-1",
+    platform: "SHOPIFY",
+    status: "PENDING_REVIEW",
+    proposals: [
+      {
+        id: "prop-hidden",
+        productId: "p-hidden",
+        shopProductId: "1",
+        changeType: "UPDATE",
+        payload: { name: "Hidden Mug" },
+        diff: [
+          {
+            field: "priceInCents",
+            before: 1000,
+            after: 2500,
+            protected: false,
+          },
+        ],
+      },
+      {
+        id: "prop-live",
+        productId: "p-live",
+        shopProductId: "2",
+        changeType: "UPDATE",
+        payload: { name: "Live Bowl" },
+        diff: [
+          { field: "name", before: "Bowl", after: "Live Bowl", protected: false },
+        ],
+      },
+      {
+        id: "prop-gone",
+        productId: "p-gone",
+        shopProductId: "3",
+        changeType: "MISSING",
+        payload: { name: "Gone Plate" },
+        diff: [],
+      },
+    ] as FakeProposal[],
+  };
+
+  const fake = makeApplyDb(run, [
+    makeProduct({ id: "p-hidden", shopProductId: "1", isPublic: false }),
+    makeProduct({ id: "p-live", shopProductId: "2", isPublic: true }),
+    makeProduct({ id: "p-gone", shopProductId: "3", isPublic: true }),
+  ]);
+
+  const result = await applySyncRun(
+    fake.db,
+    "run-apply",
+    ["prop-hidden", "prop-live", "prop-gone"],
+    "admin-1",
+  );
+
+  assertEqual(
+    "the run applies both updates and the hide",
+    result,
+    { created: 0, updated: 2, hidden: 1, rejected: 0 },
+  );
+  assertTrue(
+    "an approved update never writes isPublic at all",
+    !("isPublic" in (fake.updateFor("p-hidden") ?? {})),
+    fake.updateFor("p-hidden"),
+  );
+  assertEqual(
+    "so a hidden product stays hidden",
+    fake.rows.get("p-hidden")?.isPublic,
+    false,
+  );
+  assertEqual(
+    "and the proposed field is still written",
+    fake.updateFor("p-hidden")?.priceInCents,
+    2500,
+  );
+  assertTrue(
+    "a live product's visibility is left alone too",
+    !("isPublic" in (fake.updateFor("p-live") ?? {})),
+    fake.updateFor("p-live"),
+  );
+  assertEqual(
+    "a live product stays live",
+    fake.rows.get("p-live")?.isPublic,
+    true,
+  );
+  assertEqual(
+    "an approved MISSING proposal still hides its product",
+    fake.rows.get("p-gone")?.isPublic,
+    false,
+  );
+  assertEqual(
+    "the external id is backfilled on update",
+    fake.updateFor("p-hidden")?.shopProductId,
+    "1",
+  );
+
+  // A product a human deliberately hid needs no special case any more: nothing
+  // on the apply path can publish anything.
+  const manual = makeApplyDb(
+    {
+      ...run,
+      proposals: [run.proposals[0]!],
+    },
+    [
+      makeProduct({
+        id: "p-hidden",
+        shopProductId: "1",
+        isPublic: false,
+        manualFields: ["isPublic"],
+      }),
+    ],
+  );
+  await applySyncRun(manual.db, "run-apply", ["prop-hidden"], "admin-1");
+  assertEqual(
+    "a hand-hidden product is likewise untouched",
+    manual.rows.get("p-hidden")?.isPublic,
+    false,
+  );
+
+  // A large run must not die on Prisma's 5s default interactive-transaction
+  // timeout after doing all of the work.
+  assertEqual(
+    "the apply transaction is given room for a large catalog",
+    fake.getTransactionOptions(),
+    { timeout: 120_000, maxWait: 10_000 },
+  );
+
+  // Rejection still resolves the rest of the run.
+  const partial = makeApplyDb(run, [
+    makeProduct({ id: "p-hidden", shopProductId: "1", isPublic: false }),
+    makeProduct({ id: "p-live", shopProductId: "2", isPublic: true }),
+    makeProduct({ id: "p-gone", shopProductId: "3", isPublic: true }),
+  ]);
+  const partialResult = await applySyncRun(
+    partial.db,
+    "run-apply",
+    ["prop-live"],
+    "admin-1",
+  );
+  assertEqual(
+    "unapproved proposals are counted as rejected, not applied",
+    partialResult,
+    { created: 0, updated: 1, hidden: 0, rejected: 2 },
+  );
+  assertEqual(
+    "a rejected MISSING proposal leaves its product live",
+    partial.rows.get("p-gone")?.isPublic,
+    true,
+  );
+  assertEqual(
+    "approved proposals are marked APPROVED",
+    partial.proposalStatuses.get("prop-live"),
+    "APPROVED",
+  );
+  assertEqual(
+    "and the rest REJECTED",
+    partial.proposalStatuses.get("prop-gone"),
+    "REJECTED",
+  );
+}
+
+async function testCurrencyNormalization() {
+  section("Currency is normalized the same way everywhere");
+
+  assertEqual("a lowercase code is normalized", normalizeCurrency("usd"), "USD");
+  assertEqual(
+    "the catalog is USD-only, so other codes are coerced",
+    normalizeCurrency("eur"),
+    "USD",
+  );
+  assertEqual("absent stays absent", normalizeCurrency(null), null);
+  assertEqual("blank counts as absent", normalizeCurrency("   "), null);
+
+  const run = {
+    id: "run-currency",
+    shopId: "shop-1",
+    platform: "SHOPIFY",
+    status: "PENDING_REVIEW",
+    proposals: [
+      {
+        id: "prop-create",
+        productId: null,
+        shopProductId: "10",
+        changeType: "CREATE",
+        payload: {
+          name: "Priced Mug",
+          description: "A mug",
+          priceInCents: 1000,
+          currency: "eur",
+          imageUrl: null,
+          productUrl: null,
+        },
+        diff: [],
+      },
+      {
+        id: "prop-create-null",
+        productId: null,
+        shopProductId: "11",
+        changeType: "CREATE",
+        payload: {
+          name: "Unpriced Mug",
+          description: "A mug",
+          priceInCents: null,
+          currency: null,
+          imageUrl: null,
+          productUrl: null,
+        },
+        diff: [],
+      },
+      {
+        id: "prop-update",
+        productId: "p-1",
+        shopProductId: "12",
+        changeType: "UPDATE",
+        payload: { name: "Existing Mug" },
+        // A run planned before currency was normalized at plan time can still
+        // be sitting in the review queue carrying a raw feed value.
+        diff: [
+          { field: "currency", before: "USD", after: "gbp", protected: false },
+        ],
+      },
+    ] as FakeProposal[],
+  };
+
+  const fake = makeApplyDb(run, [makeProduct({ id: "p-1", shopProductId: "12" })]);
+  await applySyncRun(
+    fake.db,
+    "run-currency",
+    ["prop-create", "prop-create-null", "prop-update"],
+    "admin-1",
+  );
+
+  assertEqual(
+    "a created product's currency is coerced",
+    fake.created[0]?.currency,
+    "USD",
+  );
+  assertEqual(
+    "a created product with no currency keeps null",
+    fake.created[1]?.currency,
+    null,
+  );
+  assertEqual(
+    "an updated product's currency is coerced the same way",
+    fake.updateFor("p-1")?.currency,
+    "USD",
+  );
+}
+
 // --- Runner -----------------------------------------------------------------
 
 async function main() {
@@ -1101,7 +1620,10 @@ async function main() {
   await testSafetyGuards();
   await testConfigGuards();
   await testCuratedDataNeverProposed();
+  await testFeedDeduplication();
   await testSweep();
+  await testApplyPreservesVisibility();
+  await testCurrencyNormalization();
 
   console.log(`\n${passes} passed, ${failures} failed`);
   if (failures > 0) process.exit(1);

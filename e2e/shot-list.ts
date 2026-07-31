@@ -42,6 +42,7 @@ export const shots: Shot[] = [
   { id: "artisans/dashboard", path: "/admin/dashboard", role: "artisan", waitFor: "main" },
   { id: "artisans/shops", path: "/admin/shops", role: "artisan", waitFor: "main" },
   { id: "artisans/products", path: "/admin/products", role: "artisan", waitFor: "main" },
+  { id: "artisans/product-sync", path: "/admin/products/sync", role: "artisan", waitFor: "main" },
   { id: "artisans/services", path: "/admin/services", role: "artisan", waitFor: "main" },
   { id: "artisans/events", path: "/admin/events", role: "artisan", waitFor: "main" },
   { id: "artisans/account-settings", path: "/account/settings", role: "artisan", waitFor: "main" },

@@ -9,6 +9,10 @@ import {
   createTRPCRouter,
 } from "~/server/api/trpc";
 import {
+  assertStaticallyPublicHttpUrl,
+  SafeFetchError,
+} from "~/server/lib/safe-fetch";
+import {
   applySyncRun,
   planShopSync,
   runScheduledSync,
@@ -62,6 +66,55 @@ function allowedShopIds(ctx: Ctx): string[] {
 function shopScope(ctx: Ctx) {
   return { shopId: { in: allowedShopIds(ctx) } };
 }
+
+/**
+ * The artisan-writable feed URL.
+ *
+ * `syncUrl` is the one field on this router that ends up being handed to the
+ * outbound fetcher, so it is validated the moment it is saved rather than at
+ * fetch time: a syntactically valid http(s) URL, and one that clears the same
+ * static checks `safeFetchText` applies (no credentials, standard ports only,
+ * and no IP literal pointing at a private/reserved address). DNS is *not*
+ * consulted here — a store can be temporarily unresolvable without its settings
+ * becoming unsaveable — the fetch layer still resolves and re-checks every time.
+ *
+ * Empty string means "no override", and is stored as null.
+ */
+const syncUrlInput = z
+  .string()
+  .trim()
+  .nullable()
+  .transform((value) => (value && value.length > 0 ? value : null))
+  .superRefine((value, ctx) => {
+    if (value === null) return;
+
+    if (!z.string().url().safeParse(value).success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Enter a full URL including https:// — for example https://yourstore.com/products.json",
+      });
+      return;
+    }
+
+    try {
+      const url = assertStaticallyPublicHttpUrl(value);
+      if (url.protocol !== "http:" && url.protocol !== "https:") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Only http:// and https:// URLs can be synced.",
+        });
+      }
+    } catch (err) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          err instanceof SafeFetchError
+            ? `That URL can't be synced: ${err.message}`
+            : "That URL can't be synced.",
+      });
+    }
+  });
 
 function assertShopAccess(ctx: Ctx, shopId: string) {
   if (!allowedShopIds(ctx).includes(shopId)) {
@@ -263,12 +316,23 @@ export const productSyncRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const run = await ctx.db.productSyncRun.findUnique({
         where: { id: input.runId },
-        select: { shopId: true },
+        select: { shopId: true, status: true },
       });
       if (!run) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Sync run not found." });
       }
       assertShopAccess(ctx, run.shopId);
+
+      // The one failure worth naming: someone applied or discarded this run in
+      // another tab. Everything else is an internal fault (a constraint
+      // violation, a dead connection) whose text would leak schema details to
+      // the browser, so it is logged here and reported generically.
+      if (run.status !== $Enums.SyncRunStatus.PENDING_REVIEW) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `This run is ${run.status.toLowerCase()}, not awaiting review.`,
+        });
+      }
 
       try {
         return await applySyncRun(
@@ -278,9 +342,14 @@ export const productSyncRouter = createTRPCRouter({
           ctx.session.user.id,
         );
       } catch (err) {
+        console.error(
+          `[product-sync] Applying run ${input.runId} failed:`,
+          err,
+        );
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: err instanceof Error ? err.message : "Failed to apply run.",
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "Applying this run failed — nothing was changed. Check server logs.",
         });
       }
     }),
@@ -365,7 +434,7 @@ export const productSyncRouter = createTRPCRouter({
           ])
           .nullable(),
         syncEnabled: z.boolean(),
-        syncUrl: z.string().trim().nullable(),
+        syncUrl: syncUrlInput,
         allowInsecureOrigin: z.boolean().optional(),
       }),
     )
@@ -378,7 +447,8 @@ export const productSyncRouter = createTRPCRouter({
         data: {
           syncPlatform: input.syncPlatform,
           syncEnabled: input.syncEnabled,
-          syncUrl: input.syncUrl?.length ? input.syncUrl : null,
+          // Already normalized to null-or-valid-URL by `syncUrlInput`.
+          syncUrl: input.syncUrl,
           ...(isAdmin && input.allowInsecureOrigin !== undefined
             ? { allowInsecureOrigin: input.allowInsecureOrigin }
             : {}),

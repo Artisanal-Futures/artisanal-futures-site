@@ -417,10 +417,11 @@ export const productRouter = createTRPCRouter({
         }
       }
 
-      // Filter only existing product IDs
+      // Filter only existing product IDs. `isPublic`/`manualFields` come along
+      // because a bulk visibility change has to be recorded per row (below).
       const existingProducts = await ctx.db.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true },
+        select: { id: true, isPublic: true, manualFields: true },
       });
 
       const validIds = existingProducts.map((p) => p.id);
@@ -435,11 +436,30 @@ export const productRouter = createTRPCRouter({
         : [];
 
       const updatedProducts = await ctx.db.$transaction(
-        validIds.map((id) =>
+        existingProducts.map((product) =>
           ctx.db.product.update({
-            where: { id },
+            where: { id: product.id },
             data: {
-              ...(typeof isPublic === "boolean" && { isPublic }),
+              ...(typeof isPublic === "boolean" && {
+                isPublic,
+                // Hiding or publishing by hand has to outrank the scheduled
+                // sync's own visibility rules, so it is recorded in
+                // `manualFields` — the same thing `update` does when the single
+                // -product form changes visibility. Union rather than replace,
+                // and only when the value actually changes, so re-applying the
+                // state a product is already in doesn't claim the field.
+                //
+                // This is why the mutation is one update per row instead of a
+                // single `updateMany`: merging into a per-row array can't be
+                // expressed as one set-everything write.
+                ...(product.isPublic !== isPublic
+                  ? {
+                      manualFields: [
+                        ...new Set([...product.manualFields, "isPublic"]),
+                      ],
+                    }
+                  : {}),
+              }),
               ...(shopId && { shopId }),
               ...(tags && { tags: { set: tags } }),
 
