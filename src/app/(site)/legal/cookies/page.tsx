@@ -7,7 +7,7 @@ export default function CookiePolicyPage() {
             <p className="tagline">Legal</p>
             <h1>Cookie Policy</h1>
           </div>
-          <p className="description">Last updated: June 10th, 2026</p>
+          <p className="description">Last updated: September 9th, 2026</p>
         </div>
       </header>
 
@@ -29,11 +29,12 @@ export default function CookiePolicyPage() {
         <h2>How We Use Cookies</h2>
         <p>
           At Artisanal Futures, we only use cookies that are strictly necessary
-          for the functionality and security of our website and services.
-          Specifically, we use cookies for authentication purposes. These
-          cookies are essential for ensuring the security of our users&apos;
-          accounts and for enabling access to the features and functionalities
-          of our platform.
+          for the functionality and security of our website and services. We
+          use them to keep you signed in, to validate an invitation code while
+          you create an account, and to remember interface preferences such as
+          whether the navigation sidebar is expanded. These cookies are
+          essential for the security of your account and for the site to
+          behave the way you left it.
         </p>
         <p>
           <span className="font-bold">

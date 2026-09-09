@@ -1,3 +1,10 @@
+import Link from "next/link";
+
+export const metadata = {
+  title: "Help Center",
+  description: "Community guidelines for the Artisanal Futures forum",
+};
+
 export default function QuestionsPage() {
   return (
     <>
@@ -7,10 +14,23 @@ export default function QuestionsPage() {
             <p className="tagline">Legal</p>
             <h1>Help Center</h1>
           </div>
+          <p className="description">Last updated: September 9th, 2026</p>
         </div>
       </header>
 
       <section className="site-section prose prose-sm lg:prose-base mb-6">
+        <p>
+          These are community guidelines for our forum. They sit alongside our{" "}
+          <Link
+            href="/legal/terms-of-use"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Terms of Use
+          </Link>
+          , which are the binding rules for using Artisanal Futures. If the two
+          ever differ, the Terms of Use control.
+        </p>
+
         <h4 id="this-is-a-civilized-place-for-public-discussion">
           This is a Civilized Place for Public Discussion
         </h4>
@@ -19,11 +39,7 @@ export default function QuestionsPage() {
           public park. We, too, are a shared community resource — a place to
           share skills, knowledge and interests through ongoing conversation.
         </p>
-        <p>
-          These are not hard and fast rules, merely guidelines to aid the human
-          judgment of our community and keep this a clean and well-lighted place
-          for civilized public discourse.
-        </p>
+
         <h4 id="improve-the-discussion">Improve the Discussion</h4>
         <p>
           Help us make this a great place for discussion by always working to
@@ -42,6 +58,7 @@ export default function QuestionsPage() {
           or starting your own, and you&apos;ll have a better chance of meeting
           others who share your interests.
         </p>
+
         <h4 id="be-agreeable-even-when-you-disagree">
           Be Agreeable, Even When You Disagree
         </h4>
@@ -62,6 +79,7 @@ export default function QuestionsPage() {
           Instead, provide reasoned counter-arguments that improve the
           conversation.
         </p>
+
         <h5 id="your-participation-counts">Your Participation Counts</h5>
         <p>
           The conversations we have here set the tone for every new arrival.
@@ -69,32 +87,41 @@ export default function QuestionsPage() {
           in discussions that make this forum an interesting place to be — and
           avoiding those that do not.
         </p>
-        <p>
-          Our forum and website provides tools that enable the community to
-          collectively identify the best (and worst) contributions: bookmarks,
-          likes, flags, replies, edits, and so forth. Use these tools to improve
-          your own experience, and everyone else&apos;s, too.
-        </p>
         <p>Let&apos;s leave our community better than we found it.</p>
-        <h5 id="if-you-see-a-problem-flag-it">If You See a Problem, Flag It</h5>
+
+        <h5 id="if-you-see-a-problem-tell-us">If You See a Problem, Tell Us</h5>
         <p>
-          Moderators have special authority; they are responsible for this
-          forum. But so are you. With your help, moderators can be community
-          facilitators, not just janitors or police.
+          When you see content that breaks the law, our{" "}
+          <Link
+            href="/legal/terms-of-use"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Terms of Use
+          </Link>
+          , or these guidelines — including copyright, harassment, or misuse of
+          traditional craft knowledge — do not engage with it. Report it using
+          our{" "}
+          <Link
+            href="/legal/takedown"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Takedown Policy
+          </Link>
+          , or email{" "}
+          <a
+            href="mailto:support@artisanalfutures.org"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            support@artisanalfutures.org
+          </a>
+          .
         </p>
         <p>
-          When you see bad behavior, don&apos;t reply. It encourages the bad
-          behavior by acknowledging it, consumes your energy, and wastes
-          everyone&apos;s time. Just flag it. If enough flags accrue, action
-          will be taken, either automatically or by moderator intervention.
+          We may remove content and restrict accounts as described in the Terms
+          of Use and Takedown Policy. We do not preview every new post, and we
+          are not responsible for content posted by the community.
         </p>
-        <p>
-          In order to maintain our community, moderators reserve the right to
-          remove any content and any user account for any reason at any time.
-          Moderators do not preview new posts; the moderators and site operators
-          take no responsibility for any content posted by the community. New
-          members are approved for forum use when they sign up for an account.
-        </p>
+
         <h5 id="always-be-civil">Always Be Civil</h5>
         <p>Nothing sabotages a healthy conversation like rudeness:</p>
         <ul>
@@ -107,8 +134,8 @@ export default function QuestionsPage() {
             explicit.
           </li>
           <li>
-            Respect each other. Don&apos;t harass or grief anyone, impersonate
-            people, or expose their private information.
+            Respect each other. Don&apos;t harass anyone, impersonate people, or
+            expose their private information.
           </li>
           <li>
             Respect our forum. Don&apos;t post spam or otherwise vandalize the
@@ -116,53 +143,53 @@ export default function QuestionsPage() {
           </li>
         </ul>
         <p>
-          These are not concrete terms with precise definitions — avoid even the
-          appearance of any of these things. If you&apos;re unsure, ask yourself
-          how you would feel if your post was featured on the front page of the
-          New York Times.
+          This is a public forum, and search engines may index these
+          discussions. Keep the language, links, and images safe for family and
+          friends.
         </p>
-        <p>
-          This is a public forum, and search engines index these discussions.
-          Keep the language, links, and images safe for family and friends.
-        </p>
+
         <h5 id="keep-it-tidy">Keep It Tidy</h5>
         <p>
           Make the effort to put things in the right place, so that we can spend
           more time discussing and less cleaning up. So:
         </p>
         <ul>
-          <li>Don&apos;t start a topic in the wrong category.</li>
+          <li>Don&apos;t start a topic in the wrong community.</li>
           <li>Don&apos;t cross-post the same thing in multiple topics.</li>
           <li>Don&apos;t post no-content replies.</li>
           <li>Don&apos;t divert a topic by changing it midstream.</li>
-          <li>
-            Don&apos;t sign your posts — every post has your profile information
-            attached to it.
-          </li>
         </ul>
-        <p>Rather than posting “+1” or “Agreed”, use the Like button.</p>
+        <p>
+          Rather than posting “+1” or “Agreed”, use the vote buttons on a post
+          or comment.
+        </p>
+
         <h5 id="post-only-your-own-stuff">Post Only Your Own Stuff</h5>
         <p>
           You may not post descriptions of, links to, or methods for stealing
           someone&apos;s intellectual property (software, video, audio, images),
-          or for breaking any other law.
+          or for breaking any other law. If you believe someone has posted your
+          work without permission, follow our{" "}
+          <Link
+            href="/legal/takedown"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Takedown Policy
+          </Link>
+          .
         </p>
-        <h5 id="powered-by-you">Powered by You</h5>
+
+        <h5 id="terms-of-use">Terms of Use</h5>
         <p>
-          This site is operated by your friendly local staff and you, the
-          community. If you have any further questions about how things should
-          work here, open a new topic in the site feedback category and
-          let&apos;s discuss! If there&apos;s a critical or urgent issue that
-          can&apos;t be handled by a meta topic or flag, contact us via the
-          staff page.
-        </p>
-        <h5 id="terms-of-service">Terms of Service</h5>
-        <p>
-          Yes, legalese is boring, but we must protect ourselves – and by
-          extension, you and your data – against unfriendly folks. We have a
-          Terms of Service describing your (and our) behavior and rights related
-          to content, privacy, and laws. To use this service, you must agree to
-          abide by our TOS.
+          To use this service, you must agree to our{" "}
+          <Link
+            href="/legal/terms-of-use"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Terms of Use
+          </Link>
+          . They describe your (and our) rights related to content, privacy, and
+          the law.
         </p>
         <p>
           Content adopted from{" "}
@@ -173,7 +200,3 @@ export default function QuestionsPage() {
     </>
   );
 }
-export const metadata = {
-  title: "Help Center",
-  description: "The help center for Artisanal Futures",
-};

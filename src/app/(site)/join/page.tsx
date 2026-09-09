@@ -115,19 +115,19 @@ export default async function JoinPage() {
           </li>
           <li>Please respect copyright and intellectual property rights.</li>
           <li>
-            Any disputes should be resolved amicably within the community.
+            Content concerns, including copyright, can be raised under our{" "}
+            <Link href="/legal/takedown">Takedown Policy</Link>. Other disputes
+            about the platform are governed by our{" "}
+            <Link href="/legal/terms-of-use">Terms of Use</Link>.
           </li>
         </ul>
 
         <h2>User Agreement</h2>
         <p>
           You agree to abide by our{" "}
-          <Link href="/legal/privacy">Privacy Policy</Link>,{" "}
-          <Link href="/legal/collective-agreement">
-            The Artisanal Futures Collective Agreement
-          </Link>
-          , and <Link href="/legal/terms-of-service">Terms of Service</Link>.
-          Please review them carefully.
+          <Link href="/legal/privacy">Privacy Policy</Link> and{" "}
+          <Link href="/legal/terms-of-use">Terms of Use</Link>. Please review
+          them carefully.
         </p>
 
         <h2>Support</h2>

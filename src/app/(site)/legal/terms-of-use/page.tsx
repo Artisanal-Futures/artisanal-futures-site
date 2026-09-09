@@ -14,7 +14,7 @@ export default function TermsPage() {
             <p className="tagline">Legal</p>
             <h1>Terms of Use</h1>
           </div>
-          <p className="description">Last updated: June 11th, 2026</p>
+          <p className="description">Last updated: September 9th, 2026</p>
         </div>
       </header>
 
@@ -24,12 +24,10 @@ export default function TermsPage() {
           at{" "}
           <a href="https://artisanalfutures.org">artisanalfutures.org</a> and its
           subdomains, the community forum at{" "}
-          <a href="https://forum.artisanalfutures.org">
-            forum.artisanalfutures.org
-          </a>
-          , the shop and product directory, surveys, and our applications such as
-          UPCY, our image generation app (together, the &quot;Services&quot;). To
-          use the Services, you must agree to these terms.
+          <Link href="/forums">artisanalfutures.org/forums</Link>, the shop and
+          product directory, surveys, and our applications such as UPCY, our
+          image generation app (together, the &quot;Services&quot;). To use the
+          Services, you must agree to these terms.
         </p>
         <p>
           ArtisanalFutures may offer other products and services under different
@@ -161,6 +159,11 @@ export default function TermsPage() {
             You may not submit content to the Services that violates the law,
             infringes anyone&apos;s intellectual property rights, violates
             anyone&apos;s privacy, or breaches agreements you have with others.
+          </li>
+          <li>
+            You may not submit content that presents another community&apos;s
+            traditional knowledge, designs, or practices as your own in a way
+            that harms the people or communities it comes from.
           </li>
           <li>
             You may not submit content to the Services containing malicious
@@ -385,10 +388,6 @@ export default function TermsPage() {
         </p>
         <h4 id="disputes">Disputes</h4>
         <p>
-          The Artisanal Futures Collective Agreement will govern any dispute
-          related to these terms or your use of the Services.
-        </p>
-        <p>
           You and ArtisanalFutures agree to seek injunctions related to these
           terms only in state or federal court in Michigan. Neither you nor
           ArtisanalFutures will object to jurisdiction, forum, or venue in those
@@ -451,7 +450,7 @@ export default function TermsPage() {
         </p>
         <h4 id="changes">Changes</h4>
         <p>
-          ArtisanalFutures last updated these terms on June 11, 2026, and may
+          ArtisanalFutures last updated these terms on September 9, 2026, and may
           update these terms again. ArtisanalFutures will post all updates to the
           Services. For updates that contain substantial changes, ArtisanalFutures
           agrees to e-mail you, if you&apos;ve created an account and provided a

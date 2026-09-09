@@ -14,7 +14,7 @@ export default function PrivacyPage() {
             <p className="tagline">Legal</p>
             <h1>Privacy Policy</h1>
           </div>
-          <p className="description">Last updated: June 10th, 2026</p>
+          <p className="description">Last updated: September 9th, 2026</p>
         </div>
       </header>
 
@@ -144,8 +144,9 @@ export default function PrivacyPage() {
           </li>
           <li>
             <span className="font-bold">Payments</span> (Stripe): if you make a
-            purchase. Payment card details are handled by Stripe; we do not
-            store full card numbers.
+            donation. Payment card details are handled by Stripe; we do not
+            store full card numbers. We do not process purchases from artisan
+            shops.
           </li>
           <li>
             <span className="font-bold">Abuse prevention</span> (hCaptcha): to
