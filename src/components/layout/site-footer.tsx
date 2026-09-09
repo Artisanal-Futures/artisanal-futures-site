@@ -88,6 +88,12 @@ export const SiteFooter = () => {
               Cookies Policy
             </Link>
             <Link
+              href="/legal/takedown"
+              className="text-muted-foreground/80 hover:text-foreground text-sm"
+            >
+              Takedown Policy
+            </Link>
+            <Link
               href="/legal/help-center"
               className="text-muted-foreground/80 hover:text-foreground text-sm"
             >

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Terms of Use",
   description: "The terms of use for Artisanal Futures",
@@ -184,8 +186,13 @@ export default function TermsPage() {
         <p>
           ArtisanalFutures reserves the right to change, redact, and delete
           content on the Services for any reason. If you believe someone has
-          submitted content to the Services in violation of these terms, contact
-          us immediately.
+          submitted content to the Services in violation of these terms,{" "}
+          <Link
+            href="/legal/takedown"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            contact us immediately
+          </Link>.
         </p>
         <h4 id="your-account">Your Account</h4>
         <p>
@@ -212,8 +219,13 @@ export default function TermsPage() {
         </p>
         <p>
           ArtisanalFutures may restrict, suspend, or close your account on the
-          Services according to its policy for handling copyright-related
-          takedown requests, or if ArtisanalFutures reasonably believes that
+          Services according to its{" "}
+          <Link
+            href="/legal/takedown"
+            className="text-primary font-medium underline underline-offset-4"
+          >
+            Takedown Policy
+          </Link>, or if ArtisanalFutures reasonably believes that
           you&apos;ve broken any rule in these terms.
         </p>
         <h4 id="your-content">Your Content</h4>
