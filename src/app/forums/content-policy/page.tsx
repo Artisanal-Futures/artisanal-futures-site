@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 export const metadata = {
-  title: 'Artisanal Futures Forums Content Policy',
-}
+  title: "Artisanal Futures Forums Content Policy",
+};
 
 export default function ContentPolicy() {
   return (
@@ -20,30 +22,17 @@ export default function ContentPolicy() {
             discussions and knowledge sharing around artisanal practices,
             sustainable crafts, and community-driven initiatives.
           </p>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            Data Privacy
-          </h2>
-          <p className="mb-4 text-muted-foreground">
-            We take your privacy seriously. Here&apos;s our commitment to
-            protecting your data:
+          <p className="mt-4 text-muted-foreground">
+            These are community guidelines. They sit alongside our{" "}
+            <Link
+              href="/legal/terms-of-use"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              Terms of Use
+            </Link>
+            , which are the binding rules for using Artisanal Futures. If the
+            two ever differ, the Terms of Use control.
           </p>
-          <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
-            <li>
-              We do not sell or share your personal information with third
-              parties
-            </li>
-            <li>
-              We only collect information necessary for forum functionality
-            </li>
-            <li>
-              Your data is used solely for operating and improving the forum
-              experience
-            </li>
-            <li>We implement security measures to protect your information</li>
-          </ul>
         </section>
 
         <section>
@@ -70,8 +59,25 @@ export default function ContentPolicy() {
           <p className="text-muted-foreground">
             We moderate content to maintain a safe and productive environment
             for artisans and community members. Content that violates our
-            guidelines may be removed, and repeated violations may result in
-            account suspension or termination.
+            guidelines or the Terms of Use may be removed, and repeated
+            violations may result in account suspension or termination.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-2xl font-semibold text-foreground">
+            Privacy
+          </h2>
+          <p className="text-muted-foreground">
+            How we collect, use, and share information on the forums is
+            described in our site{" "}
+            <Link
+              href="/legal/privacy"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              Privacy Policy
+            </Link>
+            .
           </p>
         </section>
 
@@ -80,9 +86,8 @@ export default function ContentPolicy() {
             Updates to Policy
           </h2>
           <p className="text-muted-foreground">
-            This content policy may be updated periodically. Users will be
-            notified of significant changes. Continued use of the forums
-            constitutes acceptance of the current policy.
+            This content policy may be updated periodically. Continued use of
+            the forums constitutes acceptance of the current policy.
           </p>
         </section>
 
@@ -91,12 +96,25 @@ export default function ContentPolicy() {
             Contact Us
           </h2>
           <p className="text-muted-foreground">
-            If you have questions about our content policy or need to report a
-            violation, please contact our moderation team through the
-            appropriate channels.
+            To report a violation, including copyright or misuse of traditional
+            craft knowledge, follow our{" "}
+            <Link
+              href="/legal/takedown"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              Takedown Policy
+            </Link>{" "}
+            or email{" "}
+            <a
+              href="mailto:support@artisanalfutures.org"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              support@artisanalfutures.org
+            </a>
+            .
           </p>
         </section>
       </div>
     </div>
-  )
+  );
 }

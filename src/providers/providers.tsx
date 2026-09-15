@@ -64,7 +64,7 @@ export function SiteProviders({ children }: { children: ReactNode }) {
         }}
         additionalFields={{
           terms: {
-            label: `I agree to Artisanal Futures's Terms of Service and Privacy Policy`,
+            label: `I agree to Artisanal Futures's Terms of Use and Privacy Policy`,
             type: "boolean", // Defines it as a checkbox
             required: true, // Optional: forces the checkbox to be checked
           },

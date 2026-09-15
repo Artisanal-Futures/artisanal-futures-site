@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 export const metadata = {
-  title: 'Artisanal Futures Forums Privacy Policy',
-}
+  title: "Artisanal Futures Forums Privacy Policy",
+};
 
 export default function PrivacyPolicy() {
   return (
@@ -15,66 +17,18 @@ export default function PrivacyPolicy() {
             Overview
           </h2>
           <p className="text-muted-foreground">
-            At Artisanal Futures Forums, we prioritize your privacy and are
-            committed to protecting your personal information. This privacy
-            policy explains how we handle data on our forums.
+            The community forum is part of Artisanal Futures. How we collect,
+            use, share, and retain information — including forum posts,
+            comments, votes, and related technical data — is described in our
+            site{" "}
+            <Link
+              href="/legal/privacy"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              Privacy Policy
+            </Link>
+            . That policy is the one that applies here.
           </p>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            Data Collection
-          </h2>
-          <p className="mb-4 text-muted-foreground">
-            We collect minimal information required for basic forum
-            functionality:
-          </p>
-          <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
-            <li>Basic account information (username, email)</li>
-            <li>Forum posts and comments you choose to make</li>
-            <li>Technical information necessary for site operation</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            How We Use Your Data
-          </h2>
-          <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
-            <li>To provide and maintain forum functionality</li>
-            <li>To enable community participation and discussion</li>
-            <li>To ensure forum security and prevent abuse</li>
-            <li>To improve user experience</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            Data Protection
-          </h2>
-          <p className="text-muted-foreground">
-            We implement security measures to protect your information and do
-            not:
-          </p>
-          <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
-            <li>Sell your personal information to third parties</li>
-            <li>Share your data with advertisers</li>
-            <li>Track your activity outside our forums</li>
-            <li>Store unnecessary personal information</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            Your Rights
-          </h2>
-          <p className="text-muted-foreground">You have the right to:</p>
-          <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
-            <li>Access your personal data</li>
-            <li>Request deletion of your account and data</li>
-            <li>Export your forum contributions</li>
-            <li>Update or correct your information</li>
-          </ul>
         </section>
 
         <section>
@@ -82,22 +36,36 @@ export default function PrivacyPolicy() {
             Cookies
           </h2>
           <p className="text-muted-foreground">
-            We use essential cookies only for forum functionality and user
-            sessions. No tracking or advertising cookies are used.
+            Cookies on the forums are the same strictly necessary cookies
+            described in our{" "}
+            <Link
+              href="/legal/cookies"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              Cookie Policy
+            </Link>
+            . We do not use cookies for personal tracking, advertising, or
+            analytics.
           </p>
         </section>
 
         <section className="rounded-lg bg-secondary p-6">
           <h2 className="mb-4 text-2xl font-semibold text-foreground">
-            Contact Information
+            Contact
           </h2>
           <p className="text-muted-foreground">
-            If you have questions about your privacy on Artisanal Futures Forums
-            or need to exercise your data rights, please contact our privacy
-            team through the appropriate support channels.
+            Questions about privacy, or requests to access, correct, or delete
+            personal information, can be sent to{" "}
+            <a
+              href="mailto:support@artisanalfutures.org"
+              className="text-primary font-medium underline underline-offset-4"
+            >
+              support@artisanalfutures.org
+            </a>
+            .
           </p>
         </section>
       </div>
     </div>
-  )
+  );
 }
