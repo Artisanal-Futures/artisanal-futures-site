@@ -1,7 +1,6 @@
 import {
   type Category,
   type Prisma,
-  type PrismaClient,
   type Service,
   type Shop,
 } from "generated/prisma";
@@ -20,6 +19,7 @@ import {
   searchCatalog,
 } from "~/lib/search/catalog-search";
 import { serviceSchema } from "~/lib/validators/services";
+import { getCategoriesWithParents } from "~/server/api/shared/categories";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 type ServiceWithRelations = Service & {
@@ -444,23 +444,3 @@ export const serviceRouter = createTRPCRouter({
       return { data: null, message: "Services deleted successfully" };
     }),
 });
-
-const getCategoriesWithParents = async (
-  db: PrismaClient,
-  categoryIds: string[] | undefined,
-): Promise<string[]> => {
-  if (!categoryIds || categoryIds.length === 0) {
-    return [];
-  }
-
-  const selectedCategories = await db.category.findMany({
-    where: { id: { in: categoryIds } },
-    select: { parentId: true },
-  });
-
-  const parentIds = selectedCategories
-    .map((cat) => cat.parentId)
-    .filter((id): id is string => id !== null);
-
-  return [...new Set([...categoryIds, ...parentIds])];
-};

@@ -26,7 +26,7 @@ type Props = {
 };
 
 export function ProductClient({ products, shops }: Props) {
-  const { isElevated } = usePermissions();
+  const { isElevated, isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -77,6 +77,16 @@ export function ProductClient({ products, shops }: Props) {
           Migrate Products
         </Link>
 
+        {isAdmin && (
+          <Link
+            href="/admin/csv-import?type=products"
+            className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
+            title="Bulk-create products from a CSV file"
+          >
+            Import CSV
+          </Link>
+        )}
+
         <Link
           href="/admin/products/new"
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
@@ -85,7 +95,7 @@ export function ProductClient({ products, shops }: Props) {
         </Link>
       </>
     ),
-    [],
+    [isAdmin],
   );
 
   const columnVisibility = useMemo(

@@ -10,6 +10,7 @@ import {
   IconDashboard,
   IconDatabase,
   IconDeviceMobileMessage,
+  IconFileSpreadsheet,
   IconFolder,
   IconGlobe,
   IconHeartHandshake,
@@ -117,6 +118,11 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
             title: "Categories",
             url: "/admin/categories",
             icon: IconFolder,
+          },
+          {
+            title: "CSV Import",
+            url: "/admin/csv-import",
+            icon: IconFileSpreadsheet,
           },
           {
             title: "Website Provisions",
