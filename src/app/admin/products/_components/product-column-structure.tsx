@@ -117,7 +117,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.priceInCents
+        {row.original.priceInCents != null
           ? `${row.original.currency ?? "USD"} ${(
               row.original.priceInCents / 100
             ).toFixed(2)}`
@@ -185,7 +185,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
   },
   {
     id: "priceStatus",
-    accessorFn: (row) => (row.priceInCents ? "set" : "missing"),
+    accessorFn: (row) => (row.priceInCents != null ? "set" : "missing"),
     header: () => null,
     cell: () => null,
     enableHiding: true,

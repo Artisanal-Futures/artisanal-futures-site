@@ -70,7 +70,7 @@ export function ServiceForm({
   const defaultValues: ServiceFormData = {
     name: initialData?.name ?? "",
     description: initialData?.description ?? "",
-    priceInCents: initialData?.priceInCents ?? 0,
+    priceInCents: initialData?.priceInCents ?? null,
     currency: (initialData?.currency as "USD" | "CAD" | "EUR" | "GBP") ?? "USD",
     tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
     attributeTags: initialData?.attributeTags ?? [],
@@ -380,7 +380,7 @@ export function ServiceForm({
                                 min="0"
                                 placeholder="19.99"
                                 value={
-                                  field.value != null && field.value !== 0
+                                  field.value != null
                                     ? (field.value / 100).toFixed(2)
                                     : ""
                                 }

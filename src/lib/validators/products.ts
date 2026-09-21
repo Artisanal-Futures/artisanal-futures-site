@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+import { optionalCents } from "~/lib/validators/optional-cents";
+
 export const productSchema = z.object({
   name: z.string().min(1, "Name is required."),
   description: z.string().min(1, "Description is required."),
-  priceInCents: z.coerce.number().int("Price must be a whole number of cents.").min(0, "Price cannot be negative.").max(100_000_000, "Price is too large.").optional().nullable(),
+  priceInCents: optionalCents,
   // Only USD is offered. Force every value (including legacy import currencies
   // like CAD/EUR/GBP) to USD, while keeping the enum type stable for the forms.
   currency: z.preprocess(() => "USD", z.enum(["USD", "CAD", "EUR", "GBP"])),

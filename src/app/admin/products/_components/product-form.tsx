@@ -71,7 +71,7 @@ export function ProductForm({
   const defaultValues: ProductFormData = {
     name: initialData?.name ?? "",
     description: initialData?.description ?? "",
-    priceInCents: initialData?.priceInCents ?? 0,
+    priceInCents: initialData?.priceInCents ?? null,
     currency: (initialData?.currency as "USD" | "CAD" | "EUR" | "GBP") ?? "USD",
     tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
     productUrl: initialData?.productUrl ?? "",
@@ -385,7 +385,7 @@ export function ProductForm({
                                 min="0"
                                 placeholder="19.99"
                                 value={
-                                  field.value != null && field.value !== 0
+                                  field.value != null
                                     ? (field.value / 100).toFixed(2)
                                     : ""
                                 }
