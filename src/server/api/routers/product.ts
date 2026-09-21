@@ -1,4 +1,4 @@
-import type { Category, Prisma, PrismaClient } from "generated/prisma";
+import type { Category, Prisma } from "generated/prisma";
 import type { ProductWithRelations } from "~/types/product";
 import {
   adminArtisanProcedure,
@@ -29,6 +29,7 @@ import {
   searchCatalog,
 } from "~/lib/search/catalog-search";
 import { productSchema } from "~/lib/validators/products";
+import { getCategoriesWithParents } from "~/server/api/shared/categories";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 export const productRouter = createTRPCRouter({
@@ -693,23 +694,3 @@ export const productRouter = createTRPCRouter({
       return { data: null, message: "Products deleted successfully" };
     }),
 });
-
-const getCategoriesWithParents = async (
-  db: PrismaClient,
-  categoryIds: string[] | undefined,
-): Promise<string[]> => {
-  if (!categoryIds || categoryIds.length === 0) {
-    return [];
-  }
-
-  const selectedCategories = await db.category.findMany({
-    where: { id: { in: categoryIds } },
-    select: { parentId: true },
-  });
-
-  const parentIds = selectedCategories
-    .map((cat) => cat.parentId)
-    .filter((id): id is string => id !== null);
-
-  return [...new Set([...categoryIds, ...parentIds])];
-};

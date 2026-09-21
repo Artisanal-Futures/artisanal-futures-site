@@ -25,7 +25,7 @@ type Props = {
 };
 
 export function ServiceClient({ services, shops }: Props) {
-  const { isElevated } = usePermissions();
+  const { isElevated, isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -61,6 +61,16 @@ export function ServiceClient({ services, shops }: Props) {
   const addButtonNode = useMemo(
     () => (
       <>
+        {isAdmin && (
+          <Link
+            href="/admin/csv-import?type=services"
+            className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
+            title="Bulk-create services from a CSV file"
+          >
+            Import CSV
+          </Link>
+        )}
+
         <Link
           href="/admin/services/new"
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
@@ -69,7 +79,7 @@ export function ServiceClient({ services, shops }: Props) {
         </Link>
       </>
     ),
-    [],
+    [isAdmin],
   );
 
   const columnVisibility = useMemo(

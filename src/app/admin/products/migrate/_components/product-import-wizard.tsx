@@ -696,8 +696,8 @@ export function ProductImportWizard({
                             </div>
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            {!!product.priceInCents
-                              ? formatPrice(product.priceInCents ?? 0)
+                            {product.priceInCents != null
+                              ? formatPrice(product.priceInCents)
                               : "N/A"}{" "}
                           </TableCell>
                         </TableRow>

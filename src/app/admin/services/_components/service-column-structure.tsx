@@ -111,7 +111,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
     ),
     cell: ({ row }) => (
       <span>
-        {row.original.priceInCents
+        {row.original.priceInCents != null
           ? `${row.original.currency ?? "USD"} ${(
               row.original.priceInCents / 100
             ).toFixed(2)}`

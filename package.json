@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "jest",
+    "test:csv": "node --import tsx --test src/lib/csv-import/*.test.ts",
     "build": "next build",
     "db:gen": "prisma generate --schema ./prisma",
     "db:pull": "prisma db pull --schema ./prisma",
