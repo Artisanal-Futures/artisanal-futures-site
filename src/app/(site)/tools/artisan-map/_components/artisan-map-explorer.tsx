@@ -11,6 +11,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { List, SlidersHorizontal } from "lucide-react";
 
 import type { MapShop } from "../_lib/types";
+import type { ShopMapCardPager } from "./shop-map-card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import {
   DrawerTitle,
 } from "~/components/ui/drawer";
 
+import { groupCoLocatedShops } from "../_lib/co-located";
 import { ArtisanMapLazy } from "./artisan-map-lazy";
 import { AttributeChecklist, MapSidebar, SearchBox } from "./map-sidebar";
 import { ShopMapCard } from "./shop-map-card";
@@ -122,6 +124,9 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     [filtered, selectedId],
   );
 
+  // Storefronts sharing one pin; the card pages through them.
+  const coLocated = useMemo(() => groupCoLocatedShops(filtered), [filtered]);
+
   // Drop a selection that was filtered out (or never existed).
   useEffect(() => {
     if (selectedId && !selectedShop) {
@@ -137,6 +142,21 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     },
     [updateUrl],
   );
+
+  /** Pager props for a shop's card, or undefined when it has the pin to itself. */
+  const pagerFor = (shop: MapShop): ShopMapCardPager | undefined => {
+    const group = coLocated.get(shop.id);
+    if (!group || group.length < 2) return undefined;
+    const index = group.findIndex((s) => s.id === shop.id);
+    const step = (delta: number) =>
+      selectShop(group[(index + delta + group.length) % group.length]!.id);
+    return {
+      index,
+      total: group.length,
+      onPrev: () => step(-1),
+      onNext: () => step(1),
+    };
+  };
 
   const setQuery = useCallback(
     (value: string) => updateUrl({ q: value || null }),
@@ -229,6 +249,7 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
             <ShopMapCard
               shop={shop}
               onClose={() => selectShop(null)}
+              pager={pagerFor(shop)}
               className="w-[300px]"
             />
           )}
@@ -237,7 +258,11 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
         {/* Mobile: selected shop bottom sheet */}
         {selectedShop ? (
           <div className="absolute inset-x-3 bottom-3 z-20 max-h-[70%] overflow-y-auto rounded-xl md:hidden">
-            <ShopMapCard shop={selectedShop} onClose={() => selectShop(null)} />
+            <ShopMapCard
+              shop={selectedShop}
+              onClose={() => selectShop(null)}
+              pager={pagerFor(selectedShop)}
+            />
           </div>
         ) : (
           <Button
