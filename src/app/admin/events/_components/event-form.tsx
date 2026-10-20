@@ -56,53 +56,53 @@ export function EventForm({ initialData, shops }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const imageFileInputRef = useRef<HTMLInputElement | null>(null);
   const createEvent = api.event.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.event.invalidate();
       router.push(`/admin/events/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create event.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create event.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating event, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating event, please wait..."),
+    }),
   });
 
   const updateEvent = api.event.update.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.event.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update event.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update event.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating event, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating event, please wait..."),
+    }),
   });
 
   const deleteEvent = api.event.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.event.invalidate();
       router.push("/admin/events");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete event.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete event.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting event, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting event, please wait..."),
+    }),
   });
   const defaultValues: EventFormData = {
     title: initialData?.title ?? "",
@@ -352,7 +352,7 @@ export function EventForm({ initialData, shops }: Props) {
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                deleteEvent.mutate(initialData?.id ?? "");
+                deleteEvent.mutate({ id: initialData?.id ?? "" });
               }}
               disabled={deleteEvent.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

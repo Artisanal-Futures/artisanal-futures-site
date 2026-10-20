@@ -34,5 +34,5 @@ export default async function AdminWebsitesPage() {
 }
 
 export const metadata = {
-  title: "Websites",
+  title: "Website Provisions",
 };

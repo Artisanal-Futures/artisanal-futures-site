@@ -4,13 +4,12 @@ import { WebsiteProvisionClient } from "./_components/website-provision-client";
 export default async function AdminWebsitesPage() {
   return (
     <>
-      <TrailHeader breadcrumbs={[{ label: "Website Provision" }]} />
+      <TrailHeader breadcrumbs={[{ label: "Website" }]} />
       <div className="admin-container">
         <div className="admin-header">
           <div>
-            <h1> Create Your Free Website</h1>
+            <h1>Create Your Free Website</h1>
             <p>
-              {" "}
               Every artisan deserves an online presence. We offer free website
               hosting so you can focus on your craft, not technical details.
             </p>
@@ -24,5 +23,5 @@ export default async function AdminWebsitesPage() {
 }
 
 export const metadata = {
-  title: "Website Provision",
+  title: "Website",
 };

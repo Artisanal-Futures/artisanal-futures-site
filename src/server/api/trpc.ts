@@ -145,7 +145,7 @@ export const adminArtisanProcedure = t.procedure
 
     if (!validRoles.includes(ctx.session.user.role))
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "You are not authorized to perform this action.",
       });
 
@@ -166,7 +166,7 @@ export const adminOnlyProcedure = t.procedure
 
     if (ctx.session.user.role !== "ADMIN") {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "Only administrators can perform this action.",
       });
     }
@@ -207,7 +207,7 @@ export const artisanProcedure = t.procedure
       ctx.session.user.role !== "ARTISAN" &&
       ctx.session.user.role !== "ADMIN"
     ) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({ code: "FORBIDDEN" });
     }
 
     const shopsAvailable = await ctx.db.shop.findMany({

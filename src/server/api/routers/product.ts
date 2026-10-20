@@ -64,7 +64,7 @@ export const productRouter = createTRPCRouter({
 
     if (!isUserAuthorized) {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "Product does not belong to current user",
       });
     }
@@ -247,7 +247,7 @@ export const productRouter = createTRPCRouter({
       );
       if (!isShopOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -306,7 +306,7 @@ export const productRouter = createTRPCRouter({
 
         if (!isShopOwner) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: `Shop ${shopId} does not belong to current user`,
           });
         }
@@ -419,7 +419,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }
@@ -429,7 +429,7 @@ export const productRouter = createTRPCRouter({
 
         if (!isShopOwner) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: "Shop does not belong to current user",
           });
         }
@@ -509,7 +509,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -556,7 +556,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Product does not belong to current user",
         });
       }
@@ -570,7 +570,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isTargetShopOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -670,7 +670,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }
@@ -689,22 +689,22 @@ export const productRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.string())
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const isUserAuthorized = await checkUserProductPermissions(
         ctx.session,
-        input,
+        input.id,
       );
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Product does not belong to current user",
         });
       }
 
       await ctx.db.product.delete({
-        where: { id: input },
+        where: { id: input.id },
       });
       return {
         data: null,
@@ -712,7 +712,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  deleteMultiple: adminArtisanProcedure
+  deleteMany: adminArtisanProcedure
     .input(z.array(z.string()))
     .mutation(async ({ ctx, input }) => {
       const isAuthorized = await Promise.all(
@@ -725,7 +725,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }

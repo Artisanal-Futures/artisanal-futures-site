@@ -96,53 +96,53 @@ export function ProductForm({
   });
 
   const createProduct = api.product.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.product.invalidate();
       router.push(`/admin/products/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create product.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create product.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating product, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating product, please wait..."),
+    }),
   });
 
   const updateProduct = api.product.update.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.product.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update product.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update product.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating product, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating product, please wait..."),
+    }),
   });
 
   const deleteProduct = api.product.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.product.invalidate();
       router.push("/admin/products");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete product.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete product.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting product, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting product, please wait..."),
+    }),
   });
 
   const handleSubmit = async (data: ProductFormData) => {
@@ -445,7 +445,7 @@ export function ProductForm({
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                deleteProduct.mutate(initialData?.id ?? "");
+                deleteProduct.mutate({ id: initialData?.id ?? "" });
               }}
               disabled={deleteProduct.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

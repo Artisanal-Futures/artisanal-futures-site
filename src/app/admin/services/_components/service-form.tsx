@@ -92,53 +92,53 @@ export function ServiceForm({
   });
 
   const createService = api.service.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.service.invalidate();
       router.push(`/admin/services/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create service.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create service.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating service, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating service, please wait..."),
+    }),
   });
 
   const updateService = api.service.update.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.service.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update service.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update service.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating service, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating service, please wait..."),
+    }),
   });
 
   const deleteService = api.service.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.service.invalidate();
       router.push("/admin/services");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete service.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete service.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting service, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting service, please wait..."),
+    }),
   });
 
   const handleSubmit = async (data: ServiceFormData) => {
@@ -454,7 +454,7 @@ export function ServiceForm({
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                deleteService.mutate(initialData?.id ?? "");
+                deleteService.mutate({ id: initialData?.id ?? "" });
               }}
               disabled={deleteService.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

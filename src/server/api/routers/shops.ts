@@ -585,7 +585,7 @@ export const shopsRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -654,22 +654,22 @@ export const shopsRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.object({ shopId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const isUserAuthorized = await checkUserShopPermissions(
         ctx.session,
-        input.shopId,
+        input.id,
       );
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
 
       await ctx.db.shop.delete({
-        where: { id: input.shopId },
+        where: { id: input.id },
       });
 
       return { data: null, message: "Shop deleted successfully" };
@@ -688,7 +688,7 @@ export const shopsRouter = createTRPCRouter({
         const unauthorized = shopIds.find((id) => !ownedIds.has(id));
         if (unauthorized) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: "One or more shops do not belong to current user",
           });
         }

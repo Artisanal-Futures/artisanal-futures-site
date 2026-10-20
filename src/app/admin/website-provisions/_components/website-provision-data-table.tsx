@@ -99,22 +99,24 @@ function WebsiteProvisionActions({ shop }: { shop: ShopWithWebsite }) {
   const hasWebsiteProvision = !!shop.websiteProvision;
   const router = useRouter();
   const deleteMutation = api.websiteProvision.delete.useMutation({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success("Website provision delete successfully.");
+    onSuccess: (_data, _input, context) => {
+      toast.success("Website provision delete successfully.", {
+        id: context?.toastId,
+      });
       void utils.websiteProvision.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(`Error deleting website provision ${error.message}`);
+    onError: (error, _input, context) => {
+      toast.error(`Error deleting website provision ${error.message}`, {
+        id: context?.toastId,
+      });
     },
     onSettled: () => {
       void utils.shop.getAllWithWebsites.invalidate();
     },
-    onMutate: () => {
-      toast.loading("Deleting website provision...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting website provision..."),
+    }),
   });
   return (
     <div className="flex items-center justify-end space-x-2">

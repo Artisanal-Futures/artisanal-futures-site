@@ -15,17 +15,20 @@ export function DeleteProductDialog(props: Props) {
   const apiUtils = api.useUtils();
 
   const deleteProduct = api.product.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Product deleted successfully.");
+    onMutate: () => ({
+      toastId: toast.loading("Deleting product, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.product.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? "Failed to delete product.");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 
-  const onSubmit = () => deleteProduct.mutate(props.productId);
+  const onSubmit = () => deleteProduct.mutate({ id: props.productId });
 
   return (
     <SingleActionDialog

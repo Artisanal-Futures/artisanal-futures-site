@@ -15,18 +15,16 @@ export function DeleteCategoryDialog(props: Props) {
   const apiUtils = api.useUtils();
 
   const deleteCategory = api.category.delete.useMutation({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success("Category deleted successfully.");
+    onMutate: () => ({
+      toastId: toast.loading("Deleting category, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.category.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete category.");
-    },
-    onMutate: () => {
-      toast.loading("Deleting category, please wait...");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 

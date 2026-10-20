@@ -76,20 +76,19 @@ export function WebsiteProvisionForm({ initialData, onSuccessCallback }: Props) 
   }, [shopData, form]);
 
   const requestMySite = api.websiteProvision.requestMySite.useMutation({
-    onSuccess: (_data, variables) => {
-      toast.dismiss();
+    onSuccess: (_data, variables, context) => {
       toast.success(
         `Site built — claim email sent to ${variables?.contactEmailOverride ?? "the shop's contact email"}`,
+        { id: context?.toastId },
       );
       onSuccessCallback?.();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message);
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
-    onMutate: () => {
-      toast.loading("Building the site on SimplePress...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Building the site on SimplePress..."),
+    }),
     onSettled: () => {
       void utils.shop.getAllWithWebsites.invalidate();
       void utils.websiteProvision.invalidate();

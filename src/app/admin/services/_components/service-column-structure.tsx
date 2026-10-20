@@ -139,9 +139,8 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
   },
 
   {
-    id: "options",
+    id: "actions",
     size: 220,
-    header: "Options",
     cell: ({ row }) => (
       <div className="flex gap-2">
         <Link

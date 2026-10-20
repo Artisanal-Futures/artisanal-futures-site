@@ -26,7 +26,7 @@ type Props = {
 };
 
 export function ProductClient({ products, shops }: Props) {
-  const { isElevated, isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -100,11 +100,10 @@ export function ProductClient({ products, shops }: Props) {
 
   const columnVisibility = useMemo(
     () => ({
-      user_id: isElevated,
       categoryIds: false,
       priceStatus: false,
     }),
-    [isElevated],
+    [],
   );
 
   return (

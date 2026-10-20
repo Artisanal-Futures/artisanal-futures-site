@@ -116,9 +116,8 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 280,
-    header: "Options",
     enableSorting: false,
     cell: ({ row }) => (
       <div className="flex gap-2">

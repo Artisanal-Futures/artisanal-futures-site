@@ -193,7 +193,7 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 60,
     header: "",
     enableSorting: false,

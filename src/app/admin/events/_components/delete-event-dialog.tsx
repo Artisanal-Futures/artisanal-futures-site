@@ -15,22 +15,20 @@ export function DeleteEventDialog(props: Props) {
   const apiUtils = api.useUtils();
 
   const deleteEvent = api.event.delete.useMutation({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success("Event deleted successfully.");
+    onMutate: () => ({
+      toastId: toast.loading("Deleting event, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.event.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete event.");
-    },
-    onMutate: () => {
-      toast.loading("Deleting event, please wait...");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 
-  const onSubmit = () => deleteEvent.mutate(props.eventId);
+  const onSubmit = () => deleteEvent.mutate({ id: props.eventId });
 
   return (
     <SingleActionDialog

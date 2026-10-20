@@ -1,16 +1,10 @@
-import { redirect } from "next/navigation";
+import { requireAdmin } from "../_lib/require-admin";
 
-import { getSession } from "~/server/better-auth/server";
-
-export default async function AdminCatchLayout({
+export default async function AdminCategoriesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
-
-  if (session?.user?.role !== "ADMIN") {
-    redirect("/unauthorized");
-  }
+  await requireAdmin();
   return <>{children}</>;
 }

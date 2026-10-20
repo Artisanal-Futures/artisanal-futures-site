@@ -74,9 +74,8 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 280,
-    header: "Options",
     enableSorting: false,
     cell: ({ row }) => (
       <div className="flex gap-2">

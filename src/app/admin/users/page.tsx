@@ -5,17 +5,19 @@ import { UsersClient } from "./_components/users-client";
 
 export default async function AdminUsersPage() {
   const users = await api.user.listUsers();
+  const count = users?.length ?? 0;
 
   return (
     <>
-      <TrailHeader
-        breadcrumbs={[{ label: `Platform Users (${users?.length ?? 0})` }]}
-      />
+      <TrailHeader breadcrumbs={[{ label: "Users" }]} />
       <div className="admin-container">
         <div className="admin-header">
           <div>
             <h1>Platform Users</h1>
-            <p>View and manage user roles and access on the platform</p>
+            <p>
+              {count} {count === 1 ? "user" : "users"}. View and manage user
+              roles and access on the platform
+            </p>
           </div>
         </div>
         <UsersClient users={users ?? []} />

@@ -10,7 +10,7 @@ export default function ForkImportPage() {
   return (
     <>
       <TrailHeader
-        breadcrumbs={[{ label: "Fork import" }]}
+        breadcrumbs={[{ label: "Fork Import" }]}
       />
       <div className="admin-container">
         <ForkImportClient />

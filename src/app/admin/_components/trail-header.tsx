@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Link from "next/link";
 
 import {
   Breadcrumb,
@@ -8,7 +9,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { SidebarTrigger } from "~/components/ui/sidebar";
 
@@ -38,8 +38,8 @@ export function TrailHeader({ breadcrumbs }: Props) {
             ) : (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/admin/dashboard">
-                    Dashboard
+                  <BreadcrumbLink asChild>
+                    <Link href="/admin/dashboard">Dashboard</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -47,8 +47,8 @@ export function TrailHeader({ breadcrumbs }: Props) {
                   breadcrumb.href ? (
                     <Fragment key={breadcrumb.label}>
                       <BreadcrumbItem key={breadcrumb.label}>
-                        <BreadcrumbLink href={breadcrumb.href}>
-                          {breadcrumb.label}
+                        <BreadcrumbLink asChild>
+                          <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
                         </BreadcrumbLink>
                       </BreadcrumbItem>
                       <BreadcrumbSeparator />
@@ -63,18 +63,6 @@ export function TrailHeader({ breadcrumbs }: Props) {
             )}
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/Artisanal-Futures/artisanal-futures-site"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
-          </Button>
-        </div>
       </div>
     </header>
   );

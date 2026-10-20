@@ -232,7 +232,7 @@ export const userColumns: ColumnDef<UserRow>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 60,
     header: "",
     enableSorting: false,

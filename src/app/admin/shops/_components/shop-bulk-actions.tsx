@@ -2,9 +2,10 @@
 
 import { XIcon } from "lucide-react";
 
+import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 
-import { DeleteMultipleShopsDialog } from "./delete-multiple-shops";
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedShopIds: string[];
@@ -12,6 +13,12 @@ type Props = {
 };
 
 export function ShopBulkActions({ selectedShopIds, onClear }: Props) {
+  const apiUtils = api.useUtils();
+
+  const deleteShops = api.shop.deleteMany.useMutation({
+    onSuccess: () => apiUtils.shop.invalidate(),
+  });
+
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 px-3 py-2">
       <span className="text-sm font-medium text-muted-foreground">
@@ -20,9 +27,12 @@ export function ShopBulkActions({ selectedShopIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <DeleteMultipleShopsDialog
-        shopIds={selectedShopIds}
-        onSuccessCallback={onClear}
+      <BulkDeleteButton
+        ids={selectedShopIds}
+        itemLabel={{ singular: "shop", plural: "shops" }}
+        onDelete={deleteShops.mutateAsync}
+        isPending={deleteShops.isPending}
+        onSuccess={onClear}
       />
 
       <div className="h-4 w-px bg-border" />

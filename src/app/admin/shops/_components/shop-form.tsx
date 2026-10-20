@@ -101,52 +101,52 @@ export function ShopForm({
   });
 
   const updateShop = api.shop.update.useMutation({
-    onSuccess: ({ data, message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ data, message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.shop.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating shop, please wait..."),
+    }),
   });
 
   const createShop = api.shop.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.push(`/admin/shops/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating shop, please wait..."),
+    }),
   });
 
   const deleteShop = api.shop.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.push("/admin/shops");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting shop, please wait..."),
+    }),
   });
 
   const imageUploader = useUploadFile({
@@ -579,7 +579,7 @@ export function ShopForm({
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                deleteShop.mutate({ shopId: initialData?.id ?? "" });
+                deleteShop.mutate({ id: initialData?.id ?? "" });
               }}
               disabled={deleteShop.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

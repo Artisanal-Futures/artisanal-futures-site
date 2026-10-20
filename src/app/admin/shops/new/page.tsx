@@ -9,7 +9,7 @@ export default async function NewShopPage() {
 
   const userRole = session?.user.role ?? "ARTISAN";
 
-  // Admin-only: artisans would receive UNAUTHORIZED from this procedure.
+  // Admin-only: artisans would receive FORBIDDEN from this procedure.
   const potentialShopOwners =
     userRole === "ADMIN" ? await api.shop.getShopOwners() : [];
 

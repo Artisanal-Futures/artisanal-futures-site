@@ -15,17 +15,20 @@ export function DeleteServiceDialog(props: Props) {
   const apiUtils = api.useUtils();
 
   const deleteService = api.service.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Service deleted successfully.");
+    onMutate: () => ({
+      toastId: toast.loading("Deleting service, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.service.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? "Failed to delete service.");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 
-  const onSubmit = () => deleteService.mutate(props.serviceId);
+  const onSubmit = () => deleteService.mutate({ id: props.serviceId });
 
   return (
     <SingleActionDialog

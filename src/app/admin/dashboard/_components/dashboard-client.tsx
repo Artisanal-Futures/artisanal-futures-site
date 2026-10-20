@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { UPCY_BASE_URL } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import {
@@ -803,7 +804,7 @@ export function DashboardClient({
 
           {/* UPCY */}
           <a
-            href="https://generate.dev.artisanalfutures.org/"
+            href={UPCY_BASE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="group border-border bg-card hover:border-ring/30 flex flex-col gap-4 rounded-xl border p-6 transition-all hover:shadow-md"

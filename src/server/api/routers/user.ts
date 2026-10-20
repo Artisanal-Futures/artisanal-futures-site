@@ -240,9 +240,9 @@ export const userRouter = createTRPCRouter({
    * the "Deleted User" sentinel account so threads stay readable.
    */
   delete: adminOnlyProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { userId } = input;
+      const { id: userId } = input;
 
       if (userId === ctx.session.user.id) {
         throw new TRPCError({

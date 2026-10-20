@@ -114,11 +114,11 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
   };
 
   const previewProducts = api.csvImport.previewProducts.useMutation({
-    onMutate: () => {
-      toast.loading("Analyzing rows...");
-    },
-    onSuccess: (result) => {
-      toast.dismiss();
+    onMutate: () => ({
+      toastId: toast.loading("Analyzing rows..."),
+    }),
+    onSuccess: (result, _input, context) => {
+      toast.dismiss(context?.toastId);
       setPreview(result);
       setOverrides((prev) => {
         const stillDuplicate = new Set(
@@ -130,18 +130,19 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
       });
       setStep("review");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to analyze file");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to analyze file", {
+        id: context?.toastId,
+      });
     },
   });
 
   const previewServices = api.csvImport.previewServices.useMutation({
-    onMutate: () => {
-      toast.loading("Analyzing rows...");
-    },
-    onSuccess: (result) => {
-      toast.dismiss();
+    onMutate: () => ({
+      toastId: toast.loading("Analyzing rows..."),
+    }),
+    onSuccess: (result, _input, context) => {
+      toast.dismiss(context?.toastId);
       setPreview(result);
       setOverrides((prev) => {
         const stillDuplicate = new Set(
@@ -153,9 +154,10 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
       });
       setStep("review");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to analyze file");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to analyze file", {
+        id: context?.toastId,
+      });
     },
   });
 
@@ -185,42 +187,44 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
   };
 
   const commitProducts = api.csvImport.commitProducts.useMutation({
-    onMutate: () => {
-      toast.loading("Creating products...");
-    },
-    onSuccess: (result) => {
-      toast.dismiss();
+    onMutate: () => ({
+      toastId: toast.loading("Creating products..."),
+    }),
+    onSuccess: (result, _input, context) => {
       toast.success(
         `Created ${result.createdCount} ${itemsLabel("products", result.createdCount)}`,
+        { id: context?.toastId },
       );
       void apiUtils.product.invalidate();
       router.refresh();
       setCommitResult(result);
       setStep("success");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to import products");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to import products", {
+        id: context?.toastId,
+      });
     },
   });
 
   const commitServices = api.csvImport.commitServices.useMutation({
-    onMutate: () => {
-      toast.loading("Creating services...");
-    },
-    onSuccess: (result) => {
-      toast.dismiss();
+    onMutate: () => ({
+      toastId: toast.loading("Creating services..."),
+    }),
+    onSuccess: (result, _input, context) => {
       toast.success(
         `Created ${result.createdCount} ${itemsLabel("services", result.createdCount)}`,
+        { id: context?.toastId },
       );
       void apiUtils.service.invalidate();
       router.refresh();
       setCommitResult(result);
       setStep("success");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to import services");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to import services", {
+        id: context?.toastId,
+      });
     },
   });
 

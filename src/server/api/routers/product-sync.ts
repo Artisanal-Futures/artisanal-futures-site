@@ -119,7 +119,7 @@ const syncUrlInput = z
 function assertShopAccess(ctx: Ctx, shopId: string) {
   if (!allowedShopIds(ctx).includes(shopId)) {
     throw new TRPCError({
-      code: "UNAUTHORIZED",
+      code: "FORBIDDEN",
       message: "That shop does not belong to you.",
     });
   }

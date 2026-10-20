@@ -5,17 +5,19 @@ import { SurveyClient } from "./_components/survey-client";
 
 export default async function SurveysAdminPage() {
   const surveys = await api.survey.getAll();
+  const count = surveys?.length ?? 0;
 
   return (
     <>
-      <TrailHeader
-        breadcrumbs={[{ label: `Surveys (${surveys?.length ?? 0})` }]}
-      />
+      <TrailHeader breadcrumbs={[{ label: "Surveys" }]} />
       <div className="admin-container">
         <div className="admin-header">
           <div>
             <h1>All Artisan Surveys</h1>
-            <p>Manage surveys for artisans of AF</p>
+            <p>
+              {count} {count === 1 ? "survey" : "surveys"}. Manage surveys for
+              artisans of AF
+            </p>
           </div>
         </div>
         <SurveyClient surveys={surveys} />

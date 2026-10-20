@@ -2,9 +2,10 @@
 
 import { XIcon } from "lucide-react";
 
+import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 
-import { DeleteMultipleInvitesDialog } from "./delete-multiple-invites";
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedInviteIds: string[];
@@ -12,6 +13,12 @@ type Props = {
 };
 
 export function InviteBulkActions({ selectedInviteIds, onClear }: Props) {
+  const apiUtils = api.useUtils();
+
+  const deleteInvites = api.invite.deleteMany.useMutation({
+    onSuccess: () => apiUtils.invite.invalidate(),
+  });
+
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 px-3 py-2">
       <span className="text-sm font-medium text-muted-foreground">
@@ -20,9 +27,12 @@ export function InviteBulkActions({ selectedInviteIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <DeleteMultipleInvitesDialog
-        inviteIds={selectedInviteIds}
-        onSuccessCallback={onClear}
+      <BulkDeleteButton
+        ids={selectedInviteIds}
+        itemLabel={{ singular: "invite", plural: "invites" }}
+        onDelete={deleteInvites.mutateAsync}
+        isPending={deleteInvites.isPending}
+        onSuccess={onClear}
       />
 
       <div className="h-4 w-px bg-border" />

@@ -18,6 +18,7 @@ import {
   IconMessageCircle,
   IconNotebook,
   IconPackage,
+  IconRecycle,
   IconRefresh,
   IconShoppingCart,
   IconSparkles,
@@ -27,6 +28,7 @@ import {
 
 import type { Session } from "~/server/better-auth/config";
 import { env } from "~/env";
+import { UPCY_ADMIN_URL } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 import {
   Sidebar,
@@ -144,8 +146,13 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
           },
 
           {
+            title: "Upcycling",
+            url: "/admin/upcycling",
+            icon: IconRecycle,
+          },
+          {
             title: "UPCY Admin",
-            url: "https://generate.dev.artisanalfutures.org/admin",
+            url: UPCY_ADMIN_URL,
             icon: IconSparkles,
           },
 

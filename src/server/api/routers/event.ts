@@ -156,8 +156,8 @@ export const eventRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: id }) => {
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input: { id } }) => {
       const existing = await ctx.db.event.findUnique({
         where: { id },
         select: { shopId: true },

@@ -54,7 +54,7 @@ export default async function AdminUserDetailPage({ params }: Props) {
     <>
       <TrailHeader
         breadcrumbs={[
-          { label: "Platform Users", href: "/admin/users" },
+          { label: "Users", href: "/admin/users" },
           { label: user.name ?? user.email ?? id },
         ]}
       />

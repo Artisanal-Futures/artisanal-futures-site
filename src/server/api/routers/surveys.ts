@@ -75,7 +75,7 @@ export const surveysRouter = createTRPCRouter({
 
       if (!isShopAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -130,7 +130,7 @@ export const surveysRouter = createTRPCRouter({
         ctx.session.user.role !== "ADMIN"
       ) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "You are not authorized to update this survey",
         });
       }
@@ -142,7 +142,7 @@ export const surveysRouter = createTRPCRouter({
 
       if (!isShopAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -176,16 +176,16 @@ export const surveysRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.object({ surveyId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const survey = await ctx.db.survey.findFirst({
-        where: { id: input.surveyId },
+        where: { id: input.id },
       });
 
       if (!survey) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "surveyId is required",
+          code: "NOT_FOUND",
+          message: "Survey not found.",
         });
       }
 
@@ -194,14 +194,14 @@ export const surveysRouter = createTRPCRouter({
         ctx.session.user.role !== "ADMIN"
       ) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "You are not authorized to delete this survey",
         });
       }
 
       const deletedSurvey = await ctx.db.survey.delete({
         where: {
-          id: input.surveyId,
+          id: input.id,
         },
       });
 
@@ -225,7 +225,7 @@ export const surveysRouter = createTRPCRouter({
         );
         if (unauthorized) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: "You are not authorized to delete one or more of these surveys",
           });
         }

@@ -21,7 +21,7 @@ export default async function EditShopPage({ params }: Props) {
   // `shop.get` is public, so it returns other artisans' public shops too.
   if (userRole !== "ADMIN" && shop.ownerId !== session?.user.id) notFound();
 
-  // Admin-only procedures: artisans would receive UNAUTHORIZED from these.
+  // Admin-only procedures: artisans would receive FORBIDDEN from these.
   const potentialShopOwners =
     userRole === "ADMIN" ? await api.shop.getShopOwners() : [];
   const privateContact =
