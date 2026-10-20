@@ -1,13 +1,40 @@
 import Link from "next/link";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+import { shopPath } from "~/lib/seo/paths";
+import { collectionPageSchema } from "~/lib/seo/schema";
+import {
+  getLocationLandingPages,
+  getTagLandingPages,
+} from "~/server/seo/landing-pages";
 import { api } from "~/trpc/server";
+import { JsonLd } from "~/components/seo/json-ld";
+import { BrowseLandingLinks } from "~/app/(site)/(shops-goods-services)/shops/_components/landing-page";
 import { ShopCard } from "~/app/(site)/(shops-goods-services)/shops/_components/shop-card";
+
+const DESCRIPTION = "Browse all our artisans' stores";
 
 export default async function ShopsPage() {
   const shops = await api.shop.getAllPublic();
+  // Only landing pages with enough shops exist; none yet renders nothing.
+  const [locations, tags] = await Promise.all([
+    getLocationLandingPages().catch(() => []),
+    getTagLandingPages().catch(() => []),
+  ]);
 
   return (
     <>
+      <JsonLd
+        data={collectionPageSchema({
+          name: "Artisan shops",
+          description: DESCRIPTION,
+          path: "/shops",
+          items: shops.map((shop) => ({
+            name: shop.name,
+            path: shopPath(shop),
+          })),
+        })}
+      />
       <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -47,12 +74,16 @@ export default async function ShopsPage() {
             ))}
           </div>
         )}
+        <BrowseLandingLinks locations={locations} tags={tags} />
       </section>
     </>
   );
 }
 
-export const metadata = {
-  title: "Shops",
-  description: "Browse all our artisans' stores",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Shops",
+    description: DESCRIPTION,
+    path: "/shops",
+  });
+}

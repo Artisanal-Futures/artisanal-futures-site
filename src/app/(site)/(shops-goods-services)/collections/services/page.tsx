@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { CategoryType } from "generated/prisma";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { api } from "~/trpc/server";
 
 import { ProductSearch } from "../../_components/product-search";
@@ -37,7 +38,10 @@ export default async function ServiceCategoriesPage() {
   );
 }
 
-export const metadata = {
-  title: "Service Categories",
-  description: "Browse all our artisans' services by category",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Service Categories",
+    description: "Browse all our artisans' services by category",
+    path: "/collections/services",
+  });
+}

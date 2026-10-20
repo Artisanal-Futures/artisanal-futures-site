@@ -9,8 +9,11 @@ import {
   TwitterShareButton,
 } from "react-share";
 
+import { absoluteUrl } from "~/lib/seo/site-url";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
+
+const DONATE_URL = absoluteUrl("/donate");
 
 type Props = {
   url?: string;
@@ -39,11 +42,10 @@ export function SocialShareButtons({
     ) {
       const urlForCheck =
         (url ?? (typeof window !== "undefined" ? window.location.href : "")) ||
-        "https://artisanalfutures.org/donate";
+        DONATE_URL;
       const payload = { title, text: description, url: urlForCheck };
       const canUseShare =
-        typeof navigator.canShare !== "function" ||
-        navigator.canShare(payload);
+        typeof navigator.canShare !== "function" || navigator.canShare(payload);
       setHasNativeShare(canUseShare);
     }
   }, [url, title, description]);
@@ -87,7 +89,7 @@ export function SocialShareButtons({
         )}
         <div className={buttonClasses}>
           <FacebookShareButton
-            url={`https://artisanalfutures.org/donate`}
+            url={DONATE_URL}
             className={buttonClasses}
             title="Donate to Artisanal Futures!"
           >
@@ -102,7 +104,7 @@ export function SocialShareButtons({
         </div>
         <div className={buttonClasses}>
           <TwitterShareButton
-            url={`https://artisanalfutures.org/donate`}
+            url={DONATE_URL}
             title={title}
             className={buttonClasses}
           >
@@ -111,8 +113,8 @@ export function SocialShareButtons({
         </div>
         <div className={buttonClasses}>
           <LinkedinShareButton
-            url={`https://artisanalfutures.org/donate`}
-            source={`https://artisanalfutures.org/donate`}
+            url={DONATE_URL}
+            source={DONATE_URL}
             title={title}
             summary={description}
             className={buttonClasses}

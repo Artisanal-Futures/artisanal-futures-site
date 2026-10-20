@@ -275,6 +275,35 @@ exports.Prisma.ProductScalarFieldEnum = {
   manualFields: 'manualFields'
 };
 
+exports.Prisma.SiteSettingsScalarFieldEnum = {
+  id: 'id',
+  siteName: 'siteName',
+  alternateNames: 'alternateNames',
+  tagline: 'tagline',
+  defaultTitle: 'defaultTitle',
+  defaultDescription: 'defaultDescription',
+  defaultOgImage: 'defaultOgImage',
+  logo: 'logo',
+  contactEmail: 'contactEmail',
+  socialLinks: 'socialLinks',
+  twitterHandle: 'twitterHandle',
+  googleVerification: 'googleVerification',
+  bingVerification: 'bingVerification',
+  allowAiCrawlers: 'allowAiCrawlers',
+  llmsIntro: 'llmsIntro',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PageSeoScalarFieldEnum = {
+  id: 'id',
+  path: 'path',
+  title: 'title',
+  description: 'description',
+  ogImage: 'ogImage',
+  noIndex: 'noIndex',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ShopScalarFieldEnum = {
   id: 'id',
   ownerName: 'ownerName',
@@ -292,6 +321,13 @@ exports.Prisma.ShopScalarFieldEnum = {
   attributeTags: 'attributeTags',
   name: 'name',
   isPublic: 'isPublic',
+  slug: 'slug',
+  previousSlugs: 'previousSlugs',
+  socialLinks: 'socialLinks',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  seoImage: 'seoImage',
+  seoNoIndex: 'seoNoIndex',
   syncPlatform: 'syncPlatform',
   syncEnabled: 'syncEnabled',
   syncUrl: 'syncUrl',
@@ -1097,6 +1133,8 @@ exports.Prisma.ModelName = {
   ProductSyncProposal: 'ProductSyncProposal',
   Service: 'Service',
   Product: 'Product',
+  SiteSettings: 'SiteSettings',
+  PageSeo: 'PageSeo',
   Shop: 'Shop',
   ShopAddress: 'ShopAddress',
   ShopPrivateContact: 'ShopPrivateContact',

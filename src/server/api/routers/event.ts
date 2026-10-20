@@ -12,6 +12,7 @@ import {
 // Only the shop fields the public event UI renders (name + logo).
 const publicEventShopSelect = {
   id: true,
+  slug: true,
   name: true,
   logoPhoto: true,
 } as const;

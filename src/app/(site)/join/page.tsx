@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 
@@ -140,6 +141,11 @@ export default async function JoinPage() {
   );
 }
 
-export const metadata = {
-  title: "Join Artisanal Futures",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Join Our Artisan Network",
+    description:
+      "Interested in joining Artisanal Futures? Learn how worker-owned businesses, collectives and artisans can list their shops on our platform.",
+    path: "/join",
+  });
+}

@@ -6,14 +6,16 @@ import { contactRouter } from "./routers/contact";
 import { csvImportRouter } from "./routers/csv-import";
 import { eventRouter } from "./routers/event";
 import { forumRouter } from "./routers/forum";
-import { inviteRouter } from "./routers/invite";
 import { forumSubredditRouter } from "./routers/forum-subreddit";
+import { inviteRouter } from "./routers/invite";
 import { migrationRouter } from "./routers/migration";
 import { onboardingRouter } from "./routers/onboarding";
+import { pageSeoRouter } from "./routers/page-seo";
 import { productRouter } from "./routers/product";
 import { productSyncRouter } from "./routers/product-sync";
 import { serviceRouter } from "./routers/service";
 import { shopsRouter } from "./routers/shops";
+import { siteSettingsRouter } from "./routers/site-settings";
 import { surveysRouter } from "./routers/surveys";
 import { upcyclingRouter } from "./routers/upcycling";
 import { userRouter } from "./routers/user";
@@ -45,6 +47,8 @@ export const appRouter = createTRPCRouter({
   event: eventRouter,
   contact: contactRouter,
   csvImport: csvImportRouter,
+  siteSettings: siteSettingsRouter,
+  pageSeo: pageSeoRouter,
 });
 
 // export type definition of API

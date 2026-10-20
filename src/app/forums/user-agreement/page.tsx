@@ -1,8 +1,13 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Artisanal Futures Forums User Agreement",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Forums User Agreement",
+    path: "/forums/user-agreement",
+  });
+}
 
 export default function UserAgreement() {
   return (

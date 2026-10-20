@@ -10,6 +10,7 @@
 
 export type MapShopLocation = {
   id: string;
+  slug: string | null;
   name: string;
   ownerName: string;
   logoPhoto: string | null;

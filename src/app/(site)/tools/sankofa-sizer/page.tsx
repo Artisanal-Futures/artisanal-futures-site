@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { Link as LinkIcon } from "lucide-react";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 import { BodyPartsUI } from "./_components/body-parts-ui";
 import { BodyMeasurements } from "./_components/measurements-ui";
 import { VirtualPattern } from "./_components/virtual-pattern";
 
-export const metadata = {
-  title: "Sankofa Sizer",
-  description:
-    "Sankofa Sizer is a tool to help you measure your body and generate a virtual pattern. ",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Sankofa Sizer",
+    description:
+      "Sankofa Sizer is a tool to help you measure your body and generate a virtual pattern.",
+    path: "/tools/sankofa-sizer",
+  });
+}
 export default function SankofaSizer() {
   return (
     <>

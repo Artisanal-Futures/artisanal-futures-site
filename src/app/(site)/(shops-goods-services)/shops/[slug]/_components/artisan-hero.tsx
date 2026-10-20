@@ -1,15 +1,66 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ExternalLink, Globe, Mail, MapPin, Phone } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { getInitials } from "~/lib/get-initials";
 import { Badge } from "~/components/ui/badge";
 import { Separator } from "~/components/ui/separator";
-import { getInitials } from "~/lib/get-initials";
 
 type Props = {
   shop: NonNullable<RouterOutputs["shop"]["get"]>;
+  /** City (else state) landing page for this shop, if one qualifies. */
+  locationPath?: string | null;
+  /** Landing page per attribute tag, for the tags that qualify. */
+  tagPaths?: Record<string, string>;
 };
-export function ArtisanHero({ shop }: Props) {
+
+/** "https://www.example.com/shop" -> "example.com" */
+function websiteDomain(website: string) {
+  try {
+    const url = new URL(
+      /^https?:\/\//i.test(website) ? website : `https://${website}`,
+    );
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return website.replace(/^https?:\/\//, "");
+  }
+}
+
+/** Short, factual summary of the shop; any fact without data is skipped. */
+function getFacts(shop: Props["shop"], locationPath?: string | null) {
+  const location = [shop.address?.city, shop.address?.state]
+    .filter(Boolean)
+    .join(", ");
+
+  // Owners/admins also get hidden items back from shop.get; only public ones
+  // describe what the shop sells.
+  const categories = [
+    ...new Set(
+      [...shop.products, ...shop.services]
+        .filter((item) => item.isPublic)
+        .flatMap((item) => item.categories.map((category) => category.name)),
+    ),
+  ].sort((a, b) => a.localeCompare(b));
+
+  return [
+    { label: "Location", value: location, href: locationPath ?? undefined },
+    { label: "What they make", value: categories.slice(0, 6).join(", ") },
+    { label: "Member since", value: String(shop.createdAt.getFullYear()) },
+    {
+      label: "Website",
+      value: shop.website ? websiteDomain(shop.website) : "",
+    },
+  ].filter((fact) => fact.value) as {
+    label: string;
+    value: string;
+    href?: string;
+  }[];
+}
+
+export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
+  const facts = getFacts(shop, locationPath);
+
   return (
     <section className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16">
       {/* Left: Artisan Photo + Identity */}
@@ -32,33 +83,30 @@ export function ArtisanHero({ shop }: Props) {
           </div>
         )}
 
-        {/* Business logo + name (small, beneath the person) */}
-        <div className="flex items-center gap-3">
-          {shop?.logoPhoto && (
-            <div className="border-border relative size-9 shrink-0 overflow-hidden rounded-md border">
-              <Image
-                src={shop?.logoPhoto ?? "/placeholder.svg"}
-                alt={`${shop.name} logo`}
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
-          <span className="text-muted-foreground text-sm font-medium">
-            {shop?.name}
-          </span>
-        </div>
+        {/* Business logo (small, beneath the person). The name lives in the h1. */}
+        {shop?.logoPhoto && (
+          <div className="border-border relative size-12 shrink-0 overflow-hidden rounded-md border">
+            <Image
+              src={shop?.logoPhoto ?? "/placeholder.svg"}
+              alt={`${shop.name} logo`}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
       </div>
 
       {/* Right: Name, bio, details */}
       <div className="flex flex-1 flex-col gap-6">
-        {/* Owner Name & Visit Website CTA */}
+        {/* Shop name, owner & Visit Website CTA */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-foreground text-3xl font-bold tracking-tight text-balance lg:text-4xl">
-              {shop?.ownerName}
+              {shop?.name}
             </h1>
-            <p className="text-muted-foreground mt-1 text-base">{shop?.name}</p>
+            <p className="text-muted-foreground mt-1 text-base">
+              by {shop?.ownerName}
+            </p>
           </div>
           {shop?.website && (
             <a
@@ -72,6 +120,36 @@ export function ArtisanHero({ shop }: Props) {
             </a>
           )}
         </div>
+
+        {/* At a glance */}
+        {facts.length > 0 && (
+          <div>
+            <h2 className="text-muted-foreground mb-3 text-xs font-semibold tracking-widest uppercase">
+              At a glance
+            </h2>
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
+              {facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt className="text-muted-foreground text-xs">
+                    {fact.label}
+                  </dt>
+                  <dd className="text-foreground text-sm font-medium">
+                    {fact.href ? (
+                      <Link
+                        href={fact.href}
+                        className="underline-offset-2 hover:underline"
+                      >
+                        {fact.value}
+                      </Link>
+                    ) : (
+                      fact.value
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
 
         {/* Bio */}
         {shop?.bio && (
@@ -95,15 +173,24 @@ export function ArtisanHero({ shop }: Props) {
         {/* Tags */}
         {shop?.attributeTags && shop?.attributeTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {shop.attributeTags.map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="rounded-full px-3 py-1 text-xs font-normal"
-              >
-                {tag}
-              </Badge>
-            ))}
+            {shop.attributeTags.map((tag) => {
+              const badge = (
+                <Badge
+                  variant="secondary"
+                  className="rounded-full px-3 py-1 text-xs font-normal"
+                >
+                  {tag}
+                </Badge>
+              );
+              const href = tagPaths[tag];
+              return href ? (
+                <Link key={tag} href={href}>
+                  {badge}
+                </Link>
+              ) : (
+                <span key={tag}>{badge}</span>
+              );
+            })}
           </div>
         )}
 

@@ -23,6 +23,7 @@
     "check-store-feed": "tsx scripts/check-store-feed.ts",
     "dedupe-products": "tsx scripts/dedupe-products.ts",
     "geocode-shops": "tsx --env-file=.env scripts/geocode-shops.ts",
+    "backfill-shop-slugs": "tsx --env-file=.env scripts/backfill-shop-slugs.ts",
     "docs:seed": "tsx --env-file=.env --env-file=.env.docs scripts/docs/seed-demo.ts",
     "docs:shots": "dotenv -e .env.docs -e .env -- playwright test --config playwright.config.ts"
   },
@@ -230,6 +231,7 @@
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.19.2",
+    "schema-dts": "^2.1.0",
     "tailwindcss": "^4.2.0",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.21.0",

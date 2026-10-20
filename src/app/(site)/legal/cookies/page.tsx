@@ -1,3 +1,5 @@
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 export default function CookiePolicyPage() {
   return (
     <>
@@ -90,7 +92,10 @@ export default function CookiePolicyPage() {
     </>
   );
 }
-export const metadata = {
-  title: "Cookie Policy",
-  description: "The cookie policy for Artisanal Futures",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Cookie Policy",
+    description: "The cookie policy for Artisanal Futures",
+    path: "/legal/cookies",
+  });
+}

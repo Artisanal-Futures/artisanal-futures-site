@@ -1,3 +1,5 @@
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 import { CalculatorClient } from "./_components/calculator-client";
 
 export default function ShopRateCalculator() {
@@ -23,6 +25,11 @@ export default function ShopRateCalculator() {
   );
 }
 
-export const metadata = {
-  title: "Shop Rate Calculator",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Shop Rate Calculator",
+    description:
+      "Work out a sustainable hourly shop rate for your artisan business with this free shop rate calculator.",
+    path: "/tools/shop-rate-calculator",
+  });
+}

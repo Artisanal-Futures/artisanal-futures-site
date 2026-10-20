@@ -5,6 +5,7 @@ import { ExternalLink, Link2, Mail, MapPin, Phone, X } from "lucide-react";
 import { toast } from "sonner";
 
 import type { MapShop } from "../_lib/types";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -163,7 +164,7 @@ export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
           </Button>
         )}
         <Button asChild size="sm" className="flex-1">
-          <Link href={`/shops/${shop.id}`}>View profile</Link>
+          <Link href={shopPath(shop)}>View profile</Link>
         </Button>
         <Button
           type="button"

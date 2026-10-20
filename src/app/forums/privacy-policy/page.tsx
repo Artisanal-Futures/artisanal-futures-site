@@ -1,8 +1,13 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Artisanal Futures Forums Privacy Policy",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Forums Privacy Policy",
+    path: "/forums/privacy-policy",
+  });
+}
 
 export default function PrivacyPolicy() {
   return (

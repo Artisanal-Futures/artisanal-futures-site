@@ -18,7 +18,7 @@ export const EventPopup = ({ imageUrl }: Props) => {
             width={200}
             height={160}
             src={imageUrl}
-            alt="Details "
+            alt="Event image with full details"
             className="aspect-auto w-full"
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

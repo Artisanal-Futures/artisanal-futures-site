@@ -1,9 +1,14 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Privacy Policy",
-  description: "The privacy policy for Artisanal Futures",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Privacy Policy",
+    description: "The privacy policy for Artisanal Futures",
+    path: "/legal/privacy",
+  });
+}
 
 export default function PrivacyPage() {
   return (

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 export default function CollectiveAgreementPage() {
   return (
     <>
@@ -35,7 +37,10 @@ export default function CollectiveAgreementPage() {
   );
 }
 
-export const metadata = {
-  title: "Collective Agreement",
-  description: "The collective agreement for Artisanal Futures",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Collective Agreement",
+    description: "The collective agreement for Artisanal Futures",
+    path: "/legal/collective-agreement",
+  });
+}

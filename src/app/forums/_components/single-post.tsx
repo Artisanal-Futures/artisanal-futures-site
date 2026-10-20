@@ -80,9 +80,9 @@ export const SinglePost: FC<Props> = ({
             </div>
           </div>
           <a href={`/forums/r/${subredditName}/post/${post.id}`}>
-            <h1 className="text-foreground hover:text-primary mt-2 text-lg leading-snug font-semibold text-balance transition-colors">
+            <h2 className="text-foreground hover:text-primary mt-2 text-lg leading-snug font-semibold text-balance transition-colors">
               {post.title}
-            </h1>
+            </h2>
           </a>
 
           <div

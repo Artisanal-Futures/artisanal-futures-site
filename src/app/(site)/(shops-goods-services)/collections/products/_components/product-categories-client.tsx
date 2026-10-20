@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { type ProductWithRelations } from "~/types/product";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 
@@ -17,7 +18,11 @@ type Props = {
   >;
 };
 
-type Product = NonNullable<RouterOutputs["shop"]["get"]>["products"][number];
+// These category items are loaded without their categories.
+type Product = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["products"][number],
+  "categories"
+>;
 type Service = NonNullable<RouterOutputs["shop"]["get"]>["services"][number];
 
 export function ProductCategoriesClient({ categories }: Props) {
@@ -85,10 +90,11 @@ export function ProductCategoriesClient({ categories }: Props) {
         shopPrinciples={
           (selectedItem as ProductWithRelations)?.shop?.attributeTags ?? []
         }
-        linkToProfile={`/shops/${(selectedItem as ProductWithRelations)?.shop?.id}`}
-        fallbackImage={
-          (selectedItem as ProductWithRelations)?.shop?.logoPhoto
-        }
+        linkToProfile={shopPath({
+          id: (selectedItem as ProductWithRelations)?.shop?.id ?? "",
+          slug: (selectedItem as ProductWithRelations)?.shop?.slug,
+        })}
+        fallbackImage={(selectedItem as ProductWithRelations)?.shop?.logoPhoto}
       />
     </div>
   );

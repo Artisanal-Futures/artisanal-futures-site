@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 import { ContactForm } from "./_components/contact-form";
 
 export default async function ContactPage() {
@@ -51,6 +53,11 @@ export default async function ContactPage() {
   );
 }
 
-export const metadata = {
-  title: "Contact Us",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Contact Us",
+    description:
+      "Get in touch with the Artisanal Futures team with questions about the platform, joining, or the artisans in our network.",
+    path: "/contact",
+  });
+}

@@ -288,6 +288,39 @@ enum ProductScrapeMethod {
   SQUARE
 }
 
+/// Site-wide search/share settings, edited at /admin/seo. Singleton: id "default".
+model SiteSettings {
+  id                 String   @id @default("default")
+  siteName           String   @default("Artisanal Futures")
+  alternateNames     String[]
+  tagline            String?
+  defaultTitle       String?
+  defaultDescription String?
+  defaultOgImage     String?
+  logo               String?
+  contactEmail       String?
+  /// Organization profiles (social, Wikidata, ...). Feed schema.org `sameAs`.
+  socialLinks        String[]
+  twitterHandle      String?
+  googleVerification String?
+  bingVerification   String?
+  allowAiCrawlers    Boolean  @default(true)
+  /// Markdown intro for /llms.txt.
+  llmsIntro          String?
+  updatedAt          DateTime @updatedAt
+}
+
+/// Admin overrides for a static public page's metadata, keyed by path ("/about-us").
+model PageSeo {
+  id          String   @id @default(cuid())
+  path        String   @unique
+  title       String?
+  description String?
+  ogImage     String?
+  noIndex     Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}
+
 model Shop {
   id            String   @id @default(cuid())
   ownerName     String
@@ -305,6 +338,20 @@ model Shop {
   attributeTags String[]
   name          String
   isPublic      Boolean  @default(true)
+
+  /// Public profile URL is /shops/{slug}. Optional until every shop is
+  /// backfilled (scripts/backfill-shop-slugs.ts). Old slugs keep 301ing.
+  slug          String?  @unique
+  previousSlugs String[]
+  /// Artisan-editable profile links (Instagram, Facebook, Etsy, ...). Feed the
+  /// shop's schema.org `sameAs`.
+  socialLinks   String[]
+
+  /// Admin-only search/share overrides. Blank = derived from the profile.
+  seoTitle       String?
+  seoDescription String?
+  seoImage       String?
+  seoNoIndex     Boolean @default(false)
 
   /// Scheduled product-sync configuration. `syncPlatform` reuses the
   /// per-product scrape enum so there is one platform vocabulary; shops on

@@ -16,6 +16,20 @@ model Shop {
   name             String
   isPublic         Boolean           @default(true)
 
+  /// Public profile URL is /shops/{slug}. Optional until every shop is
+  /// backfilled (scripts/backfill-shop-slugs.ts). Old slugs keep 301ing.
+  slug             String?           @unique
+  previousSlugs    String[]
+  /// Artisan-editable profile links (Instagram, Facebook, Etsy, ...). Feed the
+  /// shop's schema.org `sameAs`.
+  socialLinks      String[]
+
+  /// Admin-only search/share overrides. Blank = derived from the profile.
+  seoTitle         String?
+  seoDescription   String?
+  seoImage         String?
+  seoNoIndex       Boolean           @default(false)
+
   /// Scheduled product-sync configuration. `syncPlatform` reuses the
   /// per-product scrape enum so there is one platform vocabulary; shops on
   /// SQUARE or MANUAL simply leave `syncEnabled` false and the cron skips them.

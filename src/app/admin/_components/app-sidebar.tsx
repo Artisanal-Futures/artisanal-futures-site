@@ -20,6 +20,7 @@ import {
   IconPackage,
   IconRecycle,
   IconRefresh,
+  IconSeo,
   IconShoppingCart,
   IconSparkles,
   IconUserPlus,
@@ -123,6 +124,11 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
             title: "Categories",
             url: "/admin/categories",
             icon: IconFolder,
+          },
+          {
+            title: "SEO",
+            url: "/admin/seo",
+            icon: IconSeo,
           },
           {
             title: "CSV Import",

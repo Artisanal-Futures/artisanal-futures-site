@@ -1,8 +1,12 @@
+import type { PrismaClient, Role } from "generated/prisma";
 import { TRPCError } from "@trpc/server";
-import type { Role } from "generated/prisma";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 
+import type { ShopSeoValues } from "~/lib/validators/seo";
+import type { MapShopLocation } from "~/server/geocoding/approximate-location";
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
+import { shopPath } from "~/lib/seo/paths";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import { shopPrivateContactSchema } from "~/lib/validators/shop-private-contact";
 import {
@@ -15,9 +19,11 @@ import {
   blankToNull,
   formatLocality,
   offsetLocation,
-  type MapShopLocation,
 } from "~/server/geocoding/approximate-location";
 import { syncShopCoordinates } from "~/server/geocoding/geocode-shop-address";
+import { pingIndexNow } from "~/server/seo/indexnow";
+import { SHOPS_LANDING_TAG } from "~/server/seo/landing-pages";
+import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
 
 /**
  * Public address select. Deliberately lists only the original columns so the
@@ -91,6 +97,117 @@ export type DirectoryRow = {
   /** privateContact.phone ?? phone */
   contactPhone: string | null;
 };
+
+type ShopDb = Pick<PrismaClient, "shop">;
+
+/**
+ * Validates an admin-requested slug for `shopId` (null for a new shop). It must
+ * not be another shop's current or previous slug, nor another shop's id, since
+ * /shops/{x} resolves slugs before ids.
+ */
+async function assertSlugAvailable(
+  db: ShopDb,
+  slug: string,
+  shopId: string | null,
+) {
+  if (RESERVED_SLUGS.has(slug)) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `"${slug}" is reserved. Choose another slug.`,
+    });
+  }
+
+  const taken = await db.shop.findFirst({
+    where: {
+      OR: [{ slug }, { previousSlugs: { has: slug } }, { id: slug }],
+      ...(shopId ? { NOT: { id: shopId } } : {}),
+    },
+    select: { name: true },
+  });
+
+  if (taken) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `The URL /shops/${slug} is already used by ${taken.name}.`,
+    });
+  }
+}
+
+/**
+ * Every URL a shop has answered on (current slug, then old slugs) for IndexNow.
+ * Old slugs 404 once the shop is deleted, so they are pinged too.
+ */
+/**
+ * A public shop was added, changed or removed: refresh the cached tag/location
+ * landing pages and tell IndexNow engines about the affected URLs.
+ */
+function publicShopsChanged(paths: string[]) {
+  revalidateTag(SHOPS_LANDING_TAG);
+  pingIndexNow(paths);
+}
+
+function shopUrlPaths(shop: {
+  id: string;
+  slug: string | null;
+  previousSlugs: string[];
+}) {
+  return [
+    shopPath(shop),
+    ...shop.previousSlugs.map((slug) => shopPath({ id: shop.id, slug })),
+  ];
+}
+
+/** Admin-only search/share columns, from the validated `seo` input. */
+function seoFields(seo: ShopSeoValues) {
+  return {
+    seoTitle: seo.seoTitle,
+    seoDescription: seo.seoDescription,
+    seoImage: seo.seoImageUrl,
+    seoNoIndex: seo.seoNoIndex,
+  };
+}
+
+/**
+ * The slug, search and share fields are admin-only. They travel in `input.seo`
+ * on create/update so the form saves in one request; any non-admin request
+ * that carries them is rejected outright rather than silently stripped.
+ */
+function assertCanEditSeo(role: string, seo: ShopSeoValues | undefined) {
+  if (seo && role !== "ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only admins can change a shop's URL or search settings",
+    });
+  }
+}
+
+/**
+ * Turns the P2002 a concurrent save hits on the slug unique index into the
+ * same CONFLICT the availability check gives; rethrows anything else.
+ */
+function rethrowSlugConflict(error: unknown): never {
+  if ((error as { code?: string } | null)?.code === "P2002") {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "That shop URL was just taken. Choose another slug.",
+    });
+  }
+  throw error;
+}
+
+/** One row of the /admin/seo shop health table. */
+export type ShopSeoHealthRow = {
+  id: string;
+  name: string;
+  slug: string | null;
+  isPublic: boolean;
+  score: number;
+  total: number;
+  /** Labels of the failed checks. */
+  missing: string[];
+};
+
+const MIN_DESCRIPTION_LENGTH = 80;
 
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: adminOnlyProcedure.query(async ({ ctx }) => {
@@ -310,6 +427,7 @@ export const shopsRouter = createTRPCRouter({
       where: { isPublic: true },
       select: {
         id: true,
+        slug: true,
         name: true,
         ownerName: true,
         bio: true,
@@ -336,6 +454,7 @@ export const shopsRouter = createTRPCRouter({
         orderBy: { name: "asc" },
         select: {
           id: true,
+          slug: true,
           name: true,
           ownerName: true,
           logoPhoto: true,
@@ -366,6 +485,7 @@ export const shopsRouter = createTRPCRouter({
 
         return {
           id: shop.id,
+          slug: shop.slug,
           name: shop.name.trim(),
           ownerName: shop.ownerName.trim(),
           logoPhoto: blankToNull(shop.logoPhoto),
@@ -489,15 +609,105 @@ export const shopsRouter = createTRPCRouter({
     };
   }),
 
-  get: publicProcedure
-    .input(z.string())
-    .query(async ({ ctx, input: shopId }) => {
-      const shop = await ctx.db.shop.findUnique({
-        where: { id: shopId },
-        include: { address: { select: publicAddressSelect } },
+  /**
+   * Every shop scored on the profile signals search engines and answer
+   * engines use, worst first, for the /admin/seo health table.
+   */
+  getSeoHealth: adminOnlyProcedure.query(
+    async ({ ctx }): Promise<ShopSeoHealthRow[]> => {
+      const shops = await ctx.db.shop.findMany({
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          description: true,
+          bio: true,
+          logoPhoto: true,
+          coverPhoto: true,
+          website: true,
+          socialLinks: true,
+          seoNoIndex: true,
+          isPublic: true,
+          address: { select: { city: true, state: true } },
+          _count: {
+            select: {
+              products: { where: { isPublic: true } },
+              services: { where: { isPublic: true } },
+            },
+          },
+        },
       });
 
+      const rows = shops.map((shop) => {
+        const checks: [label: string, passed: boolean][] = [
+          [
+            "Description",
+            (blankToNull(shop.description)?.length ?? 0) >=
+              MIN_DESCRIPTION_LENGTH,
+          ],
+          ["Bio", !!blankToNull(shop.bio)],
+          ["Logo", !!blankToNull(shop.logoPhoto)],
+          ["Cover photo", !!blankToNull(shop.coverPhoto)],
+          [
+            "City & state",
+            !!blankToNull(shop.address?.city) &&
+              !!blankToNull(shop.address?.state),
+          ],
+          ["Website", !!blankToNull(shop.website)],
+          ["Social links", shop.socialLinks.length > 0],
+          ["Public items", shop._count.products + shop._count.services > 0],
+          ["Indexable", !shop.seoNoIndex],
+          ["Public", shop.isPublic],
+        ];
+
+        return {
+          id: shop.id,
+          name: shop.name,
+          slug: shop.slug,
+          isPublic: shop.isPublic,
+          score: checks.filter(([, passed]) => passed).length,
+          total: checks.length,
+          missing: checks
+            .filter(([, passed]) => !passed)
+            .map(([label]) => label),
+        };
+      });
+
+      return rows.sort(
+        (a, b) => a.score - b.score || a.name.localeCompare(b.name),
+      );
+    },
+  ),
+
+  /**
+   * A shop by slug or id. Public storefront URLs carry the slug (or, for old
+   * links, a previous slug or the id); admin pages pass the id. Resolved in
+   * that order: current slug, previous slug, id. The page compares the param
+   * with `shop.slug` to decide whether to redirect to the canonical URL.
+   */
+  get: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: slugOrId }) => {
+      // One query for all three lookups; the priority is applied below.
+      const matches = await ctx.db.shop.findMany({
+        where: {
+          OR: [
+            { slug: slugOrId },
+            { previousSlugs: { has: slugOrId } },
+            { id: slugOrId },
+          ],
+        },
+        include: { address: { select: publicAddressSelect } },
+        take: 3,
+      });
+
+      const shop =
+        matches.find((match) => match.slug === slugOrId) ??
+        matches.find((match) => match.previousSlugs.includes(slugOrId)) ??
+        matches.find((match) => match.id === slugOrId);
+
       if (!shop) return null;
+      const shopId = shop.id;
 
       // Public storefront reads go through this procedure, so it stays public.
       // But a non-public shop (with its contact fields) must only be readable by
@@ -513,7 +723,7 @@ export const shopsRouter = createTRPCRouter({
       // Products and services carry their own `isPublic` flag, and it has to be
       // honoured here too. These used to be loaded with a bare `products: true`
       // include, so every hidden item on a *public* shop was rendered on the
-      // storefront at /shops/[shopId] for anyone — while the same items were
+      // storefront at /shops/[slug] for anyone — while the same items were
       // correctly excluded from browse and search, which do filter on isPublic.
       //
       // Owners and admins still see everything, so they can preview; the page
@@ -524,10 +734,12 @@ export const shopsRouter = createTRPCRouter({
         ctx.db.product.findMany({
           where: { shopId, ...visibility },
           orderBy: { name: "asc" },
+          include: { categories: { select: { name: true } } },
         }),
         ctx.db.service.findMany({
           where: { shopId, ...visibility },
           orderBy: { name: "asc" },
+          include: { categories: { select: { name: true } } },
         }),
       ]);
 
@@ -542,38 +754,54 @@ export const shopsRouter = createTRPCRouter({
   create: adminArtisanProcedure
     .input(shopSchema)
     .mutation(async ({ ctx, input }) => {
-      const shop = await ctx.db.shop.create({
-        data: {
-          ownerId:
-            ctx.session.user.role === "ADMIN"
-              ? // "" (unselected owner) is not nullish, so test truthiness.
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                input.ownerId || ctx.session.user.id
-              : ctx.session.user.id,
-          name: input.name,
-          ownerName: input.ownerName
-            ? input.ownerName
-            : (ctx.session.user?.name ?? ""),
-          ownerPhoto: input.ownerPhotoUrl,
-          bio: input.bio ?? "",
-          description: input.description ?? "",
-          logoPhoto: input.logoPhotoUrl,
-          attributeTags: input.attributeTags ?? [],
-          isPublic: input.isPublic,
-          address: {
-            create: {
-              address: input.address ?? "",
-              city: input.city ?? "",
-              state: input.state ?? "",
-              zip: input.zip ?? "",
-              country: input.country ?? "",
+      assertCanEditSeo(ctx.session.user.role, input.seo);
+
+      // An admin may pick the slug up front; otherwise derive it from the name.
+      const requestedSlug = blankToNull(input.seo?.slug);
+      if (requestedSlug) await assertSlugAvailable(ctx.db, requestedSlug, null);
+      const slug =
+        requestedSlug ?? (await generateUniqueShopSlug(ctx.db, input.name));
+
+      const shop = await ctx.db.shop
+        .create({
+          data: {
+            slug,
+            ...(input.seo ? seoFields(input.seo) : {}),
+            ownerId:
+              ctx.session.user.role === "ADMIN"
+                ? // "" (unselected owner) is not nullish, so test truthiness.
+                  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                  input.ownerId || ctx.session.user.id
+                : ctx.session.user.id,
+            name: input.name,
+            ownerName: input.ownerName
+              ? input.ownerName
+              : (ctx.session.user?.name ?? ""),
+            ownerPhoto: input.ownerPhotoUrl,
+            bio: input.bio ?? "",
+            description: input.description ?? "",
+            logoPhoto: input.logoPhotoUrl,
+            coverPhoto: input.coverPhotoUrl,
+            socialLinks: input.socialLinks ?? [],
+            attributeTags: input.attributeTags ?? [],
+            isPublic: input.isPublic,
+            address: {
+              create: {
+                address: input.address ?? "",
+                city: input.city ?? "",
+                state: input.state ?? "",
+                zip: input.zip ?? "",
+                country: input.country ?? "",
+              },
             },
+            phone: input.phone ?? "",
+            email: input.email ?? "",
+            website: input.website ?? "",
           },
-          phone: input.phone ?? "",
-          email: input.email ?? "",
-          website: input.website ?? "",
-        },
-      });
+        })
+        .catch(rethrowSlugConflict);
+
+      if (shop.isPublic) publicShopsChanged([shopPath(shop), "/shops"]);
 
       // Approximate map pin from zip/city/state/country. Best-effort: a
       // geocoding failure must never fail the save.
@@ -601,47 +829,101 @@ export const shopsRouter = createTRPCRouter({
         });
       }
 
-      const updateShopData = await ctx.db.$transaction(async (tx) => {
-        const addressData = {
-          address: input?.address ?? "",
-          city: input?.city ?? "",
-          state: input?.state ?? "",
-          zip: input?.zip ?? "",
-          country: input?.country ?? "",
-        };
+      assertCanEditSeo(ctx.session.user.role, input.seo);
 
-        const updatedAddress = await tx.shopAddress.upsert({
-          where: { shopId: input.id },
-          create: { ...addressData, shopId: input.id },
-          update: addressData,
-        });
+      const updateShopData = await ctx.db
+        .$transaction(async (tx) => {
+          const current = await tx.shop.findUniqueOrThrow({
+            where: { id: input.id },
+            select: { slug: true, previousSlugs: true, isPublic: true },
+          });
 
-        const updatedShop = await tx.shop.update({
-          where: { id: input.id },
-          data: {
-            ...(ctx.session.user.role === "ADMIN" && input.ownerId
-              ? { ownerId: input.ownerId }
-              : {}),
+          // Slugs never follow a rename; they only change when an admin edits
+          // one. The old slug moves to previousSlugs so its links keep
+          // redirecting. A shop without one (pre-backfill) gets one here.
+          let slugData: { slug?: string; previousSlugs?: string[] } = {};
+          const requestedSlug = input.seo?.slug;
+          if (requestedSlug && requestedSlug !== current.slug) {
+            await assertSlugAvailable(tx, requestedSlug, input.id);
+            slugData = {
+              slug: requestedSlug,
+              previousSlugs: [
+                ...current.previousSlugs.filter(
+                  (previous) =>
+                    previous !== requestedSlug && previous !== current.slug,
+                ),
+                ...(current.slug ? [current.slug] : []),
+              ],
+            };
+          } else if (!current.slug) {
+            slugData = {
+              slug: await generateUniqueShopSlug(tx, input.name, input.id),
+            };
+          }
 
-            name: input.name,
-            ownerName: input.ownerName,
-            ownerPhoto: input.ownerPhotoUrl,
-            bio: input?.bio ?? "",
-            description: input?.description ?? "",
-            logoPhoto: input.logoPhotoUrl,
-            phone: input?.phone ?? "",
-            email: input?.email ?? "",
-            website: input?.website ?? "",
-            attributeTags: input?.attributeTags ?? [],
-            isPublic: input?.isPublic,
-          },
-        });
+          const addressData = {
+            address: input?.address ?? "",
+            city: input?.city ?? "",
+            state: input?.state ?? "",
+            zip: input?.zip ?? "",
+            country: input?.country ?? "",
+          };
 
-        return {
-          updatedShop,
-          updatedAddress,
-        };
-      });
+          const updatedAddress = await tx.shopAddress.upsert({
+            where: { shopId: input.id },
+            create: { ...addressData, shopId: input.id },
+            update: addressData,
+          });
+
+          const updatedShop = await tx.shop.update({
+            where: { id: input.id },
+            data: {
+              ...(ctx.session.user.role === "ADMIN" && input.ownerId
+                ? { ownerId: input.ownerId }
+                : {}),
+
+              ...slugData,
+              ...(input.seo ? seoFields(input.seo) : {}),
+
+              name: input.name,
+              ownerName: input.ownerName,
+              ownerPhoto: input.ownerPhotoUrl,
+              bio: input?.bio ?? "",
+              description: input?.description ?? "",
+              logoPhoto: input.logoPhotoUrl,
+              coverPhoto: input.coverPhotoUrl,
+              socialLinks: input.socialLinks,
+              phone: input?.phone ?? "",
+              email: input?.email ?? "",
+              website: input?.website ?? "",
+              attributeTags: input?.attributeTags ?? [],
+              isPublic: input?.isPublic,
+            },
+          });
+
+          return {
+            updatedShop,
+            updatedAddress,
+            previousShop: current,
+          };
+        })
+        .catch(rethrowSlugConflict);
+
+      // Hidden before and after means nothing public changed. Otherwise ping the
+      // new URL and the old one (deduped when unchanged) so engines see the redirect.
+      if (
+        updateShopData.previousShop.isPublic ||
+        updateShopData.updatedShop.isPublic
+      ) {
+        publicShopsChanged([
+          shopPath(updateShopData.updatedShop),
+          shopPath({
+            id: input.id,
+            slug: updateShopData.previousShop.slug,
+          }),
+          "/shops",
+        ]);
+      }
 
       // Outside the transaction so a slow geocoder never holds it open, and
       // best-effort so a geocoding failure never fails the save.
@@ -679,9 +961,13 @@ export const shopsRouter = createTRPCRouter({
         });
       }
 
-      await ctx.db.shop.delete({
+      const deletedShop = await ctx.db.shop.delete({
         where: { id: input.id },
       });
+
+      if (deletedShop.isPublic) {
+        publicShopsChanged([...shopUrlPaths(deletedShop), "/shops"]);
+      }
 
       return { data: null, message: "Shop deleted successfully" };
     }),
@@ -705,11 +991,24 @@ export const shopsRouter = createTRPCRouter({
         }
       }
 
+      // Read the public shops before deleting; their rows are gone afterwards.
+      const publicShops = await ctx.db.shop.findMany({
+        where: { id: { in: shopIds }, isPublic: true },
+        select: { id: true, slug: true, previousSlugs: true },
+      });
+
       await ctx.db.shop.deleteMany({
         where: { id: { in: shopIds } },
       });
 
-      return { data: null, message: `${shopIds.length} shop(s) deleted successfully` };
+      if (publicShops.length > 0) {
+        publicShopsChanged([...publicShops.flatMap(shopUrlPaths), "/shops"]);
+      }
+
+      return {
+        data: null,
+        message: `${shopIds.length} shop(s) deleted successfully`,
+      };
     }),
 
   getWelcomeShop: adminArtisanProcedure.query(async ({ ctx }) => {

@@ -1,14 +1,18 @@
 import { Suspense } from "react";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { api } from "~/trpc/server";
 import { Skeleton } from "~/components/ui/skeleton";
 
 import { ArtisanMapExplorer } from "./_components/artisan-map-explorer";
 
-export const metadata = {
-  title: "Artisan Map",
-  description: "Explore Artisanal Futures artisans on an interactive map.",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Artisan Map",
+    description: "Explore Artisanal Futures artisans on an interactive map.",
+    path: "/tools/artisan-map",
+  });
+}
 
 export default async function ArtisanMapPage() {
   const shops = await api.shop.getMapLocations();

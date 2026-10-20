@@ -62,6 +62,25 @@ export const env = createEnv({
     // than the whole build refusing to start. When present it must be long
     // enough to be worth having.
     CRON_SECRET: z.string().min(32).optional(),
+
+    // IndexNow key, served at /indexnow-key.txt so Bing (and the engines it
+    // feeds), Yandex and Seznam can verify pings. Generate with
+    // `openssl rand -hex 16`. Only needed in production: unset means no pings.
+    INDEXNOW_KEY: z
+      .string()
+      .regex(/^[a-zA-Z0-9-]{8,128}$/)
+      .optional(),
+
+    // Master switch for search-engine indexing. Defaults to false so dev and
+    // staging deployments are never indexed; set to "true" in production only.
+    // It drives robots.txt and the site-wide robots meta tag.
+    // Unset = index only when BETTER_AUTH_URL is the production domain (see
+    // src/lib/seo/site.ts), so forgetting it can't deindex prod or index dev.
+    SEO_ALLOW_INDEXING: z.preprocess(
+      (str) =>
+        str === undefined || str === "" ? undefined : str === "true" || str === true,
+      z.boolean().optional(),
+    ),
   },
 
   /**
@@ -85,6 +104,11 @@ export const env = createEnv({
     NEXT_PUBLIC_HCAPTCHA_SITE_KEY: z.string(),
 
     NEXT_PUBLIC_HELP_DOCS_URL: z.string(),
+
+    // Canonical origin of this deployment (no trailing slash needed). Optional
+    // so a deploy never fails if it isn't set; src/lib/seo/site-url.ts falls
+    // back to the production domain.
+    NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   },
 
   /**
@@ -126,6 +150,8 @@ export const env = createEnv({
     NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
 
     CRON_SECRET: process.env.CRON_SECRET,
+    INDEXNOW_KEY: process.env.INDEXNOW_KEY,
+    SEO_ALLOW_INDEXING: process.env.SEO_ALLOW_INDEXING,
 
     NEXT_PUBLIC_STORAGE_URL: process.env.NEXT_PUBLIC_STORAGE_URL,
     NEXT_PUBLIC_STORAGE_BUCKET_NAME:
@@ -143,6 +169,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
 
     NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

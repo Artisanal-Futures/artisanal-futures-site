@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 
+import { shopPath } from "~/lib/seo/paths";
+import { breadcrumbSchema, collectionPageSchema } from "~/lib/seo/schema";
+import { buildMetadata } from "~/lib/seo/site";
 import { api } from "~/trpc/server";
+import { JsonLd } from "~/components/seo/json-ld";
 
-import { ProductSearch } from "../../../_components/product-search";
 import { ServiceCategoryClient } from "../_components/service-category-client";
+import { ProductSearch } from "../../../_components/product-search";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -46,6 +52,12 @@ export default async function ServiceCategoryPage({
     ? decodeURIComponent(serverSearchParams.subcategory as string)
     : undefined;
 
+  const category = await api.category.getBySlug({ slug: categoryName });
+
+  if (!category && categoryName !== "all-services") {
+    return notFound();
+  }
+
   const {
     services: rawServices,
     totalCount,
@@ -68,12 +80,6 @@ export default async function ServiceCategoryPage({
     (service): service is NonNullable<typeof service> => service !== null,
   );
 
-  const category = await api.category.getBySlug({ slug: categoryName });
-
-  if (!category && categoryName !== "all-services") {
-    return <div>Category not found.</div>;
-  }
-
   // `category.getBySlug` returns the literal name "All" for the all-services
   // sentinel, which read as a bare "All" heading on the search results page.
   const heading = search
@@ -82,8 +88,38 @@ export default async function ServiceCategoryPage({
       ? "All Services"
       : (category?.name ?? "Services");
 
+  // Services have no detail pages of their own, so each item links to its
+  // shop's profile. Only the unfiltered first page is described, matching the
+  // canonical URL.
+  const isPlainListing =
+    page === 1 && !search && !storeId && !attributes && !subcategoryName;
+  const listingName =
+    categoryName === "all-services"
+      ? "All Services"
+      : (category?.name ?? "Services");
+  const categoryPath = `/collections/services/${encodeURIComponent(categoryName.toLowerCase())}`;
+  const items = services.flatMap((service) =>
+    service.shop ? [{ name: service.name, path: shopPath(service.shop) }] : [],
+  );
+
   return (
     <>
+      {isPlainListing && (
+        <JsonLd
+          data={[
+            collectionPageSchema({
+              name: listingName,
+              path: categoryPath,
+              items,
+            }),
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Services", path: "/collections/services" },
+              { name: listingName, path: categoryPath },
+            ]),
+          ]}
+        />
+      )}
       <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -115,13 +151,37 @@ export default async function ServiceCategoryPage({
   );
 }
 
-export const generateMetadata = async ({ params }: Props) => {
+export const generateMetadata = async ({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> => {
   const serverParams = await params;
+  const serverSearchParams = await searchParams;
   const categoryName = decodeURIComponent(serverParams.slug);
   const category = await api.category.getBySlug({ slug: categoryName });
 
-  return {
-    title: category?.name ?? "Service Category",
-    description: `Browse all our artisans' services in the ${category?.name} category`,
-  };
+  if (!category) {
+    return {
+      title: "Service Category",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  // Canonical drops filter/sort/search params so every variant of a category
+  // consolidates onto one URL; only pagination is kept. Lowercased to match the
+  // category links and the sitemap.
+  const page = toPositiveInt(serverSearchParams.page, 1);
+  const basePath = `/collections/services/${encodeURIComponent(categoryName.toLowerCase())}`;
+  const path = page > 1 ? `${basePath}?page=${page}` : basePath;
+
+  const isAll = categoryName === "all-services";
+  const name = isAll ? "All Services" : category.name;
+
+  return buildMetadata({
+    title: name,
+    description: isAll
+      ? "Browse all of our artisans' services."
+      : `Browse our artisans' services in the ${category.name} category.`,
+    path,
+  });
 };

@@ -1,8 +1,22 @@
 import Image from "next/image";
 
+import { aboutPageSchema } from "~/lib/seo/schema";
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+import { JsonLd } from "~/components/seo/json-ld";
+
+const DESCRIPTION =
+  "Artisanal Futures helps worker-owned businesses, collectives and artisan enterprises build a community-based, decolonized circular economy, with a marketplace that sends customers straight to each artisan's own website.";
+
 export default function AboutUsPage() {
   return (
     <>
+      <JsonLd
+        data={aboutPageSchema({
+          name: "About Artisanal Futures",
+          description: DESCRIPTION,
+          path: "/about-us",
+        })}
+      />
       <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -48,4 +62,10 @@ export default function AboutUsPage() {
   );
 }
 
-export const metadata = { title: "About Us" };
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "About Us",
+    description: DESCRIPTION,
+    path: "/about-us",
+  });
+}

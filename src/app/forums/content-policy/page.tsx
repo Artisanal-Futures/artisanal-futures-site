@@ -1,8 +1,13 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Artisanal Futures Forums Content Policy",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Forums Content Policy",
+    path: "/forums/content-policy",
+  });
+}
 
 export default function ContentPolicy() {
   return (

@@ -17,8 +17,14 @@ import {
 } from "~/components/ui/dialog";
 import { ImageWithFallback } from "~/components/image-with-fallback";
 
-type Product = NonNullable<RouterOutputs["shop"]["get"]>["products"][number];
-type Service = NonNullable<RouterOutputs["shop"]["get"]>["services"][number];
+type Product = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["products"][number],
+  "categories"
+>;
+type Service = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["services"][number],
+  "categories"
+>;
 
 type Props = {
   item: Product | Service;

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 export default function JoinCriteriaPage() {
   return (
     <>
@@ -93,6 +95,11 @@ export default function JoinCriteriaPage() {
   );
 }
 
-export const metadata = {
-  title: "Criteria for Joining Artisanal Futures",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Criteria for Joining",
+    description:
+      "The criteria a business or collective needs to meet to join the Artisanal Futures platform.",
+    path: "/join/criteria",
+  });
+}

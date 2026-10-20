@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { shopPath } from "~/lib/seo/paths";
 import { UPCY_BASE_URL } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
@@ -648,7 +649,7 @@ export function DashboardClient({
             {selectedArtisan && (
               <>
                 <Button variant="outline" asChild>
-                  <Link href={`/shops/${selectedArtisan.id}`}>
+                  <Link href={shopPath(selectedArtisan)}>
                     View Public Profile
                     <ExternalLink className="ml-2 size-4" />
                   </Link>

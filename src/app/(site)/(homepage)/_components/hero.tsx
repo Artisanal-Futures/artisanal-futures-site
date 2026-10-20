@@ -43,7 +43,7 @@ export const Hero = () => {
             height={160}
             src="/img/montage1.webp"
             id="fade-pic5"
-            alt="Montage of artisans from African Futurist Collective"
+            alt="An artisan in a striking red and silver bodysuit with white fringe and a shoulder-piece, arms outstretched, posing in an urban plaza"
             className="fade-pic absolute aspect-auto h-full w-full object-center max-lg:object-cover"
             priority={true}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -53,7 +53,7 @@ export const Hero = () => {
             height={160}
             src="/img/montage2.webp"
             id="fade-pic4"
-            alt="Montage of artisans from African Futurist Collective"
+            alt="A maker leaning over a laser engraver as it etches a colorful kente-inspired pattern onto a wooden panel"
             className="fade-pic absolute aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
             blurDataURL={"/img/montage2.webp"}
@@ -64,7 +64,7 @@ export const Hero = () => {
             height={160}
             src="/img/montage3.webp"
             id="fade-pic3"
-            alt="Montage of artisans from African Futurist Collective"
+            alt="An artisan in a black beanie and gray hoodie loading trays of fresh green herbs into a stainless-steel dehydrator rack"
             className="fade-pic absolute aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
             blurDataURL={"/img/montage3.webp"}
@@ -75,7 +75,7 @@ export const Hero = () => {
             height={160}
             src="/img/montage4.webp"
             id="fade-pic2"
-            alt="Montage of artisans from African Futurist Collective"
+            alt="An elder in an orange head wrap and black sweater sorting fresh green herbs into a bowl at home"
             className="fade-pic absolute aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
             blurDataURL={"/img/montage4.webp"}
@@ -86,7 +86,7 @@ export const Hero = () => {
             height={160}
             src="/img/montage5.webp"
             id="fade-pic1"
-            alt="Montage of artisans from African Futurist Collective"
+            alt="A smiling artisan in a purple shirt holding up a laser-cut gold pendant with a circular pattern, with textiles and mannequins behind her"
             className="fade-pic absolute aspect-auto h-full w-full object-center max-lg:object-cover"
             placeholder="blur"
             blurDataURL={"/img/montage5.webp"}

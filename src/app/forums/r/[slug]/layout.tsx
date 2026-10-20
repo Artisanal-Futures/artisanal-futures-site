@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Info } from "lucide-react";
 
+import { buildMetadata, truncate } from "~/lib/seo/site";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
 import { buttonVariants } from "~/components/ui/button";
@@ -13,9 +14,32 @@ import { ToFeedButton } from "~/app/forums/_components/to-feed-button";
 
 import { SubredditEditButton } from "../../_components/subreddit-edit-button";
 
-export const metadata: Metadata = {
-  title: "Artisanal Futures Forums",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const path = `/forums/r/${slug}`;
+
+  const subreddit = await db.subreddit.findFirst({
+    where: { name: slug },
+    select: { name: true, description: true, isPublic: true },
+  });
+
+  if (!subreddit) {
+    return { title: "Community", robots: { index: false, follow: false } };
+  }
+
+  return buildMetadata({
+    title: `r/${subreddit.name}`,
+    description:
+      truncate(subreddit.description) ||
+      `Join the ${subreddit.name} community on the Artisanal Futures forums.`,
+    path,
+    noIndex: !subreddit.isPublic,
+  });
+}
 
 const Layout = async ({
   children,
@@ -75,7 +99,7 @@ const Layout = async ({
           <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
           {/* info sidebar */}
-          <div className="border-border order-first h-fit overflow-hidden rounded-2xl border bg-card md:order-last">
+          <div className="border-border bg-card order-first h-fit overflow-hidden rounded-2xl border md:order-last">
             <div className="bg-secondary flex items-center justify-between px-6 py-4">
               <p className="text-foreground flex items-center gap-1.5 py-3 font-semibold">
                 <Info className="h-4 w-4" />

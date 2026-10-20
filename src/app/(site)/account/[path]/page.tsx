@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { AccountView } from "@daveyplate/better-auth-ui";
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server";
 
 import { cn } from "~/lib/utils";
+
+export const metadata: Metadata = {
+  title: "Account",
+  robots: { index: false, follow: false },
+};
 
 export const dynamicParams = false;
 

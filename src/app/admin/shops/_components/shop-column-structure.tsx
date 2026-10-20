@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EyeIcon, PencilIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -136,7 +137,7 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
         </Link>
 
         <Link
-          href={`/shops/${row.original.id}`}
+          href={shopPath(row.original)}
           className={cn(
             buttonVariants({
               variant: "default",

@@ -1,13 +1,19 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 
+import { shopPath } from "~/lib/seo/paths";
+import { breadcrumbSchema, collectionPageSchema } from "~/lib/seo/schema";
+import { buildMetadata } from "~/lib/seo/site";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/server";
 import { buttonVariants } from "~/components/ui/button";
+import { JsonLd } from "~/components/seo/json-ld";
 
-import { ProductSearch } from "../../../_components/product-search";
 import { CategoryClient } from "../_components/product-category-client";
+import { ProductSearch } from "../../../_components/product-search";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -51,20 +57,26 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const category = await api.category.getBySlug({ slug: categoryName });
 
   if (!category && categoryName !== "all-products") {
-    return <div>Category not found.</div>;
+    return notFound();
   }
 
-  const { products, totalCount, totalPages, subcategories, isFuzzy, suggestions } =
-    await api.product.getAllByCategory({
-      categoryName: categoryName,
-      subcategoryName: subcategoryName,
-      page,
-      limit,
-      sort,
-      storeId,
-      search,
-      attributes,
-    });
+  const {
+    products,
+    totalCount,
+    totalPages,
+    subcategories,
+    isFuzzy,
+    suggestions,
+  } = await api.product.getAllByCategory({
+    categoryName: categoryName,
+    subcategoryName: subcategoryName,
+    page,
+    limit,
+    sort,
+    storeId,
+    search,
+    attributes,
+  });
 
   // `category.getBySlug` returns the literal name "All" for the all-products
   // sentinel, which read as a bare "All" heading on the search results page.
@@ -74,8 +86,38 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       ? "All Products"
       : (category?.name ?? "Products");
 
+  // Products have no detail pages of their own, so each item links to its
+  // shop's profile. Only the unfiltered first page is described, matching the
+  // canonical URL.
+  const isPlainListing =
+    page === 1 && !search && !storeId && !attributes && !subcategoryName;
+  const listingName =
+    categoryName === "all-products"
+      ? "All Products"
+      : (category?.name ?? "Products");
+  const categoryPath = `/collections/products/${encodeURIComponent(categoryName.toLowerCase())}`;
+  const items = products.flatMap((product) =>
+    product.shop ? [{ name: product.name, path: shopPath(product.shop) }] : [],
+  );
+
   return (
     <>
+      {isPlainListing && (
+        <JsonLd
+          data={[
+            collectionPageSchema({
+              name: listingName,
+              path: categoryPath,
+              items,
+            }),
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Products", path: "/collections/products" },
+              { name: listingName, path: categoryPath },
+            ]),
+          ]}
+        />
+      )}
       <header className="site-header">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -122,13 +164,37 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   );
 }
 
-export const generateMetadata = async ({ params }: Props) => {
+export const generateMetadata = async ({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> => {
   const serverParams = await params;
+  const serverSearchParams = await searchParams;
   const categoryName = decodeURIComponent(serverParams.slug);
   const category = await api.category.getBySlug({ slug: categoryName });
 
-  return {
-    title: category?.name ?? "Product Category",
-    description: `Browse all our artisans' products in the ${category?.name} category`,
-  };
+  if (!category) {
+    return {
+      title: "Product Category",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  // Canonical drops filter/sort/search params so every variant of a category
+  // consolidates onto one URL; only pagination is kept. Lowercased to match the
+  // category links and the sitemap.
+  const page = toPositiveInt(serverSearchParams.page, 1);
+  const basePath = `/collections/products/${encodeURIComponent(categoryName.toLowerCase())}`;
+  const path = page > 1 ? `${basePath}?page=${page}` : basePath;
+
+  const isAll = categoryName === "all-products";
+  const name = isAll ? "All Products" : category.name;
+
+  return buildMetadata({
+    title: name,
+    description: isAll
+      ? "Browse all of our artisans' products."
+      : `Browse our artisans' products in the ${category.name} category.`,
+    path,
+  });
 };

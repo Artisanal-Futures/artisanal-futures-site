@@ -64,4 +64,5 @@ export default async function GuestWelcomePage() {
 
 export const metadata = {
   title: "Welcome",
+  robots: { index: false, follow: false },
 };
