@@ -73,10 +73,9 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
     filterFn: "includesString",
     cell: ({ row }) => (
       <RowImageLink
-        id={row.original.id}
         name={`${row.original.name} `}
+        href={`/admin/shops/${row.original.id}`}
         image={toImageSrc(row.original?.logoPhoto)}
-        hasLink={false}
         subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
       />
     ),

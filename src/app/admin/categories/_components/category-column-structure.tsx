@@ -49,7 +49,11 @@ export const categoryColumns: ColumnDef<CategoryColumnEntry>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
-      <RowCellIdDisplay id={row.original.id} label={row.original.name} />
+      <RowCellIdDisplay
+        id={row.original.id}
+        label={row.original.name}
+        href={`/admin/categories/${row.original.id}`}
+      />
     ),
   },
   {

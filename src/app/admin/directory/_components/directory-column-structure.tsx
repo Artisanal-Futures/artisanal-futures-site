@@ -212,9 +212,19 @@ export function createDirectoryColumns({
             </Avatar>
             <div className="flex min-w-0 flex-col items-start">
               {r.kind === "shop" ? (
-                <span className="truncate text-sm font-medium">
-                  {r.shopName ?? "Unnamed shop"}
-                </span>
+                r.shopId ? (
+                  <Link
+                    href={`/admin/shops/${r.shopId}`}
+                    onClick={stop}
+                    className="truncate text-sm font-medium hover:underline"
+                  >
+                    {r.shopName ?? "Unnamed shop"}
+                  </Link>
+                ) : (
+                  <span className="truncate text-sm font-medium">
+                    {r.shopName ?? "Unnamed shop"}
+                  </span>
+                )
               ) : (
                 <Badge
                   variant="secondary"

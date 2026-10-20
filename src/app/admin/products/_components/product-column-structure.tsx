@@ -55,15 +55,14 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     cell: ({ row }) => (
       <>
         <RowImageLink
-          id={row.original.id}
           name={`${row.original.name}`}
+          href={`/admin/products/${row.original.id}`}
           image={row.original.imageUrl ?? ""}
           fallbackImage={(() => {
             const logo = row.original.shop?.logoPhoto;
             if (!logo?.trim() || logo === "null") return undefined;
             return logo.startsWith("http") ? logo : handleImageUrl(logo);
           })()}
-          hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
         <span className="text-muted-foreground sr-only text-xs">

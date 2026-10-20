@@ -54,10 +54,9 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
     cell: ({ row }) => (
       <>
         <RowImageLink
-          id={row.original.id}
           name={`${row.original.name} • #${row.original.id}`}
+          href={`/admin/services/${row.original.id}`}
           image={row.original.imageUrl ?? ""}
-          hasLink={false}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
         <span className="text-muted-foreground sr-only text-xs">

@@ -49,7 +49,11 @@ export const eventColumns: ColumnDef<EventColumnEntry>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => (
-      <RowCellIdDisplay id={row.original.id} label={row.original.title} />
+      <RowCellIdDisplay
+        id={row.original.id}
+        label={row.original.title}
+        href={`/admin/events/${row.original.id}`}
+      />
     ),
   },
   {
