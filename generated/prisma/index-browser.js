@@ -315,6 +315,18 @@ exports.Prisma.ShopAddressScalarFieldEnum = {
   geocodedAt: 'geocodedAt'
 };
 
+exports.Prisma.ShopPrivateContactScalarFieldEnum = {
+  id: 'id',
+  shopId: 'shopId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  notes: 'notes',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.MemberScalarFieldEnum = {
   id: 'id',
   role: 'role',
@@ -1087,6 +1099,7 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   Shop: 'Shop',
   ShopAddress: 'ShopAddress',
+  ShopPrivateContact: 'ShopPrivateContact',
   Member: 'Member',
   Message: 'Message',
   Conversation: 'Conversation',

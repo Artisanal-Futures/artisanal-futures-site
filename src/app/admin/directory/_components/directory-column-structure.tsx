@@ -2,7 +2,7 @@
 
 import type { ColumnDef, FilterFn } from "@tanstack/react-table";
 import Link from "next/link";
-import { MoreHorizontalIcon } from "lucide-react";
+import { Lock, MoreHorizontalIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import type { DirectoryRow } from "~/server/api/routers/shops";
@@ -64,6 +64,16 @@ const copyToClipboard = async (value: string, label: string) => {
   }
 };
 
+const PrivateMarker = () => (
+  <span
+    className="inline-flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground"
+    title="Private contact (admin only)"
+  >
+    <Lock className="size-3" />
+    private
+  </span>
+);
+
 const Dash = () => <span className="text-sm text-muted-foreground">—</span>;
 
 function DirectoryRowActions({
@@ -108,10 +118,11 @@ function DirectoryRowActions({
             Copy email
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={!row.phone}
+            disabled={!row.contactPhone}
             onClick={stop}
             onSelect={() => {
-              if (row.phone) void copyToClipboard(row.phone, "Phone");
+              if (row.contactPhone)
+                void copyToClipboard(row.contactPhone, "Phone");
             }}
           >
             Copy phone
@@ -177,6 +188,10 @@ export function createDirectoryColumns({
           row.contactEmail,
           row.accountEmail,
           row.phone,
+          row.contactPhone,
+          row.privateContact?.name,
+          row.privateContact?.email,
+          row.privateContact?.phone,
           row.location,
         ]
           .filter(Boolean)
@@ -208,6 +223,14 @@ export function createDirectoryColumns({
                   No shop yet
                 </Badge>
               )}
+              {r.managedByAdmin && (
+                <Badge
+                  variant="outline"
+                  className="px-1.5 py-0 text-[10px] font-normal text-amber-700 dark:text-amber-400"
+                >
+                  Managed by admin
+                </Badge>
+              )}
               <span className="max-w-full truncate text-xs text-muted-foreground">
                 {r.contactName || "—"}
               </span>
@@ -224,10 +247,17 @@ export function createDirectoryColumns({
         <AdvancedDataTableColumnHeader column={column} title="Email" />
       ),
       cell: ({ row }) => {
-        const { contactEmail, shopEmail, accountEmail } = row.original;
+        const { contactEmail, shopEmail, accountEmail, privateContact } =
+          row.original;
+        const managedByAdmin = row.original.managedByAdmin;
         if (!contactEmail) return <Dash />;
+        const isPrivate =
+          !!privateContact?.email && contactEmail === privateContact.email;
         const hasDifferentAccountEmail =
-          !!shopEmail && !!accountEmail && shopEmail !== accountEmail;
+          !managedByAdmin &&
+          !!shopEmail &&
+          !!accountEmail &&
+          shopEmail !== accountEmail;
         return (
           <div className="flex min-w-0 flex-col">
             <div className="flex min-w-0 items-center gap-1">
@@ -239,6 +269,7 @@ export function createDirectoryColumns({
                 {contactEmail}
               </a>
               <CopyButton value={contactEmail} label="Email" />
+              {isPrivate && <PrivateMarker />}
             </div>
             {hasDifferentAccountEmail && (
               <span
@@ -255,13 +286,14 @@ export function createDirectoryColumns({
     {
       id: "phone",
       size: 170,
-      accessorFn: (row) => row.phone ?? "",
+      accessorFn: (row) => row.contactPhone ?? "",
       header: ({ column }) => (
         <AdvancedDataTableColumnHeader column={column} title="Phone" />
       ),
       cell: ({ row }) => {
-        const { phone } = row.original;
+        const { contactPhone: phone, privateContact } = row.original;
         if (!phone) return <Dash />;
+        const isPrivate = !!privateContact?.phone && phone === privateContact.phone;
         return (
           <div className="flex min-w-0 items-center gap-1">
             <a
@@ -272,6 +304,7 @@ export function createDirectoryColumns({
               {phone}
             </a>
             <CopyButton value={phone} label="Phone" />
+            {isPrivate && <PrivateMarker />}
           </div>
         );
       },
@@ -362,6 +395,20 @@ export function createDirectoryColumns({
       ),
       cell: ({ row }) => (
         <span className="text-sm">{row.original.address?.state ?? "—"}</span>
+      ),
+      filterFn: facetedFilter,
+    },
+    {
+      id: "managed",
+      size: 100,
+      accessorFn: (row) => (row.managedByAdmin ? "admin" : "artisan"),
+      header: ({ column }) => (
+        <AdvancedDataTableColumnHeader column={column} title="Ownership" />
+      ),
+      cell: ({ row }) => (
+        <span className="text-sm text-muted-foreground">
+          {row.original.managedByAdmin ? "Managed by admin" : "Artisan-owned"}
+        </span>
       ),
       filterFn: facetedFilter,
     },

@@ -1,6 +1,7 @@
 import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
+import { PrivateContactCard } from "../_components/private-contact-card";
 import { ShopForm } from "../_components/shop-form";
 import { TrailHeader } from "../../_components/trail-header";
 
@@ -14,6 +15,10 @@ export default async function EditShopPage({ params }: Props) {
   const session = await getSession();
 
   const userRole = session?.user.role ?? "ARTISAN";
+
+  // Admin-only: artisans would receive FORBIDDEN from this procedure.
+  const privateContact =
+    userRole === "ADMIN" && shop ? await api.shop.getPrivateContact(id) : null;
 
   return (
     <>
@@ -29,6 +34,12 @@ export default async function EditShopPage({ params }: Props) {
         userRole={userRole}
         potentialShopOwners={potentialShopOwners}
       />
+
+      {userRole === "ADMIN" && shop && (
+        <div className="admin-container pt-0">
+          <PrivateContactCard shopId={shop.id} initial={privateContact} />
+        </div>
+      )}
     </>
   );
 }

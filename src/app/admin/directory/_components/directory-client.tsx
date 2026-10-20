@@ -16,12 +16,17 @@ type Props = { rows: DirectoryRow[] };
 
 export function DirectoryClient({ rows }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [viewRow, setViewRow] = useState<DirectoryRow | null>(null);
+  const [viewRowId, setViewRowId] = useState<string | null>(null);
   const tableRef = useRef<Table<DirectoryRow> | null>(null);
 
   const columns = useMemo(
-    () => createDirectoryColumns({ onView: setViewRow }),
+    () => createDirectoryColumns({ onView: (row) => setViewRowId(row.id) }),
     [],
+  );
+  // Derive from fresh rows so the sheet updates after router.refresh().
+  const viewRow = useMemo(
+    () => rows.find((r) => r.id === viewRowId) ?? null,
+    [rows, viewRowId],
   );
   const filters = useMemo(() => createDirectoryFilters(rows), [rows]);
 
@@ -44,7 +49,7 @@ export function DirectoryClient({ rows }: Props) {
         columns={columns}
         data={rows}
         filters={filters}
-        defaultColumnVisibility={{ kind: false, state: false }}
+        defaultColumnVisibility={{ kind: false, state: false, managed: false }}
         mobileHiddenColumnIds={["website", "location", "visibility"]}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
@@ -68,7 +73,7 @@ export function DirectoryClient({ rows }: Props) {
       <DirectoryDetailSheet
         row={viewRow}
         onOpenChange={(open) => {
-          if (!open) setViewRow(null);
+          if (!open) setViewRowId(null);
         }}
       />
     </div>

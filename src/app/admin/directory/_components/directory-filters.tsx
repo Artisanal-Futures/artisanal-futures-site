@@ -22,6 +22,14 @@ export const createDirectoryFilters = (rows: DirectoryRow[]) => {
       ],
     },
     {
+      column: "managed",
+      title: "Ownership",
+      filters: [
+        { value: "admin", label: "Managed by admin" },
+        { value: "artisan", label: "Artisan-owned" },
+      ],
+    },
+    {
       column: "visibility",
       title: "Visibility",
       filters: [

@@ -94,6 +94,12 @@ export type Shop = $Result.DefaultSelection<Prisma.$ShopPayload>
  */
 export type ShopAddress = $Result.DefaultSelection<Prisma.$ShopAddressPayload>
 /**
+ * Model ShopPrivateContact
+ * Admin-only private contact for the artisan behind a shop. Kept in its own
+ * table so it is never returned by queries that include/spread a Shop row.
+ */
+export type ShopPrivateContact = $Result.DefaultSelection<Prisma.$ShopPrivateContactPayload>
+/**
  * Model Member
  * 
  */
@@ -916,6 +922,16 @@ export class PrismaClient<
     * ```
     */
   get shopAddress(): Prisma.ShopAddressDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.shopPrivateContact`: Exposes CRUD operations for the **ShopPrivateContact** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ShopPrivateContacts
+    * const shopPrivateContacts = await prisma.shopPrivateContact.findMany()
+    * ```
+    */
+  get shopPrivateContact(): Prisma.ShopPrivateContactDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.member`: Exposes CRUD operations for the **Member** model.
@@ -1772,6 +1788,7 @@ export namespace Prisma {
     Product: 'Product',
     Shop: 'Shop',
     ShopAddress: 'ShopAddress',
+    ShopPrivateContact: 'ShopPrivateContact',
     Member: 'Member',
     Message: 'Message',
     Conversation: 'Conversation',
@@ -1830,7 +1847,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "shop" | "shopAddress" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
+      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "shop" | "shopAddress" | "shopPrivateContact" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2941,6 +2958,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ShopAddressCountArgs<ExtArgs>
             result: $Utils.Optional<ShopAddressCountAggregateOutputType> | number
+          }
+        }
+      }
+      ShopPrivateContact: {
+        payload: Prisma.$ShopPrivateContactPayload<ExtArgs>
+        fields: Prisma.ShopPrivateContactFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ShopPrivateContactFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          findFirst: {
+            args: Prisma.ShopPrivateContactFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ShopPrivateContactFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          findMany: {
+            args: Prisma.ShopPrivateContactFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          create: {
+            args: Prisma.ShopPrivateContactCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          createMany: {
+            args: Prisma.ShopPrivateContactCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ShopPrivateContactCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          delete: {
+            args: Prisma.ShopPrivateContactDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          update: {
+            args: Prisma.ShopPrivateContactUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          deleteMany: {
+            args: Prisma.ShopPrivateContactDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ShopPrivateContactUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          upsert: {
+            args: Prisma.ShopPrivateContactUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          aggregate: {
+            args: Prisma.ShopPrivateContactAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShopPrivateContact>
+          }
+          groupBy: {
+            args: Prisma.ShopPrivateContactGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ShopPrivateContactGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ShopPrivateContactCountArgs<ExtArgs>
+            result: $Utils.Optional<ShopPrivateContactCountAggregateOutputType> | number
           }
         }
       }
@@ -6015,6 +6106,7 @@ export namespace Prisma {
     product?: ProductOmit
     shop?: ShopOmit
     shopAddress?: ShopAddressOmit
+    shopPrivateContact?: ShopPrivateContactOmit
     member?: MemberOmit
     message?: MessageOmit
     conversation?: ConversationOmit
@@ -22659,6 +22751,7 @@ export namespace Prisma {
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
+    privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -22746,6 +22839,7 @@ export namespace Prisma {
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
+    privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -22766,6 +22860,7 @@ export namespace Prisma {
       address: Prisma.$ShopAddressPayload<ExtArgs> | null
       websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
       syncRuns: Prisma.$ProductSyncRunPayload<ExtArgs>[]
+      privateContact: Prisma.$ShopPrivateContactPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -23204,6 +23299,7 @@ export namespace Prisma {
     address<T extends Shop$addressArgs<ExtArgs> = {}>(args?: Subset<T, Shop$addressArgs<ExtArgs>>): Prisma__ShopAddressClient<$Result.GetResult<Prisma.$ShopAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     syncRuns<T extends Shop$syncRunsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$syncRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    privateContact<T extends Shop$privateContactArgs<ExtArgs> = {}>(args?: Subset<T, Shop$privateContactArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -23805,6 +23901,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductSyncRunScalarFieldEnum | ProductSyncRunScalarFieldEnum[]
+  }
+
+  /**
+   * Shop.privateContact
+   */
+  export type Shop$privateContactArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    where?: ShopPrivateContactWhereInput
   }
 
   /**
@@ -25045,6 +25160,1116 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ShopAddressInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ShopPrivateContact
+   */
+
+  export type AggregateShopPrivateContact = {
+    _count: ShopPrivateContactCountAggregateOutputType | null
+    _min: ShopPrivateContactMinAggregateOutputType | null
+    _max: ShopPrivateContactMaxAggregateOutputType | null
+  }
+
+  export type ShopPrivateContactMinAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShopPrivateContactMaxAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShopPrivateContactCountAggregateOutputType = {
+    id: number
+    shopId: number
+    name: number
+    email: number
+    phone: number
+    notes: number
+    updatedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ShopPrivateContactMinAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShopPrivateContactMaxAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShopPrivateContactCountAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ShopPrivateContactAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopPrivateContact to aggregate.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ShopPrivateContacts
+    **/
+    _count?: true | ShopPrivateContactCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ShopPrivateContactMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ShopPrivateContactMaxAggregateInputType
+  }
+
+  export type GetShopPrivateContactAggregateType<T extends ShopPrivateContactAggregateArgs> = {
+        [P in keyof T & keyof AggregateShopPrivateContact]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShopPrivateContact[P]>
+      : GetScalarType<T[P], AggregateShopPrivateContact[P]>
+  }
+
+
+
+
+  export type ShopPrivateContactGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShopPrivateContactWhereInput
+    orderBy?: ShopPrivateContactOrderByWithAggregationInput | ShopPrivateContactOrderByWithAggregationInput[]
+    by: ShopPrivateContactScalarFieldEnum[] | ShopPrivateContactScalarFieldEnum
+    having?: ShopPrivateContactScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ShopPrivateContactCountAggregateInputType | true
+    _min?: ShopPrivateContactMinAggregateInputType
+    _max?: ShopPrivateContactMaxAggregateInputType
+  }
+
+  export type ShopPrivateContactGroupByOutputType = {
+    id: string
+    shopId: string
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ShopPrivateContactCountAggregateOutputType | null
+    _min: ShopPrivateContactMinAggregateOutputType | null
+    _max: ShopPrivateContactMaxAggregateOutputType | null
+  }
+
+  type GetShopPrivateContactGroupByPayload<T extends ShopPrivateContactGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ShopPrivateContactGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ShopPrivateContactGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ShopPrivateContactGroupByOutputType[P]>
+            : GetScalarType<T[P], ShopPrivateContactGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ShopPrivateContactSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectScalar = {
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ShopPrivateContactOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "name" | "email" | "phone" | "notes" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shopPrivateContact"]>
+  export type ShopPrivateContactInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopPrivateContactIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopPrivateContactIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+
+  export type $ShopPrivateContactPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ShopPrivateContact"
+    objects: {
+      shop: Prisma.$ShopPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      shopId: string
+      name: string | null
+      email: string | null
+      phone: string | null
+      notes: string | null
+      updatedById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["shopPrivateContact"]>
+    composites: {}
+  }
+
+  type ShopPrivateContactGetPayload<S extends boolean | null | undefined | ShopPrivateContactDefaultArgs> = $Result.GetResult<Prisma.$ShopPrivateContactPayload, S>
+
+  type ShopPrivateContactCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ShopPrivateContactFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ShopPrivateContactCountAggregateInputType | true
+    }
+
+  export interface ShopPrivateContactDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ShopPrivateContact'], meta: { name: 'ShopPrivateContact' } }
+    /**
+     * Find zero or one ShopPrivateContact that matches the filter.
+     * @param {ShopPrivateContactFindUniqueArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ShopPrivateContactFindUniqueArgs>(args: SelectSubset<T, ShopPrivateContactFindUniqueArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ShopPrivateContact that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ShopPrivateContactFindUniqueOrThrowArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ShopPrivateContactFindUniqueOrThrowArgs>(args: SelectSubset<T, ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopPrivateContact that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindFirstArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ShopPrivateContactFindFirstArgs>(args?: SelectSubset<T, ShopPrivateContactFindFirstArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopPrivateContact that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindFirstOrThrowArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ShopPrivateContactFindFirstOrThrowArgs>(args?: SelectSubset<T, ShopPrivateContactFindFirstOrThrowArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ShopPrivateContacts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ShopPrivateContacts
+     * const shopPrivateContacts = await prisma.shopPrivateContact.findMany()
+     * 
+     * // Get first 10 ShopPrivateContacts
+     * const shopPrivateContacts = await prisma.shopPrivateContact.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ShopPrivateContactFindManyArgs>(args?: SelectSubset<T, ShopPrivateContactFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ShopPrivateContact.
+     * @param {ShopPrivateContactCreateArgs} args - Arguments to create a ShopPrivateContact.
+     * @example
+     * // Create one ShopPrivateContact
+     * const ShopPrivateContact = await prisma.shopPrivateContact.create({
+     *   data: {
+     *     // ... data to create a ShopPrivateContact
+     *   }
+     * })
+     * 
+     */
+    create<T extends ShopPrivateContactCreateArgs>(args: SelectSubset<T, ShopPrivateContactCreateArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ShopPrivateContacts.
+     * @param {ShopPrivateContactCreateManyArgs} args - Arguments to create many ShopPrivateContacts.
+     * @example
+     * // Create many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ShopPrivateContactCreateManyArgs>(args?: SelectSubset<T, ShopPrivateContactCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ShopPrivateContacts and returns the data saved in the database.
+     * @param {ShopPrivateContactCreateManyAndReturnArgs} args - Arguments to create many ShopPrivateContacts.
+     * @example
+     * // Create many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ShopPrivateContacts and only return the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ShopPrivateContactCreateManyAndReturnArgs>(args?: SelectSubset<T, ShopPrivateContactCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ShopPrivateContact.
+     * @param {ShopPrivateContactDeleteArgs} args - Arguments to delete one ShopPrivateContact.
+     * @example
+     * // Delete one ShopPrivateContact
+     * const ShopPrivateContact = await prisma.shopPrivateContact.delete({
+     *   where: {
+     *     // ... filter to delete one ShopPrivateContact
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ShopPrivateContactDeleteArgs>(args: SelectSubset<T, ShopPrivateContactDeleteArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ShopPrivateContact.
+     * @param {ShopPrivateContactUpdateArgs} args - Arguments to update one ShopPrivateContact.
+     * @example
+     * // Update one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ShopPrivateContactUpdateArgs>(args: SelectSubset<T, ShopPrivateContactUpdateArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ShopPrivateContacts.
+     * @param {ShopPrivateContactDeleteManyArgs} args - Arguments to filter ShopPrivateContacts to delete.
+     * @example
+     * // Delete a few ShopPrivateContacts
+     * const { count } = await prisma.shopPrivateContact.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ShopPrivateContactDeleteManyArgs>(args?: SelectSubset<T, ShopPrivateContactDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopPrivateContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ShopPrivateContactUpdateManyArgs>(args: SelectSubset<T, ShopPrivateContactUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopPrivateContacts and returns the data updated in the database.
+     * @param {ShopPrivateContactUpdateManyAndReturnArgs} args - Arguments to update many ShopPrivateContacts.
+     * @example
+     * // Update many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ShopPrivateContacts and only return the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ShopPrivateContactUpdateManyAndReturnArgs>(args: SelectSubset<T, ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ShopPrivateContact.
+     * @param {ShopPrivateContactUpsertArgs} args - Arguments to update or create a ShopPrivateContact.
+     * @example
+     * // Update or create a ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.upsert({
+     *   create: {
+     *     // ... data to create a ShopPrivateContact
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ShopPrivateContact we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ShopPrivateContactUpsertArgs>(args: SelectSubset<T, ShopPrivateContactUpsertArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ShopPrivateContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactCountArgs} args - Arguments to filter ShopPrivateContacts to count.
+     * @example
+     * // Count the number of ShopPrivateContacts
+     * const count = await prisma.shopPrivateContact.count({
+     *   where: {
+     *     // ... the filter for the ShopPrivateContacts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ShopPrivateContactCountArgs>(
+      args?: Subset<T, ShopPrivateContactCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ShopPrivateContactCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ShopPrivateContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ShopPrivateContactAggregateArgs>(args: Subset<T, ShopPrivateContactAggregateArgs>): Prisma.PrismaPromise<GetShopPrivateContactAggregateType<T>>
+
+    /**
+     * Group by ShopPrivateContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ShopPrivateContactGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ShopPrivateContactGroupByArgs['orderBy'] }
+        : { orderBy?: ShopPrivateContactGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ShopPrivateContactGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShopPrivateContactGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ShopPrivateContact model
+   */
+  readonly fields: ShopPrivateContactFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ShopPrivateContact.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ShopPrivateContactClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shop<T extends ShopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShopDefaultArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ShopPrivateContact model
+   */
+  interface ShopPrivateContactFieldRefs {
+    readonly id: FieldRef<"ShopPrivateContact", 'String'>
+    readonly shopId: FieldRef<"ShopPrivateContact", 'String'>
+    readonly name: FieldRef<"ShopPrivateContact", 'String'>
+    readonly email: FieldRef<"ShopPrivateContact", 'String'>
+    readonly phone: FieldRef<"ShopPrivateContact", 'String'>
+    readonly notes: FieldRef<"ShopPrivateContact", 'String'>
+    readonly updatedById: FieldRef<"ShopPrivateContact", 'String'>
+    readonly createdAt: FieldRef<"ShopPrivateContact", 'DateTime'>
+    readonly updatedAt: FieldRef<"ShopPrivateContact", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ShopPrivateContact findUnique
+   */
+  export type ShopPrivateContactFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact findUniqueOrThrow
+   */
+  export type ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact findFirst
+   */
+  export type ShopPrivateContactFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopPrivateContacts.
+     */
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact findFirstOrThrow
+   */
+  export type ShopPrivateContactFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopPrivateContacts.
+     */
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact findMany
+   */
+  export type ShopPrivateContactFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContacts to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact create
+   */
+  export type ShopPrivateContactCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ShopPrivateContact.
+     */
+    data: XOR<ShopPrivateContactCreateInput, ShopPrivateContactUncheckedCreateInput>
+  }
+
+  /**
+   * ShopPrivateContact createMany
+   */
+  export type ShopPrivateContactCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ShopPrivateContacts.
+     */
+    data: ShopPrivateContactCreateManyInput | ShopPrivateContactCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ShopPrivateContact createManyAndReturn
+   */
+  export type ShopPrivateContactCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * The data used to create many ShopPrivateContacts.
+     */
+    data: ShopPrivateContactCreateManyInput | ShopPrivateContactCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopPrivateContact update
+   */
+  export type ShopPrivateContactUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ShopPrivateContact.
+     */
+    data: XOR<ShopPrivateContactUpdateInput, ShopPrivateContactUncheckedUpdateInput>
+    /**
+     * Choose, which ShopPrivateContact to update.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact updateMany
+   */
+  export type ShopPrivateContactUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ShopPrivateContacts.
+     */
+    data: XOR<ShopPrivateContactUpdateManyMutationInput, ShopPrivateContactUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopPrivateContacts to update
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopPrivateContact updateManyAndReturn
+   */
+  export type ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * The data used to update ShopPrivateContacts.
+     */
+    data: XOR<ShopPrivateContactUpdateManyMutationInput, ShopPrivateContactUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopPrivateContacts to update
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopPrivateContact upsert
+   */
+  export type ShopPrivateContactUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ShopPrivateContact to update in case it exists.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+    /**
+     * In case the ShopPrivateContact found by the `where` argument doesn't exist, create a new ShopPrivateContact with this data.
+     */
+    create: XOR<ShopPrivateContactCreateInput, ShopPrivateContactUncheckedCreateInput>
+    /**
+     * In case the ShopPrivateContact was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ShopPrivateContactUpdateInput, ShopPrivateContactUncheckedUpdateInput>
+  }
+
+  /**
+   * ShopPrivateContact delete
+   */
+  export type ShopPrivateContactDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter which ShopPrivateContact to delete.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact deleteMany
+   */
+  export type ShopPrivateContactDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopPrivateContacts to delete
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopPrivateContact without action
+   */
+  export type ShopPrivateContactDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
   }
 
 
@@ -72625,6 +73850,21 @@ export namespace Prisma {
   export type ShopAddressScalarFieldEnum = (typeof ShopAddressScalarFieldEnum)[keyof typeof ShopAddressScalarFieldEnum]
 
 
+  export const ShopPrivateContactScalarFieldEnum: {
+    id: 'id',
+    shopId: 'shopId',
+    name: 'name',
+    email: 'email',
+    phone: 'phone',
+    notes: 'notes',
+    updatedById: 'updatedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ShopPrivateContactScalarFieldEnum = (typeof ShopPrivateContactScalarFieldEnum)[keyof typeof ShopPrivateContactScalarFieldEnum]
+
+
   export const MemberScalarFieldEnum: {
     id: 'id',
     role: 'role',
@@ -74830,6 +76070,7 @@ export namespace Prisma {
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
+    privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -74862,6 +76103,7 @@ export namespace Prisma {
     address?: ShopAddressOrderByWithRelationInput
     websiteProvision?: WebsiteProvisionOrderByWithRelationInput
     syncRuns?: ProductSyncRunOrderByRelationAggregateInput
+    privateContact?: ShopPrivateContactOrderByWithRelationInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -74897,6 +76139,7 @@ export namespace Prisma {
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
+    privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
   }, "id">
 
   export type ShopOrderByWithAggregationInput = {
@@ -75048,6 +76291,81 @@ export namespace Prisma {
     longitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
     geocodeQuery?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     geocodedAt?: DateTimeNullableWithAggregatesFilter<"ShopAddress"> | Date | string | null
+  }
+
+  export type ShopPrivateContactWhereInput = {
+    AND?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    OR?: ShopPrivateContactWhereInput[]
+    NOT?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    id?: StringFilter<"ShopPrivateContact"> | string
+    shopId?: StringFilter<"ShopPrivateContact"> | string
+    name?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }
+
+  export type ShopPrivateContactOrderByWithRelationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shop?: ShopOrderByWithRelationInput
+  }
+
+  export type ShopPrivateContactWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    shopId?: string
+    AND?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    OR?: ShopPrivateContactWhereInput[]
+    NOT?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    name?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }, "id" | "shopId">
+
+  export type ShopPrivateContactOrderByWithAggregationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ShopPrivateContactCountOrderByAggregateInput
+    _max?: ShopPrivateContactMaxOrderByAggregateInput
+    _min?: ShopPrivateContactMinOrderByAggregateInput
+  }
+
+  export type ShopPrivateContactScalarWhereWithAggregatesInput = {
+    AND?: ShopPrivateContactScalarWhereWithAggregatesInput | ShopPrivateContactScalarWhereWithAggregatesInput[]
+    OR?: ShopPrivateContactScalarWhereWithAggregatesInput[]
+    NOT?: ShopPrivateContactScalarWhereWithAggregatesInput | ShopPrivateContactScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ShopPrivateContact"> | string
+    shopId?: StringWithAggregatesFilter<"ShopPrivateContact"> | string
+    name?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
   }
 
   export type MemberWhereInput = {
@@ -79755,6 +81073,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -79786,6 +81105,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -79817,6 +81137,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -79848,6 +81169,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -80030,6 +81352,89 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopPrivateContactCreateInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shop: ShopCreateNestedOneWithoutPrivateContactInput
+  }
+
+  export type ShopPrivateContactUncheckedCreateInput = {
+    id?: string
+    shopId: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shop?: ShopUpdateOneRequiredWithoutPrivateContactNestedInput
+  }
+
+  export type ShopPrivateContactUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactCreateManyInput = {
+    id?: string
+    shopId: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MemberCreateInput = {
@@ -85118,6 +86523,11 @@ export namespace Prisma {
     none?: ProductSyncRunWhereInput
   }
 
+  export type ShopPrivateContactNullableScalarRelationFilter = {
+    is?: ShopPrivateContactWhereInput | null
+    isNot?: ShopPrivateContactWhereInput | null
+  }
+
   export type EventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -85293,6 +86703,42 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type ShopPrivateContactCountOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShopPrivateContactMaxOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShopPrivateContactMinOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumMemberRoleFilter<$PrismaModel = never> = {
@@ -88826,6 +90272,12 @@ export namespace Prisma {
     connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
   }
 
+  export type ShopPrivateContactCreateNestedOneWithoutShopInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    connect?: ShopPrivateContactWhereUniqueInput
+  }
+
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -88871,6 +90323,12 @@ export namespace Prisma {
     connectOrCreate?: ProductSyncRunCreateOrConnectWithoutShopInput | ProductSyncRunCreateOrConnectWithoutShopInput[]
     createMany?: ProductSyncRunCreateManyShopInputEnvelope
     connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
+  }
+
+  export type ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    connect?: ShopPrivateContactWhereUniqueInput
   }
 
   export type ShopUpdateattributeTagsInput = {
@@ -88980,6 +90438,16 @@ export namespace Prisma {
     deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
   }
 
+  export type ShopPrivateContactUpdateOneWithoutShopNestedInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    upsert?: ShopPrivateContactUpsertWithoutShopInput
+    disconnect?: ShopPrivateContactWhereInput | boolean
+    delete?: ShopPrivateContactWhereInput | boolean
+    connect?: ShopPrivateContactWhereUniqueInput
+    update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -89070,6 +90538,16 @@ export namespace Prisma {
     deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
   }
 
+  export type ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    upsert?: ShopPrivateContactUpsertWithoutShopInput
+    disconnect?: ShopPrivateContactWhereInput | boolean
+    delete?: ShopPrivateContactWhereInput | boolean
+    connect?: ShopPrivateContactWhereUniqueInput
+    update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
   export type ShopCreateNestedOneWithoutAddressInput = {
     create?: XOR<ShopCreateWithoutAddressInput, ShopUncheckedCreateWithoutAddressInput>
     connectOrCreate?: ShopCreateOrConnectWithoutAddressInput
@@ -89092,6 +90570,20 @@ export namespace Prisma {
     delete?: ShopWhereInput | boolean
     connect?: ShopWhereUniqueInput
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutAddressInput, ShopUpdateWithoutAddressInput>, ShopUncheckedUpdateWithoutAddressInput>
+  }
+
+  export type ShopCreateNestedOneWithoutPrivateContactInput = {
+    create?: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutPrivateContactInput
+    connect?: ShopWhereUniqueInput
+  }
+
+  export type ShopUpdateOneRequiredWithoutPrivateContactNestedInput = {
+    create?: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutPrivateContactInput
+    upsert?: ShopUpsertWithoutPrivateContactInput
+    connect?: ShopWhereUniqueInput
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutPrivateContactInput, ShopUpdateWithoutPrivateContactInput>, ShopUncheckedUpdateWithoutPrivateContactInput>
   }
 
   export type ConversationCreateNestedManyWithoutMemberOneInput = {
@@ -93549,6 +95041,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -93579,6 +95072,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -93625,6 +95119,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -93655,6 +95150,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -95319,6 +96815,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutInvitesInput = {
@@ -95349,6 +96846,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutInvitesInput = {
@@ -95472,6 +96970,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutInvitesInput = {
@@ -95502,6 +97001,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutSyncRunsInput = {
@@ -95532,6 +97032,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutSyncRunsInput = {
@@ -95562,6 +97063,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutSyncRunsInput = {
@@ -95640,6 +97142,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutSyncRunsInput = {
@@ -95670,6 +97173,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput = {
@@ -95919,6 +97423,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -95949,6 +97454,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -96018,6 +97524,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -96048,6 +97555,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -96094,6 +97602,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -96124,6 +97633,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -96225,6 +97735,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -96255,6 +97766,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -96704,6 +98216,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ShopPrivateContactCreateWithoutShopInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUncheckedCreateWithoutShopInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactCreateOrConnectWithoutShopInput = {
+    where: ShopPrivateContactWhereUniqueInput
+    create: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+  }
+
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
     where: EventWhereUniqueInput
     update: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
@@ -97048,6 +98587,39 @@ export namespace Prisma {
     triggeredManually?: BoolFilter<"ProductSyncRun"> | boolean
   }
 
+  export type ShopPrivateContactUpsertWithoutShopInput = {
+    update: XOR<ShopPrivateContactUpdateWithoutShopInput, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+    create: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    where?: ShopPrivateContactWhereInput
+  }
+
+  export type ShopPrivateContactUpdateToOneWithWhereWithoutShopInput = {
+    where?: ShopPrivateContactWhereInput
+    data: XOR<ShopPrivateContactUpdateWithoutShopInput, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ShopPrivateContactUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ShopCreateWithoutAddressInput = {
     id?: string
     ownerName: string
@@ -97076,6 +98648,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -97106,6 +98679,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -97152,6 +98726,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -97180,6 +98755,147 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+  }
+
+  export type ShopCreateWithoutPrivateContactInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopUncheckedCreateWithoutPrivateContactInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    products?: ProductUncheckedCreateNestedManyWithoutShopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
+    address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopCreateOrConnectWithoutPrivateContactInput = {
+    where: ShopWhereUniqueInput
+    create: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+  }
+
+  export type ShopUpsertWithoutPrivateContactInput = {
+    update: XOR<ShopUpdateWithoutPrivateContactInput, ShopUncheckedUpdateWithoutPrivateContactInput>
+    create: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    where?: ShopWhereInput
+  }
+
+  export type ShopUpdateToOneWithWhereWithoutPrivateContactInput = {
+    where?: ShopWhereInput
+    data: XOR<ShopUpdateWithoutPrivateContactInput, ShopUncheckedUpdateWithoutPrivateContactInput>
+  }
+
+  export type ShopUpdateWithoutPrivateContactInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+  }
+
+  export type ShopUncheckedUpdateWithoutPrivateContactInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutShopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
@@ -104699,6 +106415,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -104729,6 +106446,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -104846,6 +106564,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -104876,6 +106595,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -105642,6 +107362,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -105672,6 +107393,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -109699,6 +111421,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -109729,6 +111452,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {

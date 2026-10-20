@@ -37,6 +37,7 @@ model Shop {
   address          ShopAddress?
   websiteProvision WebsiteProvision?
   syncRuns         ProductSyncRun[]
+  privateContact   ShopPrivateContact?
 }
 
 model ShopAddress {
@@ -56,4 +57,19 @@ model ShopAddress {
   /// Normalized locality query last geocoded (zip/city/state/country only).
   geocodeQuery String?
   geocodedAt   DateTime?
+}
+
+/// Admin-only private contact for the artisan behind a shop. Kept in its own
+/// table so it is never returned by queries that include/spread a Shop row.
+model ShopPrivateContact {
+  id          String   @id @default(cuid())
+  shopId      String   @unique
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name        String?
+  email       String?
+  phone       String?
+  notes       String?  @db.Text
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

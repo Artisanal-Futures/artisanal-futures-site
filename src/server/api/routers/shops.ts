@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
+import { shopPrivateContactSchema } from "~/lib/validators/shop-private-contact";
 import {
   adminArtisanProcedure,
   adminOnlyProcedure,
@@ -36,6 +37,18 @@ const publicAddressSelect = {
   shopId: true,
 } as const;
 
+/**
+ * Admin-only private contact select. `ShopPrivateContact` must only ever be
+ * selected explicitly, and only from adminOnlyProcedure routes.
+ */
+const privateContactSelect = {
+  name: true,
+  email: true,
+  phone: true,
+  notes: true,
+  updatedAt: true,
+} as const;
+
 /** One row of the admin Artisan Directory: a shop, or an artisan with no shop. */
 export type DirectoryRow = {
   /** shop.id, or `user_${user.id}` for shopless artisans */
@@ -63,6 +76,20 @@ export type DirectoryRow = {
   } | null;
   owner: { id: string; name: string | null; email: string | null; role: Role };
   createdAt: Date;
+  /** Admin-only private contact for the real artisan behind an admin-owned shop. */
+  privateContact: {
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+    notes: string | null;
+    updatedAt: Date;
+  } | null;
+  /** True when the shop is owned by an ADMIN account (artisan has no account). */
+  managedByAdmin: boolean;
+  /** Latest unused, unexpired invite for this shop, if any. */
+  pendingInvite: { email: string; expiresAt: Date } | null;
+  /** privateContact.phone ?? phone */
+  contactPhone: string | null;
 };
 
 export const shopsRouter = createTRPCRouter({
@@ -73,6 +100,51 @@ export const shopsRouter = createTRPCRouter({
     });
     return shops;
   }),
+
+  getPrivateContact: adminOnlyProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: shopId }) => {
+      return ctx.db.shopPrivateContact.findUnique({
+        where: { shopId },
+        select: privateContactSelect,
+      });
+    }),
+
+  upsertPrivateContact: adminOnlyProcedure
+    .input(shopPrivateContactSchema)
+    .mutation(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
+        where: { id: input.shopId },
+        select: { id: true },
+      });
+
+      if (!shop) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Shop not found" });
+      }
+
+      const fields = {
+        name: blankToNull(input.name),
+        email: blankToNull(input.email),
+        phone: blankToNull(input.phone),
+        notes: blankToNull(input.notes),
+      };
+
+      if (Object.values(fields).every((value) => value === null)) {
+        await ctx.db.shopPrivateContact.deleteMany({
+          where: { shopId: input.shopId },
+        });
+        return null;
+      }
+
+      const updatedById = ctx.session.user.id;
+
+      return ctx.db.shopPrivateContact.upsert({
+        where: { shopId: input.shopId },
+        create: { shopId: input.shopId, ...fields, updatedById },
+        update: { ...fields, updatedById },
+        select: privateContactSelect,
+      });
+    }),
 
   getDirectory: adminOnlyProcedure.query(
     async ({ ctx }): Promise<DirectoryRow[]> => {
@@ -102,6 +174,13 @@ export const shopsRouter = createTRPCRouter({
             owner: {
               select: { id: true, name: true, email: true, role: true },
             },
+            privateContact: { select: privateContactSelect },
+            invites: {
+              where: { used: false, expiresAt: { gt: new Date() } },
+              select: { email: true, expiresAt: true },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
           },
           orderBy: { name: "asc" },
         }),
@@ -121,6 +200,18 @@ export const shopsRouter = createTRPCRouter({
       const shopRows: DirectoryRow[] = shops.map((shop) => {
         const shopEmail = blankToNull(shop.email);
         const accountEmail = blankToNull(shop.owner.email);
+        const managedByAdmin = shop.owner.role === "ADMIN";
+        const privateContact = shop.privateContact
+          ? {
+              name: blankToNull(shop.privateContact.name),
+              email: blankToNull(shop.privateContact.email),
+              phone: blankToNull(shop.privateContact.phone),
+              notes: blankToNull(shop.privateContact.notes),
+              updatedAt: shop.privateContact.updatedAt,
+            }
+          : null;
+        const phone = blankToNull(shop.phone);
+        const invite = shop.invites[0];
 
         return {
           id: shop.id,
@@ -129,11 +220,17 @@ export const shopsRouter = createTRPCRouter({
           shopName: blankToNull(shop.name),
           logoPhoto: blankToNull(shop.logoPhoto),
           contactName:
-            blankToNull(shop.ownerName) ?? blankToNull(shop.owner.name) ?? "",
-          contactEmail: shopEmail ?? accountEmail,
+            privateContact?.name ??
+            blankToNull(shop.ownerName) ??
+            blankToNull(shop.owner.name) ??
+            "",
+          contactEmail:
+            privateContact?.email ??
+            (managedByAdmin ? null : accountEmail) ??
+            shopEmail,
           shopEmail,
           accountEmail,
-          phone: blankToNull(shop.phone),
+          phone,
           website: blankToNull(shop.website),
           isPublic: shop.isPublic,
           location: formatLocality(shop.address?.city, shop.address?.state),
@@ -150,6 +247,12 @@ export const shopsRouter = createTRPCRouter({
             : null,
           owner: shop.owner,
           createdAt: shop.createdAt,
+          privateContact,
+          managedByAdmin,
+          pendingInvite: invite
+            ? { email: invite.email, expiresAt: invite.expiresAt }
+            : null,
+          contactPhone: privateContact?.phone ?? phone,
         };
       });
 
@@ -178,6 +281,10 @@ export const shopsRouter = createTRPCRouter({
             role: user.role,
           },
           createdAt: user.createdAt,
+          privateContact: null,
+          managedByAdmin: false,
+          pendingInvite: null,
+          contactPhone: null,
         };
       });
 

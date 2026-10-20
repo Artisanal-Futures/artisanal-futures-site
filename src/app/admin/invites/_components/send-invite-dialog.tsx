@@ -25,11 +25,41 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-export function SendInviteDialog() {
+type InviteRole = "ARTISAN" | "GUEST" | "ADMIN";
+
+export type SendInviteDialogProps = {
+  defaultEmail?: string;
+  /** Pre-attach this shop; also forces the default role to ARTISAN. */
+  defaultShopId?: string;
+  /** Custom trigger element (rendered via DialogTrigger asChild). Defaults to the existing "Send invite" button. */
+  trigger?: React.ReactNode;
+  /** Called after an invite is created successfully. */
+  onSent?: () => void;
+};
+
+export function SendInviteDialog({
+  defaultEmail,
+  defaultShopId,
+  trigger,
+  onSent,
+}: SendInviteDialogProps = {}) {
+  const defaultRole: InviteRole = defaultShopId ? "ARTISAN" : "GUEST";
+
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"ARTISAN" | "GUEST" | "ADMIN">("GUEST");
-  const [shopId, setShopId] = useState<string | undefined>();
+  const [email, setEmail] = useState(defaultEmail ?? "");
+  const [role, setRole] = useState<InviteRole>(defaultRole);
+  const [shopId, setShopId] = useState<string | undefined>(defaultShopId);
+
+  const resetToDefaults = () => {
+    setEmail(defaultEmail ?? "");
+    setRole(defaultRole);
+    setShopId(defaultShopId);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) resetToDefaults();
+    setOpen(next);
+  };
 
   const apiUtils = api.useUtils();
 
@@ -40,19 +70,18 @@ export function SendInviteDialog() {
   const createInvite = api.invite.createInvite.useMutation({
     onSuccess: () => {
       toast.success("Invite sent successfully.");
-      setEmail("");
-      setRole("GUEST");
-      setShopId(undefined);
+      resetToDefaults();
       setOpen(false);
       void apiUtils.invite.listInvites.invalidate();
       void apiUtils.invite.listAttachableShops.invalidate();
+      onSent?.();
     },
     onError: (error) => {
       toast.error(error.message ?? "Failed to send invite.");
     },
   });
 
-  const handleRoleChange = (v: "ARTISAN" | "GUEST" | "ADMIN") => {
+  const handleRoleChange = (v: InviteRole) => {
     setRole(v);
     if (v !== "ARTISAN") {
       setShopId(undefined);
@@ -61,6 +90,7 @@ export function SendInviteDialog() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!email.trim()) return;
     createInvite.mutate({
       email: email.trim(),
@@ -71,20 +101,25 @@ export function SendInviteDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="h-8 text-xs" size="sm">
-          <PlusIcon className="mr-1 h-4 w-4" />
-          Send invite
-        </Button>
+        {trigger ?? (
+          <Button className="h-8 text-xs" size="sm">
+            <PlusIcon className="mr-1 h-4 w-4" />
+            Send invite
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Send platform invite</DialogTitle>
+            <DialogTitle>
+              {defaultShopId ? "Invite to claim shop" : "Send platform invite"}
+            </DialogTitle>
             <DialogDescription>
-              Send an invitation email with a one-time code. The recipient can
-              join as an Artisan, Guest, or Admin. Codes expire in 30 days.
+              {defaultShopId
+                ? "Send an invitation email with a one-time code. When the recipient signs up with it, ownership of this shop transfers to them. Codes expire in 30 days."
+                : "Send an invitation email with a one-time code. The recipient can join as an Artisan, Guest, or Admin. Codes expire in 30 days."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -103,9 +138,7 @@ export function SendInviteDialog() {
               <Label htmlFor="invite-role">Role</Label>
               <Select
                 value={role}
-                onValueChange={(v) =>
-                  handleRoleChange(v as "ARTISAN" | "GUEST" | "ADMIN")
-                }
+                onValueChange={(v) => handleRoleChange(v as InviteRole)}
               >
                 <SelectTrigger id="invite-role">
                   <SelectValue />
@@ -168,7 +201,7 @@ export function SendInviteDialog() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
+              onClick={() => handleOpenChange(false)}
             >
               Cancel
             </Button>
