@@ -32,7 +32,7 @@ export function GuestSurveysClient({ guests }: Props) {
       <AdvancedDataTable
         searchKey="user"
         columns={guestSurveyColumnStructure}
-        mobileHiddenColumnIds={["createdAt", "prompt"]}
+        mobileHiddenColumnIds={["createdAt"]}
         data={castGuests}
         selectionActions={
           <GuestSurveyBulkActions

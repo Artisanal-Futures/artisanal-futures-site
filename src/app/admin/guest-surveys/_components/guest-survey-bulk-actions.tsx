@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Trash2Icon, XIcon } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,6 +26,7 @@ type Props = {
 
 export function GuestSurveyBulkActions({ selectedIds, onClear }: Props) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteGuestSurveys = api.onboarding.deleteGuestSurveys.useMutation({
     onMutate: () => {
@@ -34,6 +36,7 @@ export function GuestSurveyBulkActions({ selectedIds, onClear }: Props) {
       toast.dismiss();
       toast.success(message);
       void apiUtils.onboarding.invalidate();
+      router.refresh();
       onClear();
     },
     onError: (error) => {

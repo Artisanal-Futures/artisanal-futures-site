@@ -190,8 +190,6 @@ export function ShopForm({
           (response.file.objectInfo.metadata?.pathname as string | undefined) ??
           "";
         if (fileLocation) ownerPhotoUrl = fileLocation;
-
-        console.log(ownerPhotoUrl);
       } catch {
         toast.error("Failed to upload owner photo.");
         return;

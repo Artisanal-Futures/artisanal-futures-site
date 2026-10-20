@@ -2,6 +2,7 @@
 
 import type { Shop, WebsiteProvision } from "generated/prisma";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
 import { LinkIcon, MailIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -89,87 +90,89 @@ export const columns: ColumnDef<ShopWithWebsite>[] = [
   {
     id: "actions",
     size: 220,
-    cell: ({ row }) => {
-      const shop = row.original;
-      const utils = api.useUtils();
-      const hasWebsiteProvision = !!shop.websiteProvision;
-      // const router = useRouter();
-      const deleteMutation = api.websiteProvision.delete.useMutation({
-        onSuccess: () => {
-          toast.dismiss();
-          toast.success("Website provision delete successfully.");
-          void utils.websiteProvision.invalidate();
-        },
-        onError: (error) => {
-          toast.dismiss();
-          toast.error(`Error deleting website provision ${error.message}`);
-        },
-        onSettled: () => {
-          void utils.shop.getAllWithWebsites.invalidate();
-        },
-        onMutate: () => {
-          toast.loading("Deleting website provision...");
-        },
-      });
-      return (
-        <div className="flex items-center justify-end space-x-2">
-          {!hasWebsiteProvision ? (
-            <ItemDialog
-              id={shop.id}
-              title="Create Website Provision (May take up to 5 minutes)"
-              subtitle={`Create a new website for ${shop.name}`}
-              initialData={{
-                ownerId: shop.ownerId,
-                shopId: shop.id,
-                name: shop.name,
-                email: shop.email ?? "",
-              }}
-              FormComponent={WebsiteProvisionForm}
-              mode="create"
-            />
-          ) : (
-            <>
-              {shop.websiteProvision?.claimUrl &&
-                !shop.websiteProvision.claimedAt && (
-                  <Button
-                    className="h-8 text-xs"
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      window.open(shop.websiteProvision!.claimUrl!, "_blank")
-                    }
-                  >
-                    <LinkIcon className="mr-1 h-4 w-4" />
-                    Claim Link
-                  </Button>
-                )}
+    cell: ({ row }) => <WebsiteProvisionActions shop={row.original} />,
+  },
+];
+
+function WebsiteProvisionActions({ shop }: { shop: ShopWithWebsite }) {
+  const utils = api.useUtils();
+  const hasWebsiteProvision = !!shop.websiteProvision;
+  const router = useRouter();
+  const deleteMutation = api.websiteProvision.delete.useMutation({
+    onSuccess: () => {
+      toast.dismiss();
+      toast.success("Website provision delete successfully.");
+      void utils.websiteProvision.invalidate();
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.dismiss();
+      toast.error(`Error deleting website provision ${error.message}`);
+    },
+    onSettled: () => {
+      void utils.shop.getAllWithWebsites.invalidate();
+    },
+    onMutate: () => {
+      toast.loading("Deleting website provision...");
+    },
+  });
+  return (
+    <div className="flex items-center justify-end space-x-2">
+      {!hasWebsiteProvision ? (
+        <ItemDialog
+          id={shop.id}
+          title="Create Website Provision (May take up to 5 minutes)"
+          subtitle={`Create a new website for ${shop.name}`}
+          initialData={{
+            ownerId: shop.ownerId,
+            shopId: shop.id,
+            name: shop.name,
+            email: shop.email ?? "",
+          }}
+          FormComponent={WebsiteProvisionForm}
+          mode="create"
+        />
+      ) : (
+        <>
+          {shop.websiteProvision?.claimUrl &&
+            !shop.websiteProvision.claimedAt && (
               <Button
                 className="h-8 text-xs"
                 size="sm"
-                variant="default"
-                onClick={() => (window.location.href = `mailto:${shop.email}`)}
-              >
-                <MailIcon className="mr-1 h-4 w-4" />
-                Email
-              </Button>
-              <SingleActionDialog
-                title="Delete Website Provision"
-                description={`Are you sure you want to delete the website provision for "${shop.name}"? This action cannot be undone.`}
-                actionText="Delete"
-                onSubmit={() =>
-                  deleteMutation.mutate({ id: shop.websiteProvision!.id })
+                variant="outline"
+                onClick={() =>
+                  window.open(shop.websiteProvision!.claimUrl!, "_blank")
                 }
-                isLoading={deleteMutation.isPending}
-                icon={TrashIcon}
-                color="red"
-              />
-            </>
-          )}
-        </div>
-      );
-    },
-  },
-];
+              >
+                <LinkIcon className="mr-1 h-4 w-4" />
+                Claim Link
+              </Button>
+            )}
+          <Button
+            className="h-8 text-xs"
+            size="sm"
+            variant="default"
+            onClick={() => (window.location.href = `mailto:${shop.email}`)}
+          >
+            <MailIcon className="mr-1 h-4 w-4" />
+            Email
+          </Button>
+          <SingleActionDialog
+            title="Delete Website Provision"
+            description={`Are you sure you want to delete the website provision for "${shop.name}"? This action cannot be undone.`}
+            actionText="Delete"
+            onSubmit={() =>
+              deleteMutation.mutate({ id: shop.websiteProvision!.id })
+            }
+            isLoading={deleteMutation.isPending}
+            icon={TrashIcon}
+            color="red"
+          />
+        </>
+      )}
+    </div>
+  );
+}
 
 type Props = {
   websiteProvisions: RouterOutputs["shop"]["getAllWithWebsites"];

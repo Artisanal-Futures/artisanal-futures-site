@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -62,6 +63,7 @@ export function SendInviteDialog({
   };
 
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const attachableShops = api.invite.listAttachableShops.useQuery(undefined, {
     enabled: open && role === "ARTISAN",
@@ -74,6 +76,7 @@ export function SendInviteDialog({
       setOpen(false);
       void apiUtils.invite.listInvites.invalidate();
       void apiUtils.invite.listAttachableShops.invalidate();
+      router.refresh();
       onSent?.();
     },
     onError: (error) => {

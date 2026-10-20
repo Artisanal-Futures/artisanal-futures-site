@@ -5,10 +5,13 @@ import { ShopForm } from "../_components/shop-form";
 import { TrailHeader } from "../../_components/trail-header";
 
 export default async function NewShopPage() {
-  const potentialShopOwners = await api.shop.getShopOwners();
   const session = await getSession();
 
   const userRole = session?.user.role ?? "ARTISAN";
+
+  // Admin-only: artisans would receive UNAUTHORIZED from this procedure.
+  const potentialShopOwners =
+    userRole === "ADMIN" ? await api.shop.getShopOwners() : [];
 
   return (
     <>

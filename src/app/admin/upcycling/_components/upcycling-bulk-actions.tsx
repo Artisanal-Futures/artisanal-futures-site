@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2Icon, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -25,6 +26,7 @@ type Props = {
 
 export function UpcyclingBulkActions({ selectedIds, onClear }: Props) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteItems = api.upcycling.deleteMany.useMutation({
     onMutate: () => {
@@ -34,6 +36,7 @@ export function UpcyclingBulkActions({ selectedIds, onClear }: Props) {
       toast.dismiss();
       toast.success(message);
       void apiUtils.upcycling.invalidate();
+      router.refresh();
       onClear();
     },
     onError: (error) => {

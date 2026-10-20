@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   AlertTriangle,
@@ -92,6 +93,7 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const selectedShop = shops.find((shop) => shop.id === shopId);
 
@@ -192,6 +194,7 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
         `Created ${result.createdCount} ${itemsLabel("products", result.createdCount)}`,
       );
       void apiUtils.product.invalidate();
+      router.refresh();
       setCommitResult(result);
       setStep("success");
     },
@@ -211,6 +214,7 @@ export function CsvImportWizard({ shops, categories, initialType }: Props) {
         `Created ${result.createdCount} ${itemsLabel("services", result.createdCount)}`,
       );
       void apiUtils.service.invalidate();
+      router.refresh();
       setCommitResult(result);
       setStep("success");
     },

@@ -39,8 +39,8 @@ export function SurveyClient({ surveys }: Props) {
   return (
     <div className="py-4">
       <AdvancedDataTable
-        searchKey="createdAt"
-        searchPlaceholder="Filter by date..."
+        searchKey="id"
+        searchPlaceholder="Search by survey ID..."
         columns={surveyColumns}
         mobileHiddenColumnIds={["owner", "createdAt"]}
         data={elevatedSurveyData ?? []}

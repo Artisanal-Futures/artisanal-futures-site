@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertCircle, Settings } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import { parseTrpcFromBoundaryMessage } from "~/lib/trpc/boundary-error";
 import { Button } from "~/components/ui/button";
@@ -20,9 +20,6 @@ export default function AdminError({ error, reset }: Props) {
 
   const trpc = parseTrpcFromBoundaryMessage(error.message);
 
-  const isFeatureDisabled =
-    trpc?.code === "FORBIDDEN" &&
-    trpc?.message.includes("feature is not enabled");
   return (
     <div className="bg-background relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4">
       <div
@@ -79,15 +76,6 @@ export default function AdminError({ error, reset }: Props) {
         ) : null}
 
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-          {isFeatureDisabled ? (
-            <Button size="lg" className="gap-2" asChild>
-              <Link href="/admin/settings/features">
-                <Settings className="size-4 shrink-0" aria-hidden />
-                Enable collections
-              </Link>
-            </Button>
-          ) : null}
-
           {reset ? (
             <Button
               size="lg"

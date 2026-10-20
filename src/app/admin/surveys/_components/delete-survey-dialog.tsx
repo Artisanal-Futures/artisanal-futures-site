@@ -11,7 +11,7 @@ type Props = { surveyId: string };
 export function DeleteSurveyDialog({ surveyId }: Props) {
   const router = useRouter();
   const apiUtils = api.useUtils();
-  const deleteShop = api.survey.delete.useMutation({
+  const deleteSurvey = api.survey.delete.useMutation({
     onSuccess: ({ message }) => {
       toast.success(message);
       void apiUtils.survey.invalidate();
@@ -22,7 +22,7 @@ export function DeleteSurveyDialog({ surveyId }: Props) {
     },
   });
 
-  const onSubmit = () => deleteShop.mutate({ surveyId });
+  const onSubmit = () => deleteSurvey.mutate({ surveyId });
 
   return (
     <SingleActionDialog
@@ -33,7 +33,7 @@ export function DeleteSurveyDialog({ surveyId }: Props) {
         Are you sure you want to delete this survey?`}
       title="Delete survey?"
       icon={TrashIcon}
-      isLoading={deleteShop.isPending}
+      isLoading={deleteSurvey.isPending}
     />
   );
 }

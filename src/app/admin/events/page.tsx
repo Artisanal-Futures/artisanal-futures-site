@@ -3,7 +3,7 @@ import { api } from "~/trpc/server";
 import { TrailHeader } from "../_components/trail-header";
 import { EventClient } from "./_components/event-client";
 
-export default async function AdminCategoriesPage() {
+export default async function AdminEventsPage() {
   const events = await api.event.getAll();
   return (
     <>

@@ -70,13 +70,6 @@ export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
     ),
   },
   {
-    accessorKey: "prompt",
-    size: 240,
-    header: "Email",
-    cell: ({ row }) => <>{row.original.email ?? ""}</>,
-  },
-
-  {
     id: "actions",
     size: 120,
     enableSorting: false,

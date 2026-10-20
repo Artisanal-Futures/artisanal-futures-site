@@ -9,7 +9,7 @@ export default async function ProductsAdminPage() {
 
   return (
     <>
-      <TrailHeader breadcrumbs={[{ label: "Shops" }]} />
+      <TrailHeader breadcrumbs={[{ label: "Products" }]} />
       <div className="admin-container">
         <div className="admin-header">
           <div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { type ServiceWithShop } from "~/types/service";
-import { type Shop } from "~/types/shop";
 import { type FilterOption } from "~/components/tables/advanced-data-table";
 
 /**

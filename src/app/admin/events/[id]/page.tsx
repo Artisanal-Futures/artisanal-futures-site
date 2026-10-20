@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { api } from "~/trpc/server";
 
 import { EventForm } from "../_components/event-form";
@@ -9,6 +11,7 @@ type Props = {
 export default async function EditEventPage({ params }: Props) {
   const { id } = await params;
   const event = await api.event.get(id);
+  if (!event) notFound();
   const shops = await api.shop.getAll();
 
   return (
@@ -26,7 +29,7 @@ export default async function EditEventPage({ params }: Props) {
 }
 export const generateMetadata = async ({ params }: Props) => {
   const { id } = await params;
-  const event = await api.event.get(id);
+  const event = await api.event.get(id).catch(() => null);
   if (!event) {
     return {
       title: "Event Not Found",

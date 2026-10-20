@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2Icon, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -25,6 +26,7 @@ type Props = {
 
 export function EventBulkActions({ selectedEventIds, onClear }: Props) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteEvents = api.event.deleteMany.useMutation({
     onMutate: () => {
@@ -34,6 +36,7 @@ export function EventBulkActions({ selectedEventIds, onClear }: Props) {
       toast.dismiss();
       toast.success("Events deleted successfully.");
       await apiUtils.event.invalidate();
+      router.refresh();
       onClear();
     },
     onError: (error) => {

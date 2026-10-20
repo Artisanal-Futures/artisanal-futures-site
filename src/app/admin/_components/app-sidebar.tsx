@@ -10,18 +10,15 @@ import {
   IconCode,
   IconDashboard,
   IconDatabase,
-  IconDeviceMobileMessage,
   IconFileSpreadsheet,
   IconFolder,
   IconGlobe,
   IconHeartHandshake,
   IconHelp,
-  IconMail,
   IconMessageCircle,
   IconNotebook,
   IconPackage,
   IconRefresh,
-  IconSettings,
   IconShoppingCart,
   IconSparkles,
   IconUserPlus,
@@ -235,7 +232,6 @@ export function AppSidebar({
         <NavSecondary items={navData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        {/* <WelcomeNotification /> */}
         <NavUser />
       </SidebarFooter>
     </Sidebar>

@@ -2,12 +2,26 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { DatabaseIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Checkbox } from "~/components/ui/checkbox";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -56,6 +70,7 @@ type RefPreflight = { groups: RefGroup[] };
 
 const UNMAPPED = "__unmapped__";
 const ALL_STORES = "__all__";
+const CONFIRM_WORD = "IMPORT";
 
 /** All row ids that can be selected for import in a compare result. */
 function selectableIds(
@@ -93,6 +108,9 @@ export function ForkImportClient() {
   const [idRemap, setIdRemap] = useState<Record<string, string>>({});
   // Product/Service only: limit displayed/imported rows to one store (shopId).
   const [storeFilter, setStoreFilter] = useState<string>(ALL_STORES);
+  // Type-to-confirm dialog guarding the (destructive) apply action.
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmation, setConfirmation] = useState("");
 
   const toggleId = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -305,6 +323,20 @@ export function ForkImportClient() {
     return compareResult.updated.filter((u) => rowVisible(u.row));
   }, [compareResult, rowVisible]);
 
+  // Breakdown of what the apply will touch, for the confirmation dialog.
+  const applyCounts = useMemo(() => {
+    if (!compareResult || "error" in compareResult) {
+      return { created: 0, updated: 0 };
+    }
+    return {
+      created: compareResult.new.filter(keepRow).length,
+      updated:
+        compareResult.kind === "auth"
+          ? 0
+          : compareResult.updated.filter((u) => keepRow(u.row)).length,
+    };
+  }, [compareResult, keepRow]);
+
   const handleApply = useCallback(() => {
     if (!selectedTableKey || !compareResult || "error" in compareResult) return;
     const remap = Object.keys(idRemap).length > 0 ? idRemap : undefined;
@@ -327,6 +359,11 @@ export function ForkImportClient() {
 
   const canApply =
     !!compareResult && !("error" in compareResult) && effectiveCount > 0;
+  const canConfirm = confirmation.trim().toUpperCase() === CONFIRM_WORD;
+  const isSensitiveTable =
+    selectedTableKey === "User" ||
+    selectedTableKey === "Session" ||
+    selectedTableKey === "Account";
 
   return (
     <div className="space-y-6">
@@ -450,15 +487,16 @@ export function ForkImportClient() {
                     {group.fields.join(", ")}). Reassign each to an existing{" "}
                     {group.model.toLowerCase()}, or leave unmapped to skip those
                     rows (they will error on import).{" "}
-                    {
-                      group.missing.filter((m) => idRemap[m.id]).length
-                    } of {group.missing.length} reassigned.
+                    {group.missing.filter((m) => idRemap[m.id]).length} of{" "}
+                    {group.missing.length} reassigned.
                   </p>
                 </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Missing {group.model.toLowerCase()} id</TableHead>
+                      <TableHead>
+                        Missing {group.model.toLowerCase()} id
+                      </TableHead>
                       <TableHead>Rows</TableHead>
                       <TableHead>Reassign to</TableHead>
                     </TableRow>
@@ -689,7 +727,13 @@ export function ForkImportClient() {
             )}
 
             {canApply && (
-              <Button onClick={handleApply} disabled={applyTable.isPending}>
+              <Button
+                onClick={() => {
+                  setConfirmation("");
+                  setConfirmOpen(true);
+                }}
+                disabled={applyTable.isPending}
+              >
                 {applyTable.isPending
                   ? "Applying…"
                   : `Import ${effectiveCount} selected row${
@@ -700,6 +744,80 @@ export function ForkImportClient() {
           </CardContent>
         </Card>
       )}
+
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          if (!applyTable.isPending) setConfirmOpen(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+              <DatabaseIcon />
+            </AlertDialogMedia>
+            <AlertDialogTitle className="text-destructive">
+              Import into the live database?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This writes directly to the{" "}
+              <span className="font-mono font-medium">{selectedTableKey}</span>{" "}
+              table. Existing rows with matching ids will be overwritten.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-3 text-sm">
+            <ul className="text-muted-foreground list-disc space-y-1 pl-5">
+              <li>
+                {applyCounts.created} new row
+                {applyCounts.created === 1 ? "" : "s"} will be created
+              </li>
+              <li>
+                {applyCounts.updated} existing row
+                {applyCounts.updated === 1 ? "" : "s"} will be overwritten
+              </li>
+            </ul>
+            {isSensitiveTable && (
+              <p className="text-destructive font-medium">
+                This table holds account and authentication data. Overwriting it
+                can lock users out or change who can sign in.
+              </p>
+            )}
+            <p className="text-destructive font-medium">
+              This cannot be undone.
+            </p>
+            <div className="grid gap-2">
+              <Label htmlFor="fork-import-confirm">
+                Type <span className="font-mono">{CONFIRM_WORD}</span> to
+                confirm
+              </Label>
+              <Input
+                id="fork-import-confirm"
+                autoComplete="off"
+                value={confirmation}
+                onChange={(e) => setConfirmation(e.target.value)}
+                placeholder={CONFIRM_WORD}
+              />
+            </div>
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={!canConfirm || applyTable.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (!canConfirm) return;
+                setConfirmOpen(false);
+                handleApply();
+              }}
+            >
+              {applyTable.isPending ? "Importing…" : "Import rows"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

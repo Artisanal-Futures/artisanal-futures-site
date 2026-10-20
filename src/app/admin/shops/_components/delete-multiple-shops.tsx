@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -26,6 +27,7 @@ export function DeleteMultipleShopsDialog({
   onSuccessCallback?: () => void;
 }) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteShops = api.shop.deleteMany.useMutation({
     onMutate: () => {
@@ -35,6 +37,7 @@ export function DeleteMultipleShopsDialog({
       toast.dismiss();
       toast.success("Shops deleted successfully.");
       void apiUtils.shop.invalidate();
+      router.refresh();
       onSuccessCallback?.();
     },
     onError: (error) => {

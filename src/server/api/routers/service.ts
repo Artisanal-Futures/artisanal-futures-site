@@ -297,6 +297,11 @@ export const serviceRouter = createTRPCRouter({
 
       const { categoryIds, tags, ...serviceData } = input;
 
+      // Featuring is an admin-only curation flag.
+      if (ctx.session.user.role !== "ADMIN") {
+        serviceData.isFeatured = false;
+      }
+
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
         categoryIds,
@@ -331,11 +336,34 @@ export const serviceRouter = createTRPCRouter({
       if (!isUserAuthorized) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "Product does not belong to current user",
+          message: "Service does not belong to current user",
+        });
+      }
+
+      // The service may be moved to another shop: the caller must own that
+      // shop too.
+      const isTargetShopOwner = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isTargetShopOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
         });
       }
 
       const { id, categoryIds, tags, ...serviceData } = input;
+
+      // Featuring is an admin-only curation flag: keep the existing value.
+      if (ctx.session.user.role !== "ADMIN") {
+        const existing = await ctx.db.service.findUnique({
+          where: { id },
+          select: { isFeatured: true },
+        });
+        serviceData.isFeatured = existing?.isFeatured ?? false;
+      }
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,

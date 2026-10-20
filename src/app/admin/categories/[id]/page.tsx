@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { api } from "~/trpc/server";
 
 import { CategoryForm } from "../_components/category-form";
@@ -9,6 +11,7 @@ type Props = {
 export default async function EditCategoryPage({ params }: Props) {
   const { id } = await params;
   const category = await api.category.get(id);
+  if (!category) notFound();
   const categories = await api.category.getAll();
 
   return (
@@ -26,7 +29,7 @@ export default async function EditCategoryPage({ params }: Props) {
 }
 export const generateMetadata = async ({ params }: Props) => {
   const { id } = await params;
-  const category = await api.category.get(id);
+  const category = await api.category.get(id).catch(() => null);
   if (!category) {
     return {
       title: "Category Not Found",

@@ -5,13 +5,23 @@ import { addFullProductImageUrl } from "~/lib/add-full-image-url";
 import { categorySchema } from "~/lib/validators/category";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
 import {
+  adminArtisanProcedure,
   adminOnlyProcedure,
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
 
+// The form's "None" option can arrive as "", "null" or null; treat all as no
+// parent. `undefined` is preserved so partial updates leave the parent alone.
+const normalizeParentId = (parentId?: string | null) =>
+  parentId === undefined
+    ? undefined
+    : !parentId || parentId === "null"
+      ? null
+      : parentId;
+
 export const categoryRouter = createTRPCRouter({
-  getAll: adminOnlyProcedure.query(({ ctx }) => {
+  getAll: adminArtisanProcedure.query(({ ctx }) => {
     return ctx.db.category.findMany({
       orderBy: { name: "asc" },
       include: { parent: true },
@@ -24,7 +34,7 @@ export const categoryRouter = createTRPCRouter({
       const category = await ctx.db.category.create({
         data: {
           name: input.name,
-          parentId: input.parentId,
+          parentId: normalizeParentId(input.parentId),
           type: input.type ?? CategoryType.PRODUCT,
         },
       });
@@ -41,7 +51,7 @@ export const categoryRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.name,
-          parentId: input.parentId,
+          parentId: normalizeParentId(input.parentId),
           type: input.type,
         },
       });

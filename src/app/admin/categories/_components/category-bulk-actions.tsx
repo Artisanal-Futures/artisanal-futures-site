@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2Icon, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -28,6 +29,7 @@ export function CategoryBulkActions({
   onClear,
 }: Props) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteCategories = api.category.deleteMany.useMutation({
     onMutate: () => {
@@ -37,6 +39,7 @@ export function CategoryBulkActions({
       toast.dismiss();
       toast.success("Categories deleted successfully.");
       await apiUtils.category.invalidate();
+      router.refresh();
       onClear();
     },
     onError: (error) => {

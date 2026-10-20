@@ -153,10 +153,37 @@ export const auth = betterAuth({
     additionalFields: {
       role: {
         type: "string",
+        // Never accept a role from client input (sign-up or update-user).
+        // Invite sign-ups get their role assigned server-side in
+        // `databaseHooks.user.create.before` below.
+        input: false,
+        defaultValue: "GUEST",
       },
       username: {
         type: "string",
         required: false,
+      },
+    },
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user, ctx) => {
+          // Assign the role from the invite validated in `hooks.before`.
+          if (ctx?.path !== "/sign-up/email") return;
+          const body = ctx.body as { code?: string } | undefined;
+          const code = body?.code?.trim().toUpperCase();
+          if (!code) return;
+
+          const invite = await db.platformInvite.findUnique({
+            where: { code },
+            select: { role: true },
+          });
+          if (!invite) return;
+
+          return { data: { ...user, role: invite.role } };
+        },
       },
     },
   },

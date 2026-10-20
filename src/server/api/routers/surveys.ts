@@ -68,14 +68,36 @@ export const surveysRouter = createTRPCRouter({
   create: adminArtisanProcedure
     .input(surveySchema)
     .mutation(async ({ ctx, input }) => {
+      const isShopAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isShopAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
       const survey = await ctx.db.survey.create({
         data: {
           shopId: input.shopId,
-          ownerId: ctx.session.user.id,
+          // Only admins may create a survey on behalf of another user.
+          ownerId:
+            ctx.session.user.role === "ADMIN" && input.ownerId
+              ? input.ownerId
+              : ctx.session.user.id,
           processes: input.processes,
           materials: input.materials,
           principles: input.principles,
           description: input.description,
+          unmoderatedForm: input.unmoderatedForm,
+          moderatedForm: input.moderatedForm,
+          hiddenForm: input.hiddenForm,
+          privateForm: input.privateForm,
+          supplyChain: input.supplyChain,
+          messagingOptIn: input.messagingOptIn,
         },
       });
 
@@ -113,6 +135,18 @@ export const surveysRouter = createTRPCRouter({
         });
       }
 
+      const isShopAuthorized = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isShopAuthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
       const updatedSurvey = await ctx.db.survey.update({
         where: {
           id: input.surveyId,
@@ -126,257 +160,17 @@ export const surveysRouter = createTRPCRouter({
           materials: input.materials,
           principles: input.principles,
           description: input.description,
+          unmoderatedForm: input.unmoderatedForm,
+          moderatedForm: input.moderatedForm,
+          hiddenForm: input.hiddenForm,
+          privateForm: input.privateForm,
+          supplyChain: input.supplyChain,
+          messagingOptIn: input.messagingOptIn,
         },
       });
 
       return {
         data: updatedSurvey,
-        message: "Survey updated successfully",
-      };
-    }),
-
-  createFromOnboarding: protectedProcedure
-    .input(
-      z.object({
-        shopId: z.string().optional(),
-        businessType: z
-          .string()
-          .min(1, { message: "Business type is required" }),
-        experience: z
-          .string()
-          .min(1, { message: "Experience level is required" }),
-        description: z.string().min(1, { message: "Description is required" }),
-        processes: z.string().optional(),
-        materials: z.string().optional(),
-        principles: z.string().optional(),
-
-        // Optional Shop Fields
-        storeName: z.string(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        bio: z.string().optional(),
-        shopDescription: z.string().optional(),
-        website: z.string().url().optional().or(z.literal("")),
-        logo: z.string().optional(),
-        profilePic: z.string().optional(),
-
-        logoPhoto: z.string().optional().nullish(),
-        ownerPhoto: z.string().optional().nullish(),
-
-        ownerPhotoUrl: z.string().optional().nullable(),
-        logoPhotoUrl: z.string().optional().nullable(),
-
-        attributeTags: z.array(z.string()),
-        ownerName: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      let shop;
-      if (input.shopId) {
-        const isUserAuthorized = await checkUserShopPermissions(
-          ctx.session,
-          input.shopId,
-        );
-
-        if (!isUserAuthorized) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Shop does not belong to current user",
-          });
-        }
-
-        shop = await ctx.db.shop.upsert({
-          where: { id: input?.shopId ?? undefined },
-          create: {
-            name: input.storeName,
-            ownerId: ctx.session.user.id,
-            bio: input.bio ?? "",
-            description: input.description ?? "",
-            logoPhoto: input.logoPhoto,
-            ownerPhoto: input.ownerPhoto,
-            website: input.website ?? "",
-            attributeTags: input.attributeTags,
-            ownerName: input.ownerName ?? "",
-            email: ctx.session.user.email ?? "",
-          },
-          update: {
-            name: input.storeName,
-            ownerName: input.ownerName ?? "",
-            ownerId: ctx.session.user.id,
-            bio: input.bio ?? "",
-            description: input.description ?? "",
-            logoPhoto: input.logoPhoto,
-            ownerPhoto: input.ownerPhoto,
-            website: input.website ?? "",
-            attributeTags: input.attributeTags,
-          },
-        });
-      } else {
-        shop = await ctx.db.shop.create({
-          data: {
-            name: input.storeName,
-            ownerName: input.ownerName ?? "",
-            ownerId: ctx.session.user.id,
-            bio: input.bio ?? "",
-            description: input.description ?? "",
-            logoPhoto: input.logoPhoto,
-            ownerPhoto: input.ownerPhoto,
-            website: input.website ?? "",
-            attributeTags: input.attributeTags,
-            email: ctx.session.user.email ?? "",
-          },
-        });
-      }
-
-      const survey = await ctx.db.survey.create({
-        data: {
-          shopId: shop.id,
-          ownerId: ctx.session.user.id,
-          processes: input.processes,
-          materials: input.materials,
-          principles: input.principles,
-          description: input.description,
-          experience: input.experience,
-          businessType: input.businessType,
-        },
-      });
-
-      if (ctx.session.user.role !== "ADMIN") {
-        await ctx.db.user.update({
-          where: { id: ctx.session.user.id },
-          data: {
-            role: "ARTISAN",
-          },
-        });
-      }
-
-      return {
-        data: {
-          survey,
-          shop,
-        },
-        message: "Survey created successfully",
-      };
-    }),
-
-  modifyFromOnboarding: protectedProcedure
-    .input(
-      z.object({
-        surveyId: z.string(),
-        shopId: z.string().optional(),
-        businessType: z
-          .string()
-          .min(1, { message: "Business type is required" }),
-        experience: z
-          .string()
-          .min(1, { message: "Experience level is required" }),
-        description: z.string().min(1, { message: "Description is required" }),
-        processes: z.string().optional(),
-        materials: z.string().optional(),
-        principles: z.string().optional(),
-
-        // Optional Shop Fields
-        storeName: z.string(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        bio: z.string().optional(),
-        shopDescription: z.string().optional(),
-        website: z.string().url().optional(),
-        logo: z.string().optional(),
-        profilePic: z.string().optional(),
-
-        logoPhoto: z.string().optional().nullish(),
-        ownerPhoto: z.string().optional().nullish(),
-
-        ownerPhotoUrl: z.string().optional().nullable(),
-        logoPhotoUrl: z.string().optional().nullable(),
-
-        attributeTags: z.array(z.string()),
-        ownerName: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const survey = await ctx.db.survey.findUnique({
-        where: { id: input.surveyId },
-      });
-
-      const shop = await ctx.db.shop.findUnique({
-        where: { id: input.shopId ?? survey?.shopId },
-      });
-
-      if (!survey) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Survey not found",
-        });
-      }
-
-      if (!shop) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Shop not found",
-        });
-      }
-
-      if (survey.ownerId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Not authorized to modify this survey",
-        });
-      }
-
-      const isShopAuthorized = await checkUserShopPermissions(
-        ctx.session,
-        shop.id,
-      );
-
-      if (!isShopAuthorized) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Shop does not belong to current user",
-        });
-      }
-
-      const updatedShop = await ctx.db.shop.update({
-        where: { id: shop.id },
-        data: {
-          name: input.storeName,
-          ownerName: input?.ownerName,
-          bio: input.bio ?? "",
-          description: input.description ?? "",
-          logoPhoto: input.logoPhoto,
-          ownerPhoto: input.ownerPhoto,
-          website: input.website ?? "",
-          attributeTags: input.attributeTags,
-        },
-      });
-
-      const updatedSurvey = await ctx.db.survey.update({
-        where: { id: input.surveyId },
-        data: {
-          processes: input.processes,
-          materials: input.materials,
-          principles: input.principles,
-          description: input.description,
-          experience: input.experience,
-          businessType: input.businessType,
-        },
-      });
-
-      if (ctx.session.user.role !== "ADMIN") {
-        await ctx.db.user.update({
-          where: { id: ctx.session.user.id },
-          data: {
-            role: "ARTISAN",
-          },
-        });
-      }
-
-      return {
-        data: {
-          survey: updatedSurvey,
-          shop: updatedShop,
-        },
         message: "Survey updated successfully",
       };
     }),

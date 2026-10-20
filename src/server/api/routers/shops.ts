@@ -292,7 +292,7 @@ export const shopsRouter = createTRPCRouter({
     },
   ),
 
-  getShopOwners: publicProcedure.query(async ({ ctx }) => {
+  getShopOwners: adminOnlyProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({
       where: { OR: [{ role: "ARTISAN" }, { role: "ADMIN" }] },
       select: {
@@ -401,11 +401,7 @@ export const shopsRouter = createTRPCRouter({
       return shops.filter((shop) => shop.ownerId === ctx.session.user.id);
     }
 
-    return shops.map((shop) => ({
-      ...shop,
-      logoPhoto: `${shop?.logoPhoto}`,
-      ownerPhoto: `${shop?.ownerPhoto}`,
-    }));
+    return shops;
   }),
 
   getMetrics: adminOnlyProcedure.query(async ({ ctx }) => {
@@ -539,7 +535,9 @@ export const shopsRouter = createTRPCRouter({
         data: {
           ownerId:
             ctx.session.user.role === "ADMIN"
-              ? (input.ownerId ?? ctx.session.user.id)
+              ? // "" (unselected owner) is not nullish, so test truthiness.
+                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                input.ownerId || ctx.session.user.id
               : ctx.session.user.id,
           name: input.name,
           ownerName: input.ownerName
@@ -718,10 +716,10 @@ export const shopsRouter = createTRPCRouter({
     const data = {
       shop,
 
-      completedSurvey: survey ? true : false,
-      hasProducts: (shop?.products?.length ?? 0 > 0) ? true : false,
-      hasServices: (shop?.services?.length ?? 0 > 0) ? true : false,
-      hasHostedWebsite: shop?.websiteProvision ? true : false,
+      completedSurvey: !!survey,
+      hasProducts: (shop?.products?.length ?? 0) > 0,
+      hasServices: (shop?.services?.length ?? 0) > 0,
+      hasHostedWebsite: shop?.websiteProvision?.status === "ACTIVE",
     };
 
     return data;

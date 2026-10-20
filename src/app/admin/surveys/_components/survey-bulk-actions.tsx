@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2Icon, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
@@ -25,6 +26,7 @@ type Props = {
 
 export function SurveyBulkActions({ selectedSurveyIds, onClear }: Props) {
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const deleteSurveys = api.survey.deleteMany.useMutation({
     onMutate: () => {
@@ -34,6 +36,7 @@ export function SurveyBulkActions({ selectedSurveyIds, onClear }: Props) {
       toast.dismiss();
       toast.success(message);
       void apiUtils.survey.invalidate();
+      router.refresh();
       onClear();
     },
     onError: (error) => {

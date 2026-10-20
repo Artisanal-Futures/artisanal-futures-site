@@ -13,6 +13,6 @@ export const guestSurveySchema = z.object({
 });
 
 export type GuestSurveyColumn = AdminColumn<GuestSurvey> & {
-  user: User | null;
+  user: Pick<User, "id" | "name" | "email"> | null;
 };
 export type GuestSurveyFormValues = z.infer<typeof guestSurveySchema>;

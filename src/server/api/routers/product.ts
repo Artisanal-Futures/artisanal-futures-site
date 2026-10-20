@@ -323,12 +323,29 @@ export const productRouter = createTRPCRouter({
           const { tags, ...productData } = product;
           const formattedTags = tags.map((tag) => tag.text);
           if (existingProduct) {
+            // Re-importing refreshes the source data only. Visibility and
+            // featuring are curation flags that a re-import must never reset,
+            // and fields a human has edited by hand (`manualFields`) are kept.
+            const {
+              isPublic: _isPublic,
+              isFeatured: _isFeatured,
+              ...importedData
+            } = productData;
+            const manual = new Set(existingProduct.manualFields);
+            for (const field of SYNCED_FIELDS) {
+              if (manual.has(field)) delete importedData[field];
+            }
             return ctx.db.product.update({
               where: { id: existingProduct.id },
-              data: { ...productData, tags: formattedTags },
+              data: { ...importedData, tags: formattedTags },
             });
           }
 
+          // Featuring is an admin-only curation flag: new products imported by
+          // non-admins always start unfeatured.
+          if (ctx.session.user.role !== "ADMIN") {
+            productData.isFeatured = false;
+          }
           return ctx.db.product.create({
             data: { ...productData, tags: formattedTags },
           });
@@ -499,6 +516,11 @@ export const productRouter = createTRPCRouter({
 
       const { categoryIds, tags, ...productData } = input;
 
+      // Featuring is an admin-only curation flag.
+      if (ctx.session.user.role !== "ADMIN") {
+        productData.isFeatured = false;
+      }
+
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
         categoryIds,
@@ -539,6 +561,20 @@ export const productRouter = createTRPCRouter({
         });
       }
 
+      // The product may be moved to another shop: the caller must own that
+      // shop too.
+      const isTargetShopOwner = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isTargetShopOwner) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Shop does not belong to current user",
+        });
+      }
+
       const { id, categoryIds, tags, ...productData } = input;
 
       const allCategoryIds = await getCategoriesWithParents(
@@ -563,8 +599,14 @@ export const productRouter = createTRPCRouter({
           imageUrl: true,
           productUrl: true,
           isPublic: true,
+          isFeatured: true,
         },
       });
+
+      // Featuring is an admin-only curation flag: keep the existing value.
+      if (ctx.session.user.role !== "ADMIN") {
+        productData.isFeatured = existing?.isFeatured ?? false;
+      }
 
       const manualFields = new Set(existing?.manualFields ?? []);
       if (existing) {

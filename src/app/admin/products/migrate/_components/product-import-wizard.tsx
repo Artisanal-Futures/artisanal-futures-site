@@ -2,6 +2,7 @@
 
 import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   AlertTriangle,
@@ -115,12 +116,14 @@ export function ProductImportWizard({
   }, [parsedProducts, currentPage]);
 
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const productMigration = api.product.importProducts.useMutation({
     onSuccess: () => {
       toast.dismiss();
       toast.success("Products imported successfully");
       void apiUtils.product.invalidate();
+      router.refresh();
       setStep("success");
     },
     onError: (error) => {

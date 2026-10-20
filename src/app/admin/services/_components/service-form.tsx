@@ -342,7 +342,7 @@ export function ServiceForm({
                 )}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Service Information</CardTitle>
+                    <CardTitle>Pricing & Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <FormField

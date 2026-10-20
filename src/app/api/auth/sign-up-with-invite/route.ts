@@ -78,7 +78,6 @@ export async function POST(req: Request) {
         email,
         password,
         name,
-        role: invite.role,
         code: invitationCode,
       }),
     });

@@ -31,25 +31,35 @@ export function TrailHeader({ breadcrumbs }: Props) {
 
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            {breadcrumbs.map((breadcrumb) =>
-              breadcrumb.href ? (
-                <Fragment key={breadcrumb.label}>
-                  <BreadcrumbItem key={breadcrumb.label}>
-                    <BreadcrumbLink href={breadcrumb.href}>
-                      {breadcrumb.label}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                </Fragment>
-              ) : (
-                <BreadcrumbItem key={breadcrumb.label}>
-                  <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+            {breadcrumbs.length === 0 ? (
+              <BreadcrumbItem>
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              </BreadcrumbItem>
+            ) : (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/admin/dashboard">
+                    Dashboard
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
-              ),
+                <BreadcrumbSeparator />
+                {breadcrumbs.map((breadcrumb) =>
+                  breadcrumb.href ? (
+                    <Fragment key={breadcrumb.label}>
+                      <BreadcrumbItem key={breadcrumb.label}>
+                        <BreadcrumbLink href={breadcrumb.href}>
+                          {breadcrumb.label}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                    </Fragment>
+                  ) : (
+                    <BreadcrumbItem key={breadcrumb.label}>
+                      <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  ),
+                )}
+              </>
             )}
           </BreadcrumbList>
         </Breadcrumb>

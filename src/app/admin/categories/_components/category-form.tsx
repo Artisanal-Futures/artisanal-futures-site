@@ -73,7 +73,7 @@ export function CategoryForm({ initialData, categories }: Props) {
       toast.error(error.message ?? "Failed to update category.");
     },
     onMutate: () => {
-      toast.loading("Updating product, please wait...");
+      toast.loading("Updating category, please wait...");
     },
   });
 
@@ -103,7 +103,14 @@ export function CategoryForm({ initialData, categories }: Props) {
     defaultValues,
   });
 
-  const handleSubmit = async (data: CategoryFormValues) => {
+  const handleSubmit = async (formData: CategoryFormValues) => {
+    const data: CategoryFormValues = {
+      ...formData,
+      parentId:
+        !formData.parentId || formData.parentId === "null"
+          ? null
+          : formData.parentId,
+    };
     if (initialData) {
       updateCategory.mutate({ id: initialData.id, ...data });
     } else {

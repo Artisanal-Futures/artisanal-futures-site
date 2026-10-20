@@ -348,7 +348,7 @@ export function ProductForm({
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Product Information</CardTitle>
+                    <CardTitle>Pricing & Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <FormField
