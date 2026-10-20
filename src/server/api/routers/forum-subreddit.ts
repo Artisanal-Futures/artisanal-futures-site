@@ -1,12 +1,23 @@
-import type { Vote } from "generated/prisma";
+import type { Prisma, Vote } from "generated/prisma";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import {
+  visiblePostsWhere,
+  visibleSubredditsWhere,
+} from "~/lib/forum-visibility";
+import { publicUserSelect } from "~/lib/public-user";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import {
+  assertCanCommentOnPost,
+  assertCanViewComment,
+  assertCanViewPost,
+  assertCanViewSubreddit,
+} from "~/server/forum/access";
 
 // const CACHE_AFTER_UPVOTES = 1;
 
@@ -20,12 +31,6 @@ export type CachedPost = {
 };
 
 export const forumSubredditRouter = createTRPCRouter({
-  getAllPosts: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.post.findMany();
-  }),
-  getAllSubreddits: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.subreddit.findMany();
-  }),
   findOrCreatePersonalSubreddit: protectedProcedure.query(async ({ ctx }) => {
     // Remove spaces from name
     const cleanName = (ctx.session.user.name ?? "").replace(/\s+/g, "");
@@ -113,6 +118,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Your post has been published.",
         };
       } catch (e) {
+        if (e instanceof TRPCError) throw e;
         console.error(e);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -155,6 +161,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been unsubscribed from this subreddit.",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
@@ -203,6 +210,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "You've been subscribed to this subreddit.",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
@@ -223,6 +231,9 @@ export const forumSubredditRouter = createTRPCRouter({
     .input(z.object({ postId: z.string(), voteType: z.enum(["UP", "DOWN"]) }))
     .mutation(async ({ input, ctx }) => {
       try {
+        // only members of a private community may vote on its posts
+        await assertCanViewPost(ctx.db, input.postId, ctx.session.user.id);
+
         // check if user has already voted on this post
         const existingVote = await ctx.db.vote.findFirst({
           where: {
@@ -230,23 +241,6 @@ export const forumSubredditRouter = createTRPCRouter({
             postId: input.postId,
           },
         });
-
-        const post = await ctx.db.post.findUnique({
-          where: {
-            id: input.postId,
-          },
-          include: {
-            author: true,
-            votes: true,
-          },
-        });
-
-        if (!post) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Post not found",
-          });
-        }
 
         if (existingVote) {
           // if vote type is the same as existing vote, delete the vote
@@ -359,6 +353,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         if (error instanceof z.ZodError) {
           throw new TRPCError({
@@ -413,6 +408,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Your post has been published.",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -475,7 +471,9 @@ export const forumSubredditRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        // if no existing vote, create a new vote
+        // only members of a private community may comment on its posts
+        await assertCanCommentOnPost(ctx.db, input, ctx.session.user.id);
+
         await ctx.db.forumComment.create({
           data: {
             text: input.text,
@@ -490,6 +488,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Comment created successfully",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -513,6 +512,13 @@ export const forumSubredditRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
+        // only members of a private community may vote on its comments
+        await assertCanViewComment(
+          ctx.db,
+          input.commentId,
+          ctx.session.user.id,
+        );
+
         // check if user has already voted on this post
         const existingVote = await ctx.db.commentVote.findFirst({
           where: {
@@ -570,6 +576,7 @@ export const forumSubredditRouter = createTRPCRouter({
           message: "Vote created successfully",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         if (error instanceof z.ZodError) {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -591,9 +598,10 @@ export const forumSubredditRouter = createTRPCRouter({
 
       const results = await ctx.db.subreddit.findMany({
         where: {
-          name: {
-            startsWith: input.query,
-          },
+          AND: [
+            { name: { startsWith: input.query } },
+            visibleSubredditsWhere(ctx.session?.user.id),
+          ],
         },
         include: {
           _count: true,
@@ -610,68 +618,75 @@ export const forumSubredditRouter = createTRPCRouter({
         limit: z.string(),
         page: z.string(),
         subredditName: z.string().nullish().optional(),
+        followedOnly: z.boolean().optional(),
         cursor: z.string().nullish(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      let followedCommunitiesIds: string[] = [];
-
-      if (ctx?.session) {
-        const followedCommunities = await ctx.db.subscription.findMany({
-          where: {
-            userId: ctx?.session?.user.id,
-          },
-          include: {
-            subreddit: true,
-          },
-        });
-
-        followedCommunitiesIds = followedCommunities.map(
-          (sub) => sub.subreddit.id,
-        );
-      }
-
       try {
-        const { limit, page, subredditName } = input;
+        const { limit, page, subredditName, followedOnly } = input;
+        const take = parseInt(limit);
 
-        let whereClause = {};
+        let whereClause: Prisma.PostWhereInput = visiblePostsWhere(
+          ctx.session?.user.id,
+        );
 
         if (subredditName) {
+          const subreddit = await ctx.db.subreddit.findFirst({
+            where: { name: subredditName },
+            select: { id: true, isPublic: true, creatorId: true },
+          });
+
+          if (!subreddit) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Community not found",
+            });
+          }
+
+          await assertCanViewSubreddit(ctx.db, subreddit, ctx.session?.user.id);
+
           whereClause = {
-            subreddit: {
-              name: subredditName,
-            },
+            subredditId: subreddit.id,
           };
-        } else if (ctx?.session) {
+        } else if (followedOnly && ctx?.session) {
+          const followedCommunities = await ctx.db.subscription.findMany({
+            where: {
+              userId: ctx.session.user.id,
+            },
+            include: {
+              subreddit: true,
+            },
+          });
+
           whereClause = {
             subreddit: {
               id: {
-                in: followedCommunitiesIds,
+                in: followedCommunities.map((sub) => sub.subreddit.id),
               },
             },
           };
         }
 
         const posts = await ctx.db.post.findMany({
-          take: parseInt(limit),
-          skip: (parseInt(page) - 1) * parseInt(limit), // skip should start from 0 for page 1
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: {
-            createdAt: "desc",
-          },
+          take: take + 1, // fetch one extra row to know if there is a next page
+          ...(input.cursor
+            ? { cursor: { id: input.cursor }, skip: 1 } // skip the already shown cursor row
+            : { skip: (parseInt(page) - 1) * take }),
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
           include: {
             subreddit: true,
             votes: true,
-            author: true,
+            author: { select: publicUserSelect },
             comments: true,
           },
           where: whereClause,
         });
 
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (posts.length > parseInt(limit)) {
-          const nextItem = posts.pop(); // return the last item from the array
-          nextCursor = nextItem?.id;
+        let nextCursor: string | undefined = undefined;
+        if (posts.length > take) {
+          posts.pop(); // drop the extra row
+          nextCursor = posts[posts.length - 1]?.id;
         }
 
         return {
@@ -679,6 +694,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -698,16 +714,17 @@ export const forumSubredditRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       try {
         const { limit, page } = input;
+        const take = parseInt(limit);
 
         const subreddits = await ctx.db.subreddit.findMany({
-          take: parseInt(limit),
-          skip: (parseInt(page) - 1) * parseInt(limit),
-          cursor: input.cursor ? { id: input.cursor } : undefined,
-          orderBy: {
-            createdAt: "desc",
-          },
+          where: visibleSubredditsWhere(ctx.session?.user.id),
+          take: take + 1, // fetch one extra row to know if there is a next page
+          ...(input.cursor
+            ? { cursor: { id: input.cursor }, skip: 1 } // skip the already shown cursor row
+            : { skip: (parseInt(page) - 1) * take }),
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
           include: {
-            creator: true,
+            creator: { select: publicUserSelect },
             _count: {
               select: {
                 posts: true,
@@ -717,10 +734,10 @@ export const forumSubredditRouter = createTRPCRouter({
           },
         });
 
-        let nextCursor: typeof input.cursor | undefined = undefined;
-        if (subreddits.length > parseInt(limit)) {
-          const nextItem = subreddits.pop();
-          nextCursor = nextItem?.id;
+        let nextCursor: string | undefined = undefined;
+        if (subreddits.length > take) {
+          subreddits.pop(); // drop the extra row
+          nextCursor = subreddits[subreddits.length - 1]?.id;
         }
 
         return {
@@ -728,6 +745,7 @@ export const forumSubredditRouter = createTRPCRouter({
           nextCursor,
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -739,6 +757,7 @@ export const forumSubredditRouter = createTRPCRouter({
   getNavigationSubreddits: publicProcedure.query(async ({ ctx }) => {
     try {
       const subreddits = await ctx.db.subreddit.findMany({
+        where: visibleSubredditsWhere(ctx.session?.user.id),
         take: 5,
         orderBy: {
           createdAt: "desc",
@@ -747,6 +766,7 @@ export const forumSubredditRouter = createTRPCRouter({
 
       return subreddits;
     } catch (error) {
+      if (error instanceof TRPCError) throw error;
       console.error(error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
@@ -769,7 +789,7 @@ export const forumSubredditRouter = createTRPCRouter({
 
       const subreddit = await ctx.db.subreddit.findUnique({
         where: { id },
-        include: { creator: true },
+        include: { creator: { select: publicUserSelect } },
       });
 
       if (!subreddit) {
@@ -824,7 +844,7 @@ export const forumSubredditRouter = createTRPCRouter({
 
       const subreddit = await ctx.db.subreddit.findUnique({
         where: { id },
-        include: { creator: true },
+        include: { creator: { select: publicUserSelect } },
       });
 
       if (!subreddit) {

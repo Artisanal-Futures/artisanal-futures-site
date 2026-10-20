@@ -16,9 +16,8 @@ import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 
 // NOTE: WordPress provisioning was intentionally removed from this form.
-// The router still supports it (see `websiteProvisionRouter.create`), but the
-// product decision is to only offer the SimplePress headless flow here for
-// now. WordPress may return as an option later.
+// The legacy WordPress router procedure has been removed; the product decision
+// is to only offer the SimplePress headless flow here for now.
 
 type Props = {
   initialData?: {

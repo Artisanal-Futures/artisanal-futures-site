@@ -1,7 +1,8 @@
 "use client";
 
-import type { CommentVote, ForumComment, User } from "generated/prisma";
+import type { CommentVote, ForumComment } from "generated/prisma";
 import type { FC } from "react";
+import type { PublicUser } from "~/lib/public-user";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MessageSquare } from "lucide-react";
@@ -25,7 +26,7 @@ import { UserAvatar } from "../user-avatar";
 
 type ExtendedComment = ForumComment & {
   votes: CommentVote[];
-  author: Omit<User, "email"> & { email: string | null };
+  author: PublicUser;
 };
 
 type Props = {

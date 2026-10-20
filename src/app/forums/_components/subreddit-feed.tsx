@@ -21,7 +21,7 @@ export const SubredditFeed: FC<Props> = ({ initialSubreddits }) => {
     threshold: 1,
   });
 
-  const { data, fetchNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.forumSubreddit.getSubreddits.useInfiniteQuery(
       {
         limit: `${INFINITE_SCROLL_PAGINATION_RESULTS}`,
@@ -29,14 +29,28 @@ export const SubredditFeed: FC<Props> = ({ initialSubreddits }) => {
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
+        // Seed with the server-rendered first page so it is not refetched
+        initialData: {
+          pages: [
+            {
+              subreddits: initialSubreddits,
+              nextCursor:
+                initialSubreddits.length >= INFINITE_SCROLL_PAGINATION_RESULTS
+                  ? initialSubreddits[initialSubreddits.length - 1]?.id
+                  : undefined,
+            },
+          ],
+          pageParams: [null],
+        },
+        staleTime: Infinity,
       },
     );
 
   useEffect(() => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       void fetchNextPage(); // Load more subreddits when the last one comes into view
     }
-  }, [entry, fetchNextPage]);
+  }, [entry, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const subreddits =
     data?.pages?.flatMap((page) => page?.subreddits) ?? initialSubreddits;

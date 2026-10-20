@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
 
+import { publicUserSelect } from "~/lib/public-user";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
 
@@ -29,17 +30,15 @@ export const CustomFeed = async () => {
         },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     include: {
       votes: true,
-      author: true,
+      author: { select: publicUserSelect },
       comments: true,
       subreddit: true,
     },
     take: INFINITE_SCROLL_PAGINATION_RESULTS,
   });
 
-  return <PostFeed initialPosts={posts} />;
+  return <PostFeed initialPosts={posts} followedOnly />;
 };

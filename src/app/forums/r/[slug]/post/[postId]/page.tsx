@@ -1,15 +1,19 @@
 // import { CachedPost } from '@/types/redis'
-import type { Post, User, Vote } from "generated/prisma";
+import type { Post, Vote } from "generated/prisma";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ArrowBigDown, ArrowBigUp, Loader2 } from "lucide-react";
 
+import type { PublicUser } from "~/lib/public-user";
+import type { SubredditAccess } from "~/server/forum/access";
+import { publicUserSelect } from "~/lib/public-user";
 import { discussionPostSchema } from "~/lib/seo/schema";
 import { buildMetadata, truncate } from "~/lib/seo/site";
 import { formatTimeToNow } from "~/lib/utils";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
+import { canViewSubreddit, subredditAccessSelect } from "~/server/forum/access";
 import { buttonVariants } from "~/components/ui/button";
 import { JsonLd } from "~/components/seo/json-ld";
 import { CommentsSection } from "~/app/forums/_components/comments-section";
@@ -56,18 +60,30 @@ export async function generateMetadata({
   params,
 }: SubRedditPostPageProps): Promise<Metadata> {
   const { slug, postId } = await params;
+  const session = await getSession();
 
   const post = await db.post.findFirst({
     where: { id: postId },
     select: {
       title: true,
       content: true,
-      subreddit: { select: { name: true, isPublic: true } },
+      subreddit: { select: subredditAccessSelect },
     },
   });
 
-  if (!post) {
-    return { title: "Post", robots: { index: false, follow: false } };
+  // Missing, mismatched and private-to-this-viewer posts all get the same
+  // generic, noindexed metadata so the title doesn't confirm the post exists.
+  // Set every field (via buildMetadata) so nothing is inherited from the
+  // community layout's metadata either.
+  if (
+    post?.subreddit.name !== slug ||
+    !(await canViewSubreddit(db, post.subreddit, session?.user.id))
+  ) {
+    return buildMetadata({
+      title: "Post",
+      path: `/forums/r/${slug}/post/${postId}`,
+      noIndex: true,
+    });
   }
 
   return buildMetadata({
@@ -91,8 +107,8 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   let post:
     | (Post & {
         votes: Vote[];
-        author: User;
-        subreddit: { isPublic: boolean };
+        author: PublicUser;
+        subreddit: SubredditAccess;
         _count: { comments: number };
       })
     | null = null;
@@ -103,13 +119,21 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
     },
     include: {
       votes: true,
-      author: true,
-      subreddit: { select: { isPublic: true } },
+      author: { select: publicUserSelect },
+      subreddit: { select: subredditAccessSelect },
       _count: { select: { comments: { where: { deletedAt: null } } } },
     },
   });
 
-  if (!post) return notFound();
+  // notFound (not an error) for a slug mismatch or a private community the
+  // viewer can't see, so the post's existence isn't confirmed.
+  if (
+    post?.subreddit.name !== slug ||
+    !(await canViewSubreddit(db, post.subreddit, session?.user.id))
+  ) {
+    return notFound();
+  }
+
   return (
     <div>
       {/* Posts in private communities stay out of structured data, like the
