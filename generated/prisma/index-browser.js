@@ -308,7 +308,11 @@ exports.Prisma.ShopAddressScalarFieldEnum = {
   zip: 'zip',
   country: 'country',
   shopId: 'shopId',
-  street: 'street'
+  street: 'street',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  geocodeQuery: 'geocodeQuery',
+  geocodedAt: 'geocodedAt'
 };
 
 exports.Prisma.MemberScalarFieldEnum = {

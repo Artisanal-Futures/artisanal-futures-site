@@ -23832,8 +23832,20 @@ export namespace Prisma {
 
   export type AggregateShopAddress = {
     _count: ShopAddressCountAggregateOutputType | null
+    _avg: ShopAddressAvgAggregateOutputType | null
+    _sum: ShopAddressSumAggregateOutputType | null
     _min: ShopAddressMinAggregateOutputType | null
     _max: ShopAddressMaxAggregateOutputType | null
+  }
+
+  export type ShopAddressAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type ShopAddressSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
   }
 
   export type ShopAddressMinAggregateOutputType = {
@@ -23846,6 +23858,10 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
   }
 
   export type ShopAddressMaxAggregateOutputType = {
@@ -23858,6 +23874,10 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
   }
 
   export type ShopAddressCountAggregateOutputType = {
@@ -23870,9 +23890,23 @@ export namespace Prisma {
     country: number
     shopId: number
     street: number
+    latitude: number
+    longitude: number
+    geocodeQuery: number
+    geocodedAt: number
     _all: number
   }
 
+
+  export type ShopAddressAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type ShopAddressSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
 
   export type ShopAddressMinAggregateInputType = {
     id?: true
@@ -23884,6 +23918,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
   }
 
   export type ShopAddressMaxAggregateInputType = {
@@ -23896,6 +23934,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
   }
 
   export type ShopAddressCountAggregateInputType = {
@@ -23908,6 +23950,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
     _all?: true
   }
 
@@ -23949,6 +23995,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ShopAddressAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShopAddressSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ShopAddressMinAggregateInputType
@@ -23979,6 +24037,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ShopAddressCountAggregateInputType | true
+    _avg?: ShopAddressAvgAggregateInputType
+    _sum?: ShopAddressSumAggregateInputType
     _min?: ShopAddressMinAggregateInputType
     _max?: ShopAddressMaxAggregateInputType
   }
@@ -23993,7 +24053,13 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
     _count: ShopAddressCountAggregateOutputType | null
+    _avg: ShopAddressAvgAggregateOutputType | null
+    _sum: ShopAddressSumAggregateOutputType | null
     _min: ShopAddressMinAggregateOutputType | null
     _max: ShopAddressMaxAggregateOutputType | null
   }
@@ -24022,6 +24088,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24035,6 +24105,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24048,6 +24122,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24061,9 +24139,13 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
   }
 
-  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street", ExtArgs["result"]["shopAddress"]>
+  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street" | "latitude" | "longitude" | "geocodeQuery" | "geocodedAt", ExtArgs["result"]["shopAddress"]>
   export type ShopAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }
@@ -24089,6 +24171,13 @@ export namespace Prisma {
       country: string | null
       shopId: string | null
       street: string | null
+      latitude: number | null
+      longitude: number | null
+      /**
+       * Normalized locality query last geocoded (zip/city/state/country only).
+       */
+      geocodeQuery: string | null
+      geocodedAt: Date | null
     }, ExtArgs["result"]["shopAddress"]>
     composites: {}
   }
@@ -24522,6 +24611,10 @@ export namespace Prisma {
     readonly country: FieldRef<"ShopAddress", 'String'>
     readonly shopId: FieldRef<"ShopAddress", 'String'>
     readonly street: FieldRef<"ShopAddress", 'String'>
+    readonly latitude: FieldRef<"ShopAddress", 'Float'>
+    readonly longitude: FieldRef<"ShopAddress", 'Float'>
+    readonly geocodeQuery: FieldRef<"ShopAddress", 'String'>
+    readonly geocodedAt: FieldRef<"ShopAddress", 'DateTime'>
   }
     
 
@@ -72522,7 +72615,11 @@ export namespace Prisma {
     zip: 'zip',
     country: 'country',
     shopId: 'shopId',
-    street: 'street'
+    street: 'street',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    geocodeQuery: 'geocodeQuery',
+    geocodedAt: 'geocodedAt'
   };
 
   export type ShopAddressScalarFieldEnum = (typeof ShopAddressScalarFieldEnum)[keyof typeof ShopAddressScalarFieldEnum]
@@ -73408,6 +73505,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'MemberRole'
    */
   export type EnumMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MemberRole'>
@@ -73432,20 +73543,6 @@ export namespace Prisma {
    * Reference to a field of type 'ChannelType[]'
    */
   export type ListEnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -74869,6 +74966,10 @@ export namespace Prisma {
     country?: StringNullableFilter<"ShopAddress"> | string | null
     shopId?: StringNullableFilter<"ShopAddress"> | string | null
     street?: StringNullableFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }
 
@@ -74882,6 +74983,10 @@ export namespace Prisma {
     country?: SortOrderInput | SortOrder
     shopId?: SortOrderInput | SortOrder
     street?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    geocodeQuery?: SortOrderInput | SortOrder
+    geocodedAt?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
   }
 
@@ -74898,6 +75003,10 @@ export namespace Prisma {
     zip?: StringNullableFilter<"ShopAddress"> | string | null
     country?: StringNullableFilter<"ShopAddress"> | string | null
     street?: StringNullableFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }, "id" | "shopId">
 
@@ -74911,9 +75020,15 @@ export namespace Prisma {
     country?: SortOrderInput | SortOrder
     shopId?: SortOrderInput | SortOrder
     street?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    geocodeQuery?: SortOrderInput | SortOrder
+    geocodedAt?: SortOrderInput | SortOrder
     _count?: ShopAddressCountOrderByAggregateInput
+    _avg?: ShopAddressAvgOrderByAggregateInput
     _max?: ShopAddressMaxOrderByAggregateInput
     _min?: ShopAddressMinOrderByAggregateInput
+    _sum?: ShopAddressSumOrderByAggregateInput
   }
 
   export type ShopAddressScalarWhereWithAggregatesInput = {
@@ -74929,6 +75044,10 @@ export namespace Prisma {
     country?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     shopId?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     street?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableWithAggregatesFilter<"ShopAddress"> | Date | string | null
   }
 
   export type MemberWhereInput = {
@@ -79811,6 +79930,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
     shop?: ShopCreateNestedOneWithoutAddressInput
   }
 
@@ -79824,6 +79947,10 @@ export namespace Prisma {
     country?: string | null
     shopId?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUpdateInput = {
@@ -79835,6 +79962,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     shop?: ShopUpdateOneWithoutAddressNestedInput
   }
 
@@ -79848,6 +79979,10 @@ export namespace Prisma {
     country?: NullableStringFieldUpdateOperationsInput | string | null
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressCreateManyInput = {
@@ -79860,6 +79995,10 @@ export namespace Prisma {
     country?: string | null
     shopId?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUpdateManyMutationInput = {
@@ -79871,6 +80010,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressUncheckedUpdateManyInput = {
@@ -79883,6 +80026,10 @@ export namespace Prisma {
     country?: NullableStringFieldUpdateOperationsInput | string | null
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type MemberCreateInput = {
@@ -85063,6 +85210,17 @@ export namespace Prisma {
     _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ShopAddressCountOrderByAggregateInput = {
     id?: SortOrder
     address?: SortOrder
@@ -85073,6 +85231,15 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
+  }
+
+  export type ShopAddressAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
   }
 
   export type ShopAddressMaxOrderByAggregateInput = {
@@ -85085,6 +85252,10 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
   }
 
   export type ShopAddressMinOrderByAggregateInput = {
@@ -85097,6 +85268,31 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
+  }
+
+  export type ShopAddressSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumMemberRoleFilter<$PrismaModel = never> = {
@@ -86094,17 +86290,6 @@ export namespace Prisma {
     _max?: NestedEnumRouteStatusFilter<$PrismaModel>
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type RouteScalarRelationFilter = {
     is?: RouteWhereInput
     isNot?: RouteWhereInput
@@ -86169,22 +86354,6 @@ export namespace Prisma {
     distance?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type OptimizedRoutePathScalarRelationFilter = {
@@ -88907,6 +89076,14 @@ export namespace Prisma {
     connect?: ShopWhereUniqueInput
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type ShopUpdateOneWithoutAddressNestedInput = {
     create?: XOR<ShopCreateWithoutAddressInput, ShopUncheckedCreateWithoutAddressInput>
     connectOrCreate?: ShopCreateOrConnectWithoutAddressInput
@@ -90709,14 +90886,6 @@ export namespace Prisma {
     connectOrCreate?: OptimizedStopCreateOrConnectWithoutRoutePathInput | OptimizedStopCreateOrConnectWithoutRoutePathInput[]
     createMany?: OptimizedStopCreateManyRoutePathInputEnvelope
     connect?: OptimizedStopWhereUniqueInput | OptimizedStopWhereUniqueInput[]
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type RouteUpdateOneRequiredWithoutOptimizedRouteNestedInput = {
@@ -92733,6 +92902,22 @@ export namespace Prisma {
     _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumMemberRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.MemberRole | EnumMemberRoleFieldRefInput<$PrismaModel>
     in?: $Enums.MemberRole[] | ListEnumMemberRoleFieldRefInput<$PrismaModel>
@@ -92849,22 +93034,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRouteStatusFilter<$PrismaModel>
     _max?: NestedEnumRouteStatusFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumRefinementTypeFilter<$PrismaModel = never> = {
@@ -96382,6 +96551,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUncheckedCreateWithoutShopInput = {
@@ -96393,6 +96566,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressCreateOrConnectWithoutShopInput = {
@@ -96723,6 +96900,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressUncheckedUpdateWithoutShopInput = {
@@ -96734,6 +96915,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type WebsiteProvisionUpsertWithoutShopInput = {

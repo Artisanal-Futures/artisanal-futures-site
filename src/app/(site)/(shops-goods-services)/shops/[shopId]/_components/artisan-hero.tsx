@@ -4,15 +4,8 @@ import { ExternalLink, Globe, Mail, MapPin, Phone } from "lucide-react";
 import type { RouterOutputs } from "~/trpc/react";
 import { Badge } from "~/components/ui/badge";
 import { Separator } from "~/components/ui/separator";
+import { getInitials } from "~/lib/get-initials";
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
 type Props = {
   shop: NonNullable<RouterOutputs["shop"]["get"]>;
 };

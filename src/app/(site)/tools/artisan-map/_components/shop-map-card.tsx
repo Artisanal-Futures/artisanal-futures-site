@@ -1,0 +1,181 @@
+"use client";
+
+import Link from "next/link";
+import { ExternalLink, Link2, Mail, MapPin, Phone, X } from "lucide-react";
+import { toast } from "sonner";
+
+import type { MapShop } from "../_lib/types";
+import { cn } from "~/lib/utils";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+
+import { ShopAvatar } from "./shop-avatar";
+
+/** Prefix bare domains with https://; drop anything that isn't http(s). */
+export function normalizeWebsite(raw: string | null): string | null {
+  const value = raw?.trim();
+  if (!value) return null;
+  if (/^https?:\/\//i.test(value)) return value;
+  // Refuse other schemes (javascript:, data:, ...); bare `host:port` is fine.
+  if (/^(javascript|data|vbscript|file):/i.test(value)) return null;
+  return `https://${value}`;
+}
+
+function blankToNull(value: string | null): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return trimmed;
+}
+
+function phoneHref(raw: string): string | null {
+  const digits = raw.replace(/[^\d+]/g, "");
+  return digits.replace(/\+/g, "").length > 0 ? `tel:${digits}` : null;
+}
+
+type ShopMapCardProps = {
+  shop: MapShop;
+  onClose?: () => void;
+  className?: string;
+};
+
+export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
+  const website = normalizeWebsite(shop.website);
+  const email = blankToNull(shop.email);
+  const phone = blankToNull(shop.phone);
+  const telHref = phone ? phoneHref(phone) : null;
+  const showOwner =
+    !!shop.ownerName &&
+    shop.ownerName.trim().toLowerCase() !== shop.name.trim().toLowerCase();
+
+  const copyLink = async () => {
+    const url = `${window.location.origin}/tools/artisan-map?shop=${encodeURIComponent(shop.id)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied");
+    } catch {
+      toast.error("Couldn't copy the link");
+    }
+  };
+
+  return (
+    <article
+      aria-label={shop.name}
+      className={cn(
+        "bg-card text-card-foreground relative flex w-full flex-col gap-3 rounded-xl border p-4 text-left shadow-lg",
+        className,
+      )}
+    >
+      <header className="flex items-center gap-3">
+        <ShopAvatar shop={shop} size={56} />
+        <div className={cn("flex min-w-0 flex-1 flex-col", onClose && "pr-6")}>
+          <h3 className="line-clamp-2 text-base leading-snug font-semibold text-balance">
+            {shop.name}
+          </h3>
+          {showOwner && (
+            <p className="text-muted-foreground truncate text-sm">
+              {shop.ownerName}
+            </p>
+          )}
+        </div>
+        {onClose && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Close"
+            onClick={onClose}
+            className="text-muted-foreground absolute top-2 right-2 size-7"
+          >
+            <X className="size-4" aria-hidden />
+          </Button>
+        )}
+      </header>
+
+      {shop.locality && (
+        <p
+          className="text-muted-foreground flex items-center gap-1.5 text-sm"
+          title="Approximate area. Pins never show an exact address."
+        >
+          <MapPin className="size-4 shrink-0" aria-hidden />
+          <span className="truncate">{shop.locality}</span>
+          <span className="text-muted-foreground/70 shrink-0 text-xs">
+            (approx.)
+          </span>
+        </p>
+      )}
+
+      {shop.attributeTags.length > 0 && (
+        <ul className="flex flex-wrap gap-1.5" aria-label="Attributes">
+          {shop.attributeTags.map((tag) => (
+            <li key={tag}>
+              <Badge variant="secondary">{tag}</Badge>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {(email ?? phone) && (
+        <div className="flex flex-col gap-1.5 text-sm">
+          {email && (
+            <a
+              href={`mailto:${email}`}
+              className="text-foreground hover:text-primary focus-visible:ring-ring/50 flex min-w-0 items-center gap-1.5 rounded-sm outline-none hover:underline focus-visible:ring-[3px]"
+            >
+              <Mail
+                className="text-muted-foreground size-4 shrink-0"
+                aria-hidden
+              />
+              <span className="truncate">{email}</span>
+            </a>
+          )}
+          {phone &&
+            (telHref ? (
+              <a
+                href={telHref}
+                className="text-foreground hover:text-primary focus-visible:ring-ring/50 flex min-w-0 items-center gap-1.5 rounded-sm outline-none hover:underline focus-visible:ring-[3px]"
+              >
+                <Phone
+                  className="text-muted-foreground size-4 shrink-0"
+                  aria-hidden
+                />
+                <span className="truncate">{phone}</span>
+              </a>
+            ) : (
+              <span className="flex min-w-0 items-center gap-1.5">
+                <Phone
+                  className="text-muted-foreground size-4 shrink-0"
+                  aria-hidden
+                />
+                <span className="truncate">{phone}</span>
+              </span>
+            ))}
+        </div>
+      )}
+
+      <div className="flex items-center gap-2 pt-1">
+        {website && (
+          <Button asChild variant="outline" size="sm" className="flex-1">
+            <a href={website} target="_blank" rel="noopener noreferrer">
+              Website
+              <ExternalLink aria-hidden />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          </Button>
+        )}
+        <Button asChild size="sm" className="flex-1">
+          <Link href={`/shops/${shop.id}`}>View profile</Link>
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={`Copy link to ${shop.name} on the map`}
+          title="Copy link"
+          onClick={() => void copyLink()}
+        >
+          <Link2 aria-hidden />
+        </Button>
+      </div>
+    </article>
+  );
+}

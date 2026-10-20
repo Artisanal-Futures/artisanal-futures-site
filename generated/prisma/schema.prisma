@@ -340,6 +340,12 @@ model ShopAddress {
   shopId     String? @unique
   street     String?
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  latitude     Float?
+  longitude    Float?
+  /// Normalized locality query last geocoded (zip/city/state/country only).
+  geocodeQuery String?
+  geocodedAt   DateTime?
 }
 
 model Member {

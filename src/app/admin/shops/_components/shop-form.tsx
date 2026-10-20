@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useUploadFile } from "@better-upload/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import type { ShopFormData } from "~/lib/validators/shop";
 import type { RouterOutputs } from "~/trpc/react";
 import { handleImageUrl } from "~/lib/handle-image-url";
@@ -51,17 +52,6 @@ type Props = {
   userRole: string;
   potentialShopOwners: RouterOutputs["shop"]["getShopOwners"];
 };
-
-const STORE_ATTRIBUTES = [
-  "African American Culture",
-  "African Culture",
-  "African American Civil Rights",
-  "Black Owned",
-  "Woman Owned",
-  "Worker Owned",
-  "Community Education",
-  "Food Sovereignty",
-] as const;
 
 export function ShopForm({
   initialData,

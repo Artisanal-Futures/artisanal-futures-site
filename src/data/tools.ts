@@ -27,6 +27,13 @@ export const TOOLS_DATA: Tool[] = [
   // },
 
   {
+    title: "Artisan Map",
+    subtitle: "Explore artisans near you and around the world",
+    type: "Community",
+    image: "img/artisan_map.png",
+    url: "/tools/artisan-map",
+  },
+  {
     title: "Shop Rate Calculator",
     subtitle: "Calculate your shop rate",
     type: "Logistics",

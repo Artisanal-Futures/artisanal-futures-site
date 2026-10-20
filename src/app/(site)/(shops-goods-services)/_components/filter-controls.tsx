@@ -14,6 +14,7 @@ import {
   InputGroupInput,
 } from "~/components/ui/input-group";
 import { Label } from "~/components/ui/label";
+import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import {
   Select,
   SelectContent,
@@ -21,17 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
-const STORE_ATTRIBUTES = [
-  "African American Culture",
-  "African Culture",
-  "African American Civil Rights",
-  "Black Owned",
-  "Woman Owned",
-  "Worker Owned",
-  "Community Education",
-  "Food Sovereignty",
-];
 
 export const FilterControls = ({
   updateSearchParams,

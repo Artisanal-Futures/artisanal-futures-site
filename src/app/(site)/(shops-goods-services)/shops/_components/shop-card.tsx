@@ -3,16 +3,8 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { getInitials } from "~/lib/get-initials";
 import { handleImageUrl } from "~/lib/handle-image-url";
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 type Shop = NonNullable<RouterOutputs["shop"]["getAllPublic"][number]>;
 export function ShopCard({ shop }: { shop: Shop }) {

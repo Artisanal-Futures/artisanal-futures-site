@@ -9,6 +9,31 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
+import {
+  blankToNull,
+  formatLocality,
+  offsetLocation,
+  type MapShopLocation,
+} from "~/server/geocoding/approximate-location";
+import { syncShopCoordinates } from "~/server/geocoding/geocode-shop-address";
+
+/**
+ * Public address select. Deliberately lists only the original columns so the
+ * raw geocoding columns (latitude, longitude, geocodeQuery, geocodedAt) never
+ * leak through public endpoints. The map uses `getMapLocations`, which
+ * returns jittered coordinates only.
+ */
+const publicAddressSelect = {
+  id: true,
+  address: true,
+  additional: true,
+  city: true,
+  state: true,
+  zip: true,
+  country: true,
+  street: true,
+  shopId: true,
+} as const;
 
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: adminOnlyProcedure.query(async ({ ctx }) => {
@@ -46,7 +71,7 @@ export const shopsRouter = createTRPCRouter({
         website: true,
         email: true,
         phone: true,
-        address: true,
+        address: { select: publicAddressSelect },
         attributeTags: true,
         createdAt: true,
       },
@@ -55,6 +80,62 @@ export const shopsRouter = createTRPCRouter({
       },
     });
   }),
+
+  getMapLocations: publicProcedure.query(
+    async ({ ctx }): Promise<MapShopLocation[]> => {
+      const shops = await ctx.db.shop.findMany({
+        where: { isPublic: true },
+        orderBy: { name: "asc" },
+        select: {
+          id: true,
+          name: true,
+          ownerName: true,
+          logoPhoto: true,
+          ownerPhoto: true,
+          website: true,
+          email: true,
+          phone: true,
+          attributeTags: true,
+          // Only locality + coordinates: never street/zip/geocodeQuery.
+          address: {
+            select: {
+              city: true,
+              state: true,
+              latitude: true,
+              longitude: true,
+            },
+          },
+        },
+      });
+
+      return shops.map((shop) => {
+        const { latitude, longitude } = shop.address ?? {};
+        const hasCoordinates =
+          typeof latitude === "number" &&
+          typeof longitude === "number" &&
+          Number.isFinite(latitude) &&
+          Number.isFinite(longitude);
+
+        return {
+          id: shop.id,
+          name: shop.name.trim(),
+          ownerName: shop.ownerName.trim(),
+          logoPhoto: blankToNull(shop.logoPhoto),
+          ownerPhoto: blankToNull(shop.ownerPhoto),
+          website: blankToNull(shop.website),
+          email: blankToNull(shop.email),
+          phone: blankToNull(shop.phone),
+          attributeTags: shop.attributeTags.filter(
+            (tag) => blankToNull(tag) !== null,
+          ),
+          locality: formatLocality(shop.address?.city, shop.address?.state),
+          location: hasCoordinates
+            ? offsetLocation(shop.id, latitude, longitude)
+            : null,
+        };
+      });
+    },
+  ),
 
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     const shops = await ctx.db.shop.findMany({
@@ -158,7 +239,7 @@ export const shopsRouter = createTRPCRouter({
     .query(async ({ ctx, input: shopId }) => {
       const shop = await ctx.db.shop.findUnique({
         where: { id: shopId },
-        include: { address: true },
+        include: { address: { select: publicAddressSelect } },
       });
 
       if (!shop) return null;
@@ -237,6 +318,14 @@ export const shopsRouter = createTRPCRouter({
         },
       });
 
+      // Approximate map pin from zip/city/state/country. Best-effort: a
+      // geocoding failure must never fail the save.
+      try {
+        await syncShopCoordinates(ctx.db, shop.id);
+      } catch (error) {
+        console.error(`Failed to geocode shop ${shop.id}:`, error);
+      }
+
       return { data: shop, message: "Shop created successfully" };
     }),
 
@@ -296,6 +385,14 @@ export const shopsRouter = createTRPCRouter({
           updatedAddress,
         };
       });
+
+      // Outside the transaction so a slow geocoder never holds it open, and
+      // best-effort so a geocoding failure never fails the save.
+      try {
+        await syncShopCoordinates(ctx.db, input.id);
+      } catch (error) {
+        console.error(`Failed to geocode shop ${input.id}:`, error);
+      }
 
       return {
         data: {
