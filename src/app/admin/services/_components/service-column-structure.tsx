@@ -126,7 +126,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
       row.original.isPublic ? (
         <Badge
           variant="default"
-          className="bg-green-100 text-xs font-normal text-green-800 hover:bg-green-100"
+          className="bg-green-100 text-xs font-normal text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/30"
         >
           Public
         </Badge>
@@ -147,7 +147,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
           href={`/admin/services/${row.original.id}`}
           className={cn(
             buttonVariants({ variant: "default" }),
-            "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+            "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",
           )}
         >
           <PencilIcon className="mr-1 h-4 w-4" /> Edit

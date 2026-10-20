@@ -386,7 +386,11 @@ export const shopsRouter = createTRPCRouter({
   ),
 
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    const shops = await ctx.db.shop.findMany({
+    return ctx.db.shop.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { ownerId: ctx.session.user.id },
       include: {
         owner: true,
         address: true,
@@ -396,12 +400,21 @@ export const shopsRouter = createTRPCRouter({
       },
       orderBy: { createdAt: "desc" },
     });
+  }),
 
-    if (ctx.session.user.role !== "ADMIN") {
-      return shops.filter((shop) => shop.ownerId === ctx.session.user.id);
-    }
-
-    return shops;
+  /**
+   * Slim shop list for dropdowns and filters. Same role scoping as `getAll`
+   * (admins: every shop; artisans: shops they own) without the heavy relations.
+   */
+  getOptions: adminArtisanProcedure.query(async ({ ctx }) => {
+    return ctx.db.shop.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { ownerId: ctx.session.user.id },
+      select: { id: true, name: true, logoPhoto: true, ownerId: true },
+      orderBy: { name: "asc" },
+    });
   }),
 
   getMetrics: adminOnlyProcedure.query(async ({ ctx }) => {
@@ -410,55 +423,54 @@ export const shopsRouter = createTRPCRouter({
       new Date().setDate(new Date().getDate() + 7),
     );
 
-    const products = await ctx.db.product.count();
-    const services = await ctx.db.service.count();
-    const websites = await ctx.db.websiteProvision.count();
-    const invites = await ctx.db.platformInvite.count();
-    const users = await ctx.db.user.count();
-    const shops = await ctx.db.shop.count();
-
-    const newArtisansThisMonth = await ctx.db.user.count({
-      where: {
-        createdAt: {
-          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+    const [
+      products,
+      services,
+      websites,
+      invites,
+      users,
+      shops,
+      newArtisansThisMonth,
+      productsAddedThisWeek,
+      // "Needs attention" counts — actionable items for a platform admin.
+      pendingProvisions,
+      failedProvisions,
+      expiringInvites,
+      shopsWithoutProducts,
+      hiddenShops,
+    ] = await Promise.all([
+      ctx.db.product.count(),
+      ctx.db.service.count(),
+      ctx.db.websiteProvision.count(),
+      ctx.db.platformInvite.count(),
+      ctx.db.user.count(),
+      ctx.db.shop.count(),
+      ctx.db.user.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+          },
         },
-      },
-    });
-
-    const productsAddedThisWeek = await ctx.db.product.count({
-      where: {
-        createdAt: {
-          gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      }),
+      ctx.db.product.count({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+          },
         },
-      },
-    });
-
-    // "Needs attention" counts — actionable items for a platform admin.
-    const pendingProvisions = await ctx.db.websiteProvision.count({
-      where: {
-        status: { in: ["PENDING", "PROVISIONING", "BUILDING", "DEPLOYING"] },
-      },
-    });
-
-    const failedProvisions = await ctx.db.websiteProvision.count({
-      where: { status: "FAILED" },
-    });
-
-    const pendingInvites = await ctx.db.platformInvite.count({
-      where: { used: false, expiresAt: { gt: now } },
-    });
-
-    const expiringInvites = await ctx.db.platformInvite.count({
-      where: { used: false, expiresAt: { gt: now, lte: sevenDaysFromNow } },
-    });
-
-    const shopsWithoutProducts = await ctx.db.shop.count({
-      where: { products: { none: {} } },
-    });
-
-    const hiddenShops = await ctx.db.shop.count({
-      where: { isPublic: false },
-    });
+      }),
+      ctx.db.websiteProvision.count({
+        where: {
+          status: { in: ["PENDING", "PROVISIONING", "BUILDING", "DEPLOYING"] },
+        },
+      }),
+      ctx.db.websiteProvision.count({ where: { status: "FAILED" } }),
+      ctx.db.platformInvite.count({
+        where: { used: false, expiresAt: { gt: now, lte: sevenDaysFromNow } },
+      }),
+      ctx.db.shop.count({ where: { products: { none: {} } } }),
+      ctx.db.shop.count({ where: { isPublic: false } }),
+    ]);
 
     return {
       products,
@@ -471,7 +483,6 @@ export const shopsRouter = createTRPCRouter({
       productsAddedThisWeek,
       pendingProvisions,
       failedProvisions,
-      pendingInvites,
       expiringInvites,
       shopsWithoutProducts,
       hiddenShops,
@@ -704,7 +715,10 @@ export const shopsRouter = createTRPCRouter({
   getWelcomeShop: adminArtisanProcedure.query(async ({ ctx }) => {
     const shop = await ctx.db.shop.findFirst({
       where: { ownerId: ctx.session.user.id },
-      include: { products: true, services: true, websiteProvision: true },
+      include: {
+        websiteProvision: true,
+        _count: { select: { products: true, services: true } },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -717,8 +731,8 @@ export const shopsRouter = createTRPCRouter({
       shop,
 
       completedSurvey: !!survey,
-      hasProducts: (shop?.products?.length ?? 0) > 0,
-      hasServices: (shop?.services?.length ?? 0) > 0,
+      hasProducts: (shop?._count.products ?? 0) > 0,
+      hasServices: (shop?._count.services ?? 0) > 0,
       hasHostedWebsite: shop?.websiteProvision?.status === "ACTIVE",
     };
 

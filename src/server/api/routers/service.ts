@@ -55,20 +55,17 @@ export const serviceRouter = createTRPCRouter({
       return addFullServiceImageUrl(service);
     }),
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
+    // Admins see every service; artisans only see services for shops they own.
     const services = await ctx.db.service.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { shop: { ownerId: ctx.session.user.id } },
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
 
-    let servicesWithFullUrls = services.map(addFullServiceImageUrl);
-
-    if (ctx.session.user.role !== "ADMIN") {
-      servicesWithFullUrls = servicesWithFullUrls.filter(
-        (service) => service?.shop?.ownerId === ctx.session.user.id,
-      );
-    }
-
-    return servicesWithFullUrls;
+    return services.map(addFullServiceImageUrl);
   }),
 
   getAllByCategory: publicProcedure

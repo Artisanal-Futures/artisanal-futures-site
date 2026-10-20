@@ -4,8 +4,10 @@ import { TrailHeader } from "../_components/trail-header";
 import { ServiceClient } from "./_components/service-client";
 
 export default async function ServicesAdminPage() {
-  const rawServices = await api.service.getAll();
-  const shops = await api.shop.getAll();
+  const [rawServices, shops] = await Promise.all([
+    api.service.getAll(),
+    api.shop.getOptions(),
+  ]);
 
   const services = rawServices.filter(
     (s): s is NonNullable<typeof s> => s?.shop !== null,

@@ -11,8 +11,10 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  const session = await getSession();
-  const shops = await api.shop.getAll();
+  const [session, shops] = await Promise.all([
+    getSession(),
+    api.shop.getAll(),
+  ]);
   const artisanShop = shops.find((shop) => shop.ownerId === session?.user?.id);
 
   return (

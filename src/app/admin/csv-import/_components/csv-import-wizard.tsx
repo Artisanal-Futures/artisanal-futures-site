@@ -70,7 +70,7 @@ function itemsLabel(type: ImportType, count: number): string {
 }
 
 type Props = {
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
   categories: RouterOutputs["category"]["getAll"];
   initialType?: ImportType;
 };

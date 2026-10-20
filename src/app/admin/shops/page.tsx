@@ -5,8 +5,10 @@ import { TrailHeader } from "../_components/trail-header";
 import { ShopClient } from "./_components/shop-client";
 
 export default async function ShopsAdminPage() {
-  const shops = await api.shop.getAll();
-  const session = await getSession();
+  const [shops, session] = await Promise.all([
+    api.shop.getAll(),
+    getSession(),
+  ]);
   const isAdmin = session?.user?.role === "ADMIN";
 
   return (

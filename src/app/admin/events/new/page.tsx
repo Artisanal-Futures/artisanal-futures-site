@@ -4,7 +4,7 @@ import { EventForm } from "../_components/event-form";
 import { TrailHeader } from "../../_components/trail-header";
 
 export default async function NewEventPage() {
-  const shops = await api.shop.getAll();
+  const shops = await api.shop.getOptions();
 
   return (
     <>

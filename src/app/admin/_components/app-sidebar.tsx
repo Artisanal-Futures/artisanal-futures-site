@@ -224,7 +224,13 @@ export function AppSidebar({
                   src={"/logos/logo.png"}
                   alt="Artisanal Futures logo"
                   fill
-                  className="object-contain"
+                  className="object-contain dark:hidden"
+                />
+                <Image
+                  src={"/logos/logo-dark.png"}
+                  alt="Artisanal Futures logo"
+                  fill
+                  className="hidden object-contain dark:block"
                 />
               </Link>
             </SidebarMenuButton>

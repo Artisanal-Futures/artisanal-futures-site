@@ -21,7 +21,7 @@ import { createServiceFilter } from "./service-filters";
 
 type Props = {
   services: ServiceWithShop[];
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
 };
 
 export function ServiceClient({ services, shops }: Props) {

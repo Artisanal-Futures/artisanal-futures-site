@@ -45,13 +45,13 @@ export const upcyclingColumnStructure: ColumnDef<UpcyclingColumn>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-col items-start space-y-1">
-        <div className={cn("mx-0 px-0 text-sm font-medium text-gray-700")}>
+        <div className={cn("text-foreground mx-0 px-0 text-sm font-medium")}>
           {row.original.user?.name ?? "Guest"}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-muted-foreground text-xs">
           {row.original.user?.email ?? "No email"}
         </div>
-        <div className="text-xs text-gray-400">
+        <div className="text-muted-foreground text-xs">
           ID: {row.original.user?.id ?? "No ID"}
         </div>
       </div>
@@ -66,11 +66,11 @@ export const upcyclingColumnStructure: ColumnDef<UpcyclingColumn>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-col items-start">
-        <div className={cn("mx-0 px-0 text-sm font-medium text-gray-700")}>
+        <div className={cn("text-foreground mx-0 px-0 text-sm font-medium")}>
           {new Date(row.original.generation_date).toLocaleDateString()} at{" "}
           {new Date(row.original.generation_date).toLocaleTimeString()}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-muted-foreground text-xs">
           Generation took {row.original.generation_time}s
         </div>
       </div>

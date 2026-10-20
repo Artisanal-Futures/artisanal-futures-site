@@ -22,7 +22,7 @@ import { createProductFilter } from "./product-filters";
 
 type Props = {
   products: ProductWithRelations[];
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
 };
 
 export function ProductClient({ products, shops }: Props) {

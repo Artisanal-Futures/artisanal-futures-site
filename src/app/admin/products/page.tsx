@@ -4,8 +4,10 @@ import { TrailHeader } from "../_components/trail-header";
 import { ProductClient } from "./_components/product-client";
 
 export default async function ProductsAdminPage() {
-  const products = await api.product.getAll();
-  const shops = await api.shop.getAll();
+  const [products, shops] = await Promise.all([
+    api.product.getAll(),
+    api.shop.getOptions(),
+  ]);
 
   return (
     <>

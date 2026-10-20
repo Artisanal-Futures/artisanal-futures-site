@@ -8,8 +8,10 @@ import { TrailHeader } from "../_components/trail-header";
 import { AdminWelcomeDashboard } from "./_components/admin-welcome-dashboard";
 
 export default async function WelcomePage() {
-  const shop = await api.shop.getWelcomeShop();
-  const session = await getSession();
+  const [shop, session] = await Promise.all([
+    api.shop.getWelcomeShop(),
+    getSession(),
+  ]);
 
   // getWelcomeShop always returns an object; the shop itself may be null.
   if (!shop?.shop) {

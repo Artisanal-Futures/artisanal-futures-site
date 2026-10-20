@@ -45,21 +45,23 @@ export function ArtisanProfileStep() {
   });
 
   const onboarding = api.onboarding.onboardArtisan.useMutation({
-    onSuccess: (data) => {
-      toast.dismiss();
-      toast.success(data.message ?? "Welcome to the platform!");
+    onSuccess: (data, _input, context) => {
+      toast.success(data.message ?? "Welcome to the platform!", {
+        id: context?.toastId,
+      });
       setCaptchaToken("");
       const handle = captchaRef.current;
       if (handle) handle.reset();
       router.push(data.redirectUrl ?? "/");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to onboard artisan");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to onboard artisan", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Hold on... we're onboarding you!");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Hold on... we're onboarding you!"),
+    }),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -84,7 +84,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
   }
 
   const connectionNotice = simplePressUnreachable ? (
-    <p className="text-sm text-red-600">
+    <p className="text-sm text-red-600 dark:text-red-400">
       We can&apos;t connect to SimplePress right now, so this isn&apos;t
       available. Please try again later.
     </p>
@@ -152,7 +152,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
         <Card className="mb-10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Sparkles className="text-amber-600 size-5" />
+              <Sparkles className="text-amber-600 dark:text-amber-400 size-5" />
               Finish setting up your website
             </CardTitle>
           </CardHeader>
@@ -173,7 +173,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
       <Card className="mb-10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Sparkles className="text-amber-600 size-5" />
+            <Sparkles className="text-amber-600 dark:text-amber-400 size-5" />
             Your website is ready - claim it!
           </CardTitle>
         </CardHeader>
@@ -225,7 +225,7 @@ export function ProvisionStatusCard({ shopId }: { shopId: string }) {
       <Card className="mb-10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <CheckCircle2 className="text-green-600 size-5" />
+            <CheckCircle2 className="text-green-600 dark:text-green-400 size-5" />
             Your website is live
           </CardTitle>
         </CardHeader>

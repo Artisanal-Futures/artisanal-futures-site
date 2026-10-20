@@ -53,10 +53,10 @@ export function AdminWelcomeDashboard({
   const provisionFailed = provisionStatus === ProvisionStatus.FAILED;
   const hasWebsite = !!shopData?.shop?.website;
   const hasProfile = !!shopData?.completedSurvey && !!shopData?.shop;
-  // Derived from the shop's own relations so products and services are
+  // Derived from the shop's relation counts so products and services are
   // tracked independently (the router flags can't tell them apart reliably).
-  const hasProducts = (shopData?.shop?.products?.length ?? 0) > 0;
-  const hasServices = (shopData?.shop?.services?.length ?? 0) > 0;
+  const hasProducts = (shopData?.shop?._count?.products ?? 0) > 0;
+  const hasServices = (shopData?.shop?._count?.services ?? 0) > 0;
 
   const checklist: ChecklistItem[] = [
     {

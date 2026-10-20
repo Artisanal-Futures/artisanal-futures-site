@@ -34,26 +34,17 @@ import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 export const productRouter = createTRPCRouter({
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    // Always order by createdAt DESC in the DB query
+    // Admins see every product; artisans only see products for shops they own.
     const products = await ctx.db.product.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { shop: { ownerId: ctx.session.user.id } },
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
 
-    // Map to add full image URLs, but preserve the order from the DB
-    let productsWithFullUrls = products.map(addFullProductImageUrl);
-
-    // If not admin, filter by ownerId, then re-sort by createdAt DESC to ensure order
-    if (ctx.session.user.role !== "ADMIN") {
-      productsWithFullUrls = productsWithFullUrls
-        .filter((product) => product.shop?.ownerId === ctx.session.user.id)
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-    }
-
-    return productsWithFullUrls;
+    return products.map(addFullProductImageUrl);
   }),
 
   get: adminArtisanProcedure.input(z.string()).query(async ({ ctx, input }) => {

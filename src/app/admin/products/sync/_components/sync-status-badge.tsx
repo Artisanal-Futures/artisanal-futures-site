@@ -32,8 +32,7 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   },
   DISCARDED: {
     label: "Discarded",
-    className:
-      "bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-500/20 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20",
+    className: "bg-muted text-muted-foreground ring-1 ring-inset ring-border",
   },
 };
 

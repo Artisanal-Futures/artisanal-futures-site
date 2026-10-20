@@ -34,7 +34,7 @@ export function ServiceBulkActions({ selectedServiceIds, onClear }: Props) {
   const router = useRouter();
 
   const { data: categories } = api.category.getAll.useQuery();
-  const { data: shops } = api.shop.getAll.useQuery();
+  const { data: shops } = api.shop.getOptions.useQuery();
 
   const [categoryPopoverOpen, setCategoryPopoverOpen] = React.useState(false);
   const [storePopoverOpen, setStorePopoverOpen] = React.useState(false);

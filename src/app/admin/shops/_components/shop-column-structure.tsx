@@ -110,7 +110,7 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Created on" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm text-gray-500">
+      <span className="text-muted-foreground text-sm">
         {row.original.createdAt.toLocaleDateString()}
       </span>
     ),
@@ -128,7 +128,7 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
           className={cn(
             buttonVariants({
               variant: "default",
-              className: "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+              className: "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",
             }),
           )}
         >

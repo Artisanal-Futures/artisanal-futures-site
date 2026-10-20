@@ -6,65 +6,19 @@ import { surveySchema } from "~/lib/validators/survey";
 import {
   adminArtisanProcedure,
   createTRPCRouter,
-  protectedProcedure,
 } from "~/server/api/trpc";
 
 export const surveysRouter = createTRPCRouter({
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    const surveys = await ctx.db.survey.findMany({
+    return ctx.db.survey.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { ownerId: ctx.session.user.id },
       orderBy: { createdAt: "desc" },
     });
-
-    if (ctx.session.user.role !== "ADMIN") {
-      return surveys.filter((survey) => survey.ownerId === ctx.session.user.id);
-    }
-
-    return surveys;
   }),
 
-  get: protectedProcedure
-    .input(z.object({ surveyId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.survey.findUnique({
-        where: {
-          id: input.surveyId,
-          ownerId: ctx.session.user.id,
-        },
-      });
-    }),
-  getCurrent: protectedProcedure.query(async ({ ctx }) => {
-    const survey = await ctx.db.survey.findFirst({
-      where: { ownerId: ctx.session.user.id },
-    });
-    const shop = await ctx.db.shop.findFirst({
-      where: {
-        OR: [
-          { ownerId: ctx.session.user.id },
-          // Only match by survey.shopId when it exists: an `{ id: undefined }`
-          // branch collapses to `{}` in Prisma and would match any shop.
-          ...(survey?.shopId ? [{ id: survey.shopId }] : []),
-        ],
-      },
-      // Narrow select: never return the owner's User row.
-      select: { id: true, name: true },
-    });
-
-    return {
-      survey,
-      shop,
-    };
-  }),
-
-  getCurrentUserShopSurvey: protectedProcedure
-    .input(z.object({ shopId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.survey.findFirst({
-        where: {
-          ownerId: ctx.session.user.id,
-          shopId: input.shopId,
-        },
-      });
-    }),
   create: adminArtisanProcedure
     .input(surveySchema)
     .mutation(async ({ ctx, input }) => {

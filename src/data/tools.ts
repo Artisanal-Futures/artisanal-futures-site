@@ -1,4 +1,6 @@
-export const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
+import { UPCY_BASE_URL } from "~/lib/upcy";
+
+export const UPCY_URL = `${UPCY_BASE_URL}/`;
 
 export type Tool = {
   title: string;

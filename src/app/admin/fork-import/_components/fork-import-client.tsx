@@ -474,14 +474,14 @@ export function ForkImportClient() {
             {preflight?.groups.map((group) => (
               <div
                 key={group.model}
-                className="space-y-3 rounded-md border border-amber-300 bg-amber-50 p-4"
+                className="space-y-3 rounded-md border border-amber-300 bg-amber-50 p-4 dark:border-amber-900/50 dark:bg-amber-950/40"
               >
                 <div>
-                  <h4 className="font-medium text-amber-900">
+                  <h4 className="font-medium text-amber-900 dark:text-amber-200">
                     Missing {group.model.toLowerCase()} references (
                     {group.missing.length})
                   </h4>
-                  <p className="text-xs text-amber-800">
+                  <p className="text-xs text-amber-800 dark:text-amber-300">
                     Some rows reference {group.model.toLowerCase()}s not in this
                     database (field{group.fields.length === 1 ? "" : "s"}:{" "}
                     {group.fields.join(", ")}). Reassign each to an existing{" "}

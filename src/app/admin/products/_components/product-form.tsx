@@ -43,7 +43,7 @@ import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 type Props = {
   initialData: RouterOutputs["product"]["get"];
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
   categories: RouterOutputs["category"]["getAll"];
   userRole: string;
 };

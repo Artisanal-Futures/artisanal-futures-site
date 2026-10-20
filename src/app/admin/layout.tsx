@@ -38,7 +38,7 @@ export default async function AdminPanelLayout(props: Props) {
       >
         <AppSidebar variant="inset" session={session} />
         <SidebarInset className="min-w-0 overflow-x-hidden">
-          <div className="min-h-screen bg-gray-50">{props.children}</div>
+          <div className="min-w-0 flex-1">{props.children}</div>
         </SidebarInset>
       </SidebarProvider>
     </HydrateClient>

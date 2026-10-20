@@ -42,7 +42,7 @@ export const RowImageLink = ({
             {name}
           </Link>
         ) : (
-          <span className="truncate text-sm text-gray-500">{name}</span>
+          <span className="text-muted-foreground truncate text-sm">{name}</span>
         )}
         {subheader && (
           <span className="truncate text-xs text-muted-foreground">{subheader}</span>

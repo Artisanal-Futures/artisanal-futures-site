@@ -234,8 +234,8 @@ function PlatformMetrics() {
             </div>
           </div>
           <div className="text-muted-foreground mt-3 flex items-center gap-1 text-xs">
-            <TrendingUp className="size-3 text-green-600" />
-            <span className="font-medium text-green-600">
+            <TrendingUp className="size-3 text-green-600 dark:text-green-400" />
+            <span className="font-medium text-green-600 dark:text-green-400">
               +{newArtisansThisMonth}
             </span>
             <span>this month</span>
@@ -255,8 +255,8 @@ function PlatformMetrics() {
             </div>
           </div>
           <div className="text-muted-foreground mt-3 flex items-center gap-1 text-xs">
-            <TrendingUp className="size-3 text-green-600" />
-            <span className="font-medium text-green-600">
+            <TrendingUp className="size-3 text-green-600 dark:text-green-400" />
+            <span className="font-medium text-green-600 dark:text-green-400">
               +{productsAddedThisWeek}
             </span>
             <span>this week</span>

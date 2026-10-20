@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { TRPCError } from "@trpc/server";
 
@@ -10,11 +11,14 @@ import { TrailHeader } from "../../_components/trail-header";
 type Props = {
   params: Promise<{ id: string }>;
 };
+// Deduped per request so the page and generateMetadata share one query.
+const getService = cache((id: string) => api.service.get(id));
+
 // api.service.get throws for artisans requesting someone else's service, and returns
 // null for a missing record. Both should render a 404 rather than a "new" form.
 async function getServiceOrNotFound(id: string) {
   try {
-    const service = await api.service.get(id);
+    const service = await getService(id);
     if (!service) return notFound();
     return service;
   } catch (error) {
@@ -30,10 +34,12 @@ async function getServiceOrNotFound(id: string) {
 
 export default async function EditServicePage({ params }: Props) {
   const { id } = await params;
-  const service = await getServiceOrNotFound(id);
-  const shops = await api.shop.getAll();
-  const categories = await api.category.getAll();
-  const session = await getSession();
+  const [service, shops, categories, session] = await Promise.all([
+    getServiceOrNotFound(id),
+    api.shop.getOptions(),
+    api.category.getAll(),
+    getSession(),
+  ]);
   const userRole = session?.user.role ?? "ARTISAN";
   return (
     <>
@@ -55,7 +61,7 @@ export default async function EditServicePage({ params }: Props) {
 }
 export const generateMetadata = async ({ params }: Props) => {
   const { id } = await params;
-  const service = await api.service.get(id).catch(() => null);
+  const service = await getService(id).catch(() => null);
   if (!service) {
     return {
       title: "Service Not Found",

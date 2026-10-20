@@ -32,21 +32,23 @@ export function AdminAccountDetailsStep() {
   const router = useRouter();
 
   const adminCreate = api.onboarding.onboardAdmin.useMutation({
-    onSuccess: (data) => {
-      toast.dismiss();
-      toast.success(data.message ?? "Welcome to the platform!");
+    onSuccess: (data, _input, context) => {
+      toast.success(data.message ?? "Welcome to the platform!", {
+        id: context?.toastId,
+      });
       setCaptchaToken("");
       const handle = captchaRef.current;
       if (handle) handle.reset();
       router.push(data.redirectUrl);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to onboard admin");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to onboard admin", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Hold on... we're setting up your account!");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Hold on... we're setting up your account!"),
+    }),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

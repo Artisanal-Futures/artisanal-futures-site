@@ -38,7 +38,7 @@ import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 type Props = {
   initialData: RouterOutputs["event"]["get"];
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
 };
 
 export function EventForm({ initialData, shops }: Props) {
