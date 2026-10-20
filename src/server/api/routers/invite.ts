@@ -105,7 +105,9 @@ export const inviteRouter = createTRPCRouter({
       }
 
       const inviteUrl = `${baseUrl}${path}?code=${encodeURIComponent(code)}`;
-      await sendPlatformInviteEmail({
+      // sendEmail never throws; a failed send still leaves a usable invite, so
+      // report it and let the admin share the link by hand.
+      const emailResult = await sendPlatformInviteEmail({
         to: input.email,
         role: input.role,
         inviteUrl,
@@ -113,7 +115,7 @@ export const inviteRouter = createTRPCRouter({
         shopName: shop?.name,
       });
 
-      return invite;
+      return { ...invite, inviteUrl, emailSent: emailResult.success };
     }),
 
   updateInviteShop: adminOnlyProcedure

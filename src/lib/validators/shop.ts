@@ -2,6 +2,36 @@ import { z } from "zod";
 
 import { shopSeoSchema, urlListSchema } from "./seo";
 
+/**
+ * How precisely a shop's location is shown publicly. Mirrors the Prisma
+ * `ShopLocationType` enum; HOME_BASED is the default so a street address is
+ * never published unless the shop opts in as a storefront.
+ */
+export const SHOP_LOCATION_TYPES = {
+  STOREFRONT: {
+    label: "Storefront",
+    description:
+      "A public place customers can visit. Exact pin; street address shown.",
+  },
+  HOME_BASED: {
+    label: "Home-based",
+    description:
+      "Works from home. The map shows the general area; your street address stays private.",
+  },
+  AREA: {
+    label: "Area only",
+    description: "Just a city or zip, no street address.",
+  },
+} as const;
+
+export type ShopLocationTypeValue = keyof typeof SHOP_LOCATION_TYPES;
+
+export const shopLocationTypeSchema = z.enum([
+  "STOREFRONT",
+  "HOME_BASED",
+  "AREA",
+]);
+
 export const shopSchema = z.object({
   name: z.string().min(1, "Shop name is required"),
   ownerName: z.string().min(1, "Owner name is required"),
@@ -20,6 +50,7 @@ export const shopSchema = z.object({
   state: z.string().optional().nullable(),
   zip: z.string().optional().nullable(),
   country: z.string().optional().nullable(),
+  locationType: shopLocationTypeSchema.default("HOME_BASED"),
   attributeTags: z.array(z.string()),
   ownerId: z.string().optional().nullable(),
 

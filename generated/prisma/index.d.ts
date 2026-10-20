@@ -372,6 +372,15 @@ export const ProductScrapeMethod: {
 export type ProductScrapeMethod = (typeof ProductScrapeMethod)[keyof typeof ProductScrapeMethod]
 
 
+export const ShopLocationType: {
+  STOREFRONT: 'STOREFRONT',
+  HOME_BASED: 'HOME_BASED',
+  AREA: 'AREA'
+};
+
+export type ShopLocationType = (typeof ShopLocationType)[keyof typeof ShopLocationType]
+
+
 export const MemberRole: {
   ADMIN: 'ADMIN',
   MODERATOR: 'MODERATOR',
@@ -592,6 +601,10 @@ export const ProposalStatus: typeof $Enums.ProposalStatus
 export type ProductScrapeMethod = $Enums.ProductScrapeMethod
 
 export const ProductScrapeMethod: typeof $Enums.ProductScrapeMethod
+
+export type ShopLocationType = $Enums.ShopLocationType
+
+export const ShopLocationType: typeof $Enums.ShopLocationType
 
 export type MemberRole = $Enums.MemberRole
 
@@ -24821,6 +24834,7 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
     seoImage: string | null
@@ -24849,6 +24863,7 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
     seoImage: string | null
@@ -24880,6 +24895,7 @@ export namespace Prisma {
     slug: number
     previousSlugs: number
     socialLinks: number
+    locationType: number
     seoTitle: number
     seoDescription: number
     seoImage: number
@@ -24910,6 +24926,7 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    locationType?: true
     seoTitle?: true
     seoDescription?: true
     seoImage?: true
@@ -24938,6 +24955,7 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    locationType?: true
     seoTitle?: true
     seoDescription?: true
     seoImage?: true
@@ -24969,6 +24987,7 @@ export namespace Prisma {
     slug?: true
     previousSlugs?: true
     socialLinks?: true
+    locationType?: true
     seoTitle?: true
     seoDescription?: true
     seoImage?: true
@@ -25073,6 +25092,7 @@ export namespace Prisma {
     slug: string | null
     previousSlugs: string[]
     socialLinks: string[]
+    locationType: $Enums.ShopLocationType
     seoTitle: string | null
     seoDescription: string | null
     seoImage: string | null
@@ -25121,6 +25141,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoImage?: boolean
@@ -25162,6 +25183,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoImage?: boolean
@@ -25194,6 +25216,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoImage?: boolean
@@ -25226,6 +25249,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoImage?: boolean
@@ -25237,7 +25261,7 @@ export namespace Prisma {
     lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -25298,6 +25322,12 @@ export namespace Prisma {
        * shop's schema.org `sameAs`.
        */
       socialLinks: string[]
+      /**
+       * How precisely the shop's location is shown publicly. STOREFRONT pins the
+       * street address and shows it on the profile; HOME_BASED keeps the street
+       * private and pins the general area; AREA only ever stores a locality.
+       */
+      locationType: $Enums.ShopLocationType
       /**
        * Admin-only search/share overrides. Blank = derived from the profile.
        */
@@ -25774,6 +25804,7 @@ export namespace Prisma {
     readonly slug: FieldRef<"Shop", 'String'>
     readonly previousSlugs: FieldRef<"Shop", 'String[]'>
     readonly socialLinks: FieldRef<"Shop", 'String[]'>
+    readonly locationType: FieldRef<"Shop", 'ShopLocationType'>
     readonly seoTitle: FieldRef<"Shop", 'String'>
     readonly seoDescription: FieldRef<"Shop", 'String'>
     readonly seoImage: FieldRef<"Shop", 'String'>
@@ -26410,6 +26441,7 @@ export namespace Prisma {
     longitude: number | null
     geocodeQuery: string | null
     geocodedAt: Date | null
+    geocodePrecision: string | null
   }
 
   export type ShopAddressMaxAggregateOutputType = {
@@ -26426,6 +26458,7 @@ export namespace Prisma {
     longitude: number | null
     geocodeQuery: string | null
     geocodedAt: Date | null
+    geocodePrecision: string | null
   }
 
   export type ShopAddressCountAggregateOutputType = {
@@ -26442,6 +26475,7 @@ export namespace Prisma {
     longitude: number
     geocodeQuery: number
     geocodedAt: number
+    geocodePrecision: number
     _all: number
   }
 
@@ -26470,6 +26504,7 @@ export namespace Prisma {
     longitude?: true
     geocodeQuery?: true
     geocodedAt?: true
+    geocodePrecision?: true
   }
 
   export type ShopAddressMaxAggregateInputType = {
@@ -26486,6 +26521,7 @@ export namespace Prisma {
     longitude?: true
     geocodeQuery?: true
     geocodedAt?: true
+    geocodePrecision?: true
   }
 
   export type ShopAddressCountAggregateInputType = {
@@ -26502,6 +26538,7 @@ export namespace Prisma {
     longitude?: true
     geocodeQuery?: true
     geocodedAt?: true
+    geocodePrecision?: true
     _all?: true
   }
 
@@ -26605,6 +26642,7 @@ export namespace Prisma {
     longitude: number | null
     geocodeQuery: string | null
     geocodedAt: Date | null
+    geocodePrecision: string | null
     _count: ShopAddressCountAggregateOutputType | null
     _avg: ShopAddressAvgAggregateOutputType | null
     _sum: ShopAddressSumAggregateOutputType | null
@@ -26640,6 +26678,7 @@ export namespace Prisma {
     longitude?: boolean
     geocodeQuery?: boolean
     geocodedAt?: boolean
+    geocodePrecision?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -26657,6 +26696,7 @@ export namespace Prisma {
     longitude?: boolean
     geocodeQuery?: boolean
     geocodedAt?: boolean
+    geocodePrecision?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -26674,6 +26714,7 @@ export namespace Prisma {
     longitude?: boolean
     geocodeQuery?: boolean
     geocodedAt?: boolean
+    geocodePrecision?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -26691,9 +26732,10 @@ export namespace Prisma {
     longitude?: boolean
     geocodeQuery?: boolean
     geocodedAt?: boolean
+    geocodePrecision?: boolean
   }
 
-  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street" | "latitude" | "longitude" | "geocodeQuery" | "geocodedAt", ExtArgs["result"]["shopAddress"]>
+  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street" | "latitude" | "longitude" | "geocodeQuery" | "geocodedAt" | "geocodePrecision", ExtArgs["result"]["shopAddress"]>
   export type ShopAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }
@@ -26722,10 +26764,17 @@ export namespace Prisma {
       latitude: number | null
       longitude: number | null
       /**
-       * Normalized locality query last geocoded (zip/city/state/country only).
+       * Normalized query last geocoded, prefixed with its mode:
+       * `mode=locality|zip=...` (zip/city/state/country only), or for a
+       * STOREFRONT `mode=street|street=...|zip=...`. Never returned publicly.
        */
       geocodeQuery: string | null
       geocodedAt: Date | null
+      /**
+       * What the stored coordinates resolve to: "street" (exact storefront pin)
+       * or "locality" (zip/city centroid).
+       */
+      geocodePrecision: string | null
     }, ExtArgs["result"]["shopAddress"]>
     composites: {}
   }
@@ -27163,6 +27212,7 @@ export namespace Prisma {
     readonly longitude: FieldRef<"ShopAddress", 'Float'>
     readonly geocodeQuery: FieldRef<"ShopAddress", 'String'>
     readonly geocodedAt: FieldRef<"ShopAddress", 'DateTime'>
+    readonly geocodePrecision: FieldRef<"ShopAddress", 'String'>
   }
     
 
@@ -76292,6 +76342,7 @@ export namespace Prisma {
     slug: 'slug',
     previousSlugs: 'previousSlugs',
     socialLinks: 'socialLinks',
+    locationType: 'locationType',
     seoTitle: 'seoTitle',
     seoDescription: 'seoDescription',
     seoImage: 'seoImage',
@@ -76319,7 +76370,8 @@ export namespace Prisma {
     latitude: 'latitude',
     longitude: 'longitude',
     geocodeQuery: 'geocodeQuery',
-    geocodedAt: 'geocodedAt'
+    geocodedAt: 'geocodedAt',
+    geocodePrecision: 'geocodePrecision'
   };
 
   export type ShopAddressScalarFieldEnum = (typeof ShopAddressScalarFieldEnum)[keyof typeof ShopAddressScalarFieldEnum]
@@ -77216,6 +77268,20 @@ export namespace Prisma {
    * Reference to a field of type 'ProposalStatus[]'
    */
   export type ListEnumProposalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProposalStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ShopLocationType'
+   */
+  export type EnumShopLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShopLocationType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ShopLocationType[]'
+   */
+  export type ListEnumShopLocationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShopLocationType[]'>
     
 
 
@@ -78704,6 +78770,7 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
     seoImage?: StringNullableFilter<"Shop"> | string | null
@@ -78744,6 +78811,7 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
     seoImage?: SortOrderInput | SortOrder
@@ -78787,6 +78855,7 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Shop"> | boolean
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
     seoImage?: StringNullableFilter<"Shop"> | string | null
@@ -78827,6 +78896,7 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
     seoImage?: SortOrderInput | SortOrder
@@ -78864,6 +78934,7 @@ export namespace Prisma {
     slug?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    locationType?: EnumShopLocationTypeWithAggregatesFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     seoDescription?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     seoImage?: StringNullableWithAggregatesFilter<"Shop"> | string | null
@@ -78892,6 +78963,7 @@ export namespace Prisma {
     longitude?: FloatNullableFilter<"ShopAddress"> | number | null
     geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
     geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
+    geocodePrecision?: StringNullableFilter<"ShopAddress"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }
 
@@ -78909,6 +78981,7 @@ export namespace Prisma {
     longitude?: SortOrderInput | SortOrder
     geocodeQuery?: SortOrderInput | SortOrder
     geocodedAt?: SortOrderInput | SortOrder
+    geocodePrecision?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
   }
 
@@ -78929,6 +79002,7 @@ export namespace Prisma {
     longitude?: FloatNullableFilter<"ShopAddress"> | number | null
     geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
     geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
+    geocodePrecision?: StringNullableFilter<"ShopAddress"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }, "id" | "shopId">
 
@@ -78946,6 +79020,7 @@ export namespace Prisma {
     longitude?: SortOrderInput | SortOrder
     geocodeQuery?: SortOrderInput | SortOrder
     geocodedAt?: SortOrderInput | SortOrder
+    geocodePrecision?: SortOrderInput | SortOrder
     _count?: ShopAddressCountOrderByAggregateInput
     _avg?: ShopAddressAvgOrderByAggregateInput
     _max?: ShopAddressMaxOrderByAggregateInput
@@ -78970,6 +79045,7 @@ export namespace Prisma {
     longitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
     geocodeQuery?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     geocodedAt?: DateTimeNullableWithAggregatesFilter<"ShopAddress"> | Date | string | null
+    geocodePrecision?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
   }
 
   export type ShopPrivateContactWhereInput = {
@@ -83945,6 +84021,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -83985,6 +84062,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -84023,6 +84101,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84063,6 +84142,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84102,6 +84182,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -84132,6 +84213,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84163,6 +84245,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -84187,6 +84270,7 @@ export namespace Prisma {
     longitude?: number | null
     geocodeQuery?: string | null
     geocodedAt?: Date | string | null
+    geocodePrecision?: string | null
     shop?: ShopCreateNestedOneWithoutAddressInput
   }
 
@@ -84204,6 +84288,7 @@ export namespace Prisma {
     longitude?: number | null
     geocodeQuery?: string | null
     geocodedAt?: Date | string | null
+    geocodePrecision?: string | null
   }
 
   export type ShopAddressUpdateInput = {
@@ -84219,6 +84304,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneWithoutAddressNestedInput
   }
 
@@ -84236,6 +84322,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopAddressCreateManyInput = {
@@ -84252,6 +84339,7 @@ export namespace Prisma {
     longitude?: number | null
     geocodeQuery?: string | null
     geocodedAt?: Date | string | null
+    geocodePrecision?: string | null
   }
 
   export type ShopAddressUpdateManyMutationInput = {
@@ -84267,6 +84355,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopAddressUncheckedUpdateManyInput = {
@@ -84283,6 +84372,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopPrivateContactCreateInput = {
@@ -89502,6 +89592,13 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumShopLocationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShopLocationType | EnumShopLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumShopLocationTypeFilter<$PrismaModel> | $Enums.ShopLocationType
+  }
+
   export type EnumProductScrapeMethodNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
@@ -89574,6 +89671,7 @@ export namespace Prisma {
     slug?: SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoImage?: SortOrder
@@ -89602,6 +89700,7 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoImage?: SortOrder
@@ -89630,6 +89729,7 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoImage?: SortOrder
@@ -89639,6 +89739,16 @@ export namespace Prisma {
     syncUrl?: SortOrder
     allowInsecureOrigin?: SortOrder
     lastSyncedAt?: SortOrder
+  }
+
+  export type EnumShopLocationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShopLocationType | EnumShopLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumShopLocationTypeWithAggregatesFilter<$PrismaModel> | $Enums.ShopLocationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumShopLocationTypeFilter<$PrismaModel>
+    _max?: NestedEnumShopLocationTypeFilter<$PrismaModel>
   }
 
   export type EnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -89676,6 +89786,7 @@ export namespace Prisma {
     longitude?: SortOrder
     geocodeQuery?: SortOrder
     geocodedAt?: SortOrder
+    geocodePrecision?: SortOrder
   }
 
   export type ShopAddressAvgOrderByAggregateInput = {
@@ -89697,6 +89808,7 @@ export namespace Prisma {
     longitude?: SortOrder
     geocodeQuery?: SortOrder
     geocodedAt?: SortOrder
+    geocodePrecision?: SortOrder
   }
 
   export type ShopAddressMinOrderByAggregateInput = {
@@ -89713,6 +89825,7 @@ export namespace Prisma {
     longitude?: SortOrder
     geocodeQuery?: SortOrder
     geocodedAt?: SortOrder
+    geocodePrecision?: SortOrder
   }
 
   export type ShopAddressSumOrderByAggregateInput = {
@@ -93401,6 +93514,10 @@ export namespace Prisma {
   export type ShopUpdatesocialLinksInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type EnumShopLocationTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ShopLocationType
   }
 
   export type NullableEnumProductScrapeMethodFieldUpdateOperationsInput = {
@@ -97444,11 +97561,28 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumShopLocationTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShopLocationType | EnumShopLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumShopLocationTypeFilter<$PrismaModel> | $Enums.ShopLocationType
+  }
+
   export type NestedEnumProductScrapeMethodNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
     notIn?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
     not?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel> | $Enums.ProductScrapeMethod | null
+  }
+
+  export type NestedEnumShopLocationTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ShopLocationType | EnumShopLocationTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ShopLocationType[] | ListEnumShopLocationTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumShopLocationTypeWithAggregatesFilter<$PrismaModel> | $Enums.ShopLocationType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumShopLocationTypeFilter<$PrismaModel>
+    _max?: NestedEnumShopLocationTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumProductScrapeMethodNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -98099,6 +98233,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -98138,6 +98273,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -98191,6 +98327,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -98230,6 +98367,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -99901,6 +100039,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -99940,6 +100079,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100070,6 +100210,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100109,6 +100250,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100146,6 +100288,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100185,6 +100328,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100270,6 +100414,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100309,6 +100454,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100565,6 +100711,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100604,6 +100751,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100680,6 +100828,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100719,6 +100868,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100772,6 +100922,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100811,6 +100962,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -100919,6 +101071,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100958,6 +101111,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -101274,6 +101428,7 @@ export namespace Prisma {
     longitude?: number | null
     geocodeQuery?: string | null
     geocodedAt?: Date | string | null
+    geocodePrecision?: string | null
   }
 
   export type ShopAddressUncheckedCreateWithoutShopInput = {
@@ -101289,6 +101444,7 @@ export namespace Prisma {
     longitude?: number | null
     geocodeQuery?: string | null
     geocodedAt?: Date | string | null
+    geocodePrecision?: string | null
   }
 
   export type ShopAddressCreateOrConnectWithoutShopInput = {
@@ -101650,6 +101806,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShopAddressUncheckedUpdateWithoutShopInput = {
@@ -101665,6 +101822,7 @@ export namespace Prisma {
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
     geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    geocodePrecision?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WebsiteProvisionUpsertWithoutShopInput = {
@@ -101846,6 +102004,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -101885,6 +102044,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -101938,6 +102098,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -101977,6 +102138,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102014,6 +102176,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -102053,6 +102216,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -102106,6 +102270,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102145,6 +102310,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -109669,6 +109835,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -109708,6 +109875,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -109832,6 +110000,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -109871,6 +110040,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -110644,6 +110814,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -110682,6 +110853,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -111410,6 +111582,7 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
     seoImage?: StringNullableFilter<"Shop"> | string | null
@@ -114256,6 +114429,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
     seoImage?: string | null
@@ -114731,6 +114905,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114769,6 +114944,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114807,6 +114983,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoImage?: NullableStringFieldUpdateOperationsInput | string | null

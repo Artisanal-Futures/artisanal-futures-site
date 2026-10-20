@@ -1,11 +1,12 @@
 /**
  * Pure helpers for the public Artisan Map. No database imports.
  *
- * Shops are geocoded from zip/city/state only, so many shops in one ZIP share
- * the exact same centroid. Before a coordinate is sent to the public we nudge
- * it by a deterministic, per-shop offset (0.4-1.2 km) so that (a) the pin never
- * sits on a precise point and (b) shops sharing a ZIP don't stack on top of
- * each other.
+ * Home-based and area-only shops are geocoded from zip/city/state only, so
+ * many shops in one ZIP share the exact same centroid. Before such a
+ * coordinate is sent to the public we nudge it by a deterministic, per-shop
+ * offset (0.4-1.2 km) so that (a) the pin never sits on a precise point and
+ * (b) shops sharing a ZIP don't stack on top of each other. Only a storefront
+ * geocoded from its street is sent unshifted (`roundLocation`).
  */
 
 export type MapShopLocation = {
@@ -21,6 +22,13 @@ export type MapShopLocation = {
   attributeTags: string[];
   locality: string | null;
   location: { lat: number; lng: number } | null;
+  /**
+   * "exact" only for a STOREFRONT geocoded from its street; everything else
+   * is an offset locality centroid.
+   */
+  precision: "exact" | "approximate";
+  /** Street line, only for an exact (storefront) pin. */
+  streetAddress?: string | null;
 };
 
 /** Trim a string; empty/whitespace-only/nullish becomes null. */
@@ -66,6 +74,14 @@ function unitFloat(input: string, salt: number): number {
 }
 
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
+
+/** An exact (storefront) pin, rounded to 5 decimals (~1 m). */
+export function roundLocation(
+  lat: number,
+  lng: number,
+): { lat: number; lng: number } {
+  return { lat: round5(lat), lng: round5(lng) };
+}
 
 /**
  * Deterministically displace a coordinate by 0.4-1.2 km in a shop-specific

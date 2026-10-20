@@ -3,6 +3,7 @@
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Plus, X } from "lucide-react";
 
+import { getSocialPlatform } from "~/lib/social-links";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { SocialIcon } from "~/components/icons/social-icons";
 
 type Props<CurrentForm extends FieldValues> = {
   form: UseFormReturn<CurrentForm>;
@@ -62,23 +64,36 @@ export const UrlListFormField = <CurrentForm extends FieldValues>({
                 return (
                   <div key={index} className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <Input
-                        type={type}
-                        inputMode={type === "url" ? "url" : undefined}
-                        value={value}
-                        disabled={disabled}
-                        placeholder={placeholder}
-                        aria-label={`${label ?? "Item"} ${index + 1}`}
-                        aria-invalid={!!error}
-                        onBlur={field.onBlur}
-                        onChange={(e) =>
-                          setValues(
-                            values.map((current, i) =>
-                              i === index ? e.target.value : current,
-                            ),
-                          )
-                        }
-                      />
+                      <div className="relative flex-1">
+                        {type === "url" && (
+                          <SocialIcon
+                            platform={
+                              value.trim()
+                                ? getSocialPlatform(value.trim()).platform
+                                : "website"
+                            }
+                            className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+                          />
+                        )}
+                        <Input
+                          type={type}
+                          inputMode={type === "url" ? "url" : undefined}
+                          value={value}
+                          disabled={disabled}
+                          placeholder={placeholder}
+                          aria-label={`${label ?? "Item"} ${index + 1}`}
+                          aria-invalid={!!error}
+                          className={cn(type === "url" && "pl-9")}
+                          onBlur={field.onBlur}
+                          onChange={(e) =>
+                            setValues(
+                              values.map((current, i) =>
+                                i === index ? e.target.value : current,
+                              ),
+                            )
+                          }
+                        />
+                      </div>
                       <Button
                         type="button"
                         variant="ghost"

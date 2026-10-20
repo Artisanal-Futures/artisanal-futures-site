@@ -324,6 +324,7 @@ exports.Prisma.ShopScalarFieldEnum = {
   slug: 'slug',
   previousSlugs: 'previousSlugs',
   socialLinks: 'socialLinks',
+  locationType: 'locationType',
   seoTitle: 'seoTitle',
   seoDescription: 'seoDescription',
   seoImage: 'seoImage',
@@ -348,7 +349,8 @@ exports.Prisma.ShopAddressScalarFieldEnum = {
   latitude: 'latitude',
   longitude: 'longitude',
   geocodeQuery: 'geocodeQuery',
-  geocodedAt: 'geocodedAt'
+  geocodedAt: 'geocodedAt',
+  geocodePrecision: 'geocodePrecision'
 };
 
 exports.Prisma.ShopPrivateContactScalarFieldEnum = {
@@ -984,6 +986,12 @@ exports.ProposalStatus = exports.$Enums.ProposalStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
+};
+
+exports.ShopLocationType = exports.$Enums.ShopLocationType = {
+  STOREFRONT: 'STOREFRONT',
+  HOME_BASED: 'HOME_BASED',
+  AREA: 'AREA'
 };
 
 exports.MemberRole = exports.$Enums.MemberRole = {

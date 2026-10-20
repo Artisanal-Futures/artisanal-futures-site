@@ -70,8 +70,24 @@ export function SendInviteDialog({
   });
 
   const createInvite = api.invite.createInvite.useMutation({
-    onSuccess: () => {
-      toast.success("Invite sent successfully.");
+    onSuccess: (invite) => {
+      if (invite.emailSent) {
+        toast.success("Invite sent successfully.");
+      } else {
+        toast.warning("Invite created, but the email failed to send.", {
+          description: "Copy the link and share it with them directly.",
+          duration: 15000,
+          action: {
+            label: "Copy link",
+            onClick: () => {
+              void navigator.clipboard
+                .writeText(invite.inviteUrl)
+                .then(() => toast.success("Invite link copied."))
+                .catch(() => toast.error("Couldn't copy the link."));
+            },
+          },
+        });
+      }
       resetToDefaults();
       setOpen(false);
       void apiUtils.invite.listInvites.invalidate();
