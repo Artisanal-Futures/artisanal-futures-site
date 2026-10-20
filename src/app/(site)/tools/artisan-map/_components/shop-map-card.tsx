@@ -20,6 +20,7 @@ import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { OutboundLink } from "~/components/outbound-link";
 
 import { ShopAvatar } from "./shop-avatar";
 
@@ -208,11 +209,18 @@ export function ShopMapCard({
       <div className="flex items-center gap-2 pt-1">
         {website && (
           <Button asChild variant="outline" size="sm" className="flex-1">
-            <a href={website} target="_blank" rel="noopener noreferrer">
+            <OutboundLink
+              href={website}
+              track={{
+                shopId: shop.id,
+                target: "WEBSITE",
+                source: "ARTISAN_MAP",
+              }}
+            >
               Website
               <ExternalLink aria-hidden />
               <span className="sr-only">(opens in a new tab)</span>
-            </a>
+            </OutboundLink>
           </Button>
         )}
         <Button asChild size="sm" className="flex-1">

@@ -215,6 +215,8 @@ export function ProductServiceGrid({
       onOpenChange={setDialogOpen}
       shopPrinciples={shop?.attributeTags ?? []}
       fallbackImage={shop?.logoPhoto}
+      shopId={shop.id}
+      trackingSource="SHOP_PROFILE"
     />
   );
 

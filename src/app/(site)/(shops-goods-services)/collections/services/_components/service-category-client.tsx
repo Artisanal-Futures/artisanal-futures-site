@@ -182,6 +182,7 @@ export function ServiceCategoryClient({
         )}
 
         <ProductDetailDialog
+          trackingSource="COLLECTIONS"
           item={selectedItem as Service}
           open={dialogOpen}
           onOpenChange={setDialogOpen}

@@ -18,6 +18,7 @@ model Service {
   serviceUrl        String?
   shop              Shop?      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[] @relation("CategoryToService")
+  outboundClicks    OutboundClick[]
 }
 
 model Product {
@@ -49,6 +50,7 @@ model Product {
   shop              Shop?               @relation(fields: [shopId], references: [id], onDelete: Cascade)
   categories        Category[]          @relation("CategoryToProduct")
   syncProposals     ProductSyncProposal[]
+  outboundClicks    OutboundClick[]
 
   @@unique([shopId, shopProductId])
 }

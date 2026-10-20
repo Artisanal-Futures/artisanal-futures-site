@@ -19,7 +19,7 @@ export default function PrivacyPage() {
             <p className="tagline">Legal</p>
             <h1>Privacy Policy</h1>
           </div>
-          <p className="description">Last updated: September 9th, 2026</p>
+          <p className="description">Last updated: October 20th, 2026</p>
         </div>
       </header>
 
@@ -119,7 +119,10 @@ export default function PrivacyPage() {
             We do <u>not</u> use cookies for personal tracking, advertising, or
             analytics.
           </span>{" "}
-          For more detail, see our{" "}
+          We do count clicks on links to artisans&apos; own websites so we can
+          show artisans how much traffic we send them; each count records only
+          which link was clicked and when, with no cookies, IP address, or other
+          identifier tied to you. For more detail, see our{" "}
           <Link
             href="/legal/cookies"
             className="text-primary font-medium underline underline-offset-4"

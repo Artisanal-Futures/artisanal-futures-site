@@ -187,6 +187,7 @@ export function CategoryClient({
         )}
 
         <ProductDetailDialog
+          trackingSource="COLLECTIONS"
           item={selectedItem as Product}
           open={dialogOpen}
           onOpenChange={setDialogOpen}

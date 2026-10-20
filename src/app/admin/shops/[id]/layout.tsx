@@ -13,7 +13,7 @@ type Props = {
 };
 
 /**
- * Shared chrome for a shop's admin pages (Details, Products, Services, Sync).
+ * Shared chrome for a shop's admin pages (Details, Products, Services, Sync, Insights).
  * Access is checked here for the header, but each page must still call
  * `getAdminShop` itself.
  */

@@ -81,6 +81,7 @@ export function ServiceCategoriesClient({ categories }: Props) {
       ))}
 
       <ProductDetailDialog
+        trackingSource="COLLECTIONS"
         item={selectedItem as Service}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
