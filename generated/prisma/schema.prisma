@@ -347,6 +347,11 @@ model Shop {
   /// shop's schema.org `sameAs`.
   socialLinks   String[]
 
+  /// How precisely the shop's location is shown publicly. STOREFRONT pins the
+  /// street address and shows it on the profile; HOME_BASED keeps the street
+  /// private and pins the general area; AREA only ever stores a locality.
+  locationType ShopLocationType @default(HOME_BASED)
+
   /// Admin-only search/share overrides. Blank = derived from the profile.
   seoTitle       String?
   seoDescription String?
@@ -389,11 +394,22 @@ model ShopAddress {
   street     String?
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
-  latitude     Float?
-  longitude    Float?
-  /// Normalized locality query last geocoded (zip/city/state/country only).
-  geocodeQuery String?
-  geocodedAt   DateTime?
+  latitude         Float?
+  longitude        Float?
+  /// Normalized query last geocoded, prefixed with its mode:
+  /// `mode=locality|zip=...` (zip/city/state/country only), or for a
+  /// STOREFRONT `mode=street|street=...|zip=...`. Never returned publicly.
+  geocodeQuery     String?
+  geocodedAt       DateTime?
+  /// What the stored coordinates resolve to: "street" (exact storefront pin)
+  /// or "locality" (zip/city centroid).
+  geocodePrecision String?
+}
+
+enum ShopLocationType {
+  STOREFRONT
+  HOME_BASED
+  AREA
 }
 
 /// Admin-only private contact for the artisan behind a shop. Kept in its own

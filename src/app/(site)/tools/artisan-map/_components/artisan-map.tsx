@@ -76,6 +76,7 @@ export const US_ZOOM = 3.5;
 
 const SOURCE_ID = "artisan-shops";
 const SELECTED_SOURCE_ID = "artisan-selected-shop";
+const AREA_RING_LAYER_ID = "artisan-area-rings";
 const CLUSTER_LAYER_ID = "artisan-clusters";
 const CLUSTER_COUNT_LAYER_ID = "artisan-cluster-count";
 const PIN_SHADOW_LAYER_ID = "artisan-pin-shadow";
@@ -91,6 +92,15 @@ const INTERACTIVE_LAYER_IDS = [
 const PIN_LAYERS = new Set([PIN_LAYER_ID, SELECTED_PIN_LAYER_ID]);
 
 const SELECTED_PIN_SCALE = 1.3;
+
+/**
+ * Approximate pins sit 0.4-1.2 km from their locality centroid, so they get a
+ * faint ~1.2 km ring once zoomed in far enough for that to be readable. Circle
+ * radii are in pixels: ~20px at z10 (about 1.2 km at US latitudes), doubling
+ * per zoom level so the ring keeps its ground size.
+ */
+const AREA_RING_MIN_ZOOM = 10;
+const AREA_RING_RADIUS_Z10 = 20;
 const FIT_PADDING = 60;
 const FIT_MAX_ZOOM = 10;
 const SELECT_MIN_ZOOM = 11;
@@ -131,7 +141,11 @@ export type ArtisanMapProps = {
 
 type LocatedShop = MapShop & { location: { lat: number; lng: number } };
 
-type ShopFeatureProps = { shopId: string; name: string };
+type ShopFeatureProps = {
+  shopId: string;
+  name: string;
+  precision: MapShop["precision"];
+};
 
 // ---------------------------------------------------------------------------
 // Hooks / helpers
@@ -172,7 +186,11 @@ function toFeatureCollection(
         type: "Point",
         coordinates: [shop.location.lng, shop.location.lat],
       },
-      properties: { shopId: shop.id, name: shop.name },
+      properties: {
+        shopId: shop.id,
+        name: shop.name,
+        precision: shop.precision,
+      },
     })),
   };
 }
@@ -249,6 +267,52 @@ function buildLayers(colors: MapBrandColors, selectedShopId: string | null) {
     "circle-opacity": 0.28,
     "circle-pitch-alignment": "map",
   } as const;
+
+  // Drawn under everything else and never interactive: it only says "the
+  // shop is somewhere around here".
+  const areaRing: LayerProps = {
+    id: AREA_RING_LAYER_ID,
+    type: "circle",
+    minzoom: AREA_RING_MIN_ZOOM,
+    filter: [
+      "all",
+      ["!", ["has", "point_count"]],
+      ["==", ["get", "precision"], "approximate"],
+    ],
+    paint: {
+      "circle-radius": [
+        "interpolate",
+        ["exponential", 2],
+        ["zoom"],
+        AREA_RING_MIN_ZOOM,
+        AREA_RING_RADIUS_Z10,
+        AREA_RING_MIN_ZOOM + 8,
+        AREA_RING_RADIUS_Z10 * 2 ** 8,
+      ],
+      "circle-color": colors.pin,
+      "circle-opacity": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        AREA_RING_MIN_ZOOM,
+        0,
+        AREA_RING_MIN_ZOOM + 1,
+        0.08,
+      ],
+      "circle-stroke-width": 1,
+      "circle-stroke-color": colors.pin,
+      "circle-stroke-opacity": [
+        "interpolate",
+        ["linear"],
+        ["zoom"],
+        AREA_RING_MIN_ZOOM,
+        0,
+        AREA_RING_MIN_ZOOM + 1,
+        0.35,
+      ],
+      "circle-pitch-alignment": "map",
+    },
+  };
 
   const cluster: LayerProps = {
     id: CLUSTER_LAYER_ID,
@@ -329,6 +393,7 @@ function buildLayers(colors: MapBrandColors, selectedShopId: string | null) {
   };
 
   return {
+    areaRing,
     cluster,
     clusterCount,
     pinShadow,
@@ -688,6 +753,7 @@ export default function ArtisanMap({
           clusterRadius={50}
           clusterMaxZoom={13}
         >
+          <Layer {...layers.areaRing} />
           <Layer {...layers.cluster} />
           <Layer {...layers.clusterCount} />
           <Layer {...layers.pinShadow} />

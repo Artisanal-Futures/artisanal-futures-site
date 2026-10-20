@@ -17,7 +17,7 @@ type Props = {
 
 export function PrivateContactCard({ shopId, initial }: Props) {
   return (
-    <Card className="max-w-xl">
+    <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle>Private contact</CardTitle>

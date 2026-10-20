@@ -183,6 +183,8 @@ export type ShopSchemaInput = {
   website?: string | null;
   socialLinks?: string[];
   attributeTags: string[];
+  /** Only a STOREFRONT publishes its street; missing is treated as private. */
+  locationType?: "STOREFRONT" | "HOME_BASED" | "AREA";
   address?: {
     address?: string | null;
     street?: string | null;
@@ -243,17 +245,20 @@ export function shopSchema(
   const products = shop.products.filter((product) => product.isPublic);
   const services = shop.services.filter((service) => service.isPublic);
 
-  const street = [
-    nonEmpty(shop.address?.address),
-    nonEmpty(shop.address?.street),
-  ]
-    .filter(Boolean)
-    .join(", ");
+  // Home-based and area-only shops keep their street private (the owner's
+  // preview still loads it), and drop a ZIP+4 to the 5-digit ZIP.
+  const isStorefront = shop.locationType === "STOREFRONT";
+  const street = isStorefront
+    ? [nonEmpty(shop.address?.address), nonEmpty(shop.address?.street)]
+        .filter(Boolean)
+        .join(", ")
+    : "";
+  const zip = nonEmpty(shop.address?.zip);
   const addressParts = {
     streetAddress: street || undefined,
     addressLocality: nonEmpty(shop.address?.city),
     addressRegion: nonEmpty(shop.address?.state),
-    postalCode: nonEmpty(shop.address?.zip),
+    postalCode: isStorefront ? zip : zip?.replace(/^(\d{5})[-\s]?\d{4}$/, "$1"),
     addressCountry: nonEmpty(shop.address?.country),
   };
   // A bare country says nothing about where the business is.

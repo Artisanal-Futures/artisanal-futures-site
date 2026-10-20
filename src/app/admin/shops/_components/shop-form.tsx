@@ -1,12 +1,12 @@
 "use client";
 
-import type { Resolver } from "react-hook-form";
+import type { FieldErrors, Resolver } from "react-hook-form";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useUploadFile } from "@better-upload/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -14,6 +14,7 @@ import type { ShopFormData } from "~/lib/validators/shop";
 import type { RouterOutputs } from "~/trpc/react";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { handleImageUrl } from "~/lib/handle-image-url";
+import { shopPath } from "~/lib/seo/paths";
 import { cn, slugify } from "~/lib/utils";
 import { shopFormSchema } from "~/lib/validators/shop";
 import { api } from "~/trpc/react";
@@ -40,6 +41,7 @@ import {
 import { Checkbox } from "~/components/ui/checkbox";
 import { Form, FormLabel } from "~/components/ui/form";
 import { Label } from "~/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { FancySwitchFormField } from "~/components/inputs/fancy-switch-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
@@ -47,22 +49,78 @@ import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 import { UrlListFormField } from "~/components/inputs/url-list-form-field";
 
+import { ShopLocationCard } from "./shop-location-card";
 import { ShopSeoCard } from "./shop-seo-card";
+
+const TAB_ORDER = [
+  "profile",
+  "contact",
+  "location",
+  "seo",
+  "ownership",
+] as const;
+type TabKey = (typeof TAB_ORDER)[number];
+
+const TAB_LABELS: Record<TabKey, string> = {
+  profile: "Profile",
+  contact: "Contact & links",
+  location: "Location",
+  seo: "Search & sharing",
+  ownership: "Ownership",
+};
+
+/** Which tab each top-level form field lives on (unlisted fields: profile). */
+const FIELD_TAB: Record<string, TabKey> = {
+  name: "profile",
+  description: "profile",
+  ownerName: "profile",
+  ownerPhotoFile: "profile",
+  ownerPhotoUrl: "profile",
+  bio: "profile",
+  logoPhotoFile: "profile",
+  logoPhotoUrl: "profile",
+  coverPhotoFile: "profile",
+  coverPhotoUrl: "profile",
+  attributeTags: "profile",
+  isPublic: "profile",
+  website: "contact",
+  email: "contact",
+  phone: "contact",
+  socialLinks: "contact",
+  locationType: "location",
+  address: "location",
+  city: "location",
+  state: "location",
+  zip: "location",
+  country: "location",
+  seo: "seo",
+  seoImageFile: "seo",
+  ownerId: "ownership",
+};
+
+const getErrorTabs = (errors: FieldErrors<ShopFormData>) =>
+  new Set(Object.keys(errors).map((field) => FIELD_TAB[field] ?? "profile"));
 
 type Props = {
   initialData: RouterOutputs["shop"]["get"];
   userRole: string;
-  potentialShopOwners: RouterOutputs["shop"]["getShopOwners"];
+  /** Create mode only: ownership of an existing shop changes via transfer. */
+  potentialShopOwners?: RouterOutputs["shop"]["getShopOwners"];
+  /** Edit mode, admins: cards for the Ownership tab (they have their own forms). */
+  ownershipSlot?: React.ReactNode;
 };
 
 export function ShopForm({
   initialData,
   userRole,
-  potentialShopOwners,
+  potentialShopOwners = [],
+  ownershipSlot,
 }: Props) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const apiUtils = api.useUtils();
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -74,6 +132,29 @@ export function ShopForm({
   // Slug and search/share fields are admin-only, and only admins' requests
   // may carry them (shop.create/update reject `seo` from anyone else).
   const isAdmin = userRole === "ADMIN";
+
+  const visibleTabs = TAB_ORDER.filter(
+    (tab) => isAdmin || (tab !== "seo" && tab !== "ownership"),
+  );
+  const requestedTab = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    visibleTabs.find((tab) => tab === requestedTab) ?? "profile",
+  );
+
+  const changeTab = (tab: TabKey) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "profile") params.delete("tab");
+    else params.set("tab", tab);
+    const query = params.toString();
+    // replaceState (not router.replace) so switching tabs doesn't re-run the
+    // server page; Next keeps useSearchParams in sync with it.
+    window.history.replaceState(
+      null,
+      "",
+      query ? `${pathname}?${query}` : pathname,
+    );
+  };
 
   const initialFormValues: ShopFormData = {
     name: initialData?.name ?? "",
@@ -88,6 +169,7 @@ export function ShopForm({
     state: initialData?.address?.state ?? "",
     zip: initialData?.address?.zip ?? "",
     country: initialData?.address?.country ?? "US",
+    locationType: initialData?.locationType ?? "HOME_BASED",
     attributeTags: initialData?.attributeTags ?? [],
     socialLinks: initialData?.socialLinks ?? [],
     ownerId: initialData?.ownerId ?? "",
@@ -233,6 +315,9 @@ export function ShopForm({
 
     const payload = {
       ...data,
+      // The server clears an AREA shop's street; mirror it here so the hidden
+      // field doesn't keep (and later re-send) the old street.
+      address: data.locationType === "AREA" ? "" : data.address,
       ownerPhotoUrl,
       logoPhotoUrl,
       coverPhotoUrl,
@@ -242,8 +327,10 @@ export function ShopForm({
     if (!initialData) {
       createShop.mutate(payload);
     } else {
+      // Ownership changes only through `shop.transferOwnership`.
+      const updatePayload = { ...payload, ownerId: undefined };
       updateShop.mutate(
-        { id: initialData.id, ...payload },
+        { id: initialData.id, ...updatePayload },
         {
           // Keep what was saved (incl. uploaded URLs and an auto-assigned
           // slug) as the new clean state.
@@ -290,16 +377,25 @@ export function ShopForm({
 
   const isDirty = form.formState.isDirty;
 
+  const errorTabs = getErrorTabs(form.formState.errors);
+
+  /** Jump to the first tab (in tab order) that has an invalid field. */
+  const handleInvalid = (errors: FieldErrors<ShopFormData>) => {
+    const invalidTabs = getErrorTabs(errors);
+    const firstTab = visibleTabs.find((tab) => invalidTabs.has(tab));
+    if (firstTab && firstTab !== activeTab) changeTab(firstTab);
+  };
+
   useDirtyForm(isDirty);
-  useKeyboardEnter(form, handleSubmit);
+  useKeyboardEnter(form, handleSubmit, handleInvalid);
 
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={(e) => void form.handleSubmit(handleSubmit)(e)}
-          className="min-h-screen"
-          ref={formRef}
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => changeTab(value as TabKey)}
+          className="min-h-screen gap-0"
         >
           <div className={cn("admin-form-toolbar", isDirty ? "dirty" : "")}>
             <div className="toolbar-info">
@@ -328,6 +424,31 @@ export function ShopForm({
             <div className="toolbar-actions">
               {initialData && (
                 <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  aria-label={
+                    initialData.isPublic ? "View shop" : "Preview shop"
+                  }
+                >
+                  <Link
+                    href={shopPath({
+                      id: initialData.id,
+                      slug: initialData.slug,
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">
+                      {initialData.isPublic ? "View shop" : "Preview shop"}
+                    </span>
+                  </Link>
+                </Button>
+              )}
+
+              {initialData && (
+                <Button
                   type="button"
                   variant="ghost"
                   size="sm"
@@ -351,7 +472,12 @@ export function ShopForm({
                 Reset
               </Button>
 
-              <Button type="submit" size="sm" disabled={isPending}>
+              <Button
+                type="submit"
+                form="shop-form"
+                size="sm"
+                disabled={isPending}
+              >
                 {isPending ? (
                   <>
                     <span className="saving-indicator" />
@@ -368,11 +494,40 @@ export function ShopForm({
             </div>
           </div>
 
-          <div className="admin-container space-y-6">
-            <div className="flex flex-col gap-4 p-1 md:grid md:grid-cols-12">
-              {/* Left Column */}
-              <div className="col-span-6 flex flex-col gap-4">
-                {/* Visibility Section */}
+          <div className="admin-container w-full space-y-6">
+            <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+              <TabsList className="w-max">
+                {visibleTabs.map((tab) => (
+                  <TabsTrigger key={tab} value={tab}>
+                    {TAB_LABELS[tab]}
+                    {errorTabs.has(tab) && (
+                      <>
+                        <span
+                          aria-hidden
+                          className="bg-destructive size-1.5 rounded-full"
+                        />
+                        <span className="sr-only">has errors</span>
+                      </>
+                    )}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+
+            <form
+              id="shop-form"
+              onSubmit={(e) =>
+                void form.handleSubmit(handleSubmit, handleInvalid)(e)
+              }
+              ref={formRef}
+            >
+              {/* Tabs stay mounted (just hidden) so file inputs and field
+                  errors survive switching. */}
+              <TabsContent
+                value="profile"
+                forceMount
+                className="max-w-3xl space-y-6 data-[state=inactive]:hidden"
+              >
                 <Card>
                   <CardContent>
                     <FancySwitchFormField
@@ -384,8 +539,6 @@ export function ShopForm({
                   </CardContent>
                 </Card>
 
-                {/* Basic Info Section */}
-
                 <Card>
                   <CardHeader>
                     <CardTitle>Shop Information</CardTitle>
@@ -394,41 +547,6 @@ export function ShopForm({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {userRole === "ADMIN" && (
-                      <>
-                        {!potentialShopOwners ||
-                        potentialShopOwners?.length === 0 ? (
-                          <div className="flex flex-col gap-2">
-                            <FormLabel>
-                              Who is the owner of this shop?
-                            </FormLabel>
-                            <p className="text-muted-foreground text-sm">
-                              You are the owner of this shop.
-                            </p>
-                          </div>
-                        ) : (
-                          <SelectFormField
-                            form={form}
-                            name="ownerId"
-                            label="Select a current elevated user to be the owner of this shop *"
-                            values={potentialShopOwners.map((owner) => ({
-                              key: owner.name,
-                              value: owner.id,
-                              label: owner.name,
-                            }))}
-                            onValueChange={(value) => {
-                              form.setValue(
-                                "ownerName",
-                                potentialShopOwners.find(
-                                  (owner) => owner.id === value,
-                                )?.name ?? "",
-                              );
-                            }}
-                          />
-                        )}
-                      </>
-                    )}
-
                     <InputFormField
                       form={form}
                       name="name"
@@ -443,33 +561,12 @@ export function ShopForm({
                       className="w-full"
                       placeholder="e.g. We sell the best products in the world!"
                     />
-
-                    <InputFormField
-                      form={form}
-                      name="website"
-                      label="What is your shop's website?"
-                      placeholder="e.g. https://thebestshopever.com"
-                      className="w-full"
-                    />
-                    <InputFormField
-                      form={form}
-                      name="email"
-                      label="What is your shop's public email?"
-                      className="w-full"
-                      placeholder="e.g. info@thebestshopever.com"
-                    />
-                    <InputFormField
-                      form={form}
-                      name="phone"
-                      label="What is your shop's public phone number?"
-                      className="w-full"
-                      placeholder="e.g. (555) 555-5555"
-                    />
                   </CardContent>
                 </Card>
+
                 <Card>
                   <CardHeader>
-                    <CardTitle>Additional Owner Information</CardTitle>
+                    <CardTitle>About the Owner</CardTitle>
                     <CardDescription>
                       We like to show off the artisans here at AF. The following
                       fields are used to flush out your shop page.
@@ -503,11 +600,7 @@ export function ShopForm({
                     />
                   </CardContent>
                 </Card>
-              </div>
 
-              {/* Right Column */}
-              <div className="col-span-6 flex flex-col gap-4">
-                {/* Address Section */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Shop Branding</CardTitle>
@@ -516,33 +609,29 @@ export function ShopForm({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <ImageUploadFormField
-                      form={form}
-                      name="logoPhotoFile"
-                      label="Logo image"
-                      description="Upload your store logo image here!"
-                      disabled={isPending}
-                      existingPreviewUrl={initialData?.logoPhoto ?? undefined}
-                      inputRef={logoFileInputRef}
-                    />
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      <ImageUploadFormField
+                        form={form}
+                        name="logoPhotoFile"
+                        label="Logo image"
+                        description="Upload your store logo image here!"
+                        disabled={isPending}
+                        existingPreviewUrl={initialData?.logoPhoto ?? undefined}
+                        inputRef={logoFileInputRef}
+                      />
 
-                    <ImageUploadFormField
-                      form={form}
-                      name="coverPhotoFile"
-                      label="Cover photo"
-                      description="A wide photo of your work or workspace. Also used when your shop is shared online."
-                      disabled={isPending}
-                      existingPreviewUrl={initialData?.coverPhoto ?? undefined}
-                      inputRef={coverFileInputRef}
-                    />
-
-                    <UrlListFormField
-                      form={form}
-                      name="socialLinks"
-                      label="Social links"
-                      description="Your shop's profiles elsewhere (Instagram, Facebook, Etsy, ...). Full URLs, starting with https://."
-                      disabled={isPending}
-                    />
+                      <ImageUploadFormField
+                        form={form}
+                        name="coverPhotoFile"
+                        label="Cover photo"
+                        description="A wide photo of your work or workspace. Also used when your shop is shared online."
+                        disabled={isPending}
+                        existingPreviewUrl={
+                          initialData?.coverPhoto ?? undefined
+                        }
+                        inputRef={coverFileInputRef}
+                      />
+                    </div>
 
                     <div className="space-y-2">
                       <FormLabel htmlFor="shop-attributes">
@@ -590,69 +679,139 @@ export function ShopForm({
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent
+                value="contact"
+                forceMount
+                className="max-w-3xl space-y-6 data-[state=inactive]:hidden"
+              >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Business Address (Optional)</CardTitle>
+                    <CardTitle>Contact &amp; Links</CardTitle>
                     <CardDescription>
-                      If you want to have your business address listed on your
-                      shop page, please fill out the following fields.
+                      How customers can find and reach your shop. These are
+                      shown publicly.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 gap-3">
-                      <InputFormField
-                        form={form}
-                        name="address"
-                        label="Street Address"
-                        className="w-full"
-                        placeholder="e.g. 123 Main St"
-                      />
-                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                        <InputFormField
-                          form={form}
-                          name="city"
-                          label="City"
-                          className="col-span-1"
-                          placeholder="e.g. Detroit"
-                        />
-                        <InputFormField
-                          form={form}
-                          name="state"
-                          label="State"
-                          className="col-span-1"
-                          placeholder="e.g. MI"
-                        />
-                        <InputFormField
-                          form={form}
-                          name="zip"
-                          label="ZIP Code"
-                          className="col-span-1"
-                          placeholder="e.g. 48201"
-                        />
-                      </div>
-                      <InputFormField
-                        form={form}
-                        name="country"
-                        label="Country"
-                        className="w-full"
-                        placeholder="e.g. US"
-                      />
-                    </div>
+                    <InputFormField
+                      form={form}
+                      name="website"
+                      label="What is your shop's website?"
+                      placeholder="e.g. https://thebestshopever.com"
+                      className="w-full"
+                    />
+                    <InputFormField
+                      form={form}
+                      name="email"
+                      label="What is your shop's public email?"
+                      className="w-full"
+                      placeholder="e.g. info@thebestshopever.com"
+                    />
+                    <InputFormField
+                      form={form}
+                      name="phone"
+                      label="What is your shop's public phone number?"
+                      className="w-full"
+                      placeholder="e.g. (555) 555-5555"
+                    />
+
+                    <UrlListFormField
+                      form={form}
+                      name="socialLinks"
+                      label="Social links"
+                      description="Your shop's profiles elsewhere (Instagram, Facebook, Etsy, ...). Full URLs, starting with https://."
+                      disabled={isPending}
+                    />
                   </CardContent>
                 </Card>
+              </TabsContent>
 
-                {isAdmin && (
+              <TabsContent
+                value="location"
+                forceMount
+                className="max-w-3xl space-y-6 data-[state=inactive]:hidden"
+              >
+                <ShopLocationCard form={form} disabled={isPending} />
+              </TabsContent>
+
+              {isAdmin && (
+                <TabsContent
+                  value="seo"
+                  forceMount
+                  className="max-w-3xl space-y-6 data-[state=inactive]:hidden"
+                >
                   <ShopSeoCard
                     form={form}
                     shop={initialData}
                     disabled={isPending}
                     seoImageInputRef={seoImageInputRef}
                   />
-                )}
-              </div>
-            </div>
+                </TabsContent>
+              )}
+
+              {/* Create mode: the owner is picked here, inside the form. */}
+              {isAdmin && !initialData && (
+                <TabsContent
+                  value="ownership"
+                  forceMount
+                  className="max-w-3xl space-y-6 data-[state=inactive]:hidden"
+                >
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Owner</CardTitle>
+                      <CardDescription>
+                        Who this shop belongs to.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {potentialShopOwners.length === 0 ? (
+                        <div className="flex flex-col gap-2">
+                          <FormLabel>Who is the owner of this shop?</FormLabel>
+                          <p className="text-muted-foreground text-sm">
+                            You are the owner of this shop.
+                          </p>
+                        </div>
+                      ) : (
+                        <SelectFormField
+                          form={form}
+                          name="ownerId"
+                          label="Select a current elevated user to be the owner of this shop *"
+                          values={potentialShopOwners.map((owner) => ({
+                            key: owner.name,
+                            value: owner.id,
+                            label: owner.name,
+                          }))}
+                          onValueChange={(value) => {
+                            form.setValue(
+                              "ownerName",
+                              potentialShopOwners.find(
+                                (owner) => owner.id === value,
+                              )?.name ?? "",
+                            );
+                          }}
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                  <p className="text-muted-foreground text-sm">
+                    Save the shop first to add private contact details and
+                    invite an owner.
+                  </p>
+                </TabsContent>
+              )}
+            </form>
+
+            {/* Edit mode: owner and private-contact cards have their own
+                forms/queries, so they live outside the main form. */}
+            {isAdmin && initialData && (
+              <TabsContent value="ownership" className="max-w-3xl space-y-6">
+                {ownershipSlot}
+              </TabsContent>
+            )}
           </div>
-        </form>
+        </Tabs>
       </Form>
 
       {/* Delete Dialog */}

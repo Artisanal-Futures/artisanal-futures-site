@@ -10,6 +10,7 @@ import {
   checkSimplePressConnection,
   provisionSimplePressSite,
 } from "~/server/lib/simplepress-client";
+import { toPublicAddress } from "~/server/lib/public-address";
 
 import { adminOnlyProcedure, artisanProcedure, createTRPCRouter } from "../trpc";
 
@@ -174,8 +175,11 @@ export const websiteProvisionRouter = createTRPCRouter({
           coverPhoto: true,
           website: true,
           owner: { select: { email: true } },
+          locationType: true,
           address: {
             select: {
+              address: true,
+              additional: true,
               street: true,
               city: true,
               state: true,
@@ -194,6 +198,10 @@ export const websiteProvisionRouter = createTRPCRouter({
         });
       }
 
+      // This prefills a public website, so it follows the storefront rule:
+      // only a STOREFRONT's street line leaves the platform.
+      const address = toPublicAddress(shop.address, shop.locationType);
+
       return {
         shop: {
           websiteProvision: shop.websiteProvision
@@ -206,13 +214,15 @@ export const websiteProvisionRouter = createTRPCRouter({
           ownerName: shop.ownerName,
           contactEmail: shop.email ?? shop.owner.email,
           contactPhone: shop.phone,
-          businessAddress: shop.address
+          businessAddress: address
             ? {
-                street: shop.address.street,
-                city: shop.address.city,
-                state: shop.address.state,
-                zip: shop.address.zip,
-                country: shop.address.country,
+                // The form's "Street Address" is stored in `address`; the
+                // legacy `street` column is a fallback.
+                street: address.address?.trim() ? address.address : address.street,
+                city: address.city,
+                state: address.state,
+                zip: address.zip,
+                country: address.country,
               }
             : undefined,
           businessTagLine: shop.bio,

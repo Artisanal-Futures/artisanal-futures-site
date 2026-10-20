@@ -10,7 +10,8 @@ export const SEO_DESCRIPTION_TARGET = 160;
 /** /shops/{slug}: lowercase words joined by single hyphens. */
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-const MAX_LINKS = 20;
+/** Most profile links a shop or the site can list. */
+export const MAX_LINKS = 20;
 
 function isHttpUrl(value: string) {
   try {

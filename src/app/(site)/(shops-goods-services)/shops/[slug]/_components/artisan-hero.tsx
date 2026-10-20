@@ -4,8 +4,10 @@ import { ExternalLink, Globe, Mail, MapPin, Phone } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { getInitials } from "~/lib/get-initials";
+import { getSocialPlatform } from "~/lib/social-links";
 import { Badge } from "~/components/ui/badge";
 import { Separator } from "~/components/ui/separator";
+import { SocialIcon } from "~/components/icons/social-icons";
 
 type Props = {
   shop: NonNullable<RouterOutputs["shop"]["get"]>;
@@ -25,6 +27,13 @@ function websiteDomain(website: string) {
   } catch {
     return website.replace(/^https?:\/\//, "");
   }
+}
+
+/** The site is US-only for now, so only a non-US country is worth showing. */
+function isUnitedStates(country: string) {
+  return /^(us|usa|u\.s\.(a\.)?|united states( of america)?)$/i.test(
+    country.trim(),
+  );
 }
 
 /** Short, factual summary of the shop; any fact without data is skipped. */
@@ -60,6 +69,15 @@ function getFacts(shop: Props["shop"], locationPath?: string | null) {
 
 export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
   const facts = getFacts(shop, locationPath);
+
+  // Only a storefront shows its street. Owners/admins get the full address
+  // back from shop.get, so this must not rely on it being blank for
+  // home-based and area-only shops.
+  const showStreetAddress =
+    shop.locationType === "STOREFRONT" && !!shop.address?.address;
+  const locality = [shop.address?.city, shop.address?.state]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <section className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16">
@@ -153,7 +171,7 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
 
         {/* Bio */}
         {shop?.bio && (
-          <p className="text-foreground/80 max-w-2xl leading-relaxed">
+          <p className="text-foreground/80 max-w-2xl leading-relaxed whitespace-pre-line">
             {shop?.bio}
           </p>
         )}
@@ -164,7 +182,7 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
             <h2 className="text-muted-foreground mb-2 text-xs font-semibold tracking-widest uppercase">
               About the Shop
             </h2>
-            <p className="text-card-foreground/80 text-sm leading-relaxed">
+            <p className="text-card-foreground/80 text-sm leading-relaxed whitespace-pre-line">
               {shop?.description}
             </p>
           </div>
@@ -216,7 +234,7 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
               {shop.email}
             </a>
           )}
-          {shop?.address?.address && (
+          {showStreetAddress ? (
             <div className="text-muted-foreground flex items-start gap-3 text-sm">
               <MapPin className="mt-0.5 size-4 shrink-0" />
               <span>
@@ -251,6 +269,22 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
                 )}
               </span>
             </div>
+          ) : (
+            locality && (
+              <div className="text-muted-foreground flex items-start gap-3 text-sm">
+                <MapPin className="mt-0.5 size-4 shrink-0" />
+                <span>
+                  {locality}
+                  {shop.address?.country &&
+                    !isUnitedStates(shop.address.country) && (
+                      <>
+                        <br />
+                        {shop.address.country}
+                      </>
+                    )}
+                </span>
+              </div>
+            )
           )}
           {shop?.website && (
             <a
@@ -264,6 +298,29 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
             </a>
           )}
         </div>
+
+        {/* Social profiles */}
+        {shop?.socialLinks && shop.socialLinks.length > 0 && (
+          <ul className="flex flex-wrap gap-2">
+            {shop.socialLinks.map((url) => {
+              const { platform, label } = getSocialPlatform(url);
+              return (
+                <li key={url}>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring flex size-9 items-center justify-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  >
+                    <SocialIcon platform={platform} className="size-4" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </section>
   );

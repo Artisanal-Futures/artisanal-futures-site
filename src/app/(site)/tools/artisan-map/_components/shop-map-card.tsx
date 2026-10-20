@@ -92,17 +92,32 @@ export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
         )}
       </header>
 
-      {shop.locality && (
-        <p
-          className="text-muted-foreground flex items-center gap-1.5 text-sm"
-          title="Approximate area. Pins never show an exact address."
-        >
-          <MapPin className="size-4 shrink-0" aria-hidden />
-          <span className="truncate">{shop.locality}</span>
-          <span className="text-muted-foreground/70 shrink-0 text-xs">
-            (approx.)
+      {shop.precision === "exact" && shop.streetAddress ? (
+        // Storefronts are public places, pinned at their street address.
+        <p className="text-muted-foreground flex items-start gap-1.5 text-sm">
+          <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span className="min-w-0">
+            <span className="block truncate">{shop.streetAddress}</span>
+            {shop.locality && (
+              <span className="block truncate">{shop.locality}</span>
+            )}
           </span>
         </p>
+      ) : (
+        shop.locality && (
+          <p
+            className="text-muted-foreground flex items-center gap-1.5 text-sm"
+            title="The pin marks the general area, never a home address."
+          >
+            <MapPin className="size-4 shrink-0" aria-hidden />
+            <span className="truncate">
+              <span className="text-muted-foreground/70">
+                Approximate area ·{" "}
+              </span>
+              {shop.locality}
+            </span>
+          </p>
+        )
       )}
 
       {shop.attributeTags.length > 0 && (

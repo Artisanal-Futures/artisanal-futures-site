@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 import { z } from "zod";
 
 import type { ShopSeoValues } from "~/lib/validators/seo";
+import type { ShopLocationTypeValue } from "~/lib/validators/shop";
 import type { MapShopLocation } from "~/server/geocoding/approximate-location";
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { shopPath } from "~/lib/seo/paths";
@@ -19,8 +20,10 @@ import {
   blankToNull,
   formatLocality,
   offsetLocation,
+  roundLocation,
 } from "~/server/geocoding/approximate-location";
 import { syncShopCoordinates } from "~/server/geocoding/geocode-shop-address";
+import { toPublicAddress } from "~/server/lib/public-address";
 import { pingIndexNow } from "~/server/seo/indexnow";
 import { SHOPS_LANDING_TAG } from "~/server/seo/landing-pages";
 import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
@@ -29,7 +32,10 @@ import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
  * Public address select. Deliberately lists only the original columns so the
  * raw geocoding columns (latitude, longitude, geocodeQuery, geocodedAt) never
  * leak through public endpoints. The map uses `getMapLocations`, which
- * returns jittered coordinates only.
+ * returns jittered coordinates for anything but a geocoded storefront.
+ *
+ * The street columns are still selected here; every public endpoint must pass
+ * the result through `toPublicAddress` before returning it.
  */
 const publicAddressSelect = {
   id: true,
@@ -42,6 +48,31 @@ const publicAddressSelect = {
   street: true,
   shopId: true,
 } as const;
+
+/**
+ * Street columns to save. An AREA shop only ever stores a locality, so its
+ * street lines are cleared here whatever the form sent.
+ */
+function streetFieldsFor(
+  locationType: ShopLocationTypeValue,
+  address: string | null | undefined,
+) {
+  return locationType === "AREA"
+    ? { address: null, street: null, additional: null }
+    : { address: address ?? "" };
+}
+
+/** A storefront's street line for the map card, e.g. "123 Main St". */
+function formatStreetLine(address: {
+  address: string | null;
+  street: string | null;
+}): string | null {
+  const parts = [
+    blankToNull(address.address),
+    blankToNull(address.street),
+  ].filter((part): part is string => part !== null);
+  return parts.length > 0 ? parts.join(", ") : null;
+}
 
 /**
  * Admin-only private contact select. `ShopPrivateContact` must only ever be
@@ -263,6 +294,128 @@ export const shopsRouter = createTRPCRouter({
       });
     }),
 
+  /** The shop's owner account plus any pending claim invite, for the admin. */
+  getOwnership: adminOnlyProcedure
+    .input(z.object({ shopId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const shop = await ctx.db.shop.findUnique({
+        where: { id: input.shopId },
+        select: {
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+              image: true,
+            },
+          },
+          invites: {
+            where: { used: false, expiresAt: { gt: new Date() } },
+            select: { id: true, email: true, expiresAt: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
+        },
+      });
+
+      if (!shop) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Shop not found" });
+      }
+
+      return { owner: shop.owner, pendingInvite: shop.invites[0] ?? null };
+    }),
+
+  /**
+   * Hands a shop to another existing user. The website provision follows the
+   * owner, and any unused claim invite is dropped since it would otherwise
+   * transfer the shop again when redeemed.
+   */
+  transferOwnership: adminOnlyProcedure
+    .input(
+      z.object({
+        shopId: z.string(),
+        userId: z.string(),
+        updateOwnerName: z.boolean().default(true),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [shop, user] = await Promise.all([
+        ctx.db.shop.findUnique({
+          where: { id: input.shopId },
+          select: {
+            id: true,
+            slug: true,
+            isPublic: true,
+            ownerId: true,
+            ownerName: true,
+          },
+        }),
+        ctx.db.user.findUnique({
+          where: { id: input.userId },
+          select: { id: true, name: true, email: true, role: true, image: true },
+        }),
+      ]);
+
+      if (!shop) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Shop not found" });
+      }
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      if (shop.ownerId === user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `${user.name ?? user.email ?? "This user"} already owns this shop.`,
+        });
+      }
+
+      const newOwnerName = input.updateOwnerName ? user.name?.trim() : "";
+      const promoted = user.role === "USER" || user.role === "GUEST";
+
+      const owner = await ctx.db.$transaction(async (tx) => {
+        await tx.shop.update({
+          where: { id: shop.id },
+          data: {
+            ownerId: user.id,
+            ...(newOwnerName ? { ownerName: newOwnerName } : {}),
+          },
+        });
+
+        const updatedOwner = promoted
+          ? await tx.user.update({
+              where: { id: user.id },
+              data: { role: "ARTISAN" },
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                image: true,
+              },
+            })
+          : user;
+
+        await tx.websiteProvision.updateMany({
+          where: { shopId: shop.id },
+          data: { userId: user.id },
+        });
+
+        await tx.platformInvite.deleteMany({
+          where: { shopId: shop.id, used: false },
+        });
+
+        return updatedOwner;
+      });
+
+      // The owner name shows on the storefront and landing pages.
+      if (shop.isPublic && newOwnerName && newOwnerName !== shop.ownerName) {
+        publicShopsChanged([shopPath(shop)]);
+      }
+
+      return { owner, promoted };
+    }),
+
   getDirectory: adminOnlyProcedure.query(
     async ({ ctx }): Promise<DirectoryRow[]> => {
       const [shops, shoplessArtisans] = await Promise.all([
@@ -422,8 +575,8 @@ export const shopsRouter = createTRPCRouter({
     return users;
   }),
 
-  getAllPublic: publicProcedure.query(({ ctx }) => {
-    return ctx.db.shop.findMany({
+  getAllPublic: publicProcedure.query(async ({ ctx }) => {
+    const shops = await ctx.db.shop.findMany({
       where: { isPublic: true },
       select: {
         id: true,
@@ -437,6 +590,7 @@ export const shopsRouter = createTRPCRouter({
         website: true,
         email: true,
         phone: true,
+        locationType: true,
         address: { select: publicAddressSelect },
         attributeTags: true,
         createdAt: true,
@@ -445,6 +599,11 @@ export const shopsRouter = createTRPCRouter({
         name: "asc",
       },
     });
+
+    return shops.map((shop) => ({
+      ...shop,
+      address: toPublicAddress(shop.address, shop.locationType),
+    }));
   }),
 
   getMapLocations: publicProcedure.query(
@@ -463,25 +622,46 @@ export const shopsRouter = createTRPCRouter({
           email: true,
           phone: true,
           attributeTags: true,
-          // Only locality + coordinates: never street/zip/geocodeQuery.
+          locationType: true,
+          // Locality + coordinates, plus the street lines, which are only
+          // returned for a storefront pinned at street precision (below).
+          // Never zip/geocodeQuery.
           address: {
             select: {
+              address: true,
+              street: true,
               city: true,
               state: true,
               latitude: true,
               longitude: true,
+              geocodePrecision: true,
             },
           },
         },
       });
 
-      return shops.map((shop) => {
+      return shops.map((shop): MapShopLocation => {
         const { latitude, longitude } = shop.address ?? {};
         const hasCoordinates =
           typeof latitude === "number" &&
           typeof longitude === "number" &&
           Number.isFinite(latitude) &&
           Number.isFinite(longitude);
+
+        // A storefront geocoded from its street is a public place: pin it
+        // exactly. Anything else (home-based, area, or a storefront that fell
+        // back to its locality) gets the jittered approximate pin.
+        const isExact =
+          hasCoordinates &&
+          shop.locationType === "STOREFRONT" &&
+          shop.address?.geocodePrecision === "street";
+
+        let location: MapShopLocation["location"] = null;
+        if (hasCoordinates) {
+          location = isExact
+            ? roundLocation(latitude, longitude)
+            : offsetLocation(shop.id, latitude, longitude);
+        }
 
         return {
           id: shop.id,
@@ -497,9 +677,10 @@ export const shopsRouter = createTRPCRouter({
             (tag) => blankToNull(tag) !== null,
           ),
           locality: formatLocality(shop.address?.city, shop.address?.state),
-          location: hasCoordinates
-            ? offsetLocation(shop.id, latitude, longitude)
-            : null,
+          location,
+          precision: isExact ? "exact" : "approximate",
+          streetAddress:
+            isExact && shop.address ? formatStreetLine(shop.address) : null,
         };
       });
     },
@@ -748,7 +929,14 @@ export const shopsRouter = createTRPCRouter({
           services.filter((service) => !service.isPublic).length
         : 0;
 
-      return { ...shop, products, services, hiddenItemCount };
+      // The owner/admin edit form loads through here too, so they keep the
+      // full (private) address; the profile only renders the street for a
+      // storefront either way.
+      const address = isOwnerOrAdmin
+        ? shop.address
+        : toPublicAddress(shop.address, shop.locationType);
+
+      return { ...shop, address, products, services, hiddenItemCount };
     }),
 
   create: adminArtisanProcedure
@@ -785,9 +973,10 @@ export const shopsRouter = createTRPCRouter({
             socialLinks: input.socialLinks ?? [],
             attributeTags: input.attributeTags ?? [],
             isPublic: input.isPublic,
+            locationType: input.locationType,
             address: {
               create: {
-                address: input.address ?? "",
+                ...streetFieldsFor(input.locationType, input.address),
                 city: input.city ?? "",
                 state: input.state ?? "",
                 zip: input.zip ?? "",
@@ -803,8 +992,8 @@ export const shopsRouter = createTRPCRouter({
 
       if (shop.isPublic) publicShopsChanged([shopPath(shop), "/shops"]);
 
-      // Approximate map pin from zip/city/state/country. Best-effort: a
-      // geocoding failure must never fail the save.
+      // Map pin: the street for a storefront, else zip/city/state.
+      // Best-effort: a geocoding failure must never fail the save.
       try {
         await syncShopCoordinates(ctx.db, shop.id);
       } catch (error) {
@@ -862,7 +1051,7 @@ export const shopsRouter = createTRPCRouter({
           }
 
           const addressData = {
-            address: input?.address ?? "",
+            ...streetFieldsFor(input.locationType, input.address),
             city: input?.city ?? "",
             state: input?.state ?? "",
             zip: input?.zip ?? "",
@@ -878,10 +1067,8 @@ export const shopsRouter = createTRPCRouter({
           const updatedShop = await tx.shop.update({
             where: { id: input.id },
             data: {
-              ...(ctx.session.user.role === "ADMIN" && input.ownerId
-                ? { ownerId: input.ownerId }
-                : {}),
-
+              // Ownership changes go through `transferOwnership` only, so the
+              // role promotion, provision sync and invite cleanup can't be skipped.
               ...slugData,
               ...(input.seo ? seoFields(input.seo) : {}),
 
@@ -898,6 +1085,7 @@ export const shopsRouter = createTRPCRouter({
               website: input?.website ?? "",
               attributeTags: input?.attributeTags ?? [],
               isPublic: input?.isPublic,
+              locationType: input.locationType,
             },
           });
 

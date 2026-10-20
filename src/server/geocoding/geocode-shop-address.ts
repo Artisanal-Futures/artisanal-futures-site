@@ -1,12 +1,17 @@
 /**
- * Approximate shop geocoding for the Artisan Map.
+ * Shop geocoding for the Artisan Map.
  *
- * PRIVACY: many artisans work from home, so a shop's pin must never point at
- * a street address. Everything in this module works from the LOCALITY fields
- * only — zip, city, state, country. The street-level ShopAddress fields
- * (`address`, `street`, `additional`) are deliberately absent from
- * `GeocodeInput` and are never selected from the database here, so they
- * cannot reach the geocoder by accident.
+ * PRIVACY: many artisans work from home, so a shop's pin must only point at a
+ * street address when the shop has opted in as a STOREFRONT (a public place
+ * whose address it already shows on its profile). HOME_BASED and AREA shops
+ * are geocoded from the LOCALITY fields only — zip, city, state, country.
+ *
+ * This is structural, not a filter: `GeocodeInput` has no street fields, and
+ * the street-level ShopAddress columns (`address`, `street`) are selected in
+ * exactly one place, `loadStorefrontStreet`, which `syncShopCoordinates` only
+ * calls after reading `locationType === "STOREFRONT"`. `additional` (suite,
+ * "by appointment", ...) is never sent. A storefront whose street can't be
+ * placed falls back to its locality.
  *
  * Geocoding uses OpenStreetMap Nominatim's structured search. Its usage
  * policy allows at most one request per second, so every request goes
@@ -23,6 +28,9 @@ export type GeocodeInput = {
 };
 
 export type GeocodeResult = { lat: number; lng: number };
+
+/** What stored coordinates resolve to (`ShopAddress.geocodePrecision`). */
+export type GeocodePrecision = "street" | "locality";
 
 export type SyncShopCoordinatesResult =
   | "unchanged"
@@ -93,15 +101,26 @@ function normalizeLocality(input: GeocodeInput): NormalizedLocality {
 }
 
 /**
- * Stable, normalized cache key for a locality, e.g.
- * `zip=48201|city=detroit|state=mi|country=us`. Returns null when there is
- * not enough to geocode (neither zip nor city).
+ * Stable, normalized cache key, prefixed with the geocoding mode so a change
+ * of location type re-geocodes, e.g.
+ * `mode=locality|zip=48201|city=detroit|state=mi|country=us`, or for a
+ * storefront `mode=street|street=123 main st|zip=48201|...`. Pass `street`
+ * only for a STOREFRONT; a blank one gives the locality key. Returns null when
+ * there is not enough to geocode (neither zip nor city).
  */
-export function buildGeocodeQuery(input: GeocodeInput): string | null {
+export function buildGeocodeQuery(
+  input: GeocodeInput,
+  street?: string | null,
+): string | null {
   const locality = normalizeLocality(input);
   if (!locality.zip && !locality.city) return null;
 
+  const cleanStreet = clean(street);
+
   return [
+    ...(cleanStreet
+      ? ["mode=street", `street=${cleanStreet}`]
+      : ["mode=locality"]),
     `zip=${locality.zip ?? ""}`,
     `city=${locality.city ?? ""}`,
     `state=${locality.state ?? ""}`,
@@ -129,7 +148,8 @@ async function waitForRequestSlot(): Promise<void> {
 }
 
 type LookupOutcome =
-  | { status: "found"; lat: number; lng: number }
+  /** `placeRank` is Nominatim's place_rank (26+ = street or finer), if given. */
+  | { status: "found"; lat: number; lng: number; placeRank?: number }
   | { status: "not_found" }
   | { status: "error" };
 
@@ -161,7 +181,9 @@ async function nominatimSearch(
       return { status: "not_found" };
     }
 
-    const first = body[0] as { lat?: unknown; lon?: unknown } | undefined;
+    const first = body[0] as
+      | { lat?: unknown; lon?: unknown; place_rank?: unknown }
+      | undefined;
     const lat = Number(first?.lat);
     const lng = Number(first?.lon);
     if (
@@ -175,11 +197,25 @@ async function nominatimSearch(
       return { status: "not_found" };
     }
 
-    return { status: "found", lat, lng };
+    return {
+      status: "found",
+      lat,
+      lng,
+      ...(typeof first.place_rank === "number"
+        ? { placeRank: first.place_rank }
+        : {}),
+    };
   } catch (error) {
     console.warn("[geocode] Nominatim request failed:", error);
     return { status: "error" };
   }
+}
+
+/** Nominatim country params; US searches are also pinned by country code. */
+function countryParams(locality: NormalizedLocality): Record<string, string> {
+  return locality.country === "us"
+    ? { country: "United States", countrycodes: "us" }
+    : { country: locality.country };
 }
 
 /**
@@ -191,17 +227,12 @@ async function lookupLocality(input: GeocodeInput): Promise<LookupOutcome> {
   const locality = normalizeLocality(input);
   if (!locality.zip && !locality.city) return { status: "not_found" };
 
-  const countryParams: Record<string, string> =
-    locality.country === "us"
-      ? { country: "United States", countrycodes: "us" }
-      : { country: locality.country };
-
   let sawError = false;
 
   if (locality.zip) {
     const byZip = await nominatimSearch({
       postalcode: locality.zip,
-      ...countryParams,
+      ...countryParams(locality),
     });
     if (byZip.status === "found") return byZip;
     if (byZip.status === "error") sawError = true;
@@ -211,13 +242,44 @@ async function lookupLocality(input: GeocodeInput): Promise<LookupOutcome> {
     const byCity = await nominatimSearch({
       city: locality.city,
       ...(locality.state ? { state: locality.state } : {}),
-      ...countryParams,
+      ...countryParams(locality),
     });
     if (byCity.status === "found") return byCity;
     if (byCity.status === "error") sawError = true;
   }
 
   return sawError ? { status: "error" } : { status: "not_found" };
+}
+
+/** Nominatim place_rank of a street; anything lower is a locality or wider. */
+const MIN_STREET_PLACE_RANK = 26;
+
+/**
+ * Structured street search for a STOREFRONT, narrowed by its locality. A
+ * match coarser than a street counts as not_found so the caller falls back to
+ * `lookupLocality` and records "locality" precision.
+ */
+async function lookupStreet(
+  input: GeocodeInput,
+  street: string,
+): Promise<LookupOutcome> {
+  const locality = normalizeLocality(input);
+  const outcome = await nominatimSearch({
+    street,
+    ...(locality.city ? { city: locality.city } : {}),
+    ...(locality.state ? { state: locality.state } : {}),
+    ...(locality.zip ? { postalcode: locality.zip } : {}),
+    ...countryParams(locality),
+  });
+
+  if (
+    outcome.status === "found" &&
+    outcome.placeRank !== undefined &&
+    outcome.placeRank < MIN_STREET_PLACE_RANK
+  ) {
+    return { status: "not_found" };
+  }
+  return outcome;
 }
 
 /**
@@ -243,13 +305,61 @@ export async function geocodeLocality(
 // ---------------------------------------------------------------------------
 
 /**
- * Bring a shop's stored coordinates in line with its current locality.
+ * Street first when given (storefronts only), then the locality. `streetFailed`
+ * is true when the street search hit an outage rather than a definitive miss.
+ */
+async function lookupShop(
+  input: GeocodeInput,
+  street: string | null,
+): Promise<{
+  outcome: LookupOutcome;
+  precision: GeocodePrecision;
+  streetFailed: boolean;
+}> {
+  if (street) {
+    const byStreet = await lookupStreet(input, street);
+    if (byStreet.status === "found") {
+      return { outcome: byStreet, precision: "street", streetFailed: false };
+    }
+    return {
+      outcome: await lookupLocality(input),
+      precision: "locality",
+      streetFailed: byStreet.status === "error",
+    };
+  }
+  return {
+    outcome: await lookupLocality(input),
+    precision: "locality",
+    streetFailed: false,
+  };
+}
+
+/**
+ * The street line of a STOREFRONT's address — the only place this module
+ * reads street-level columns. Callers must have checked `locationType` first.
+ */
+async function loadStorefrontStreet(
+  db: GeocodeDb,
+  addressId: string,
+): Promise<string | null> {
+  const row = await db.shopAddress.findUnique({
+    where: { id: addressId },
+    select: { address: true, street: true },
+  });
+  return clean(row?.address) ?? clean(row?.street);
+}
+
+/**
+ * Bring a shop's stored coordinates in line with its current address and
+ * location type: a STOREFRONT geocodes its street (falling back to its
+ * locality), everything else its locality only.
  *
  * Skips the network entirely when the normalized query matches the one last
  * geocoded (unless `force`). `geocodeQuery` is stored on not_found too, so an
- * address Nominatim can't place isn't re-queried on every save. A network
- * failure stores nothing new for the query, so the next save or backfill
- * retries it.
+ * address Nominatim can't place isn't re-queried on every save; likewise a
+ * storefront that fell back to its locality keeps its `mode=street` key, with
+ * `geocodePrecision` "locality". A network failure stores nothing new for the
+ * query, so the next save or backfill retries it.
  */
 export async function syncShopCoordinates(
   db: GeocodeDb,
@@ -258,7 +368,7 @@ export async function syncShopCoordinates(
 ): Promise<SyncShopCoordinatesResult> {
   const row = await db.shopAddress.findUnique({
     where: { shopId },
-    // Locality fields only — never select street-level fields here.
+    // Locality fields only — street-level fields are never selected here.
     select: {
       id: true,
       zip: true,
@@ -268,12 +378,18 @@ export async function syncShopCoordinates(
       latitude: true,
       longitude: true,
       geocodeQuery: true,
+      shop: { select: { locationType: true } },
     },
   });
 
   if (!row) return "no_address";
 
-  const query = buildGeocodeQuery(row);
+  const street =
+    row.shop?.locationType === "STOREFRONT"
+      ? await loadStorefrontStreet(db, row.id)
+      : null;
+
+  const query = buildGeocodeQuery(row, street);
 
   if (query === null) {
     if (
@@ -289,6 +405,7 @@ export async function syncShopCoordinates(
         latitude: null,
         longitude: null,
         geocodeQuery: null,
+        geocodePrecision: null,
         geocodedAt: new Date(),
       },
     });
@@ -298,17 +415,22 @@ export async function syncShopCoordinates(
   const queryChanged = query !== row.geocodeQuery;
   if (!queryChanged && !opts.force) return "unchanged";
 
-  const outcome = await lookupLocality(row);
+  const { outcome, precision, streetFailed } = await lookupShop(row, street);
 
   if (outcome.status === "error") {
-    // Keep coordinates that still describe this exact locality (a forced
-    // re-run hitting an outage); drop stale ones from an old locality so the
-    // map doesn't show the wrong place, and leave geocodeQuery null so the
-    // next sync retries.
+    // Keep coordinates that still describe this exact query (a forced re-run
+    // hitting an outage); drop stale ones from an old address so the map
+    // doesn't show the wrong place, and leave geocodeQuery null so the next
+    // sync retries.
     if (queryChanged && (row.latitude !== null || row.longitude !== null)) {
       await db.shopAddress.update({
         where: { id: row.id },
-        data: { latitude: null, longitude: null, geocodeQuery: null },
+        data: {
+          latitude: null,
+          longitude: null,
+          geocodeQuery: null,
+          geocodePrecision: null,
+        },
       });
     }
     return "failed";
@@ -320,7 +442,10 @@ export async function syncShopCoordinates(
     data: {
       latitude: found ? outcome.lat : null,
       longitude: found ? outcome.lng : null,
-      geocodeQuery: query,
+      // The street search itself failed (outage), so keep the locality pin
+      // for now but leave the query unset so the next sync retries the street.
+      geocodeQuery: streetFailed ? null : query,
+      geocodePrecision: found ? precision : null,
       geocodedAt: new Date(),
     },
   });

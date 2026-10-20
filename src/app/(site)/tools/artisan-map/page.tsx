@@ -25,8 +25,8 @@ export default async function ArtisanMapPage() {
           Artisan Map
         </h1>
         <p className="text-muted-foreground text-xs sm:text-sm">
-          Discover artisans in our network. Pins show an approximate area, never
-          a home address.
+          Discover artisans in our network. Storefronts are pinned exactly;
+          everyone else shows an approximate area, never a home address.
         </p>
       </header>
       <Suspense fallback={<Skeleton className="min-h-0 flex-1 rounded-none" />}>

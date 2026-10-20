@@ -6,6 +6,7 @@ import { api } from "~/trpc/server";
 
 import { PrivateContactCard } from "../_components/private-contact-card";
 import { ShopForm } from "../_components/shop-form";
+import { ShopOwnerCard } from "../_components/shop-owner-card";
 import { TrailHeader } from "../../_components/trail-header";
 
 type Props = {
@@ -25,14 +26,9 @@ export default async function EditShopPage({ params }: Props) {
   // `shop.get` is public, so it returns other artisans' public shops too.
   if (userRole !== "ADMIN" && shop.ownerId !== session?.user.id) notFound();
 
-  // Admin-only procedures: artisans would receive FORBIDDEN from these.
-  const [potentialShopOwners, privateContact] =
-    userRole === "ADMIN"
-      ? await Promise.all([
-          api.shop.getShopOwners(),
-          api.shop.getPrivateContact(id),
-        ])
-      : [[], null];
+  // Admin-only procedure: artisans would receive FORBIDDEN from it.
+  const privateContact =
+    userRole === "ADMIN" ? await api.shop.getPrivateContact(id) : null;
 
   return (
     <>
@@ -46,14 +42,15 @@ export default async function EditShopPage({ params }: Props) {
       <ShopForm
         initialData={shop}
         userRole={userRole}
-        potentialShopOwners={potentialShopOwners}
+        ownershipSlot={
+          userRole === "ADMIN" ? (
+            <>
+              <ShopOwnerCard shopId={shop.id} shopName={shop.name} />
+              <PrivateContactCard shopId={shop.id} initial={privateContact} />
+            </>
+          ) : undefined
+        }
       />
-
-      {userRole === "ADMIN" && shop && (
-        <div className="admin-container pt-0">
-          <PrivateContactCard shopId={shop.id} initial={privateContact} />
-        </div>
-      )}
     </>
   );
 }

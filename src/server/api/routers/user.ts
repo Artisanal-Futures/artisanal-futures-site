@@ -120,6 +120,23 @@ export const userRouter = createTRPCRouter({
       };
     }),
 
+  /** Users an admin can hand a shop to, matched on name or email. */
+  searchOwnerCandidates: adminOnlyProcedure
+    .input(z.object({ query: z.string().trim().min(1).max(100) }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: input.query, mode: "insensitive" } },
+            { email: { contains: input.query, mode: "insensitive" } },
+          ],
+        },
+        select: { id: true, name: true, email: true, role: true, image: true },
+        orderBy: { name: "asc" },
+        take: 10,
+      });
+    }),
+
   setUserRole: adminOnlyProcedure
     .input(z.object({ userId: z.string(), role: roleEnum }))
     .mutation(async ({ ctx, input }) => {

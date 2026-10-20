@@ -10,6 +10,13 @@ export type MapShop = {
   attributeTags: string[];
   /** "City, ST", one part, or null. Never a street address. */
   locality: string | null;
-  /** Approximate (server-offset) location, or null if not geocoded. */
+  /**
+   * Exact for a storefront geocoded from its street, otherwise the
+   * server-offset approximate location; null if not geocoded.
+   */
   location: { lat: number; lng: number } | null;
+  /** "exact" only for a storefront pinned at its street address. */
+  precision: "exact" | "approximate";
+  /** Public street line, only for an exact (storefront) pin. */
+  streetAddress?: string | null;
 };

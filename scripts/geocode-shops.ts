@@ -1,17 +1,19 @@
 /**
- * Backfill approximate map coordinates for every shop address.
+ * Backfill map coordinates for every shop address.
  *
  * Usage:
  *
- *   pnpm geocode-shops            # geocode addresses whose locality changed
+ *   pnpm geocode-shops            # geocode addresses whose query changed
  *   pnpm geocode-shops --force    # re-geocode every address
  *
- * Uses the same `syncShopCoordinates` as the shop router, so only zip, city,
- * state and country are ever sent to the geocoder — never street fields.
+ * Uses the same `syncShopCoordinates` as the shop router, so street fields
+ * only reach the geocoder for STOREFRONT shops; everything else sends zip,
+ * city, state and country only. Rows geocoded before the `mode=` prefix was
+ * added to `geocodeQuery` re-geocode once on their first run.
  *
  * Rate limiting: Nominatim allows at most 1 request/second. The geocoding
- * module throttles every request it makes (including the zip → city/state
- * fallback, which can be two requests for one shop), so this loop can run
+ * module throttles every request it makes (including the street → zip →
+ * city/state fallbacks, up to three requests for one shop), so this loop can run
  * shops back to back without its own sleep. Addresses whose stored
  * `geocodeQuery` already matches are skipped without touching the network.
  */

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { parseSocialLinks } from "~/lib/social-links";
 import {
   adminOnboardingSchema,
   artisanOnboardingSchema,
@@ -85,6 +86,7 @@ export const onboardingRouter = createTRPCRouter({
           phone: input.businessTelephone ?? "",
           name: input.businessName,
         };
+        const socialLinks = parseSocialLinks(input.socialMediaLinks ?? "");
 
         // If a shop was pre-attached to the invite, take ownership of it and
         // update its details instead of creating a new one. Unmapped fields
@@ -97,11 +99,16 @@ export const onboardingRouter = createTRPCRouter({
         if (attachedShop) {
           newShop = await tx.shop.update({
             where: { id: attachedShop.id },
-            data: { ...shopData, ownerId: ctx.session.user.id },
+            data: {
+              ...shopData,
+              // Keep links an admin already set unless the artisan gave some.
+              ...(socialLinks.length > 0 && { socialLinks }),
+              ownerId: ctx.session.user.id,
+            },
           });
         } else {
           newShop = await tx.shop.create({
-            data: { ...shopData, ownerId: ctx.session.user.id },
+            data: { ...shopData, socialLinks, ownerId: ctx.session.user.id },
           });
         }
 
@@ -263,6 +270,8 @@ export const onboardingRouter = createTRPCRouter({
       await ctx.db.guestSurvey.deleteMany({
         where: { id: { in: input } },
       });
-      return { message: `${input.length} guest survey(s) deleted successfully` };
+      return {
+        message: `${input.length} guest survey(s) deleted successfully`,
+      };
     }),
 });

@@ -17,7 +17,7 @@ describe("buildGeocodeQuery", () => {
         state: "MI",
         country: "US",
       }),
-      "zip=48201|city=detroit|state=mi|country=us",
+      "mode=locality|zip=48201|city=detroit|state=mi|country=us",
     );
   });
 
@@ -32,12 +32,12 @@ describe("buildGeocodeQuery", () => {
   it("treats blank strings as missing", () => {
     assert.equal(
       buildGeocodeQuery({ zip: "", city: "Detroit", state: "", country: "" }),
-      "zip=|city=detroit|state=|country=us",
+      "mode=locality|zip=|city=detroit|state=|country=us",
     );
   });
 
   it("normalizes US spellings and defaults the country to us", () => {
-    const expected = "zip=48201|city=|state=|country=us";
+    const expected = "mode=locality|zip=48201|city=|state=|country=us";
     for (const country of [
       null,
       undefined,
@@ -55,14 +55,25 @@ describe("buildGeocodeQuery", () => {
   it("keeps other countries as-is (lowercased)", () => {
     assert.equal(
       buildGeocodeQuery({ city: "Toronto", country: "Canada" }),
-      "zip=|city=toronto|state=|country=canada",
+      "mode=locality|zip=|city=toronto|state=|country=canada",
     );
   });
 
   it("truncates US ZIP+4 to 5 digits", () => {
     assert.equal(
       buildGeocodeQuery({ zip: "48201-1234" }),
-      "zip=48201|city=|state=|country=us",
+      "mode=locality|zip=48201|city=|state=|country=us",
+    );
+  });
+
+  it("prefixes a storefront's street with mode=street", () => {
+    assert.equal(
+      buildGeocodeQuery({ zip: "48201", city: "Detroit" }, " 123  Main St "),
+      "mode=street|street=123 main st|zip=48201|city=detroit|state=|country=us",
+    );
+    assert.equal(
+      buildGeocodeQuery({ zip: "48201" }, "  "),
+      "mode=locality|zip=48201|city=|state=|country=us",
     );
   });
 
@@ -161,7 +172,7 @@ describe("syncShopCoordinates", () => {
     const calls = stubFetch([]);
     const { db, updates } = fakeDb({
       ...base,
-      geocodeQuery: "zip=48201|city=detroit|state=mi|country=us",
+      geocodeQuery: "mode=locality|zip=48201|city=detroit|state=mi|country=us",
       latitude: 1,
       longitude: 2,
     });
@@ -177,11 +188,44 @@ describe("syncShopCoordinates", () => {
       city: " ",
       latitude: 1,
       longitude: 2,
-      geocodeQuery: "zip=48201|city=detroit|state=mi|country=us",
+      geocodeQuery: "mode=locality|zip=48201|city=detroit|state=mi|country=us",
     });
     assert.equal(await syncShopCoordinates(db, "shop_1"), "cleared");
     assert.equal(updates[0]?.latitude, null);
     assert.equal(updates[0]?.geocodeQuery, null);
+  });
+
+  it("never reads street fields for a home-based shop", async () => {
+    const calls = stubFetch([[{ lat: "42.33", lon: "-83.04" }]]);
+    const { db, updates } = fakeDb({
+      ...base,
+      address: "123 Main St",
+      shop: { locationType: "HOME_BASED" },
+    });
+    assert.equal(await syncShopCoordinates(db, "shop_1"), "located");
+    assert.equal(calls[0]?.searchParams.get("street"), null);
+    assert.equal(
+      updates[0]?.geocodeQuery,
+      "mode=locality|zip=48201|city=detroit|state=mi|country=us",
+    );
+    assert.equal(updates[0]?.geocodePrecision, "locality");
+  });
+
+  it("geocodes a storefront's street, keeping the street key on fallback", async () => {
+    const calls = stubFetch([[], [{ lat: "42.33", lon: "-83.04" }]]);
+    const { db, updates } = fakeDb({
+      ...base,
+      address: "123 Main St",
+      shop: { locationType: "STOREFRONT" },
+    });
+    assert.equal(await syncShopCoordinates(db, "shop_1"), "located");
+    assert.equal(calls[0]?.searchParams.get("street"), "123 main st");
+    assert.equal(calls[1]?.searchParams.get("street"), null);
+    assert.equal(
+      updates[0]?.geocodeQuery,
+      "mode=street|street=123 main st|zip=48201|city=detroit|state=mi|country=us",
+    );
+    assert.equal(updates[0]?.geocodePrecision, "locality");
   });
 
   it("stores the query on not_found so it is not re-queried", async () => {
@@ -190,7 +234,7 @@ describe("syncShopCoordinates", () => {
     assert.equal(await syncShopCoordinates(db, "shop_1"), "not_found");
     assert.equal(
       updates[0]?.geocodeQuery,
-      "zip=48201|city=detroit|state=mi|country=us",
+      "mode=locality|zip=48201|city=detroit|state=mi|country=us",
     );
     assert.equal(updates[0]?.latitude, null);
   });
