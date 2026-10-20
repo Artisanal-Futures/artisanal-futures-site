@@ -62,6 +62,7 @@ export function ProductServiceGrid({
           item={selectedItem as Product}
           open={dialogOpen}
           linkToWebsite={shop?.website ?? undefined}
+          createdBy={shop.name}
           onOpenChange={setDialogOpen}
           shopPrinciples={shop?.attributeTags ?? []}
           fallbackImage={shop?.logoPhoto}
@@ -117,6 +118,7 @@ export function ProductServiceGrid({
         shopPrinciples={shop?.attributeTags ?? []}
         onOpenChange={setDialogOpen}
         linkToWebsite={shop?.website ?? undefined}
+        createdBy={shop.name}
         fallbackImage={shop?.logoPhoto}
       />
     </section>

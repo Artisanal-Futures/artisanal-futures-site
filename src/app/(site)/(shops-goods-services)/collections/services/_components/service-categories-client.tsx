@@ -67,18 +67,6 @@ export function ServiceCategoriesClient({ categories }: Props) {
             </div>
           )}
 
-          <ProductDetailDialog
-            item={selectedItem as Service}
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
-            createdBy={(selectedItem as ServiceWithShop)?.shop?.name ?? ""}
-            shopPrinciples={
-              (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
-            }
-            linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
-            fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
-          />
-
           {category?.items?.length === 0 && (
             <p className="text-muted-foreground text-left">
               No services found for the selected filters.
@@ -86,6 +74,18 @@ export function ServiceCategoriesClient({ categories }: Props) {
           )}
         </div>
       ))}
+
+      <ProductDetailDialog
+        item={selectedItem as Service}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        createdBy={(selectedItem as ServiceWithShop)?.shop?.name ?? ""}
+        shopPrinciples={
+          (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
+        }
+        linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
+        fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
+      />
     </div>
   );
 }

@@ -76,7 +76,7 @@ export function ProductCard({
             <p className="text-foreground/70 text-xs font-medium">{price}</p>
           ) : (
             <p className="text-muted-foreground text-xs">
-              See shop for pricing
+              See price on their site
             </p>
           ))}
         {shopPrinciples && shopPrinciples.length > 0 && (

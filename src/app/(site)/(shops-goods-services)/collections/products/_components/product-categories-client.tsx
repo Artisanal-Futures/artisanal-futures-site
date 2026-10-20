@@ -69,20 +69,6 @@ export function ProductCategoriesClient({ categories }: Props) {
             </div>
           )}
 
-          <ProductDetailDialog
-            item={selectedItem as Product}
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
-            createdBy={(selectedItem as ProductWithRelations)?.shop?.name ?? ""}
-            shopPrinciples={
-              (selectedItem as ProductWithRelations)?.shop?.attributeTags ?? []
-            }
-            linkToProfile={`/shops/${(selectedItem as ProductWithRelations)?.shop?.id}`}
-            fallbackImage={
-              (selectedItem as ProductWithRelations)?.shop?.logoPhoto
-            }
-          />
-
           {category?.items?.length === 0 && (
             <p className="text-muted-foreground text-left">
               No products found for the selected filters.
@@ -90,6 +76,20 @@ export function ProductCategoriesClient({ categories }: Props) {
           )}
         </div>
       ))}
+
+      <ProductDetailDialog
+        item={selectedItem as Product}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        createdBy={(selectedItem as ProductWithRelations)?.shop?.name ?? ""}
+        shopPrinciples={
+          (selectedItem as ProductWithRelations)?.shop?.attributeTags ?? []
+        }
+        linkToProfile={`/shops/${(selectedItem as ProductWithRelations)?.shop?.id}`}
+        fallbackImage={
+          (selectedItem as ProductWithRelations)?.shop?.logoPhoto
+        }
+      />
     </div>
   );
 }
