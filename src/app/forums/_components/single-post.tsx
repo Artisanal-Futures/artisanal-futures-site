@@ -1,7 +1,8 @@
 "use client";
 
-import type { Post as PostType, User, Vote } from "generated/prisma";
+import type { Post as PostType, Vote } from "generated/prisma";
 import type { FC } from "react";
+import type { PublicUser } from "~/lib/public-user";
 import { useRef } from "react";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
@@ -18,7 +19,7 @@ type PartialVote = Pick<Vote, "type">;
 
 type Props = {
   post: PostType & {
-    author: User;
+    author: PublicUser;
     votes: Vote[];
   };
   votesAmt: number;
@@ -80,9 +81,9 @@ export const SinglePost: FC<Props> = ({
             </div>
           </div>
           <a href={`/forums/r/${subredditName}/post/${post.id}`}>
-            <h1 className="text-foreground hover:text-primary mt-2 text-lg leading-snug font-semibold text-balance transition-colors">
+            <h2 className="text-foreground hover:text-primary mt-2 text-lg leading-snug font-semibold text-balance transition-colors">
               {post.title}
-            </h1>
+            </h2>
           </a>
 
           <div

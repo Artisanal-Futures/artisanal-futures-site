@@ -20,20 +20,31 @@ export function AuthShell({
   return (
     <div className="bg-background flex min-h-screen">
       {aside && (
-        <div className="bg-primary/50 relative hidden overflow-hidden lg:flex lg:w-1/2">
+        <div
+          className={`relative hidden overflow-hidden lg:flex lg:w-1/2 ${
+            asideImage ? "bg-black" : "bg-primary/50"
+          }`}
+        >
           {asideImage && (
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-20"
-              style={{ backgroundImage: `url(${asideImage})` }}
-            />
+            <>
+              <Image
+                src={asideImage}
+                alt=""
+                fill
+                className="object-cover object-center opacity-80"
+                sizes="50vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60" />
+            </>
           )}
-          <div className="text-primary-foreground relative z-10 flex flex-col justify-between p-12">
+          <div className="text-white relative z-10 flex flex-col justify-between p-12">
             <Link
               href="/"
-              className="text-primary-foreground flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
+              className="text-white flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
             >
               <Image
-                src="/logos/logo.png"
+                src={asideImage ? "/logos/logo-dark.png" : "/logos/logo.png"}
                 alt="Artisanal Futures"
                 width={300}
                 height={120}
@@ -42,7 +53,7 @@ export function AuthShell({
 
             <div className="max-w-md">{aside}</div>
 
-            <div className="text-primary-foreground/60 text-sm">
+            <div className="text-white/70 text-sm">
               © {year} Artisanal Futures. All rights reserved.
             </div>
           </div>

@@ -5,22 +5,22 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  IconAddressBook,
   IconCalendar,
   IconCode,
   IconDashboard,
   IconDatabase,
-  IconDeviceMobileMessage,
   IconFileSpreadsheet,
   IconFolder,
   IconGlobe,
   IconHeartHandshake,
   IconHelp,
-  IconMail,
   IconMessageCircle,
   IconNotebook,
   IconPackage,
+  IconRecycle,
   IconRefresh,
-  IconSettings,
+  IconSeo,
   IconShoppingCart,
   IconSparkles,
   IconUserPlus,
@@ -29,6 +29,7 @@ import {
 
 import type { Session } from "~/server/better-auth/config";
 import { env } from "~/env";
+import { UPCY_ADMIN_URL } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 import {
   Sidebar,
@@ -115,9 +116,19 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
             icon: IconShoppingCart,
           },
           {
+            title: "Artisan Directory",
+            url: "/admin/directory",
+            icon: IconAddressBook,
+          },
+          {
             title: "Categories",
             url: "/admin/categories",
             icon: IconFolder,
+          },
+          {
+            title: "SEO",
+            url: "/admin/seo",
+            icon: IconSeo,
           },
           {
             title: "CSV Import",
@@ -141,8 +152,13 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
           },
 
           {
+            title: "Upcycling",
+            url: "/admin/upcycling",
+            icon: IconRecycle,
+          },
+          {
             title: "UPCY Admin",
-            url: "https://generate.dev.artisanalfutures.org/admin",
+            url: UPCY_ADMIN_URL,
             icon: IconSparkles,
           },
 
@@ -214,7 +230,13 @@ export function AppSidebar({
                   src={"/logos/logo.png"}
                   alt="Artisanal Futures logo"
                   fill
-                  className="object-contain"
+                  className="object-contain dark:hidden"
+                />
+                <Image
+                  src={"/logos/logo-dark.png"}
+                  alt="Artisanal Futures logo"
+                  fill
+                  className="hidden object-contain dark:block"
                 />
               </Link>
             </SidebarMenuButton>
@@ -229,7 +251,6 @@ export function AppSidebar({
         <NavSecondary items={navData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        {/* <WelcomeNotification /> */}
         <NavUser />
       </SidebarFooter>
     </Sidebar>

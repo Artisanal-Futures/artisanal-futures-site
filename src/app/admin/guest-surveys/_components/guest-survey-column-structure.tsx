@@ -42,13 +42,13 @@ export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
     accessorFn: (row) => `${row?.name ?? "Guest"} ${row?.email ?? "No email"}`,
     cell: ({ row }) => (
       <div className="flex flex-col items-start space-y-1">
-        <div className={cn("mx-0 px-0 text-sm font-medium text-gray-700")}>
+        <div className={cn("text-foreground mx-0 px-0 text-sm font-medium")}>
           {row.original?.name ?? row.original.user?.name ?? "Guest"}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-muted-foreground text-xs">
           {row.original?.email ?? row.original.user?.email ?? "No email"}
         </div>
-        <div className="text-xs text-gray-400">
+        <div className="text-muted-foreground text-xs">
           User ID: {row.original?.user?.id ?? "No ID"}
         </div>
       </div>
@@ -62,20 +62,13 @@ export const guestSurveyColumnStructure: ColumnDef<GuestSurveyColumn>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-col items-start">
-        <div className={cn("mx-0 px-0 text-sm font-medium text-gray-700")}>
+        <div className={cn("text-foreground mx-0 px-0 text-sm font-medium")}>
           {new Date(row.original.createdAt).toLocaleDateString()} at{" "}
           {new Date(row.original.createdAt).toLocaleTimeString()}
         </div>
       </div>
     ),
   },
-  {
-    accessorKey: "prompt",
-    size: 240,
-    header: "Email",
-    cell: ({ row }) => <>{row.original.email ?? ""}</>,
-  },
-
   {
     id: "actions",
     size: 120,

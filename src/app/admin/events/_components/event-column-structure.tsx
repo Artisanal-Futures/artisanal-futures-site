@@ -49,7 +49,11 @@ export const eventColumns: ColumnDef<EventColumnEntry>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ row }) => (
-      <RowCellIdDisplay id={row.original.id} label={row.original.title} />
+      <RowCellIdDisplay
+        id={row.original.id}
+        label={row.original.title}
+        href={`/admin/events/${row.original.id}`}
+      />
     ),
   },
   {
@@ -87,7 +91,7 @@ export const eventColumns: ColumnDef<EventColumnEntry>[] = [
           href={`/admin/events/${row.original.id}`}
           className={cn(
             buttonVariants({ variant: "default" }),
-            "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+            "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",
           )}
         >
           <PencilIcon className="mr-1 h-4 w-4" /> Edit

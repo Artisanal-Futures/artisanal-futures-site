@@ -29,7 +29,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               alt="Artisanal Futures Logo"
               width={158}
               height={40}
-              className="h-7 w-auto object-contain"
+              className="h-7 w-auto object-contain dark:hidden"
+            />
+            <Image
+              src="/logos/logo-dark.png"
+              alt="Artisanal Futures Logo"
+              width={158}
+              height={40}
+              className="hidden h-7 w-auto object-contain dark:block"
             />
           </div>
 

@@ -14,7 +14,7 @@ function toImportType(value: string | string[] | undefined) {
 export default async function CsvImportPage({ searchParams }: Props) {
   const serverSearchParams = await searchParams;
   const [shops, categories] = await Promise.all([
-    api.shop.getAll(),
+    api.shop.getOptions(),
     api.category.getAll(),
   ]);
 

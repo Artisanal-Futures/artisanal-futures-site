@@ -10,4 +10,11 @@ export const surveySchema = z.object({
   processes: z.string().optional(),
   materials: z.string().optional(),
   principles: z.string().optional(),
+
+  unmoderatedForm: z.boolean().optional(),
+  moderatedForm: z.boolean().optional(),
+  hiddenForm: z.boolean().optional(),
+  privateForm: z.boolean().optional(),
+  supplyChain: z.boolean().optional(),
+  messagingOptIn: z.boolean().optional(),
 });

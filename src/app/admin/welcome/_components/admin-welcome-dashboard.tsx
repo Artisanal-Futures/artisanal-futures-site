@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ProvisionStatus } from "generated/prisma";
 import {
   ArrowRight,
   CheckCircle2,
@@ -15,10 +15,10 @@ import {
   Package,
   Server,
   Sparkles,
-  Users,
 } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { UPCY_BASE_URL } from "~/lib/upcy";
 import { Button } from "~/components/ui/button";
 import { Progress } from "~/components/ui/progress";
 
@@ -41,11 +41,22 @@ export function AdminWelcomeDashboard({
     photo: string;
   };
 }) {
-  const hasHostedWebsite = !!shopData?.hasHostedWebsite;
+  const provisionStatus = shopData?.shop?.websiteProvision?.status;
+  // Only a live (ACTIVE) provision counts as a hosted website; the router's
+  // `hasHostedWebsite` is true for any provision, including failed ones.
+  const hasHostedWebsite = provisionStatus === ProvisionStatus.ACTIVE;
+  const isProvisioning =
+    provisionStatus === ProvisionStatus.PENDING ||
+    provisionStatus === ProvisionStatus.PROVISIONING ||
+    provisionStatus === ProvisionStatus.BUILDING ||
+    provisionStatus === ProvisionStatus.DEPLOYING;
+  const provisionFailed = provisionStatus === ProvisionStatus.FAILED;
   const hasWebsite = !!shopData?.shop?.website;
   const hasProfile = !!shopData?.completedSurvey && !!shopData?.shop;
-  const hasProductsOrServices =
-    !!shopData?.hasProducts || !!shopData?.hasServices;
+  // Derived from the shop's relation counts so products and services are
+  // tracked independently (the router flags can't tell them apart reliably).
+  const hasProducts = (shopData?.shop?._count?.products ?? 0) > 0;
+  const hasServices = (shopData?.shop?._count?.services ?? 0) > 0;
 
   const checklist: ChecklistItem[] = [
     {
@@ -61,7 +72,7 @@ export function AdminWelcomeDashboard({
       id: "products",
       label: "Add your first product",
       description: "Showcase what you create so visitors can explore your work",
-      completed: hasProductsOrServices,
+      completed: hasProducts,
       href: `/admin/products`,
       action: "View Products",
     },
@@ -69,19 +80,35 @@ export function AdminWelcomeDashboard({
       id: "services",
       label: "Add your first service",
       description: "Showcase what you offer so visitors can explore your work",
-      completed: hasProductsOrServices,
+      completed: hasServices,
       href: `/admin/services`,
       action: "View Services",
     },
     {
       id: "website",
-      label: hasWebsite ? "Connect your website" : "Create your free site",
-      description: hasWebsite
-        ? "We offer free hosting for your existing website"
-        : "Get a simple, beautiful site to start selling online",
+      label: isProvisioning
+        ? "Your free site is being set up"
+        : provisionFailed
+          ? "Fix your free site setup"
+          : hasWebsite
+            ? "Connect your website"
+            : "Create your free site",
+      description: isProvisioning
+        ? "We're building your site. Check back soon or view its progress"
+        : provisionFailed
+          ? "Something went wrong while setting up your site"
+          : hasWebsite
+            ? "We offer free hosting for your existing website"
+            : "Get a simple, beautiful site to start selling online",
       completed: hasHostedWebsite,
       href: "/admin/website",
-      action: hasWebsite ? "Learn More" : "Get Started",
+      action: isProvisioning
+        ? "View Status"
+        : provisionFailed
+          ? "Review"
+          : hasWebsite
+            ? "Learn More"
+            : "Get Started",
     },
   ];
 
@@ -194,14 +221,35 @@ export function AdminWelcomeDashboard({
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
                   <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-xl">
-                    {hasWebsite ? (
+                    {hasWebsite || isProvisioning || provisionFailed ? (
                       <Server className="text-primary size-6" />
                     ) : (
                       <Globe className="text-primary size-6" />
                     )}
                   </div>
                   <div>
-                    {hasWebsite ? (
+                    {isProvisioning ? (
+                      <>
+                        <h3 className="text-foreground text-lg font-semibold">
+                          Your Website Is Being Set Up
+                        </h3>
+                        <p className="text-muted-foreground mt-1 max-w-md text-sm">
+                          We&apos;re building your free site. This can take a
+                          little while; check the status page for the latest
+                          progress.
+                        </p>
+                      </>
+                    ) : provisionFailed ? (
+                      <>
+                        <h3 className="text-foreground text-lg font-semibold">
+                          Website Setup Failed
+                        </h3>
+                        <p className="text-muted-foreground mt-1 max-w-md text-sm">
+                          Something went wrong while setting up your site. Open
+                          the website page to see what happened and try again.
+                        </p>
+                      </>
+                    ) : hasWebsite ? (
                       <>
                         <h3 className="text-foreground text-lg font-semibold">
                           Free Website Hosting
@@ -229,7 +277,13 @@ export function AdminWelcomeDashboard({
                 </div>
                 <Button asChild className="shrink-0">
                   <Link href={"/admin/website"}>
-                    {hasWebsite ? "Explore Hosting" : "Create My Site"}
+                    {isProvisioning
+                      ? "View Status"
+                      : provisionFailed
+                        ? "Review Website"
+                        : hasWebsite
+                          ? "Explore Hosting"
+                          : "Create My Site"}
                     <ArrowRight className="ml-2 size-4" />
                   </Link>
                 </Button>
@@ -269,7 +323,7 @@ export function AdminWelcomeDashboard({
 
             {/* UPCY */}
             <a
-              href="https://generate.dev.artisanalfutures.org/"
+              href={UPCY_BASE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="group border-border bg-card hover:border-ring/30 flex flex-col gap-4 rounded-xl border p-6 transition-all hover:shadow-md"
@@ -331,10 +385,10 @@ export function AdminWelcomeDashboard({
                     Sign in faster next time
                   </h3>
                   <p className="text-muted-foreground mt-1 max-w-md text-sm">
-                    You signed up with email and password, but you can also
-                    link a Google, Discord, or Auth0 account so you can sign
-                    in with one click going forward. Use the same email you
-                    signed up with.
+                    You signed up with email and password, but you can also link
+                    a Google, Discord, or Auth0 account so you can sign in with
+                    one click going forward. Use the same email you signed up
+                    with.
                   </p>
                 </div>
               </div>
@@ -368,14 +422,6 @@ export function AdminWelcomeDashboard({
             </div>
           </div>
         </section>
-
-        {/* Community Stats */}
-        {/* <section>
-          <div className="text-muted-foreground flex items-center gap-3 text-sm">
-            <Users className="size-4" />
-            <span>Join 240+ artisans already on the platform</span>
-          </div>
-        </section> */}
       </div>
     </div>
   );

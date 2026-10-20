@@ -16,9 +16,8 @@ import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 
 // NOTE: WordPress provisioning was intentionally removed from this form.
-// The router still supports it (see `websiteProvisionRouter.create`), but the
-// product decision is to only offer the SimplePress headless flow here for
-// now. WordPress may return as an option later.
+// The legacy WordPress router procedure has been removed; the product decision
+// is to only offer the SimplePress headless flow here for now.
 
 type Props = {
   initialData?: {
@@ -76,20 +75,19 @@ export function WebsiteProvisionForm({ initialData, onSuccessCallback }: Props) 
   }, [shopData, form]);
 
   const requestMySite = api.websiteProvision.requestMySite.useMutation({
-    onSuccess: (_data, variables) => {
-      toast.dismiss();
+    onSuccess: (_data, variables, context) => {
       toast.success(
         `Site built — claim email sent to ${variables?.contactEmailOverride ?? "the shop's contact email"}`,
+        { id: context?.toastId },
       );
       onSuccessCallback?.();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message);
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
-    onMutate: () => {
-      toast.loading("Building the site on SimplePress...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Building the site on SimplePress..."),
+    }),
     onSettled: () => {
       void utils.shop.getAllWithWebsites.invalidate();
       void utils.websiteProvision.invalidate();

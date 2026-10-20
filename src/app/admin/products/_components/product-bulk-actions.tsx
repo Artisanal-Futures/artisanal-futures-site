@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/select";
 import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 
-import { DeleteMultipleProductsDialog } from "./delete-multiple-products";
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedProductIds: string[];
@@ -34,27 +34,31 @@ export function ProductBulkActions({ selectedProductIds, onClear }: Props) {
   const router = useRouter();
 
   const { data: categories } = api.category.getAll.useQuery();
-  const { data: shops } = api.shop.getAll.useQuery();
+  const { data: shops } = api.shop.getOptions.useQuery();
 
   const [categoryPopoverOpen, setCategoryPopoverOpen] = React.useState(false);
   const [storePopoverOpen, setStorePopoverOpen] = React.useState(false);
   const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<string[]>([]);
   const [selectedShopId, setSelectedShopId] = React.useState<string | undefined>(undefined);
 
+  const deleteProducts = api.product.deleteMany.useMutation({
+    onSuccess: () => apiUtils.product.invalidate(),
+  });
+
   const bulkUpdate = api.product.bulkUpdate.useMutation({
-    onMutate: () => {
-      toast.loading("Updating products…");
-    },
-    onSuccess: async (data) => {
-      toast.dismiss();
-      toast.success(data.message);
+    onMutate: () => ({
+      toastId: toast.loading("Updating products…"),
+    }),
+    onSuccess: async (data, _input, context) => {
+      toast.success(data.message, { id: context?.toastId });
       await apiUtils.product.invalidate();
       router.refresh();
       onClear();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update products.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update products.", {
+        id: context?.toastId,
+      });
     },
   });
 
@@ -91,9 +95,12 @@ export function ProductBulkActions({ selectedProductIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <DeleteMultipleProductsDialog
-        productIds={selectedProductIds}
-        onSuccessCallback={onClear}
+      <BulkDeleteButton
+        ids={selectedProductIds}
+        itemLabel={{ singular: "product", plural: "products" }}
+        onDelete={deleteProducts.mutateAsync}
+        isPending={deleteProducts.isPending}
+        onSuccess={onClear}
       />
 
       <Button

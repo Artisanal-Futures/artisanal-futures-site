@@ -27,7 +27,7 @@ type Props = {
 export function SurveyForm({ initialData, onSuccessCallback }: Props) {
   const router = useRouter();
   const apiUtils = api.useUtils();
-  const { data: shops } = api.shop.getAll.useQuery();
+  const { data: shops } = api.shop.getOptions.useQuery();
   const { data: users } = api.user.getAll.useQuery();
 
   const form = useForm<SurveyFormSchema>({

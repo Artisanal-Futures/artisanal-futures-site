@@ -1,6 +1,5 @@
 import { api } from "~/trpc/server";
 
-import { DatabaseMigrationClient } from "../_components/product-migration-client";
 import { TrailHeader } from "../../_components/trail-header";
 import { ProductImportWizard } from "./_components/product-import-wizard";
 
@@ -15,8 +14,6 @@ export default async function DatabaseMigrationPage() {
         ]}
       />
       <div className="admin-container">
-        {/* <DatabaseMigrationClient shops={shops ?? []} /> */}
-
         <ProductImportWizard shops={shops} />
       </div>
     </>

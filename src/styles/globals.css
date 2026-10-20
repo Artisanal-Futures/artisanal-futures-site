@@ -235,10 +235,10 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
     @apply mb-8 flex items-center justify-between;
   }
   .admin-header h1 {
-    @apply text-3xl font-bold text-gray-900;
+    @apply text-foreground text-3xl font-bold;
   }
   .admin-header p {
-    @apply mt-1 text-gray-600;
+    @apply text-muted-foreground mt-1;
   }
   .admin-container {
     @apply mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
@@ -273,7 +273,7 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
   }
 
   .admin-status-badge.isDraft {
-    @apply bg-gray-50 text-gray-600 ring-1 ring-gray-500/20 ring-inset dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20;
+    @apply bg-muted text-muted-foreground ring-border ring-1 ring-inset;
   }
 
   .admin-status-badge.isDirty {
@@ -292,7 +292,7 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
     @apply flex shrink-0 items-center gap-2;
   }
   .admin-form-toolbar.dirty {
-    @apply shadow-sm shadow-amber-200;
+    @apply shadow-sm shadow-amber-200 dark:shadow-amber-900/40;
   }
 
   .saving-indicator {

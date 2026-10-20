@@ -6,8 +6,14 @@ import { handleImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
 import { ImageWithFallback } from "~/components/image-with-fallback";
 
-type Product = NonNullable<RouterOutputs["shop"]["get"]>["products"][number];
-type Service = NonNullable<RouterOutputs["shop"]["get"]>["services"][number];
+type Product = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["products"][number],
+  "categories"
+>;
+type Service = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["services"][number],
+  "categories"
+>;
 
 type Props = {
   item: Product | Service;
@@ -76,7 +82,7 @@ export function ProductCard({
             <p className="text-foreground/70 text-xs font-medium">{price}</p>
           ) : (
             <p className="text-muted-foreground text-xs">
-              See shop for pricing
+              See price on their site
             </p>
           ))}
         {shopPrinciples && shopPrinciples.length > 0 && (

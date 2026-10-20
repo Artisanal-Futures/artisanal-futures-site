@@ -9,6 +9,14 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+// Only the shop fields the public event UI renders (name + logo).
+const publicEventShopSelect = {
+  id: true,
+  slug: true,
+  name: true,
+  logoPhoto: true,
+} as const;
+
 export const eventRouter = createTRPCRouter({
   getHomepageEvents: publicProcedure.query(async ({ ctx }) => {
     const now = new Date();
@@ -16,6 +24,8 @@ export const eventRouter = createTRPCRouter({
     startOfToday.setHours(0, 0, 0, 0);
     return ctx.db.event.findMany({
       where: {
+        // Hidden shops must not appear in public listings.
+        shop: { isPublic: true },
         OR: [
           { persist: true },
           { endDate: { gte: now } },
@@ -23,7 +33,7 @@ export const eventRouter = createTRPCRouter({
         ],
       },
       orderBy: { startDate: "asc" },
-      include: { shop: true },
+      include: { shop: { select: publicEventShopSelect } },
     });
   }),
 
@@ -31,9 +41,10 @@ export const eventRouter = createTRPCRouter({
     return ctx.db.event.findMany({
       where: {
         startDate: { gte: new Date() },
+        shop: { isPublic: true },
       },
       orderBy: { startDate: "asc" },
-      include: { shop: true },
+      include: { shop: { select: publicEventShopSelect } },
     });
   }),
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
@@ -146,8 +157,8 @@ export const eventRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input: id }) => {
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input: { id } }) => {
       const existing = await ctx.db.event.findUnique({
         where: { id },
         select: { shopId: true },

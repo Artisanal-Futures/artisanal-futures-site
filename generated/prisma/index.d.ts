@@ -84,6 +84,16 @@ export type Service = $Result.DefaultSelection<Prisma.$ServicePayload>
  */
 export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
 /**
+ * Model SiteSettings
+ * Site-wide search/share settings, edited at /admin/seo. Singleton: id "default".
+ */
+export type SiteSettings = $Result.DefaultSelection<Prisma.$SiteSettingsPayload>
+/**
+ * Model PageSeo
+ * Admin overrides for a static public page's metadata, keyed by path ("/about-us").
+ */
+export type PageSeo = $Result.DefaultSelection<Prisma.$PageSeoPayload>
+/**
  * Model Shop
  * 
  */
@@ -93,6 +103,12 @@ export type Shop = $Result.DefaultSelection<Prisma.$ShopPayload>
  * 
  */
 export type ShopAddress = $Result.DefaultSelection<Prisma.$ShopAddressPayload>
+/**
+ * Model ShopPrivateContact
+ * Admin-only private contact for the artisan behind a shop. Kept in its own
+ * table so it is never returned by queries that include/spread a Shop row.
+ */
+export type ShopPrivateContact = $Result.DefaultSelection<Prisma.$ShopPrivateContactPayload>
 /**
  * Model Member
  * 
@@ -898,6 +914,26 @@ export class PrismaClient<
   get product(): Prisma.ProductDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.siteSettings`: Exposes CRUD operations for the **SiteSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SiteSettings
+    * const siteSettings = await prisma.siteSettings.findMany()
+    * ```
+    */
+  get siteSettings(): Prisma.SiteSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pageSeo`: Exposes CRUD operations for the **PageSeo** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PageSeos
+    * const pageSeos = await prisma.pageSeo.findMany()
+    * ```
+    */
+  get pageSeo(): Prisma.PageSeoDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.shop`: Exposes CRUD operations for the **Shop** model.
     * Example usage:
     * ```ts
@@ -916,6 +952,16 @@ export class PrismaClient<
     * ```
     */
   get shopAddress(): Prisma.ShopAddressDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.shopPrivateContact`: Exposes CRUD operations for the **ShopPrivateContact** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ShopPrivateContacts
+    * const shopPrivateContacts = await prisma.shopPrivateContact.findMany()
+    * ```
+    */
+  get shopPrivateContact(): Prisma.ShopPrivateContactDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.member`: Exposes CRUD operations for the **Member** model.
@@ -1770,8 +1816,11 @@ export namespace Prisma {
     ProductSyncProposal: 'ProductSyncProposal',
     Service: 'Service',
     Product: 'Product',
+    SiteSettings: 'SiteSettings',
+    PageSeo: 'PageSeo',
     Shop: 'Shop',
     ShopAddress: 'ShopAddress',
+    ShopPrivateContact: 'ShopPrivateContact',
     Member: 'Member',
     Message: 'Message',
     Conversation: 'Conversation',
@@ -1830,7 +1879,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "shop" | "shopAddress" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
+      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "siteSettings" | "pageSeo" | "shop" | "shopAddress" | "shopPrivateContact" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2796,6 +2845,154 @@ export namespace Prisma {
           }
         }
       }
+      SiteSettings: {
+        payload: Prisma.$SiteSettingsPayload<ExtArgs>
+        fields: Prisma.SiteSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SiteSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SiteSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.SiteSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SiteSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.SiteSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.SiteSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.SiteSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SiteSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.SiteSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          update: {
+            args: Prisma.SiteSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.SiteSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SiteSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SiteSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.SiteSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SiteSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.SiteSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSiteSettings>
+          }
+          groupBy: {
+            args: Prisma.SiteSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SiteSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SiteSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<SiteSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      PageSeo: {
+        payload: Prisma.$PageSeoPayload<ExtArgs>
+        fields: Prisma.PageSeoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PageSeoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PageSeoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          findFirst: {
+            args: Prisma.PageSeoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PageSeoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          findMany: {
+            args: Prisma.PageSeoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>[]
+          }
+          create: {
+            args: Prisma.PageSeoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          createMany: {
+            args: Prisma.PageSeoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PageSeoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>[]
+          }
+          delete: {
+            args: Prisma.PageSeoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          update: {
+            args: Prisma.PageSeoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          deleteMany: {
+            args: Prisma.PageSeoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PageSeoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PageSeoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>[]
+          }
+          upsert: {
+            args: Prisma.PageSeoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PageSeoPayload>
+          }
+          aggregate: {
+            args: Prisma.PageSeoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePageSeo>
+          }
+          groupBy: {
+            args: Prisma.PageSeoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PageSeoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PageSeoCountArgs<ExtArgs>
+            result: $Utils.Optional<PageSeoCountAggregateOutputType> | number
+          }
+        }
+      }
       Shop: {
         payload: Prisma.$ShopPayload<ExtArgs>
         fields: Prisma.ShopFieldRefs
@@ -2941,6 +3138,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ShopAddressCountArgs<ExtArgs>
             result: $Utils.Optional<ShopAddressCountAggregateOutputType> | number
+          }
+        }
+      }
+      ShopPrivateContact: {
+        payload: Prisma.$ShopPrivateContactPayload<ExtArgs>
+        fields: Prisma.ShopPrivateContactFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ShopPrivateContactFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          findFirst: {
+            args: Prisma.ShopPrivateContactFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ShopPrivateContactFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          findMany: {
+            args: Prisma.ShopPrivateContactFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          create: {
+            args: Prisma.ShopPrivateContactCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          createMany: {
+            args: Prisma.ShopPrivateContactCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ShopPrivateContactCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          delete: {
+            args: Prisma.ShopPrivateContactDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          update: {
+            args: Prisma.ShopPrivateContactUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          deleteMany: {
+            args: Prisma.ShopPrivateContactDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ShopPrivateContactUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>[]
+          }
+          upsert: {
+            args: Prisma.ShopPrivateContactUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopPrivateContactPayload>
+          }
+          aggregate: {
+            args: Prisma.ShopPrivateContactAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShopPrivateContact>
+          }
+          groupBy: {
+            args: Prisma.ShopPrivateContactGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ShopPrivateContactGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ShopPrivateContactCountArgs<ExtArgs>
+            result: $Utils.Optional<ShopPrivateContactCountAggregateOutputType> | number
           }
         }
       }
@@ -6013,8 +6284,11 @@ export namespace Prisma {
     productSyncProposal?: ProductSyncProposalOmit
     service?: ServiceOmit
     product?: ProductOmit
+    siteSettings?: SiteSettingsOmit
+    pageSeo?: PageSeoOmit
     shop?: ShopOmit
     shopAddress?: ShopAddressOmit
+    shopPrivateContact?: ShopPrivateContactOmit
     member?: MemberOmit
     message?: MessageOmit
     conversation?: ConversationOmit
@@ -22364,6 +22638,2163 @@ export namespace Prisma {
 
 
   /**
+   * Model SiteSettings
+   */
+
+  export type AggregateSiteSettings = {
+    _count: SiteSettingsCountAggregateOutputType | null
+    _min: SiteSettingsMinAggregateOutputType | null
+    _max: SiteSettingsMaxAggregateOutputType | null
+  }
+
+  export type SiteSettingsMinAggregateOutputType = {
+    id: string | null
+    siteName: string | null
+    tagline: string | null
+    defaultTitle: string | null
+    defaultDescription: string | null
+    defaultOgImage: string | null
+    logo: string | null
+    contactEmail: string | null
+    twitterHandle: string | null
+    googleVerification: string | null
+    bingVerification: string | null
+    allowAiCrawlers: boolean | null
+    llmsIntro: string | null
+    updatedAt: Date | null
+  }
+
+  export type SiteSettingsMaxAggregateOutputType = {
+    id: string | null
+    siteName: string | null
+    tagline: string | null
+    defaultTitle: string | null
+    defaultDescription: string | null
+    defaultOgImage: string | null
+    logo: string | null
+    contactEmail: string | null
+    twitterHandle: string | null
+    googleVerification: string | null
+    bingVerification: string | null
+    allowAiCrawlers: boolean | null
+    llmsIntro: string | null
+    updatedAt: Date | null
+  }
+
+  export type SiteSettingsCountAggregateOutputType = {
+    id: number
+    siteName: number
+    alternateNames: number
+    tagline: number
+    defaultTitle: number
+    defaultDescription: number
+    defaultOgImage: number
+    logo: number
+    contactEmail: number
+    socialLinks: number
+    twitterHandle: number
+    googleVerification: number
+    bingVerification: number
+    allowAiCrawlers: number
+    llmsIntro: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SiteSettingsMinAggregateInputType = {
+    id?: true
+    siteName?: true
+    tagline?: true
+    defaultTitle?: true
+    defaultDescription?: true
+    defaultOgImage?: true
+    logo?: true
+    contactEmail?: true
+    twitterHandle?: true
+    googleVerification?: true
+    bingVerification?: true
+    allowAiCrawlers?: true
+    llmsIntro?: true
+    updatedAt?: true
+  }
+
+  export type SiteSettingsMaxAggregateInputType = {
+    id?: true
+    siteName?: true
+    tagline?: true
+    defaultTitle?: true
+    defaultDescription?: true
+    defaultOgImage?: true
+    logo?: true
+    contactEmail?: true
+    twitterHandle?: true
+    googleVerification?: true
+    bingVerification?: true
+    allowAiCrawlers?: true
+    llmsIntro?: true
+    updatedAt?: true
+  }
+
+  export type SiteSettingsCountAggregateInputType = {
+    id?: true
+    siteName?: true
+    alternateNames?: true
+    tagline?: true
+    defaultTitle?: true
+    defaultDescription?: true
+    defaultOgImage?: true
+    logo?: true
+    contactEmail?: true
+    socialLinks?: true
+    twitterHandle?: true
+    googleVerification?: true
+    bingVerification?: true
+    allowAiCrawlers?: true
+    llmsIntro?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SiteSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SiteSettings to aggregate.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SiteSettings
+    **/
+    _count?: true | SiteSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SiteSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SiteSettingsMaxAggregateInputType
+  }
+
+  export type GetSiteSettingsAggregateType<T extends SiteSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateSiteSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSiteSettings[P]>
+      : GetScalarType<T[P], AggregateSiteSettings[P]>
+  }
+
+
+
+
+  export type SiteSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SiteSettingsWhereInput
+    orderBy?: SiteSettingsOrderByWithAggregationInput | SiteSettingsOrderByWithAggregationInput[]
+    by: SiteSettingsScalarFieldEnum[] | SiteSettingsScalarFieldEnum
+    having?: SiteSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SiteSettingsCountAggregateInputType | true
+    _min?: SiteSettingsMinAggregateInputType
+    _max?: SiteSettingsMaxAggregateInputType
+  }
+
+  export type SiteSettingsGroupByOutputType = {
+    id: string
+    siteName: string
+    alternateNames: string[]
+    tagline: string | null
+    defaultTitle: string | null
+    defaultDescription: string | null
+    defaultOgImage: string | null
+    logo: string | null
+    contactEmail: string | null
+    socialLinks: string[]
+    twitterHandle: string | null
+    googleVerification: string | null
+    bingVerification: string | null
+    allowAiCrawlers: boolean
+    llmsIntro: string | null
+    updatedAt: Date
+    _count: SiteSettingsCountAggregateOutputType | null
+    _min: SiteSettingsMinAggregateOutputType | null
+    _max: SiteSettingsMaxAggregateOutputType | null
+  }
+
+  type GetSiteSettingsGroupByPayload<T extends SiteSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SiteSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SiteSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SiteSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], SiteSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SiteSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    alternateNames?: boolean
+    tagline?: boolean
+    defaultTitle?: boolean
+    defaultDescription?: boolean
+    defaultOgImage?: boolean
+    logo?: boolean
+    contactEmail?: boolean
+    socialLinks?: boolean
+    twitterHandle?: boolean
+    googleVerification?: boolean
+    bingVerification?: boolean
+    allowAiCrawlers?: boolean
+    llmsIntro?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    alternateNames?: boolean
+    tagline?: boolean
+    defaultTitle?: boolean
+    defaultDescription?: boolean
+    defaultOgImage?: boolean
+    logo?: boolean
+    contactEmail?: boolean
+    socialLinks?: boolean
+    twitterHandle?: boolean
+    googleVerification?: boolean
+    bingVerification?: boolean
+    allowAiCrawlers?: boolean
+    llmsIntro?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    alternateNames?: boolean
+    tagline?: boolean
+    defaultTitle?: boolean
+    defaultDescription?: boolean
+    defaultOgImage?: boolean
+    logo?: boolean
+    contactEmail?: boolean
+    socialLinks?: boolean
+    twitterHandle?: boolean
+    googleVerification?: boolean
+    bingVerification?: boolean
+    allowAiCrawlers?: boolean
+    llmsIntro?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["siteSettings"]>
+
+  export type SiteSettingsSelectScalar = {
+    id?: boolean
+    siteName?: boolean
+    alternateNames?: boolean
+    tagline?: boolean
+    defaultTitle?: boolean
+    defaultDescription?: boolean
+    defaultOgImage?: boolean
+    logo?: boolean
+    contactEmail?: boolean
+    socialLinks?: boolean
+    twitterHandle?: boolean
+    googleVerification?: boolean
+    bingVerification?: boolean
+    allowAiCrawlers?: boolean
+    llmsIntro?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "alternateNames" | "tagline" | "defaultTitle" | "defaultDescription" | "defaultOgImage" | "logo" | "contactEmail" | "socialLinks" | "twitterHandle" | "googleVerification" | "bingVerification" | "allowAiCrawlers" | "llmsIntro" | "updatedAt", ExtArgs["result"]["siteSettings"]>
+
+  export type $SiteSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SiteSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      siteName: string
+      alternateNames: string[]
+      tagline: string | null
+      defaultTitle: string | null
+      defaultDescription: string | null
+      defaultOgImage: string | null
+      logo: string | null
+      contactEmail: string | null
+      /**
+       * Organization profiles (social, Wikidata, ...). Feed schema.org `sameAs`.
+       */
+      socialLinks: string[]
+      twitterHandle: string | null
+      googleVerification: string | null
+      bingVerification: string | null
+      allowAiCrawlers: boolean
+      /**
+       * Markdown intro for /llms.txt.
+       */
+      llmsIntro: string | null
+      updatedAt: Date
+    }, ExtArgs["result"]["siteSettings"]>
+    composites: {}
+  }
+
+  type SiteSettingsGetPayload<S extends boolean | null | undefined | SiteSettingsDefaultArgs> = $Result.GetResult<Prisma.$SiteSettingsPayload, S>
+
+  type SiteSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SiteSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SiteSettingsCountAggregateInputType | true
+    }
+
+  export interface SiteSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SiteSettings'], meta: { name: 'SiteSettings' } }
+    /**
+     * Find zero or one SiteSettings that matches the filter.
+     * @param {SiteSettingsFindUniqueArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SiteSettingsFindUniqueArgs>(args: SelectSubset<T, SiteSettingsFindUniqueArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SiteSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SiteSettingsFindUniqueOrThrowArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SiteSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, SiteSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SiteSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindFirstArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SiteSettingsFindFirstArgs>(args?: SelectSubset<T, SiteSettingsFindFirstArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SiteSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindFirstOrThrowArgs} args - Arguments to find a SiteSettings
+     * @example
+     * // Get one SiteSettings
+     * const siteSettings = await prisma.siteSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SiteSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, SiteSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SiteSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SiteSettings
+     * const siteSettings = await prisma.siteSettings.findMany()
+     * 
+     * // Get first 10 SiteSettings
+     * const siteSettings = await prisma.siteSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SiteSettingsFindManyArgs>(args?: SelectSubset<T, SiteSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SiteSettings.
+     * @param {SiteSettingsCreateArgs} args - Arguments to create a SiteSettings.
+     * @example
+     * // Create one SiteSettings
+     * const SiteSettings = await prisma.siteSettings.create({
+     *   data: {
+     *     // ... data to create a SiteSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends SiteSettingsCreateArgs>(args: SelectSubset<T, SiteSettingsCreateArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SiteSettings.
+     * @param {SiteSettingsCreateManyArgs} args - Arguments to create many SiteSettings.
+     * @example
+     * // Create many SiteSettings
+     * const siteSettings = await prisma.siteSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SiteSettingsCreateManyArgs>(args?: SelectSubset<T, SiteSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SiteSettings and returns the data saved in the database.
+     * @param {SiteSettingsCreateManyAndReturnArgs} args - Arguments to create many SiteSettings.
+     * @example
+     * // Create many SiteSettings
+     * const siteSettings = await prisma.siteSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SiteSettings and only return the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SiteSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, SiteSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SiteSettings.
+     * @param {SiteSettingsDeleteArgs} args - Arguments to delete one SiteSettings.
+     * @example
+     * // Delete one SiteSettings
+     * const SiteSettings = await prisma.siteSettings.delete({
+     *   where: {
+     *     // ... filter to delete one SiteSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SiteSettingsDeleteArgs>(args: SelectSubset<T, SiteSettingsDeleteArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SiteSettings.
+     * @param {SiteSettingsUpdateArgs} args - Arguments to update one SiteSettings.
+     * @example
+     * // Update one SiteSettings
+     * const siteSettings = await prisma.siteSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SiteSettingsUpdateArgs>(args: SelectSubset<T, SiteSettingsUpdateArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SiteSettings.
+     * @param {SiteSettingsDeleteManyArgs} args - Arguments to filter SiteSettings to delete.
+     * @example
+     * // Delete a few SiteSettings
+     * const { count } = await prisma.siteSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SiteSettingsDeleteManyArgs>(args?: SelectSubset<T, SiteSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SiteSettings
+     * const siteSettings = await prisma.siteSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SiteSettingsUpdateManyArgs>(args: SelectSubset<T, SiteSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SiteSettings and returns the data updated in the database.
+     * @param {SiteSettingsUpdateManyAndReturnArgs} args - Arguments to update many SiteSettings.
+     * @example
+     * // Update many SiteSettings
+     * const siteSettings = await prisma.siteSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SiteSettings and only return the `id`
+     * const siteSettingsWithIdOnly = await prisma.siteSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SiteSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, SiteSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SiteSettings.
+     * @param {SiteSettingsUpsertArgs} args - Arguments to update or create a SiteSettings.
+     * @example
+     * // Update or create a SiteSettings
+     * const siteSettings = await prisma.siteSettings.upsert({
+     *   create: {
+     *     // ... data to create a SiteSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SiteSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SiteSettingsUpsertArgs>(args: SelectSubset<T, SiteSettingsUpsertArgs<ExtArgs>>): Prisma__SiteSettingsClient<$Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsCountArgs} args - Arguments to filter SiteSettings to count.
+     * @example
+     * // Count the number of SiteSettings
+     * const count = await prisma.siteSettings.count({
+     *   where: {
+     *     // ... the filter for the SiteSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends SiteSettingsCountArgs>(
+      args?: Subset<T, SiteSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SiteSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SiteSettingsAggregateArgs>(args: Subset<T, SiteSettingsAggregateArgs>): Prisma.PrismaPromise<GetSiteSettingsAggregateType<T>>
+
+    /**
+     * Group by SiteSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SiteSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SiteSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SiteSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: SiteSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SiteSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSiteSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SiteSettings model
+   */
+  readonly fields: SiteSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SiteSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SiteSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SiteSettings model
+   */
+  interface SiteSettingsFieldRefs {
+    readonly id: FieldRef<"SiteSettings", 'String'>
+    readonly siteName: FieldRef<"SiteSettings", 'String'>
+    readonly alternateNames: FieldRef<"SiteSettings", 'String[]'>
+    readonly tagline: FieldRef<"SiteSettings", 'String'>
+    readonly defaultTitle: FieldRef<"SiteSettings", 'String'>
+    readonly defaultDescription: FieldRef<"SiteSettings", 'String'>
+    readonly defaultOgImage: FieldRef<"SiteSettings", 'String'>
+    readonly logo: FieldRef<"SiteSettings", 'String'>
+    readonly contactEmail: FieldRef<"SiteSettings", 'String'>
+    readonly socialLinks: FieldRef<"SiteSettings", 'String[]'>
+    readonly twitterHandle: FieldRef<"SiteSettings", 'String'>
+    readonly googleVerification: FieldRef<"SiteSettings", 'String'>
+    readonly bingVerification: FieldRef<"SiteSettings", 'String'>
+    readonly allowAiCrawlers: FieldRef<"SiteSettings", 'Boolean'>
+    readonly llmsIntro: FieldRef<"SiteSettings", 'String'>
+    readonly updatedAt: FieldRef<"SiteSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SiteSettings findUnique
+   */
+  export type SiteSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings findUniqueOrThrow
+   */
+  export type SiteSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings findFirst
+   */
+  export type SiteSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SiteSettings.
+     */
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings findFirstOrThrow
+   */
+  export type SiteSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SiteSettings.
+     */
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings findMany
+   */
+  export type SiteSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which SiteSettings to fetch.
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SiteSettings to fetch.
+     */
+    orderBy?: SiteSettingsOrderByWithRelationInput | SiteSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SiteSettings.
+     */
+    cursor?: SiteSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SiteSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SiteSettings.
+     */
+    skip?: number
+    distinct?: SiteSettingsScalarFieldEnum | SiteSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * SiteSettings create
+   */
+  export type SiteSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SiteSettings.
+     */
+    data: XOR<SiteSettingsCreateInput, SiteSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * SiteSettings createMany
+   */
+  export type SiteSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SiteSettings.
+     */
+    data: SiteSettingsCreateManyInput | SiteSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SiteSettings createManyAndReturn
+   */
+  export type SiteSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many SiteSettings.
+     */
+    data: SiteSettingsCreateManyInput | SiteSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SiteSettings update
+   */
+  export type SiteSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateInput, SiteSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which SiteSettings to update.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings updateMany
+   */
+  export type SiteSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateManyMutationInput, SiteSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which SiteSettings to update
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings updateManyAndReturn
+   */
+  export type SiteSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update SiteSettings.
+     */
+    data: XOR<SiteSettingsUpdateManyMutationInput, SiteSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which SiteSettings to update
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings upsert
+   */
+  export type SiteSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SiteSettings to update in case it exists.
+     */
+    where: SiteSettingsWhereUniqueInput
+    /**
+     * In case the SiteSettings found by the `where` argument doesn't exist, create a new SiteSettings with this data.
+     */
+    create: XOR<SiteSettingsCreateInput, SiteSettingsUncheckedCreateInput>
+    /**
+     * In case the SiteSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SiteSettingsUpdateInput, SiteSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * SiteSettings delete
+   */
+  export type SiteSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which SiteSettings to delete.
+     */
+    where: SiteSettingsWhereUniqueInput
+  }
+
+  /**
+   * SiteSettings deleteMany
+   */
+  export type SiteSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SiteSettings to delete
+     */
+    where?: SiteSettingsWhereInput
+    /**
+     * Limit how many SiteSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SiteSettings without action
+   */
+  export type SiteSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SiteSettings
+     */
+    select?: SiteSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SiteSettings
+     */
+    omit?: SiteSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PageSeo
+   */
+
+  export type AggregatePageSeo = {
+    _count: PageSeoCountAggregateOutputType | null
+    _min: PageSeoMinAggregateOutputType | null
+    _max: PageSeoMaxAggregateOutputType | null
+  }
+
+  export type PageSeoMinAggregateOutputType = {
+    id: string | null
+    path: string | null
+    title: string | null
+    description: string | null
+    ogImage: string | null
+    noIndex: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type PageSeoMaxAggregateOutputType = {
+    id: string | null
+    path: string | null
+    title: string | null
+    description: string | null
+    ogImage: string | null
+    noIndex: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type PageSeoCountAggregateOutputType = {
+    id: number
+    path: number
+    title: number
+    description: number
+    ogImage: number
+    noIndex: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PageSeoMinAggregateInputType = {
+    id?: true
+    path?: true
+    title?: true
+    description?: true
+    ogImage?: true
+    noIndex?: true
+    updatedAt?: true
+  }
+
+  export type PageSeoMaxAggregateInputType = {
+    id?: true
+    path?: true
+    title?: true
+    description?: true
+    ogImage?: true
+    noIndex?: true
+    updatedAt?: true
+  }
+
+  export type PageSeoCountAggregateInputType = {
+    id?: true
+    path?: true
+    title?: true
+    description?: true
+    ogImage?: true
+    noIndex?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PageSeoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PageSeo to aggregate.
+     */
+    where?: PageSeoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PageSeos to fetch.
+     */
+    orderBy?: PageSeoOrderByWithRelationInput | PageSeoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PageSeoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PageSeos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PageSeos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PageSeos
+    **/
+    _count?: true | PageSeoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PageSeoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PageSeoMaxAggregateInputType
+  }
+
+  export type GetPageSeoAggregateType<T extends PageSeoAggregateArgs> = {
+        [P in keyof T & keyof AggregatePageSeo]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePageSeo[P]>
+      : GetScalarType<T[P], AggregatePageSeo[P]>
+  }
+
+
+
+
+  export type PageSeoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PageSeoWhereInput
+    orderBy?: PageSeoOrderByWithAggregationInput | PageSeoOrderByWithAggregationInput[]
+    by: PageSeoScalarFieldEnum[] | PageSeoScalarFieldEnum
+    having?: PageSeoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PageSeoCountAggregateInputType | true
+    _min?: PageSeoMinAggregateInputType
+    _max?: PageSeoMaxAggregateInputType
+  }
+
+  export type PageSeoGroupByOutputType = {
+    id: string
+    path: string
+    title: string | null
+    description: string | null
+    ogImage: string | null
+    noIndex: boolean
+    updatedAt: Date
+    _count: PageSeoCountAggregateOutputType | null
+    _min: PageSeoMinAggregateOutputType | null
+    _max: PageSeoMaxAggregateOutputType | null
+  }
+
+  type GetPageSeoGroupByPayload<T extends PageSeoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PageSeoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PageSeoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PageSeoGroupByOutputType[P]>
+            : GetScalarType<T[P], PageSeoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PageSeoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    path?: boolean
+    title?: boolean
+    description?: boolean
+    ogImage?: boolean
+    noIndex?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pageSeo"]>
+
+  export type PageSeoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    path?: boolean
+    title?: boolean
+    description?: boolean
+    ogImage?: boolean
+    noIndex?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pageSeo"]>
+
+  export type PageSeoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    path?: boolean
+    title?: boolean
+    description?: boolean
+    ogImage?: boolean
+    noIndex?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["pageSeo"]>
+
+  export type PageSeoSelectScalar = {
+    id?: boolean
+    path?: boolean
+    title?: boolean
+    description?: boolean
+    ogImage?: boolean
+    noIndex?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PageSeoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "path" | "title" | "description" | "ogImage" | "noIndex" | "updatedAt", ExtArgs["result"]["pageSeo"]>
+
+  export type $PageSeoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PageSeo"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      path: string
+      title: string | null
+      description: string | null
+      ogImage: string | null
+      noIndex: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["pageSeo"]>
+    composites: {}
+  }
+
+  type PageSeoGetPayload<S extends boolean | null | undefined | PageSeoDefaultArgs> = $Result.GetResult<Prisma.$PageSeoPayload, S>
+
+  type PageSeoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PageSeoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PageSeoCountAggregateInputType | true
+    }
+
+  export interface PageSeoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PageSeo'], meta: { name: 'PageSeo' } }
+    /**
+     * Find zero or one PageSeo that matches the filter.
+     * @param {PageSeoFindUniqueArgs} args - Arguments to find a PageSeo
+     * @example
+     * // Get one PageSeo
+     * const pageSeo = await prisma.pageSeo.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PageSeoFindUniqueArgs>(args: SelectSubset<T, PageSeoFindUniqueArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PageSeo that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PageSeoFindUniqueOrThrowArgs} args - Arguments to find a PageSeo
+     * @example
+     * // Get one PageSeo
+     * const pageSeo = await prisma.pageSeo.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PageSeoFindUniqueOrThrowArgs>(args: SelectSubset<T, PageSeoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PageSeo that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoFindFirstArgs} args - Arguments to find a PageSeo
+     * @example
+     * // Get one PageSeo
+     * const pageSeo = await prisma.pageSeo.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PageSeoFindFirstArgs>(args?: SelectSubset<T, PageSeoFindFirstArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PageSeo that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoFindFirstOrThrowArgs} args - Arguments to find a PageSeo
+     * @example
+     * // Get one PageSeo
+     * const pageSeo = await prisma.pageSeo.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PageSeoFindFirstOrThrowArgs>(args?: SelectSubset<T, PageSeoFindFirstOrThrowArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PageSeos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PageSeos
+     * const pageSeos = await prisma.pageSeo.findMany()
+     * 
+     * // Get first 10 PageSeos
+     * const pageSeos = await prisma.pageSeo.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pageSeoWithIdOnly = await prisma.pageSeo.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PageSeoFindManyArgs>(args?: SelectSubset<T, PageSeoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PageSeo.
+     * @param {PageSeoCreateArgs} args - Arguments to create a PageSeo.
+     * @example
+     * // Create one PageSeo
+     * const PageSeo = await prisma.pageSeo.create({
+     *   data: {
+     *     // ... data to create a PageSeo
+     *   }
+     * })
+     * 
+     */
+    create<T extends PageSeoCreateArgs>(args: SelectSubset<T, PageSeoCreateArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PageSeos.
+     * @param {PageSeoCreateManyArgs} args - Arguments to create many PageSeos.
+     * @example
+     * // Create many PageSeos
+     * const pageSeo = await prisma.pageSeo.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PageSeoCreateManyArgs>(args?: SelectSubset<T, PageSeoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PageSeos and returns the data saved in the database.
+     * @param {PageSeoCreateManyAndReturnArgs} args - Arguments to create many PageSeos.
+     * @example
+     * // Create many PageSeos
+     * const pageSeo = await prisma.pageSeo.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PageSeos and only return the `id`
+     * const pageSeoWithIdOnly = await prisma.pageSeo.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PageSeoCreateManyAndReturnArgs>(args?: SelectSubset<T, PageSeoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PageSeo.
+     * @param {PageSeoDeleteArgs} args - Arguments to delete one PageSeo.
+     * @example
+     * // Delete one PageSeo
+     * const PageSeo = await prisma.pageSeo.delete({
+     *   where: {
+     *     // ... filter to delete one PageSeo
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PageSeoDeleteArgs>(args: SelectSubset<T, PageSeoDeleteArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PageSeo.
+     * @param {PageSeoUpdateArgs} args - Arguments to update one PageSeo.
+     * @example
+     * // Update one PageSeo
+     * const pageSeo = await prisma.pageSeo.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PageSeoUpdateArgs>(args: SelectSubset<T, PageSeoUpdateArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PageSeos.
+     * @param {PageSeoDeleteManyArgs} args - Arguments to filter PageSeos to delete.
+     * @example
+     * // Delete a few PageSeos
+     * const { count } = await prisma.pageSeo.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PageSeoDeleteManyArgs>(args?: SelectSubset<T, PageSeoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PageSeos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PageSeos
+     * const pageSeo = await prisma.pageSeo.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PageSeoUpdateManyArgs>(args: SelectSubset<T, PageSeoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PageSeos and returns the data updated in the database.
+     * @param {PageSeoUpdateManyAndReturnArgs} args - Arguments to update many PageSeos.
+     * @example
+     * // Update many PageSeos
+     * const pageSeo = await prisma.pageSeo.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PageSeos and only return the `id`
+     * const pageSeoWithIdOnly = await prisma.pageSeo.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PageSeoUpdateManyAndReturnArgs>(args: SelectSubset<T, PageSeoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PageSeo.
+     * @param {PageSeoUpsertArgs} args - Arguments to update or create a PageSeo.
+     * @example
+     * // Update or create a PageSeo
+     * const pageSeo = await prisma.pageSeo.upsert({
+     *   create: {
+     *     // ... data to create a PageSeo
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PageSeo we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PageSeoUpsertArgs>(args: SelectSubset<T, PageSeoUpsertArgs<ExtArgs>>): Prisma__PageSeoClient<$Result.GetResult<Prisma.$PageSeoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PageSeos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoCountArgs} args - Arguments to filter PageSeos to count.
+     * @example
+     * // Count the number of PageSeos
+     * const count = await prisma.pageSeo.count({
+     *   where: {
+     *     // ... the filter for the PageSeos we want to count
+     *   }
+     * })
+    **/
+    count<T extends PageSeoCountArgs>(
+      args?: Subset<T, PageSeoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PageSeoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PageSeo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PageSeoAggregateArgs>(args: Subset<T, PageSeoAggregateArgs>): Prisma.PrismaPromise<GetPageSeoAggregateType<T>>
+
+    /**
+     * Group by PageSeo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PageSeoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PageSeoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PageSeoGroupByArgs['orderBy'] }
+        : { orderBy?: PageSeoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PageSeoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPageSeoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PageSeo model
+   */
+  readonly fields: PageSeoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PageSeo.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PageSeoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PageSeo model
+   */
+  interface PageSeoFieldRefs {
+    readonly id: FieldRef<"PageSeo", 'String'>
+    readonly path: FieldRef<"PageSeo", 'String'>
+    readonly title: FieldRef<"PageSeo", 'String'>
+    readonly description: FieldRef<"PageSeo", 'String'>
+    readonly ogImage: FieldRef<"PageSeo", 'String'>
+    readonly noIndex: FieldRef<"PageSeo", 'Boolean'>
+    readonly updatedAt: FieldRef<"PageSeo", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PageSeo findUnique
+   */
+  export type PageSeoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter, which PageSeo to fetch.
+     */
+    where: PageSeoWhereUniqueInput
+  }
+
+  /**
+   * PageSeo findUniqueOrThrow
+   */
+  export type PageSeoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter, which PageSeo to fetch.
+     */
+    where: PageSeoWhereUniqueInput
+  }
+
+  /**
+   * PageSeo findFirst
+   */
+  export type PageSeoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter, which PageSeo to fetch.
+     */
+    where?: PageSeoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PageSeos to fetch.
+     */
+    orderBy?: PageSeoOrderByWithRelationInput | PageSeoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PageSeos.
+     */
+    cursor?: PageSeoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PageSeos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PageSeos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PageSeos.
+     */
+    distinct?: PageSeoScalarFieldEnum | PageSeoScalarFieldEnum[]
+  }
+
+  /**
+   * PageSeo findFirstOrThrow
+   */
+  export type PageSeoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter, which PageSeo to fetch.
+     */
+    where?: PageSeoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PageSeos to fetch.
+     */
+    orderBy?: PageSeoOrderByWithRelationInput | PageSeoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PageSeos.
+     */
+    cursor?: PageSeoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PageSeos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PageSeos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PageSeos.
+     */
+    distinct?: PageSeoScalarFieldEnum | PageSeoScalarFieldEnum[]
+  }
+
+  /**
+   * PageSeo findMany
+   */
+  export type PageSeoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter, which PageSeos to fetch.
+     */
+    where?: PageSeoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PageSeos to fetch.
+     */
+    orderBy?: PageSeoOrderByWithRelationInput | PageSeoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PageSeos.
+     */
+    cursor?: PageSeoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PageSeos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PageSeos.
+     */
+    skip?: number
+    distinct?: PageSeoScalarFieldEnum | PageSeoScalarFieldEnum[]
+  }
+
+  /**
+   * PageSeo create
+   */
+  export type PageSeoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PageSeo.
+     */
+    data: XOR<PageSeoCreateInput, PageSeoUncheckedCreateInput>
+  }
+
+  /**
+   * PageSeo createMany
+   */
+  export type PageSeoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PageSeos.
+     */
+    data: PageSeoCreateManyInput | PageSeoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PageSeo createManyAndReturn
+   */
+  export type PageSeoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * The data used to create many PageSeos.
+     */
+    data: PageSeoCreateManyInput | PageSeoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PageSeo update
+   */
+  export type PageSeoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PageSeo.
+     */
+    data: XOR<PageSeoUpdateInput, PageSeoUncheckedUpdateInput>
+    /**
+     * Choose, which PageSeo to update.
+     */
+    where: PageSeoWhereUniqueInput
+  }
+
+  /**
+   * PageSeo updateMany
+   */
+  export type PageSeoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PageSeos.
+     */
+    data: XOR<PageSeoUpdateManyMutationInput, PageSeoUncheckedUpdateManyInput>
+    /**
+     * Filter which PageSeos to update
+     */
+    where?: PageSeoWhereInput
+    /**
+     * Limit how many PageSeos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PageSeo updateManyAndReturn
+   */
+  export type PageSeoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * The data used to update PageSeos.
+     */
+    data: XOR<PageSeoUpdateManyMutationInput, PageSeoUncheckedUpdateManyInput>
+    /**
+     * Filter which PageSeos to update
+     */
+    where?: PageSeoWhereInput
+    /**
+     * Limit how many PageSeos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PageSeo upsert
+   */
+  export type PageSeoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PageSeo to update in case it exists.
+     */
+    where: PageSeoWhereUniqueInput
+    /**
+     * In case the PageSeo found by the `where` argument doesn't exist, create a new PageSeo with this data.
+     */
+    create: XOR<PageSeoCreateInput, PageSeoUncheckedCreateInput>
+    /**
+     * In case the PageSeo was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PageSeoUpdateInput, PageSeoUncheckedUpdateInput>
+  }
+
+  /**
+   * PageSeo delete
+   */
+  export type PageSeoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+    /**
+     * Filter which PageSeo to delete.
+     */
+    where: PageSeoWhereUniqueInput
+  }
+
+  /**
+   * PageSeo deleteMany
+   */
+  export type PageSeoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PageSeos to delete
+     */
+    where?: PageSeoWhereInput
+    /**
+     * Limit how many PageSeos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PageSeo without action
+   */
+  export type PageSeoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PageSeo
+     */
+    select?: PageSeoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PageSeo
+     */
+    omit?: PageSeoOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model Shop
    */
 
@@ -22389,6 +24820,11 @@ export namespace Prisma {
     updatedAt: Date | null
     name: string | null
     isPublic: boolean | null
+    slug: string | null
+    seoTitle: string | null
+    seoDescription: string | null
+    seoImage: string | null
+    seoNoIndex: boolean | null
     syncPlatform: $Enums.ProductScrapeMethod | null
     syncEnabled: boolean | null
     syncUrl: string | null
@@ -22412,6 +24848,11 @@ export namespace Prisma {
     updatedAt: Date | null
     name: string | null
     isPublic: boolean | null
+    slug: string | null
+    seoTitle: string | null
+    seoDescription: string | null
+    seoImage: string | null
+    seoNoIndex: boolean | null
     syncPlatform: $Enums.ProductScrapeMethod | null
     syncEnabled: boolean | null
     syncUrl: string | null
@@ -22436,6 +24877,13 @@ export namespace Prisma {
     attributeTags: number
     name: number
     isPublic: number
+    slug: number
+    previousSlugs: number
+    socialLinks: number
+    seoTitle: number
+    seoDescription: number
+    seoImage: number
+    seoNoIndex: number
     syncPlatform: number
     syncEnabled: number
     syncUrl: number
@@ -22461,6 +24909,11 @@ export namespace Prisma {
     updatedAt?: true
     name?: true
     isPublic?: true
+    slug?: true
+    seoTitle?: true
+    seoDescription?: true
+    seoImage?: true
+    seoNoIndex?: true
     syncPlatform?: true
     syncEnabled?: true
     syncUrl?: true
@@ -22484,6 +24937,11 @@ export namespace Prisma {
     updatedAt?: true
     name?: true
     isPublic?: true
+    slug?: true
+    seoTitle?: true
+    seoDescription?: true
+    seoImage?: true
+    seoNoIndex?: true
     syncPlatform?: true
     syncEnabled?: true
     syncUrl?: true
@@ -22508,6 +24966,13 @@ export namespace Prisma {
     attributeTags?: true
     name?: true
     isPublic?: true
+    slug?: true
+    previousSlugs?: true
+    socialLinks?: true
+    seoTitle?: true
+    seoDescription?: true
+    seoImage?: true
+    seoNoIndex?: true
     syncPlatform?: true
     syncEnabled?: true
     syncUrl?: true
@@ -22605,6 +25070,13 @@ export namespace Prisma {
     attributeTags: string[]
     name: string
     isPublic: boolean
+    slug: string | null
+    previousSlugs: string[]
+    socialLinks: string[]
+    seoTitle: string | null
+    seoDescription: string | null
+    seoImage: string | null
+    seoNoIndex: boolean
     syncPlatform: $Enums.ProductScrapeMethod | null
     syncEnabled: boolean
     syncUrl: string | null
@@ -22646,6 +25118,13 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    slug?: boolean
+    previousSlugs?: boolean
+    socialLinks?: boolean
+    seoTitle?: boolean
+    seoDescription?: boolean
+    seoImage?: boolean
+    seoNoIndex?: boolean
     syncPlatform?: boolean
     syncEnabled?: boolean
     syncUrl?: boolean
@@ -22659,6 +25138,7 @@ export namespace Prisma {
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
+    privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -22679,6 +25159,13 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    slug?: boolean
+    previousSlugs?: boolean
+    socialLinks?: boolean
+    seoTitle?: boolean
+    seoDescription?: boolean
+    seoImage?: boolean
+    seoNoIndex?: boolean
     syncPlatform?: boolean
     syncEnabled?: boolean
     syncUrl?: boolean
@@ -22704,6 +25191,13 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    slug?: boolean
+    previousSlugs?: boolean
+    socialLinks?: boolean
+    seoTitle?: boolean
+    seoDescription?: boolean
+    seoImage?: boolean
+    seoNoIndex?: boolean
     syncPlatform?: boolean
     syncEnabled?: boolean
     syncUrl?: boolean
@@ -22729,6 +25223,13 @@ export namespace Prisma {
     attributeTags?: boolean
     name?: boolean
     isPublic?: boolean
+    slug?: boolean
+    previousSlugs?: boolean
+    socialLinks?: boolean
+    seoTitle?: boolean
+    seoDescription?: boolean
+    seoImage?: boolean
+    seoNoIndex?: boolean
     syncPlatform?: boolean
     syncEnabled?: boolean
     syncUrl?: boolean
@@ -22736,7 +25237,7 @@ export namespace Prisma {
     lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -22746,6 +25247,7 @@ export namespace Prisma {
     address?: boolean | Shop$addressArgs<ExtArgs>
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
+    privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -22766,6 +25268,7 @@ export namespace Prisma {
       address: Prisma.$ShopAddressPayload<ExtArgs> | null
       websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
       syncRuns: Prisma.$ProductSyncRunPayload<ExtArgs>[]
+      privateContact: Prisma.$ShopPrivateContactPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -22784,6 +25287,24 @@ export namespace Prisma {
       attributeTags: string[]
       name: string
       isPublic: boolean
+      /**
+       * Public profile URL is /shops/{slug}. Optional until every shop is
+       * backfilled (scripts/backfill-shop-slugs.ts). Old slugs keep 301ing.
+       */
+      slug: string | null
+      previousSlugs: string[]
+      /**
+       * Artisan-editable profile links (Instagram, Facebook, Etsy, ...). Feed the
+       * shop's schema.org `sameAs`.
+       */
+      socialLinks: string[]
+      /**
+       * Admin-only search/share overrides. Blank = derived from the profile.
+       */
+      seoTitle: string | null
+      seoDescription: string | null
+      seoImage: string | null
+      seoNoIndex: boolean
       /**
        * Scheduled product-sync configuration. `syncPlatform` reuses the
        * per-product scrape enum so there is one platform vocabulary; shops on
@@ -23204,6 +25725,7 @@ export namespace Prisma {
     address<T extends Shop$addressArgs<ExtArgs> = {}>(args?: Subset<T, Shop$addressArgs<ExtArgs>>): Prisma__ShopAddressClient<$Result.GetResult<Prisma.$ShopAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     syncRuns<T extends Shop$syncRunsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$syncRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    privateContact<T extends Shop$privateContactArgs<ExtArgs> = {}>(args?: Subset<T, Shop$privateContactArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -23249,6 +25771,13 @@ export namespace Prisma {
     readonly attributeTags: FieldRef<"Shop", 'String[]'>
     readonly name: FieldRef<"Shop", 'String'>
     readonly isPublic: FieldRef<"Shop", 'Boolean'>
+    readonly slug: FieldRef<"Shop", 'String'>
+    readonly previousSlugs: FieldRef<"Shop", 'String[]'>
+    readonly socialLinks: FieldRef<"Shop", 'String[]'>
+    readonly seoTitle: FieldRef<"Shop", 'String'>
+    readonly seoDescription: FieldRef<"Shop", 'String'>
+    readonly seoImage: FieldRef<"Shop", 'String'>
+    readonly seoNoIndex: FieldRef<"Shop", 'Boolean'>
     readonly syncPlatform: FieldRef<"Shop", 'ProductScrapeMethod'>
     readonly syncEnabled: FieldRef<"Shop", 'Boolean'>
     readonly syncUrl: FieldRef<"Shop", 'String'>
@@ -23808,6 +26337,25 @@ export namespace Prisma {
   }
 
   /**
+   * Shop.privateContact
+   */
+  export type Shop$privateContactArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    where?: ShopPrivateContactWhereInput
+  }
+
+  /**
    * Shop without action
    */
   export type ShopDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -23832,8 +26380,20 @@ export namespace Prisma {
 
   export type AggregateShopAddress = {
     _count: ShopAddressCountAggregateOutputType | null
+    _avg: ShopAddressAvgAggregateOutputType | null
+    _sum: ShopAddressSumAggregateOutputType | null
     _min: ShopAddressMinAggregateOutputType | null
     _max: ShopAddressMaxAggregateOutputType | null
+  }
+
+  export type ShopAddressAvgAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
+  }
+
+  export type ShopAddressSumAggregateOutputType = {
+    latitude: number | null
+    longitude: number | null
   }
 
   export type ShopAddressMinAggregateOutputType = {
@@ -23846,6 +26406,10 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
   }
 
   export type ShopAddressMaxAggregateOutputType = {
@@ -23858,6 +26422,10 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
   }
 
   export type ShopAddressCountAggregateOutputType = {
@@ -23870,9 +26438,23 @@ export namespace Prisma {
     country: number
     shopId: number
     street: number
+    latitude: number
+    longitude: number
+    geocodeQuery: number
+    geocodedAt: number
     _all: number
   }
 
+
+  export type ShopAddressAvgAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
+
+  export type ShopAddressSumAggregateInputType = {
+    latitude?: true
+    longitude?: true
+  }
 
   export type ShopAddressMinAggregateInputType = {
     id?: true
@@ -23884,6 +26466,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
   }
 
   export type ShopAddressMaxAggregateInputType = {
@@ -23896,6 +26482,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
   }
 
   export type ShopAddressCountAggregateInputType = {
@@ -23908,6 +26498,10 @@ export namespace Prisma {
     country?: true
     shopId?: true
     street?: true
+    latitude?: true
+    longitude?: true
+    geocodeQuery?: true
+    geocodedAt?: true
     _all?: true
   }
 
@@ -23949,6 +26543,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ShopAddressAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ShopAddressSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ShopAddressMinAggregateInputType
@@ -23979,6 +26585,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ShopAddressCountAggregateInputType | true
+    _avg?: ShopAddressAvgAggregateInputType
+    _sum?: ShopAddressSumAggregateInputType
     _min?: ShopAddressMinAggregateInputType
     _max?: ShopAddressMaxAggregateInputType
   }
@@ -23993,7 +26601,13 @@ export namespace Prisma {
     country: string | null
     shopId: string | null
     street: string | null
+    latitude: number | null
+    longitude: number | null
+    geocodeQuery: string | null
+    geocodedAt: Date | null
     _count: ShopAddressCountAggregateOutputType | null
+    _avg: ShopAddressAvgAggregateOutputType | null
+    _sum: ShopAddressSumAggregateOutputType | null
     _min: ShopAddressMinAggregateOutputType | null
     _max: ShopAddressMaxAggregateOutputType | null
   }
@@ -24022,6 +26636,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24035,6 +26653,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24048,6 +26670,10 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }, ExtArgs["result"]["shopAddress"]>
 
@@ -24061,9 +26687,13 @@ export namespace Prisma {
     country?: boolean
     shopId?: boolean
     street?: boolean
+    latitude?: boolean
+    longitude?: boolean
+    geocodeQuery?: boolean
+    geocodedAt?: boolean
   }
 
-  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street", ExtArgs["result"]["shopAddress"]>
+  export type ShopAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "additional" | "city" | "state" | "zip" | "country" | "shopId" | "street" | "latitude" | "longitude" | "geocodeQuery" | "geocodedAt", ExtArgs["result"]["shopAddress"]>
   export type ShopAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | ShopAddress$shopArgs<ExtArgs>
   }
@@ -24089,6 +26719,13 @@ export namespace Prisma {
       country: string | null
       shopId: string | null
       street: string | null
+      latitude: number | null
+      longitude: number | null
+      /**
+       * Normalized locality query last geocoded (zip/city/state/country only).
+       */
+      geocodeQuery: string | null
+      geocodedAt: Date | null
     }, ExtArgs["result"]["shopAddress"]>
     composites: {}
   }
@@ -24522,6 +27159,10 @@ export namespace Prisma {
     readonly country: FieldRef<"ShopAddress", 'String'>
     readonly shopId: FieldRef<"ShopAddress", 'String'>
     readonly street: FieldRef<"ShopAddress", 'String'>
+    readonly latitude: FieldRef<"ShopAddress", 'Float'>
+    readonly longitude: FieldRef<"ShopAddress", 'Float'>
+    readonly geocodeQuery: FieldRef<"ShopAddress", 'String'>
+    readonly geocodedAt: FieldRef<"ShopAddress", 'DateTime'>
   }
     
 
@@ -24952,6 +27593,1116 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ShopAddressInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ShopPrivateContact
+   */
+
+  export type AggregateShopPrivateContact = {
+    _count: ShopPrivateContactCountAggregateOutputType | null
+    _min: ShopPrivateContactMinAggregateOutputType | null
+    _max: ShopPrivateContactMaxAggregateOutputType | null
+  }
+
+  export type ShopPrivateContactMinAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShopPrivateContactMaxAggregateOutputType = {
+    id: string | null
+    shopId: string | null
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ShopPrivateContactCountAggregateOutputType = {
+    id: number
+    shopId: number
+    name: number
+    email: number
+    phone: number
+    notes: number
+    updatedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ShopPrivateContactMinAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShopPrivateContactMaxAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ShopPrivateContactCountAggregateInputType = {
+    id?: true
+    shopId?: true
+    name?: true
+    email?: true
+    phone?: true
+    notes?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ShopPrivateContactAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopPrivateContact to aggregate.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ShopPrivateContacts
+    **/
+    _count?: true | ShopPrivateContactCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ShopPrivateContactMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ShopPrivateContactMaxAggregateInputType
+  }
+
+  export type GetShopPrivateContactAggregateType<T extends ShopPrivateContactAggregateArgs> = {
+        [P in keyof T & keyof AggregateShopPrivateContact]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShopPrivateContact[P]>
+      : GetScalarType<T[P], AggregateShopPrivateContact[P]>
+  }
+
+
+
+
+  export type ShopPrivateContactGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShopPrivateContactWhereInput
+    orderBy?: ShopPrivateContactOrderByWithAggregationInput | ShopPrivateContactOrderByWithAggregationInput[]
+    by: ShopPrivateContactScalarFieldEnum[] | ShopPrivateContactScalarFieldEnum
+    having?: ShopPrivateContactScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ShopPrivateContactCountAggregateInputType | true
+    _min?: ShopPrivateContactMinAggregateInputType
+    _max?: ShopPrivateContactMaxAggregateInputType
+  }
+
+  export type ShopPrivateContactGroupByOutputType = {
+    id: string
+    shopId: string
+    name: string | null
+    email: string | null
+    phone: string | null
+    notes: string | null
+    updatedById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ShopPrivateContactCountAggregateOutputType | null
+    _min: ShopPrivateContactMinAggregateOutputType | null
+    _max: ShopPrivateContactMaxAggregateOutputType | null
+  }
+
+  type GetShopPrivateContactGroupByPayload<T extends ShopPrivateContactGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ShopPrivateContactGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ShopPrivateContactGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ShopPrivateContactGroupByOutputType[P]>
+            : GetScalarType<T[P], ShopPrivateContactGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ShopPrivateContactSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopPrivateContact"]>
+
+  export type ShopPrivateContactSelectScalar = {
+    id?: boolean
+    shopId?: boolean
+    name?: boolean
+    email?: boolean
+    phone?: boolean
+    notes?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ShopPrivateContactOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shopId" | "name" | "email" | "phone" | "notes" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["shopPrivateContact"]>
+  export type ShopPrivateContactInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopPrivateContactIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopPrivateContactIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+
+  export type $ShopPrivateContactPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ShopPrivateContact"
+    objects: {
+      shop: Prisma.$ShopPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      shopId: string
+      name: string | null
+      email: string | null
+      phone: string | null
+      notes: string | null
+      updatedById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["shopPrivateContact"]>
+    composites: {}
+  }
+
+  type ShopPrivateContactGetPayload<S extends boolean | null | undefined | ShopPrivateContactDefaultArgs> = $Result.GetResult<Prisma.$ShopPrivateContactPayload, S>
+
+  type ShopPrivateContactCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ShopPrivateContactFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ShopPrivateContactCountAggregateInputType | true
+    }
+
+  export interface ShopPrivateContactDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ShopPrivateContact'], meta: { name: 'ShopPrivateContact' } }
+    /**
+     * Find zero or one ShopPrivateContact that matches the filter.
+     * @param {ShopPrivateContactFindUniqueArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ShopPrivateContactFindUniqueArgs>(args: SelectSubset<T, ShopPrivateContactFindUniqueArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ShopPrivateContact that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ShopPrivateContactFindUniqueOrThrowArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ShopPrivateContactFindUniqueOrThrowArgs>(args: SelectSubset<T, ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopPrivateContact that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindFirstArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ShopPrivateContactFindFirstArgs>(args?: SelectSubset<T, ShopPrivateContactFindFirstArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopPrivateContact that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindFirstOrThrowArgs} args - Arguments to find a ShopPrivateContact
+     * @example
+     * // Get one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ShopPrivateContactFindFirstOrThrowArgs>(args?: SelectSubset<T, ShopPrivateContactFindFirstOrThrowArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ShopPrivateContacts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ShopPrivateContacts
+     * const shopPrivateContacts = await prisma.shopPrivateContact.findMany()
+     * 
+     * // Get first 10 ShopPrivateContacts
+     * const shopPrivateContacts = await prisma.shopPrivateContact.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ShopPrivateContactFindManyArgs>(args?: SelectSubset<T, ShopPrivateContactFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ShopPrivateContact.
+     * @param {ShopPrivateContactCreateArgs} args - Arguments to create a ShopPrivateContact.
+     * @example
+     * // Create one ShopPrivateContact
+     * const ShopPrivateContact = await prisma.shopPrivateContact.create({
+     *   data: {
+     *     // ... data to create a ShopPrivateContact
+     *   }
+     * })
+     * 
+     */
+    create<T extends ShopPrivateContactCreateArgs>(args: SelectSubset<T, ShopPrivateContactCreateArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ShopPrivateContacts.
+     * @param {ShopPrivateContactCreateManyArgs} args - Arguments to create many ShopPrivateContacts.
+     * @example
+     * // Create many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ShopPrivateContactCreateManyArgs>(args?: SelectSubset<T, ShopPrivateContactCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ShopPrivateContacts and returns the data saved in the database.
+     * @param {ShopPrivateContactCreateManyAndReturnArgs} args - Arguments to create many ShopPrivateContacts.
+     * @example
+     * // Create many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ShopPrivateContacts and only return the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ShopPrivateContactCreateManyAndReturnArgs>(args?: SelectSubset<T, ShopPrivateContactCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ShopPrivateContact.
+     * @param {ShopPrivateContactDeleteArgs} args - Arguments to delete one ShopPrivateContact.
+     * @example
+     * // Delete one ShopPrivateContact
+     * const ShopPrivateContact = await prisma.shopPrivateContact.delete({
+     *   where: {
+     *     // ... filter to delete one ShopPrivateContact
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ShopPrivateContactDeleteArgs>(args: SelectSubset<T, ShopPrivateContactDeleteArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ShopPrivateContact.
+     * @param {ShopPrivateContactUpdateArgs} args - Arguments to update one ShopPrivateContact.
+     * @example
+     * // Update one ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ShopPrivateContactUpdateArgs>(args: SelectSubset<T, ShopPrivateContactUpdateArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ShopPrivateContacts.
+     * @param {ShopPrivateContactDeleteManyArgs} args - Arguments to filter ShopPrivateContacts to delete.
+     * @example
+     * // Delete a few ShopPrivateContacts
+     * const { count } = await prisma.shopPrivateContact.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ShopPrivateContactDeleteManyArgs>(args?: SelectSubset<T, ShopPrivateContactDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopPrivateContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ShopPrivateContactUpdateManyArgs>(args: SelectSubset<T, ShopPrivateContactUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopPrivateContacts and returns the data updated in the database.
+     * @param {ShopPrivateContactUpdateManyAndReturnArgs} args - Arguments to update many ShopPrivateContacts.
+     * @example
+     * // Update many ShopPrivateContacts
+     * const shopPrivateContact = await prisma.shopPrivateContact.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ShopPrivateContacts and only return the `id`
+     * const shopPrivateContactWithIdOnly = await prisma.shopPrivateContact.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ShopPrivateContactUpdateManyAndReturnArgs>(args: SelectSubset<T, ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ShopPrivateContact.
+     * @param {ShopPrivateContactUpsertArgs} args - Arguments to update or create a ShopPrivateContact.
+     * @example
+     * // Update or create a ShopPrivateContact
+     * const shopPrivateContact = await prisma.shopPrivateContact.upsert({
+     *   create: {
+     *     // ... data to create a ShopPrivateContact
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ShopPrivateContact we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ShopPrivateContactUpsertArgs>(args: SelectSubset<T, ShopPrivateContactUpsertArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ShopPrivateContacts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactCountArgs} args - Arguments to filter ShopPrivateContacts to count.
+     * @example
+     * // Count the number of ShopPrivateContacts
+     * const count = await prisma.shopPrivateContact.count({
+     *   where: {
+     *     // ... the filter for the ShopPrivateContacts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ShopPrivateContactCountArgs>(
+      args?: Subset<T, ShopPrivateContactCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ShopPrivateContactCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ShopPrivateContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ShopPrivateContactAggregateArgs>(args: Subset<T, ShopPrivateContactAggregateArgs>): Prisma.PrismaPromise<GetShopPrivateContactAggregateType<T>>
+
+    /**
+     * Group by ShopPrivateContact.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopPrivateContactGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ShopPrivateContactGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ShopPrivateContactGroupByArgs['orderBy'] }
+        : { orderBy?: ShopPrivateContactGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ShopPrivateContactGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShopPrivateContactGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ShopPrivateContact model
+   */
+  readonly fields: ShopPrivateContactFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ShopPrivateContact.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ShopPrivateContactClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shop<T extends ShopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShopDefaultArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ShopPrivateContact model
+   */
+  interface ShopPrivateContactFieldRefs {
+    readonly id: FieldRef<"ShopPrivateContact", 'String'>
+    readonly shopId: FieldRef<"ShopPrivateContact", 'String'>
+    readonly name: FieldRef<"ShopPrivateContact", 'String'>
+    readonly email: FieldRef<"ShopPrivateContact", 'String'>
+    readonly phone: FieldRef<"ShopPrivateContact", 'String'>
+    readonly notes: FieldRef<"ShopPrivateContact", 'String'>
+    readonly updatedById: FieldRef<"ShopPrivateContact", 'String'>
+    readonly createdAt: FieldRef<"ShopPrivateContact", 'DateTime'>
+    readonly updatedAt: FieldRef<"ShopPrivateContact", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ShopPrivateContact findUnique
+   */
+  export type ShopPrivateContactFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact findUniqueOrThrow
+   */
+  export type ShopPrivateContactFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact findFirst
+   */
+  export type ShopPrivateContactFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopPrivateContacts.
+     */
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact findFirstOrThrow
+   */
+  export type ShopPrivateContactFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContact to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopPrivateContacts.
+     */
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact findMany
+   */
+  export type ShopPrivateContactFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopPrivateContacts to fetch.
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopPrivateContacts to fetch.
+     */
+    orderBy?: ShopPrivateContactOrderByWithRelationInput | ShopPrivateContactOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ShopPrivateContacts.
+     */
+    cursor?: ShopPrivateContactWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopPrivateContacts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopPrivateContacts.
+     */
+    skip?: number
+    distinct?: ShopPrivateContactScalarFieldEnum | ShopPrivateContactScalarFieldEnum[]
+  }
+
+  /**
+   * ShopPrivateContact create
+   */
+  export type ShopPrivateContactCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ShopPrivateContact.
+     */
+    data: XOR<ShopPrivateContactCreateInput, ShopPrivateContactUncheckedCreateInput>
+  }
+
+  /**
+   * ShopPrivateContact createMany
+   */
+  export type ShopPrivateContactCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ShopPrivateContacts.
+     */
+    data: ShopPrivateContactCreateManyInput | ShopPrivateContactCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ShopPrivateContact createManyAndReturn
+   */
+  export type ShopPrivateContactCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * The data used to create many ShopPrivateContacts.
+     */
+    data: ShopPrivateContactCreateManyInput | ShopPrivateContactCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopPrivateContact update
+   */
+  export type ShopPrivateContactUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ShopPrivateContact.
+     */
+    data: XOR<ShopPrivateContactUpdateInput, ShopPrivateContactUncheckedUpdateInput>
+    /**
+     * Choose, which ShopPrivateContact to update.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact updateMany
+   */
+  export type ShopPrivateContactUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ShopPrivateContacts.
+     */
+    data: XOR<ShopPrivateContactUpdateManyMutationInput, ShopPrivateContactUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopPrivateContacts to update
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopPrivateContact updateManyAndReturn
+   */
+  export type ShopPrivateContactUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * The data used to update ShopPrivateContacts.
+     */
+    data: XOR<ShopPrivateContactUpdateManyMutationInput, ShopPrivateContactUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopPrivateContacts to update
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopPrivateContact upsert
+   */
+  export type ShopPrivateContactUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ShopPrivateContact to update in case it exists.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+    /**
+     * In case the ShopPrivateContact found by the `where` argument doesn't exist, create a new ShopPrivateContact with this data.
+     */
+    create: XOR<ShopPrivateContactCreateInput, ShopPrivateContactUncheckedCreateInput>
+    /**
+     * In case the ShopPrivateContact was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ShopPrivateContactUpdateInput, ShopPrivateContactUncheckedUpdateInput>
+  }
+
+  /**
+   * ShopPrivateContact delete
+   */
+  export type ShopPrivateContactDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
+    /**
+     * Filter which ShopPrivateContact to delete.
+     */
+    where: ShopPrivateContactWhereUniqueInput
+  }
+
+  /**
+   * ShopPrivateContact deleteMany
+   */
+  export type ShopPrivateContactDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopPrivateContacts to delete
+     */
+    where?: ShopPrivateContactWhereInput
+    /**
+     * Limit how many ShopPrivateContacts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopPrivateContact without action
+   */
+  export type ShopPrivateContactDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopPrivateContact
+     */
+    select?: ShopPrivateContactSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopPrivateContact
+     */
+    omit?: ShopPrivateContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopPrivateContactInclude<ExtArgs> | null
   }
 
 
@@ -72486,6 +76237,41 @@ export namespace Prisma {
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+  export const SiteSettingsScalarFieldEnum: {
+    id: 'id',
+    siteName: 'siteName',
+    alternateNames: 'alternateNames',
+    tagline: 'tagline',
+    defaultTitle: 'defaultTitle',
+    defaultDescription: 'defaultDescription',
+    defaultOgImage: 'defaultOgImage',
+    logo: 'logo',
+    contactEmail: 'contactEmail',
+    socialLinks: 'socialLinks',
+    twitterHandle: 'twitterHandle',
+    googleVerification: 'googleVerification',
+    bingVerification: 'bingVerification',
+    allowAiCrawlers: 'allowAiCrawlers',
+    llmsIntro: 'llmsIntro',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
+
+
+  export const PageSeoScalarFieldEnum: {
+    id: 'id',
+    path: 'path',
+    title: 'title',
+    description: 'description',
+    ogImage: 'ogImage',
+    noIndex: 'noIndex',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PageSeoScalarFieldEnum = (typeof PageSeoScalarFieldEnum)[keyof typeof PageSeoScalarFieldEnum]
+
+
   export const ShopScalarFieldEnum: {
     id: 'id',
     ownerName: 'ownerName',
@@ -72503,6 +76289,13 @@ export namespace Prisma {
     attributeTags: 'attributeTags',
     name: 'name',
     isPublic: 'isPublic',
+    slug: 'slug',
+    previousSlugs: 'previousSlugs',
+    socialLinks: 'socialLinks',
+    seoTitle: 'seoTitle',
+    seoDescription: 'seoDescription',
+    seoImage: 'seoImage',
+    seoNoIndex: 'seoNoIndex',
     syncPlatform: 'syncPlatform',
     syncEnabled: 'syncEnabled',
     syncUrl: 'syncUrl',
@@ -72522,10 +76315,29 @@ export namespace Prisma {
     zip: 'zip',
     country: 'country',
     shopId: 'shopId',
-    street: 'street'
+    street: 'street',
+    latitude: 'latitude',
+    longitude: 'longitude',
+    geocodeQuery: 'geocodeQuery',
+    geocodedAt: 'geocodedAt'
   };
 
   export type ShopAddressScalarFieldEnum = (typeof ShopAddressScalarFieldEnum)[keyof typeof ShopAddressScalarFieldEnum]
+
+
+  export const ShopPrivateContactScalarFieldEnum: {
+    id: 'id',
+    shopId: 'shopId',
+    name: 'name',
+    email: 'email',
+    phone: 'phone',
+    notes: 'notes',
+    updatedById: 'updatedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ShopPrivateContactScalarFieldEnum = (typeof ShopPrivateContactScalarFieldEnum)[keyof typeof ShopPrivateContactScalarFieldEnum]
 
 
   export const MemberScalarFieldEnum: {
@@ -73408,6 +77220,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'MemberRole'
    */
   export type EnumMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MemberRole'>
@@ -73432,20 +77258,6 @@ export namespace Prisma {
    * Reference to a field of type 'ChannelType[]'
    */
   export type ListEnumChannelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -74700,6 +78512,175 @@ export namespace Prisma {
     manualFields?: StringNullableListFilter<"Product">
   }
 
+  export type SiteSettingsWhereInput = {
+    AND?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    OR?: SiteSettingsWhereInput[]
+    NOT?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    id?: StringFilter<"SiteSettings"> | string
+    siteName?: StringFilter<"SiteSettings"> | string
+    alternateNames?: StringNullableListFilter<"SiteSettings">
+    tagline?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultTitle?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultDescription?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultOgImage?: StringNullableFilter<"SiteSettings"> | string | null
+    logo?: StringNullableFilter<"SiteSettings"> | string | null
+    contactEmail?: StringNullableFilter<"SiteSettings"> | string | null
+    socialLinks?: StringNullableListFilter<"SiteSettings">
+    twitterHandle?: StringNullableFilter<"SiteSettings"> | string | null
+    googleVerification?: StringNullableFilter<"SiteSettings"> | string | null
+    bingVerification?: StringNullableFilter<"SiteSettings"> | string | null
+    allowAiCrawlers?: BoolFilter<"SiteSettings"> | boolean
+    llmsIntro?: StringNullableFilter<"SiteSettings"> | string | null
+    updatedAt?: DateTimeFilter<"SiteSettings"> | Date | string
+  }
+
+  export type SiteSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    alternateNames?: SortOrder
+    tagline?: SortOrderInput | SortOrder
+    defaultTitle?: SortOrderInput | SortOrder
+    defaultDescription?: SortOrderInput | SortOrder
+    defaultOgImage?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    contactEmail?: SortOrderInput | SortOrder
+    socialLinks?: SortOrder
+    twitterHandle?: SortOrderInput | SortOrder
+    googleVerification?: SortOrderInput | SortOrder
+    bingVerification?: SortOrderInput | SortOrder
+    allowAiCrawlers?: SortOrder
+    llmsIntro?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    OR?: SiteSettingsWhereInput[]
+    NOT?: SiteSettingsWhereInput | SiteSettingsWhereInput[]
+    siteName?: StringFilter<"SiteSettings"> | string
+    alternateNames?: StringNullableListFilter<"SiteSettings">
+    tagline?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultTitle?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultDescription?: StringNullableFilter<"SiteSettings"> | string | null
+    defaultOgImage?: StringNullableFilter<"SiteSettings"> | string | null
+    logo?: StringNullableFilter<"SiteSettings"> | string | null
+    contactEmail?: StringNullableFilter<"SiteSettings"> | string | null
+    socialLinks?: StringNullableListFilter<"SiteSettings">
+    twitterHandle?: StringNullableFilter<"SiteSettings"> | string | null
+    googleVerification?: StringNullableFilter<"SiteSettings"> | string | null
+    bingVerification?: StringNullableFilter<"SiteSettings"> | string | null
+    allowAiCrawlers?: BoolFilter<"SiteSettings"> | boolean
+    llmsIntro?: StringNullableFilter<"SiteSettings"> | string | null
+    updatedAt?: DateTimeFilter<"SiteSettings"> | Date | string
+  }, "id">
+
+  export type SiteSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    alternateNames?: SortOrder
+    tagline?: SortOrderInput | SortOrder
+    defaultTitle?: SortOrderInput | SortOrder
+    defaultDescription?: SortOrderInput | SortOrder
+    defaultOgImage?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    contactEmail?: SortOrderInput | SortOrder
+    socialLinks?: SortOrder
+    twitterHandle?: SortOrderInput | SortOrder
+    googleVerification?: SortOrderInput | SortOrder
+    bingVerification?: SortOrderInput | SortOrder
+    allowAiCrawlers?: SortOrder
+    llmsIntro?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: SiteSettingsCountOrderByAggregateInput
+    _max?: SiteSettingsMaxOrderByAggregateInput
+    _min?: SiteSettingsMinOrderByAggregateInput
+  }
+
+  export type SiteSettingsScalarWhereWithAggregatesInput = {
+    AND?: SiteSettingsScalarWhereWithAggregatesInput | SiteSettingsScalarWhereWithAggregatesInput[]
+    OR?: SiteSettingsScalarWhereWithAggregatesInput[]
+    NOT?: SiteSettingsScalarWhereWithAggregatesInput | SiteSettingsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SiteSettings"> | string
+    siteName?: StringWithAggregatesFilter<"SiteSettings"> | string
+    alternateNames?: StringNullableListFilter<"SiteSettings">
+    tagline?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    defaultTitle?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    defaultDescription?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    defaultOgImage?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    logo?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    contactEmail?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    socialLinks?: StringNullableListFilter<"SiteSettings">
+    twitterHandle?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    googleVerification?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    bingVerification?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    allowAiCrawlers?: BoolWithAggregatesFilter<"SiteSettings"> | boolean
+    llmsIntro?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"SiteSettings"> | Date | string
+  }
+
+  export type PageSeoWhereInput = {
+    AND?: PageSeoWhereInput | PageSeoWhereInput[]
+    OR?: PageSeoWhereInput[]
+    NOT?: PageSeoWhereInput | PageSeoWhereInput[]
+    id?: StringFilter<"PageSeo"> | string
+    path?: StringFilter<"PageSeo"> | string
+    title?: StringNullableFilter<"PageSeo"> | string | null
+    description?: StringNullableFilter<"PageSeo"> | string | null
+    ogImage?: StringNullableFilter<"PageSeo"> | string | null
+    noIndex?: BoolFilter<"PageSeo"> | boolean
+    updatedAt?: DateTimeFilter<"PageSeo"> | Date | string
+  }
+
+  export type PageSeoOrderByWithRelationInput = {
+    id?: SortOrder
+    path?: SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    ogImage?: SortOrderInput | SortOrder
+    noIndex?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PageSeoWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    path?: string
+    AND?: PageSeoWhereInput | PageSeoWhereInput[]
+    OR?: PageSeoWhereInput[]
+    NOT?: PageSeoWhereInput | PageSeoWhereInput[]
+    title?: StringNullableFilter<"PageSeo"> | string | null
+    description?: StringNullableFilter<"PageSeo"> | string | null
+    ogImage?: StringNullableFilter<"PageSeo"> | string | null
+    noIndex?: BoolFilter<"PageSeo"> | boolean
+    updatedAt?: DateTimeFilter<"PageSeo"> | Date | string
+  }, "id" | "path">
+
+  export type PageSeoOrderByWithAggregationInput = {
+    id?: SortOrder
+    path?: SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    ogImage?: SortOrderInput | SortOrder
+    noIndex?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PageSeoCountOrderByAggregateInput
+    _max?: PageSeoMaxOrderByAggregateInput
+    _min?: PageSeoMinOrderByAggregateInput
+  }
+
+  export type PageSeoScalarWhereWithAggregatesInput = {
+    AND?: PageSeoScalarWhereWithAggregatesInput | PageSeoScalarWhereWithAggregatesInput[]
+    OR?: PageSeoScalarWhereWithAggregatesInput[]
+    NOT?: PageSeoScalarWhereWithAggregatesInput | PageSeoScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PageSeo"> | string
+    path?: StringWithAggregatesFilter<"PageSeo"> | string
+    title?: StringNullableWithAggregatesFilter<"PageSeo"> | string | null
+    description?: StringNullableWithAggregatesFilter<"PageSeo"> | string | null
+    ogImage?: StringNullableWithAggregatesFilter<"PageSeo"> | string | null
+    noIndex?: BoolWithAggregatesFilter<"PageSeo"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"PageSeo"> | Date | string
+  }
+
   export type ShopWhereInput = {
     AND?: ShopWhereInput | ShopWhereInput[]
     OR?: ShopWhereInput[]
@@ -74720,6 +78701,13 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    slug?: StringNullableFilter<"Shop"> | string | null
+    previousSlugs?: StringNullableListFilter<"Shop">
+    socialLinks?: StringNullableListFilter<"Shop">
+    seoTitle?: StringNullableFilter<"Shop"> | string | null
+    seoDescription?: StringNullableFilter<"Shop"> | string | null
+    seoImage?: StringNullableFilter<"Shop"> | string | null
+    seoNoIndex?: BoolFilter<"Shop"> | boolean
     syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFilter<"Shop"> | boolean
     syncUrl?: StringNullableFilter<"Shop"> | string | null
@@ -74733,6 +78721,7 @@ export namespace Prisma {
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
+    privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -74752,6 +78741,13 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    slug?: SortOrderInput | SortOrder
+    previousSlugs?: SortOrder
+    socialLinks?: SortOrder
+    seoTitle?: SortOrderInput | SortOrder
+    seoDescription?: SortOrderInput | SortOrder
+    seoImage?: SortOrderInput | SortOrder
+    seoNoIndex?: SortOrder
     syncPlatform?: SortOrderInput | SortOrder
     syncEnabled?: SortOrder
     syncUrl?: SortOrderInput | SortOrder
@@ -74765,10 +78761,12 @@ export namespace Prisma {
     address?: ShopAddressOrderByWithRelationInput
     websiteProvision?: WebsiteProvisionOrderByWithRelationInput
     syncRuns?: ProductSyncRunOrderByRelationAggregateInput
+    privateContact?: ShopPrivateContactOrderByWithRelationInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    slug?: string
     AND?: ShopWhereInput | ShopWhereInput[]
     OR?: ShopWhereInput[]
     NOT?: ShopWhereInput | ShopWhereInput[]
@@ -74787,6 +78785,12 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    previousSlugs?: StringNullableListFilter<"Shop">
+    socialLinks?: StringNullableListFilter<"Shop">
+    seoTitle?: StringNullableFilter<"Shop"> | string | null
+    seoDescription?: StringNullableFilter<"Shop"> | string | null
+    seoImage?: StringNullableFilter<"Shop"> | string | null
+    seoNoIndex?: BoolFilter<"Shop"> | boolean
     syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFilter<"Shop"> | boolean
     syncUrl?: StringNullableFilter<"Shop"> | string | null
@@ -74800,7 +78804,8 @@ export namespace Prisma {
     address?: XOR<ShopAddressNullableScalarRelationFilter, ShopAddressWhereInput> | null
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
-  }, "id">
+    privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
+  }, "id" | "slug">
 
   export type ShopOrderByWithAggregationInput = {
     id?: SortOrder
@@ -74819,6 +78824,13 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    slug?: SortOrderInput | SortOrder
+    previousSlugs?: SortOrder
+    socialLinks?: SortOrder
+    seoTitle?: SortOrderInput | SortOrder
+    seoDescription?: SortOrderInput | SortOrder
+    seoImage?: SortOrderInput | SortOrder
+    seoNoIndex?: SortOrder
     syncPlatform?: SortOrderInput | SortOrder
     syncEnabled?: SortOrder
     syncUrl?: SortOrderInput | SortOrder
@@ -74849,6 +78861,13 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringWithAggregatesFilter<"Shop"> | string
     isPublic?: BoolWithAggregatesFilter<"Shop"> | boolean
+    slug?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    previousSlugs?: StringNullableListFilter<"Shop">
+    socialLinks?: StringNullableListFilter<"Shop">
+    seoTitle?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    seoDescription?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    seoImage?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    seoNoIndex?: BoolWithAggregatesFilter<"Shop"> | boolean
     syncPlatform?: EnumProductScrapeMethodNullableWithAggregatesFilter<"Shop"> | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolWithAggregatesFilter<"Shop"> | boolean
     syncUrl?: StringNullableWithAggregatesFilter<"Shop"> | string | null
@@ -74869,6 +78888,10 @@ export namespace Prisma {
     country?: StringNullableFilter<"ShopAddress"> | string | null
     shopId?: StringNullableFilter<"ShopAddress"> | string | null
     street?: StringNullableFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }
 
@@ -74882,6 +78905,10 @@ export namespace Prisma {
     country?: SortOrderInput | SortOrder
     shopId?: SortOrderInput | SortOrder
     street?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    geocodeQuery?: SortOrderInput | SortOrder
+    geocodedAt?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
   }
 
@@ -74898,6 +78925,10 @@ export namespace Prisma {
     zip?: StringNullableFilter<"ShopAddress"> | string | null
     country?: StringNullableFilter<"ShopAddress"> | string | null
     street?: StringNullableFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableFilter<"ShopAddress"> | Date | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
   }, "id" | "shopId">
 
@@ -74911,9 +78942,15 @@ export namespace Prisma {
     country?: SortOrderInput | SortOrder
     shopId?: SortOrderInput | SortOrder
     street?: SortOrderInput | SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
+    geocodeQuery?: SortOrderInput | SortOrder
+    geocodedAt?: SortOrderInput | SortOrder
     _count?: ShopAddressCountOrderByAggregateInput
+    _avg?: ShopAddressAvgOrderByAggregateInput
     _max?: ShopAddressMaxOrderByAggregateInput
     _min?: ShopAddressMinOrderByAggregateInput
+    _sum?: ShopAddressSumOrderByAggregateInput
   }
 
   export type ShopAddressScalarWhereWithAggregatesInput = {
@@ -74929,6 +78966,85 @@ export namespace Prisma {
     country?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     shopId?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
     street?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
+    latitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"ShopAddress"> | number | null
+    geocodeQuery?: StringNullableWithAggregatesFilter<"ShopAddress"> | string | null
+    geocodedAt?: DateTimeNullableWithAggregatesFilter<"ShopAddress"> | Date | string | null
+  }
+
+  export type ShopPrivateContactWhereInput = {
+    AND?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    OR?: ShopPrivateContactWhereInput[]
+    NOT?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    id?: StringFilter<"ShopPrivateContact"> | string
+    shopId?: StringFilter<"ShopPrivateContact"> | string
+    name?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }
+
+  export type ShopPrivateContactOrderByWithRelationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shop?: ShopOrderByWithRelationInput
+  }
+
+  export type ShopPrivateContactWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    shopId?: string
+    AND?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    OR?: ShopPrivateContactWhereInput[]
+    NOT?: ShopPrivateContactWhereInput | ShopPrivateContactWhereInput[]
+    name?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeFilter<"ShopPrivateContact"> | Date | string
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }, "id" | "shopId">
+
+  export type ShopPrivateContactOrderByWithAggregationInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ShopPrivateContactCountOrderByAggregateInput
+    _max?: ShopPrivateContactMaxOrderByAggregateInput
+    _min?: ShopPrivateContactMinOrderByAggregateInput
+  }
+
+  export type ShopPrivateContactScalarWhereWithAggregatesInput = {
+    AND?: ShopPrivateContactScalarWhereWithAggregatesInput | ShopPrivateContactScalarWhereWithAggregatesInput[]
+    OR?: ShopPrivateContactScalarWhereWithAggregatesInput[]
+    NOT?: ShopPrivateContactScalarWhereWithAggregatesInput | ShopPrivateContactScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ShopPrivateContact"> | string
+    shopId?: StringWithAggregatesFilter<"ShopPrivateContact"> | string
+    name?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    email?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    updatedById?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
   }
 
   export type MemberWhereInput = {
@@ -79607,6 +83723,209 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
   }
 
+  export type SiteSettingsCreateInput = {
+    id?: string
+    siteName?: string
+    alternateNames?: SiteSettingsCreatealternateNamesInput | string[]
+    tagline?: string | null
+    defaultTitle?: string | null
+    defaultDescription?: string | null
+    defaultOgImage?: string | null
+    logo?: string | null
+    contactEmail?: string | null
+    socialLinks?: SiteSettingsCreatesocialLinksInput | string[]
+    twitterHandle?: string | null
+    googleVerification?: string | null
+    bingVerification?: string | null
+    allowAiCrawlers?: boolean
+    llmsIntro?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUncheckedCreateInput = {
+    id?: string
+    siteName?: string
+    alternateNames?: SiteSettingsCreatealternateNamesInput | string[]
+    tagline?: string | null
+    defaultTitle?: string | null
+    defaultDescription?: string | null
+    defaultOgImage?: string | null
+    logo?: string | null
+    contactEmail?: string | null
+    socialLinks?: SiteSettingsCreatesocialLinksInput | string[]
+    twitterHandle?: string | null
+    googleVerification?: string | null
+    bingVerification?: string | null
+    allowAiCrawlers?: boolean
+    llmsIntro?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    siteName?: StringFieldUpdateOperationsInput | string
+    alternateNames?: SiteSettingsUpdatealternateNamesInput | string[]
+    tagline?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultOgImage?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    socialLinks?: SiteSettingsUpdatesocialLinksInput | string[]
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    googleVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    bingVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    allowAiCrawlers?: BoolFieldUpdateOperationsInput | boolean
+    llmsIntro?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    siteName?: StringFieldUpdateOperationsInput | string
+    alternateNames?: SiteSettingsUpdatealternateNamesInput | string[]
+    tagline?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultOgImage?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    socialLinks?: SiteSettingsUpdatesocialLinksInput | string[]
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    googleVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    bingVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    allowAiCrawlers?: BoolFieldUpdateOperationsInput | boolean
+    llmsIntro?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsCreateManyInput = {
+    id?: string
+    siteName?: string
+    alternateNames?: SiteSettingsCreatealternateNamesInput | string[]
+    tagline?: string | null
+    defaultTitle?: string | null
+    defaultDescription?: string | null
+    defaultOgImage?: string | null
+    logo?: string | null
+    contactEmail?: string | null
+    socialLinks?: SiteSettingsCreatesocialLinksInput | string[]
+    twitterHandle?: string | null
+    googleVerification?: string | null
+    bingVerification?: string | null
+    allowAiCrawlers?: boolean
+    llmsIntro?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type SiteSettingsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    siteName?: StringFieldUpdateOperationsInput | string
+    alternateNames?: SiteSettingsUpdatealternateNamesInput | string[]
+    tagline?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultOgImage?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    socialLinks?: SiteSettingsUpdatesocialLinksInput | string[]
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    googleVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    bingVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    allowAiCrawlers?: BoolFieldUpdateOperationsInput | boolean
+    llmsIntro?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SiteSettingsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    siteName?: StringFieldUpdateOperationsInput | string
+    alternateNames?: SiteSettingsUpdatealternateNamesInput | string[]
+    tagline?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultOgImage?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    socialLinks?: SiteSettingsUpdatesocialLinksInput | string[]
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    googleVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    bingVerification?: NullableStringFieldUpdateOperationsInput | string | null
+    allowAiCrawlers?: BoolFieldUpdateOperationsInput | boolean
+    llmsIntro?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PageSeoCreateInput = {
+    id?: string
+    path: string
+    title?: string | null
+    description?: string | null
+    ogImage?: string | null
+    noIndex?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type PageSeoUncheckedCreateInput = {
+    id?: string
+    path: string
+    title?: string | null
+    description?: string | null
+    ogImage?: string | null
+    noIndex?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type PageSeoUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    path?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ogImage?: NullableStringFieldUpdateOperationsInput | string | null
+    noIndex?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PageSeoUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    path?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ogImage?: NullableStringFieldUpdateOperationsInput | string | null
+    noIndex?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PageSeoCreateManyInput = {
+    id?: string
+    path: string
+    title?: string | null
+    description?: string | null
+    ogImage?: string | null
+    noIndex?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type PageSeoUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    path?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ogImage?: NullableStringFieldUpdateOperationsInput | string | null
+    noIndex?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PageSeoUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    path?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ogImage?: NullableStringFieldUpdateOperationsInput | string | null
+    noIndex?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ShopCreateInput = {
     id?: string
     ownerName: string
@@ -79623,6 +83942,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -79636,6 +83962,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -79655,6 +83982,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -79667,6 +84001,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -79685,6 +84020,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -79698,6 +84040,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -79717,6 +84060,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -79729,6 +84079,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -79748,6 +84099,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -79771,6 +84129,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -79795,6 +84160,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -79811,6 +84183,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
     shop?: ShopCreateNestedOneWithoutAddressInput
   }
 
@@ -79824,6 +84200,10 @@ export namespace Prisma {
     country?: string | null
     shopId?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUpdateInput = {
@@ -79835,6 +84215,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     shop?: ShopUpdateOneWithoutAddressNestedInput
   }
 
@@ -79848,6 +84232,10 @@ export namespace Prisma {
     country?: NullableStringFieldUpdateOperationsInput | string | null
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressCreateManyInput = {
@@ -79860,6 +84248,10 @@ export namespace Prisma {
     country?: string | null
     shopId?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUpdateManyMutationInput = {
@@ -79871,6 +84263,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressUncheckedUpdateManyInput = {
@@ -79883,6 +84279,93 @@ export namespace Prisma {
     country?: NullableStringFieldUpdateOperationsInput | string | null
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopPrivateContactCreateInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shop: ShopCreateNestedOneWithoutPrivateContactInput
+  }
+
+  export type ShopPrivateContactUncheckedCreateInput = {
+    id?: string
+    shopId: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shop?: ShopUpdateOneRequiredWithoutPrivateContactNestedInput
+  }
+
+  export type ShopPrivateContactUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactCreateManyInput = {
+    id?: string
+    shopId: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MemberCreateInput = {
@@ -84936,6 +89419,89 @@ export namespace Prisma {
     priceInCents?: SortOrder
   }
 
+  export type SiteSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    alternateNames?: SortOrder
+    tagline?: SortOrder
+    defaultTitle?: SortOrder
+    defaultDescription?: SortOrder
+    defaultOgImage?: SortOrder
+    logo?: SortOrder
+    contactEmail?: SortOrder
+    socialLinks?: SortOrder
+    twitterHandle?: SortOrder
+    googleVerification?: SortOrder
+    bingVerification?: SortOrder
+    allowAiCrawlers?: SortOrder
+    llmsIntro?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    tagline?: SortOrder
+    defaultTitle?: SortOrder
+    defaultDescription?: SortOrder
+    defaultOgImage?: SortOrder
+    logo?: SortOrder
+    contactEmail?: SortOrder
+    twitterHandle?: SortOrder
+    googleVerification?: SortOrder
+    bingVerification?: SortOrder
+    allowAiCrawlers?: SortOrder
+    llmsIntro?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SiteSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    tagline?: SortOrder
+    defaultTitle?: SortOrder
+    defaultDescription?: SortOrder
+    defaultOgImage?: SortOrder
+    logo?: SortOrder
+    contactEmail?: SortOrder
+    twitterHandle?: SortOrder
+    googleVerification?: SortOrder
+    bingVerification?: SortOrder
+    allowAiCrawlers?: SortOrder
+    llmsIntro?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PageSeoCountOrderByAggregateInput = {
+    id?: SortOrder
+    path?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    ogImage?: SortOrder
+    noIndex?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PageSeoMaxOrderByAggregateInput = {
+    id?: SortOrder
+    path?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    ogImage?: SortOrder
+    noIndex?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PageSeoMinOrderByAggregateInput = {
+    id?: SortOrder
+    path?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    ogImage?: SortOrder
+    noIndex?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type EnumProductScrapeMethodNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.ProductScrapeMethod | EnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
     in?: $Enums.ProductScrapeMethod[] | ListEnumProductScrapeMethodFieldRefInput<$PrismaModel> | null
@@ -84971,6 +89537,11 @@ export namespace Prisma {
     none?: ProductSyncRunWhereInput
   }
 
+  export type ShopPrivateContactNullableScalarRelationFilter = {
+    is?: ShopPrivateContactWhereInput | null
+    isNot?: ShopPrivateContactWhereInput | null
+  }
+
   export type EventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -85000,6 +89571,13 @@ export namespace Prisma {
     attributeTags?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    slug?: SortOrder
+    previousSlugs?: SortOrder
+    socialLinks?: SortOrder
+    seoTitle?: SortOrder
+    seoDescription?: SortOrder
+    seoImage?: SortOrder
+    seoNoIndex?: SortOrder
     syncPlatform?: SortOrder
     syncEnabled?: SortOrder
     syncUrl?: SortOrder
@@ -85023,6 +89601,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    slug?: SortOrder
+    seoTitle?: SortOrder
+    seoDescription?: SortOrder
+    seoImage?: SortOrder
+    seoNoIndex?: SortOrder
     syncPlatform?: SortOrder
     syncEnabled?: SortOrder
     syncUrl?: SortOrder
@@ -85046,6 +89629,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
     name?: SortOrder
     isPublic?: SortOrder
+    slug?: SortOrder
+    seoTitle?: SortOrder
+    seoDescription?: SortOrder
+    seoImage?: SortOrder
+    seoNoIndex?: SortOrder
     syncPlatform?: SortOrder
     syncEnabled?: SortOrder
     syncUrl?: SortOrder
@@ -85063,6 +89651,17 @@ export namespace Prisma {
     _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type ShopAddressCountOrderByAggregateInput = {
     id?: SortOrder
     address?: SortOrder
@@ -85073,6 +89672,15 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
+  }
+
+  export type ShopAddressAvgOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
   }
 
   export type ShopAddressMaxOrderByAggregateInput = {
@@ -85085,6 +89693,10 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
   }
 
   export type ShopAddressMinOrderByAggregateInput = {
@@ -85097,6 +89709,67 @@ export namespace Prisma {
     country?: SortOrder
     shopId?: SortOrder
     street?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    geocodeQuery?: SortOrder
+    geocodedAt?: SortOrder
+  }
+
+  export type ShopAddressSumOrderByAggregateInput = {
+    latitude?: SortOrder
+    longitude?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type ShopPrivateContactCountOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShopPrivateContactMaxOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ShopPrivateContactMinOrderByAggregateInput = {
+    id?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    notes?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumMemberRoleFilter<$PrismaModel = never> = {
@@ -86094,17 +90767,6 @@ export namespace Prisma {
     _max?: NestedEnumRouteStatusFilter<$PrismaModel>
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type RouteScalarRelationFilter = {
     is?: RouteWhereInput
     isNot?: RouteWhereInput
@@ -86169,22 +90831,6 @@ export namespace Prisma {
     distance?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type OptimizedRoutePathScalarRelationFilter = {
@@ -88600,7 +93246,33 @@ export namespace Prisma {
     deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
   }
 
+  export type SiteSettingsCreatealternateNamesInput = {
+    set: string[]
+  }
+
+  export type SiteSettingsCreatesocialLinksInput = {
+    set: string[]
+  }
+
+  export type SiteSettingsUpdatealternateNamesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type SiteSettingsUpdatesocialLinksInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
   export type ShopCreateattributeTagsInput = {
+    set: string[]
+  }
+
+  export type ShopCreatepreviousSlugsInput = {
+    set: string[]
+  }
+
+  export type ShopCreatesocialLinksInput = {
     set: string[]
   }
 
@@ -88657,6 +93329,12 @@ export namespace Prisma {
     connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
   }
 
+  export type ShopPrivateContactCreateNestedOneWithoutShopInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    connect?: ShopPrivateContactWhereUniqueInput
+  }
+
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -88704,7 +93382,23 @@ export namespace Prisma {
     connect?: ProductSyncRunWhereUniqueInput | ProductSyncRunWhereUniqueInput[]
   }
 
+  export type ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    connect?: ShopPrivateContactWhereUniqueInput
+  }
+
   export type ShopUpdateattributeTagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatepreviousSlugsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatesocialLinksInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -88811,6 +93505,16 @@ export namespace Prisma {
     deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
   }
 
+  export type ShopPrivateContactUpdateOneWithoutShopNestedInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    upsert?: ShopPrivateContactUpsertWithoutShopInput
+    disconnect?: ShopPrivateContactWhereInput | boolean
+    delete?: ShopPrivateContactWhereInput | boolean
+    connect?: ShopPrivateContactWhereUniqueInput
+    update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -88901,10 +93605,28 @@ export namespace Prisma {
     deleteMany?: ProductSyncRunScalarWhereInput | ProductSyncRunScalarWhereInput[]
   }
 
+  export type ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput = {
+    create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
+    upsert?: ShopPrivateContactUpsertWithoutShopInput
+    disconnect?: ShopPrivateContactWhereInput | boolean
+    delete?: ShopPrivateContactWhereInput | boolean
+    connect?: ShopPrivateContactWhereUniqueInput
+    update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
   export type ShopCreateNestedOneWithoutAddressInput = {
     create?: XOR<ShopCreateWithoutAddressInput, ShopUncheckedCreateWithoutAddressInput>
     connectOrCreate?: ShopCreateOrConnectWithoutAddressInput
     connect?: ShopWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type ShopUpdateOneWithoutAddressNestedInput = {
@@ -88915,6 +93637,20 @@ export namespace Prisma {
     delete?: ShopWhereInput | boolean
     connect?: ShopWhereUniqueInput
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutAddressInput, ShopUpdateWithoutAddressInput>, ShopUncheckedUpdateWithoutAddressInput>
+  }
+
+  export type ShopCreateNestedOneWithoutPrivateContactInput = {
+    create?: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutPrivateContactInput
+    connect?: ShopWhereUniqueInput
+  }
+
+  export type ShopUpdateOneRequiredWithoutPrivateContactNestedInput = {
+    create?: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutPrivateContactInput
+    upsert?: ShopUpsertWithoutPrivateContactInput
+    connect?: ShopWhereUniqueInput
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutPrivateContactInput, ShopUpdateWithoutPrivateContactInput>, ShopUncheckedUpdateWithoutPrivateContactInput>
   }
 
   export type ConversationCreateNestedManyWithoutMemberOneInput = {
@@ -90709,14 +95445,6 @@ export namespace Prisma {
     connectOrCreate?: OptimizedStopCreateOrConnectWithoutRoutePathInput | OptimizedStopCreateOrConnectWithoutRoutePathInput[]
     createMany?: OptimizedStopCreateManyRoutePathInputEnvelope
     connect?: OptimizedStopWhereUniqueInput | OptimizedStopWhereUniqueInput[]
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type RouteUpdateOneRequiredWithoutOptimizedRouteNestedInput = {
@@ -92733,6 +97461,22 @@ export namespace Prisma {
     _max?: NestedEnumProductScrapeMethodNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumMemberRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.MemberRole | EnumMemberRoleFieldRefInput<$PrismaModel>
     in?: $Enums.MemberRole[] | ListEnumMemberRoleFieldRefInput<$PrismaModel>
@@ -92849,22 +97593,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRouteStatusFilter<$PrismaModel>
     _max?: NestedEnumRouteStatusFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumRefinementTypeFilter<$PrismaModel = never> = {
@@ -93368,6 +98096,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -93380,6 +98115,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -93399,6 +98135,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -93410,6 +98153,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -93444,6 +98188,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -93456,6 +98207,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -93475,6 +98227,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -93486,6 +98245,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -95138,6 +99898,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95150,6 +99917,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutInvitesInput = {
@@ -95169,6 +99937,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95180,6 +99955,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutInvitesInput = {
@@ -95291,6 +100067,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95303,6 +100086,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutInvitesInput = {
@@ -95322,6 +100106,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95333,6 +100124,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutSyncRunsInput = {
@@ -95351,6 +100143,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95363,6 +100162,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutSyncRunsInput = {
@@ -95382,6 +100182,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95393,6 +100200,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutSyncRunsInput = {
@@ -95459,6 +100267,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95471,6 +100286,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutSyncRunsInput = {
@@ -95490,6 +100306,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95501,6 +100324,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput = {
@@ -95738,6 +100562,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95750,6 +100581,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -95769,6 +100601,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95780,6 +100619,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -95837,6 +100677,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95849,6 +100696,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -95868,6 +100716,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -95879,6 +100734,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -95913,6 +100769,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95925,6 +100788,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -95944,6 +100808,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -95955,6 +100826,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -96044,6 +100916,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -96056,6 +100935,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -96075,6 +100955,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -96086,6 +100973,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -96382,6 +101270,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressUncheckedCreateWithoutShopInput = {
@@ -96393,6 +101285,10 @@ export namespace Prisma {
     zip?: string | null
     country?: string | null
     street?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    geocodeQuery?: string | null
+    geocodedAt?: Date | string | null
   }
 
   export type ShopAddressCreateOrConnectWithoutShopInput = {
@@ -96525,6 +101421,33 @@ export namespace Prisma {
   export type ProductSyncRunCreateManyShopInputEnvelope = {
     data: ProductSyncRunCreateManyShopInput | ProductSyncRunCreateManyShopInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ShopPrivateContactCreateWithoutShopInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactUncheckedCreateWithoutShopInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    notes?: string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ShopPrivateContactCreateOrConnectWithoutShopInput = {
+    where: ShopPrivateContactWhereUniqueInput
+    create: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
   }
 
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
@@ -96723,6 +101646,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ShopAddressUncheckedUpdateWithoutShopInput = {
@@ -96734,6 +101661,10 @@ export namespace Prisma {
     zip?: NullableStringFieldUpdateOperationsInput | string | null
     country?: NullableStringFieldUpdateOperationsInput | string | null
     street?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    geocodeQuery?: NullableStringFieldUpdateOperationsInput | string | null
+    geocodedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type WebsiteProvisionUpsertWithoutShopInput = {
@@ -96863,6 +101794,39 @@ export namespace Prisma {
     triggeredManually?: BoolFilter<"ProductSyncRun"> | boolean
   }
 
+  export type ShopPrivateContactUpsertWithoutShopInput = {
+    update: XOR<ShopPrivateContactUpdateWithoutShopInput, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+    create: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+    where?: ShopPrivateContactWhereInput
+  }
+
+  export type ShopPrivateContactUpdateToOneWithWhereWithoutShopInput = {
+    where?: ShopPrivateContactWhereInput
+    data: XOR<ShopPrivateContactUpdateWithoutShopInput, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ShopPrivateContactUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopPrivateContactUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ShopCreateWithoutAddressInput = {
     id?: string
     ownerName: string
@@ -96879,6 +101843,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -96891,6 +101862,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -96910,6 +101882,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -96921,6 +101900,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -96955,6 +101935,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -96967,6 +101954,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -96986,6 +101974,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -96995,6 +101990,175 @@ export namespace Prisma {
     products?: ProductUncheckedUpdateManyWithoutShopNestedInput
     services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+  }
+
+  export type ShopCreateWithoutPrivateContactInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopUncheckedCreateWithoutPrivateContactInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    products?: ProductUncheckedCreateNestedManyWithoutShopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
+    address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopCreateOrConnectWithoutPrivateContactInput = {
+    where: ShopWhereUniqueInput
+    create: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+  }
+
+  export type ShopUpsertWithoutPrivateContactInput = {
+    update: XOR<ShopUpdateWithoutPrivateContactInput, ShopUncheckedUpdateWithoutPrivateContactInput>
+    create: XOR<ShopCreateWithoutPrivateContactInput, ShopUncheckedCreateWithoutPrivateContactInput>
+    where?: ShopWhereInput
+  }
+
+  export type ShopUpdateToOneWithWhereWithoutPrivateContactInput = {
+    where?: ShopWhereInput
+    data: XOR<ShopUpdateWithoutPrivateContactInput, ShopUncheckedUpdateWithoutPrivateContactInput>
+  }
+
+  export type ShopUpdateWithoutPrivateContactInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+  }
+
+  export type ShopUncheckedUpdateWithoutPrivateContactInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutShopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
   }
@@ -104502,6 +109666,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -104514,6 +109685,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutShopsInput
     address?: ShopAddressCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -104533,6 +109705,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -104544,6 +109723,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -104649,6 +109829,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104661,6 +109848,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutShopsNestedInput
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -104680,6 +109868,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104691,6 +109886,7 @@ export namespace Prisma {
     invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -105445,6 +110641,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -105457,6 +110660,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -105475,6 +110679,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -105487,6 +110698,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -106195,6 +111407,13 @@ export namespace Prisma {
     attributeTags?: StringNullableListFilter<"Shop">
     name?: StringFilter<"Shop"> | string
     isPublic?: BoolFilter<"Shop"> | boolean
+    slug?: StringNullableFilter<"Shop"> | string | null
+    previousSlugs?: StringNullableListFilter<"Shop">
+    socialLinks?: StringNullableListFilter<"Shop">
+    seoTitle?: StringNullableFilter<"Shop"> | string | null
+    seoDescription?: StringNullableFilter<"Shop"> | string | null
+    seoImage?: StringNullableFilter<"Shop"> | string | null
+    seoNoIndex?: BoolFilter<"Shop"> | boolean
     syncPlatform?: EnumProductScrapeMethodNullableFilter<"Shop"> | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFilter<"Shop"> | boolean
     syncUrl?: StringNullableFilter<"Shop"> | string | null
@@ -109034,6 +114253,13 @@ export namespace Prisma {
     attributeTags?: ShopCreateattributeTagsInput | string[]
     name: string
     isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
     syncPlatform?: $Enums.ProductScrapeMethod | null
     syncEnabled?: boolean
     syncUrl?: string | null
@@ -109502,6 +114728,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -109514,6 +114747,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -109532,6 +114766,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -109544,6 +114785,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {
@@ -109562,6 +114804,13 @@ export namespace Prisma {
     attributeTags?: ShopUpdateattributeTagsInput | string[]
     name?: StringFieldUpdateOperationsInput | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
     syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
     syncEnabled?: BoolFieldUpdateOperationsInput | boolean
     syncUrl?: NullableStringFieldUpdateOperationsInput | string | null

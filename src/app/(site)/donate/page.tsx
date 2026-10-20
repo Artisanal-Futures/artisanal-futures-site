@@ -1,3 +1,5 @@
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
 import { DonateForm } from "./_components/donate-form";
 
 export default async function DonatePage() {
@@ -57,6 +59,11 @@ export default async function DonatePage() {
   );
 }
 
-export const metadata = {
-  title: "Donate to Artisanal Futures",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Donate",
+    description:
+      "Support Artisanal Futures, a platform for artisan communities and worker-owned businesses, with a donation.",
+    path: "/donate",
+  });
+}

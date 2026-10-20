@@ -1,9 +1,14 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Terms of Use",
-  description: "The terms of use for Artisanal Futures",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Terms of Use",
+    description: "The terms of use for Artisanal Futures",
+    path: "/legal/terms-of-use",
+  });
+}
 
 export default function TermsPage() {
   return (

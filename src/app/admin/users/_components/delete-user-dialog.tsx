@@ -140,7 +140,7 @@ export function DeleteUserDialog({
               // Keep the dialog open until the mutation settles.
               e.preventDefault();
               if (!canConfirm) return;
-              deleteUser.mutate({ userId });
+              deleteUser.mutate({ id: userId });
             }}
           >
             {deleteUser.isPending ? "Deleting…" : "Delete user"}

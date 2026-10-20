@@ -11,20 +11,16 @@ export const metadata = {
 };
 
 export default async function AdminPage() {
-  const session = await getSession();
-  const shops = await api.shop.getAll();
+  const [session, shops] = await Promise.all([
+    getSession(),
+    api.shop.getAll(),
+  ]);
   const artisanShop = shops.find((shop) => shop.ownerId === session?.user?.id);
 
   return (
     <>
       <TrailHeader breadcrumbs={[]} />
       <div className="admin-container">
-        {/* <div className="admin-header">
-          <div>
-            <h1>Admin Dashboard</h1>
-            <p>Welcome back {session?.user?.name}</p>
-          </div>
-        </div> */}
         <div className="flex items-center justify-center p-8">
           <DashboardClient
             shops={shops}

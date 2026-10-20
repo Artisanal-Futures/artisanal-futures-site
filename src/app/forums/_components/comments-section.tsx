@@ -1,4 +1,6 @@
-import type { CommentVote, ForumComment, User } from "generated/prisma";
+import type { CommentVote, ForumComment } from "generated/prisma";
+
+import type { PublicUser } from "~/lib/public-user";
 
 import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
@@ -8,13 +10,13 @@ import { CreateComment } from "./create-comment";
 
 type ExtendedComment = ForumComment & {
   votes: CommentVote[];
-  author: Omit<User, "email"> & { email: string | null };
+  author: PublicUser;
   replies: ReplyComment[];
 };
 
 type ReplyComment = ForumComment & {
   votes: CommentVote[];
-  author: Omit<User, "email"> & { email: string | null };
+  author: PublicUser;
 };
 
 type Props = {

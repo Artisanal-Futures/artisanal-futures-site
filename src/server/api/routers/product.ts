@@ -34,26 +34,17 @@ import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 export const productRouter = createTRPCRouter({
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    // Always order by createdAt DESC in the DB query
+    // Admins see every product; artisans only see products for shops they own.
     const products = await ctx.db.product.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { shop: { ownerId: ctx.session.user.id } },
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
 
-    // Map to add full image URLs, but preserve the order from the DB
-    let productsWithFullUrls = products.map(addFullProductImageUrl);
-
-    // If not admin, filter by ownerId, then re-sort by createdAt DESC to ensure order
-    if (ctx.session.user.role !== "ADMIN") {
-      productsWithFullUrls = productsWithFullUrls
-        .filter((product) => product.shop?.ownerId === ctx.session.user.id)
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-    }
-
-    return productsWithFullUrls;
+    return products.map(addFullProductImageUrl);
   }),
 
   get: adminArtisanProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -64,7 +55,7 @@ export const productRouter = createTRPCRouter({
 
     if (!isUserAuthorized) {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "Product does not belong to current user",
       });
     }
@@ -247,7 +238,7 @@ export const productRouter = createTRPCRouter({
       );
       if (!isShopOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
@@ -306,7 +297,7 @@ export const productRouter = createTRPCRouter({
 
         if (!isShopOwner) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: `Shop ${shopId} does not belong to current user`,
           });
         }
@@ -323,12 +314,29 @@ export const productRouter = createTRPCRouter({
           const { tags, ...productData } = product;
           const formattedTags = tags.map((tag) => tag.text);
           if (existingProduct) {
+            // Re-importing refreshes the source data only. Visibility and
+            // featuring are curation flags that a re-import must never reset,
+            // and fields a human has edited by hand (`manualFields`) are kept.
+            const {
+              isPublic: _isPublic,
+              isFeatured: _isFeatured,
+              ...importedData
+            } = productData;
+            const manual = new Set(existingProduct.manualFields);
+            for (const field of SYNCED_FIELDS) {
+              if (manual.has(field)) delete importedData[field];
+            }
             return ctx.db.product.update({
               where: { id: existingProduct.id },
-              data: { ...productData, tags: formattedTags },
+              data: { ...importedData, tags: formattedTags },
             });
           }
 
+          // Featuring is an admin-only curation flag: new products imported by
+          // non-admins always start unfeatured.
+          if (ctx.session.user.role !== "ADMIN") {
+            productData.isFeatured = false;
+          }
           return ctx.db.product.create({
             data: { ...productData, tags: formattedTags },
           });
@@ -402,7 +410,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }
@@ -412,7 +420,7 @@ export const productRouter = createTRPCRouter({
 
         if (!isShopOwner) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: "Shop does not belong to current user",
           });
         }
@@ -492,12 +500,17 @@ export const productRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
 
       const { categoryIds, tags, ...productData } = input;
+
+      // Featuring is an admin-only curation flag.
+      if (ctx.session.user.role !== "ADMIN") {
+        productData.isFeatured = false;
+      }
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
@@ -534,8 +547,22 @@ export const productRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Product does not belong to current user",
+        });
+      }
+
+      // The product may be moved to another shop: the caller must own that
+      // shop too.
+      const isTargetShopOwner = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isTargetShopOwner) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Shop does not belong to current user",
         });
       }
 
@@ -563,8 +590,14 @@ export const productRouter = createTRPCRouter({
           imageUrl: true,
           productUrl: true,
           isPublic: true,
+          isFeatured: true,
         },
       });
+
+      // Featuring is an admin-only curation flag: keep the existing value.
+      if (ctx.session.user.role !== "ADMIN") {
+        productData.isFeatured = existing?.isFeatured ?? false;
+      }
 
       const manualFields = new Set(existing?.manualFields ?? []);
       if (existing) {
@@ -628,7 +661,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }
@@ -647,22 +680,22 @@ export const productRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.string())
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const isUserAuthorized = await checkUserProductPermissions(
         ctx.session,
-        input,
+        input.id,
       );
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Product does not belong to current user",
         });
       }
 
       await ctx.db.product.delete({
-        where: { id: input },
+        where: { id: input.id },
       });
       return {
         data: null,
@@ -670,7 +703,7 @@ export const productRouter = createTRPCRouter({
       };
     }),
 
-  deleteMultiple: adminArtisanProcedure
+  deleteMany: adminArtisanProcedure
     .input(z.array(z.string()))
     .mutation(async ({ ctx, input }) => {
       const isAuthorized = await Promise.all(
@@ -683,7 +716,7 @@ export const productRouter = createTRPCRouter({
 
       if (!isAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more products do not belong to current user",
         });
       }

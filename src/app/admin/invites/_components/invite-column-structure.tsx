@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { MoreHorizontalIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
@@ -108,9 +109,18 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
     header: ({ column }) => (
       <AdvancedDataTableColumnHeader column={column} title="Shop" />
     ),
-    cell: ({ row }) => (
-      <span className="text-sm">{row.original.shop?.name ?? "—"}</span>
-    ),
+    cell: ({ row }) =>
+      row.original.shop ? (
+        <Link
+          href={`/admin/shops/${row.original.shop.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="text-sm hover:underline"
+        >
+          {row.original.shop.name}
+        </Link>
+      ) : (
+        <span className="text-sm">—</span>
+      ),
   },
   {
     accessorKey: "code",
@@ -183,7 +193,7 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 60,
     header: "",
     enableSorting: false,

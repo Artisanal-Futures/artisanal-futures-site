@@ -36,6 +36,23 @@ function isValidGuestCode(
   );
 }
 
+// Mirrors the better-auth sign-up hook: an invite may only be redeemed by the
+// account whose email it was issued to.
+function assertInviteEmailMatches(
+  invite: { email: string } | null,
+  sessionEmail: string | null | undefined,
+) {
+  const inviteEmail = invite?.email?.trim().toLowerCase();
+  if (!inviteEmail) return;
+
+  if (inviteEmail !== sessionEmail?.trim().toLowerCase()) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "This invitation is for a different email address.",
+    });
+  }
+}
+
 export const onboardingRouter = createTRPCRouter({
   onboardArtisan: protectedProcedure
     .input(artisanOnboardingSchema)
@@ -51,6 +68,8 @@ export const onboardingRouter = createTRPCRouter({
           message: "Invalid invitation code",
         });
       }
+
+      assertInviteEmailMatches(invite, ctx.session.user.email);
 
       const business = await ctx.db.$transaction(async (tx) => {
         // 1. Create or update business
@@ -153,6 +172,8 @@ export const onboardingRouter = createTRPCRouter({
         });
       }
 
+      assertInviteEmailMatches(invite, ctx.session.user.email);
+
       const guest = await ctx.db.guestSurvey.create({
         data: {
           name: input.name,
@@ -209,6 +230,8 @@ export const onboardingRouter = createTRPCRouter({
         });
       }
 
+      assertInviteEmailMatches(invite, ctx.session.user.email);
+
       await ctx.db.platformInvite.update({
         where: { id: invite!.id },
         data: {
@@ -225,7 +248,9 @@ export const onboardingRouter = createTRPCRouter({
     }),
 
   getGuestSurveys: adminOnlyProcedure.query(async ({ ctx }) => {
-    const guests = await ctx.db.guestSurvey.findMany();
+    const guests = await ctx.db.guestSurvey.findMany({
+      include: { user: { select: { id: true, name: true, email: true } } },
+    });
     return guests;
   }),
   getArtisanSurveys: adminOnlyProcedure.query(async ({ ctx }) => {

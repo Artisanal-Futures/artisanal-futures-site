@@ -30,4 +30,5 @@ export default async function WelcomePage() {
 
 export const metadata = {
   title: "Welcome to Artisanal Futures",
+  robots: { index: false, follow: false },
 };

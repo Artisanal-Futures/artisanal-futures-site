@@ -140,9 +140,13 @@ export const userColumns: ColumnDef<UserRow>[] = [
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-sm font-medium">
+            <Link
+              href={`/admin/users/${row.original.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="truncate text-sm font-medium hover:underline"
+            >
               {name ?? "—"}
-            </span>
+            </Link>
             <span className="truncate text-xs text-muted-foreground">
               {email ?? "—"}
             </span>
@@ -228,7 +232,7 @@ export const userColumns: ColumnDef<UserRow>[] = [
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 60,
     header: "",
     enableSorting: false,

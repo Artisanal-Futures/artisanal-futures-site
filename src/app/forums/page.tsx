@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HomeIcon } from "lucide-react";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { getSession } from "~/server/better-auth/server";
 import { buttonVariants } from "~/components/ui/button";
 import { CustomFeed } from "~/app/forums/_components/homepage/custom-feed";
@@ -9,9 +10,14 @@ import { GeneralFeed } from "~/app/forums/_components/homepage/general-feed";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-export const metadata = {
-  title: "Forum Home",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Forum Home",
+    description:
+      "Community forums where Artisanal Futures artisans and supporters share knowledge, tools and ideas.",
+    path: "/forums",
+  });
+}
 export default async function ForumHome() {
   const session = await getSession();
 

@@ -5,9 +5,11 @@ import { ServiceForm } from "../_components/service-form";
 import { TrailHeader } from "../../_components/trail-header";
 
 export default async function NewServicePage() {
-  const shops = await api.shop.getAll();
-  const categories = await api.category.getAll();
-  const session = await getSession();
+  const [shops, categories, session] = await Promise.all([
+    api.shop.getOptions(),
+    api.category.getAll(),
+    getSession(),
+  ]);
 
   const userRole = session?.user.role ?? "ARTISAN";
 

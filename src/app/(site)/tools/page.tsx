@@ -1,13 +1,17 @@
 import { TOOLS_DATA } from "~/data/tools";
 
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { getSession } from "~/server/better-auth/server";
 import { ToolCard } from "~/app/(site)/tools/_components/tool-card";
 
-export const metadata = {
-  title: "Tools",
-  description:
-    "Browse our current selection of free and open source tools to power up your business workflow",
-};
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Tools",
+    description:
+      "Browse our current selection of free and open source tools to power up your business workflow",
+    path: "/tools",
+  });
+}
 
 export default async function ToolsPage() {
   const session = await getSession();

@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Sparkles } from "lucide-react";
 
-const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
+import { UPCY_BASE_URL } from "~/lib/upcy";
+
+const UPCY_URL = `${UPCY_BASE_URL}/`;
 
 export interface WelcomeCardUser {
   name: string | null;

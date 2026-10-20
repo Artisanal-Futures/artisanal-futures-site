@@ -36,6 +36,8 @@ import {
 } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { shopPath } from "~/lib/seo/paths";
+import { UPCY_BASE_URL } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import {
@@ -46,21 +48,51 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-// Platform-wide metrics for admin
-// const platformMetrics = {
-//   totalArtisans: 247,
-//   totalProducts: 1842,
-//   totalSites: 156,
-//   totalEmails: 12450,
-//   newArtisansThisMonth: 23,
-//   productsAddedThisWeek: 89,
-// };
-
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
   if (hour < 18) return "Good afternoon";
   return "Good evening";
+}
+
+// getAll stringifies the logo for admins, so a missing logo can arrive as the
+// literal string "null". Never let that reach next/image.
+function isUsableImageSrc(src: string | null | undefined): src is string {
+  if (!src) return false;
+  const trimmed = src.trim();
+  return trimmed !== "" && trimmed !== "null" && trimmed !== "undefined";
+}
+
+const IN_PROGRESS_STATUSES: ProvisionStatus[] = [
+  ProvisionStatus.PENDING,
+  ProvisionStatus.PROVISIONING,
+  ProvisionStatus.BUILDING,
+  ProvisionStatus.DEPLOYING,
+];
+
+// Summarises the hosted-website state from the provision record, falling back
+// to whether the shop has an external website link.
+function getWebsiteSummary(
+  artisan: RouterOutputs["shop"]["getAll"][number] | undefined,
+): { value: string; label: string } {
+  const status = artisan?.websiteProvision?.status;
+
+  if (status === ProvisionStatus.ACTIVE) {
+    return { value: "Active", label: "Hosted website" };
+  }
+  if (status && IN_PROGRESS_STATUSES.includes(status)) {
+    return { value: "In progress", label: "Hosted website" };
+  }
+  if (status === ProvisionStatus.FAILED) {
+    return { value: "Failed", label: "Hosted website" };
+  }
+  if (status === ProvisionStatus.SUSPENDED) {
+    return { value: "Suspended", label: "Hosted website" };
+  }
+  return {
+    value: artisan?.website ? "Linked" : "None",
+    label: "Website link",
+  };
 }
 
 function ShopStats({
@@ -70,7 +102,7 @@ function ShopStats({
 }) {
   const productCount = artisan?.products?.length ?? 0;
   const serviceCount = artisan?.services?.length ?? 0;
-  const hasWebsite = !!artisan?.website;
+  const websiteSummary = getWebsiteSummary(artisan);
 
   return (
     <div className="grid gap-4 sm:grid-cols-3">
@@ -103,9 +135,11 @@ function ShopStats({
           </div>
           <div>
             <p className="text-foreground text-2xl font-bold">
-              {hasWebsite ? "Active" : "None"}
+              {websiteSummary.value}
             </p>
-            <p className="text-muted-foreground text-sm">Website</p>
+            <p className="text-muted-foreground text-sm">
+              {websiteSummary.label}
+            </p>
           </div>
         </div>
       </div>
@@ -201,8 +235,8 @@ function PlatformMetrics() {
             </div>
           </div>
           <div className="text-muted-foreground mt-3 flex items-center gap-1 text-xs">
-            <TrendingUp className="size-3 text-green-600" />
-            <span className="font-medium text-green-600">
+            <TrendingUp className="size-3 text-green-600 dark:text-green-400" />
+            <span className="font-medium text-green-600 dark:text-green-400">
               +{newArtisansThisMonth}
             </span>
             <span>this month</span>
@@ -222,8 +256,8 @@ function PlatformMetrics() {
             </div>
           </div>
           <div className="text-muted-foreground mt-3 flex items-center gap-1 text-xs">
-            <TrendingUp className="size-3 text-green-600" />
-            <span className="font-medium text-green-600">
+            <TrendingUp className="size-3 text-green-600 dark:text-green-400" />
+            <span className="font-medium text-green-600 dark:text-green-400">
               +{productsAddedThisWeek}
             </span>
             <span>this week</span>
@@ -243,7 +277,10 @@ function PlatformMetrics() {
             </div>
           </div>
           <p className="text-muted-foreground mt-3 text-xs">
-            {Math.round((totalSites / totalArtisans) * 100)}% adoption rate
+            {totalArtisans > 0
+              ? Math.round((totalSites / totalArtisans) * 100)
+              : 0}
+            % adoption rate
           </p>
         </div>
 
@@ -462,9 +499,7 @@ function QuickActions() {
     <section className="mb-10">
       <div className="mb-6 flex items-center gap-2">
         <Zap className="text-primary size-5" />
-        <h2 className="text-foreground text-lg font-semibold">
-          Quick Actions
-        </h2>
+        <h2 className="text-foreground text-lg font-semibold">Quick Actions</h2>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {actions.map((action) => (
@@ -513,13 +548,14 @@ export function DashboardClient({
 
   const productCount = selectedArtisan?.products?.length ?? 0;
   const hasWebsite = !!selectedArtisan?.website;
+  const provisionStatus = selectedArtisan?.websiteProvision?.status;
   const hasProducts = productCount > 0;
   const hiddenServicesCount =
-    selectedArtisan?.services?.filter((service) => !service.isPublic)
-      .length ?? 0;
+    selectedArtisan?.services?.filter((service) => !service.isPublic).length ??
+    0;
   const hiddenProductsCount =
-    selectedArtisan?.products?.filter((product) => !product.isPublic)
-      .length ?? 0;
+    selectedArtisan?.products?.filter((product) => !product.isPublic).length ??
+    0;
   const productsMissingImagesCount =
     selectedArtisan?.products?.filter(
       (product) => product.isPublic && !product.imageUrl,
@@ -559,10 +595,10 @@ export function DashboardClient({
       <header className="mb-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-4">
-            {selectedArtisan?.logoPhoto ? (
+            {isUsableImageSrc(selectedArtisan?.logoPhoto) ? (
               <div className="border-secondary relative size-16 overflow-hidden rounded-full border-2 shadow-sm">
                 <Image
-                  src={selectedArtisan.logoPhoto}
+                  src={selectedArtisan.logoPhoto.trim()}
                   alt={selectedArtisan.name}
                   fill
                   className="object-cover"
@@ -572,9 +608,9 @@ export function DashboardClient({
               <div className="border-secondary bg-muted flex size-16 items-center justify-center rounded-full border-2">
                 <span className="text-muted-foreground text-xl font-semibold">
                   {selectedArtisan?.name
-                    .split(" ")
+                    ?.split(" ")
                     .map((n) => n[0])
-                    .join("")}
+                    .join("") ?? <Store className="size-6" />}
                 </span>
               </div>
             )}
@@ -610,102 +646,134 @@ export function DashboardClient({
               </Select>
             )}
 
-            <Button variant="outline" asChild>
-              <Link href={`/shops/${selectedArtisan?.id}`}>
-                View Public Profile
-                <ExternalLink className="ml-2 size-4" />
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href={`/admin/shops/${selectedArtisan?.id}`}>
-                <Edit className="mr-2 size-4" />
-                Edit Shop
-              </Link>
-            </Button>
+            {selectedArtisan && (
+              <>
+                <Button variant="outline" asChild>
+                  <Link href={shopPath(selectedArtisan)}>
+                    View Public Profile
+                    <ExternalLink className="ml-2 size-4" />
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link href={`/admin/shops/${selectedArtisan.id}`}>
+                    <Edit className="mr-2 size-4" />
+                    Edit Shop
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Shop Stats */}
-      <section className="mb-10">
-        <h2 className="text-foreground mb-4 text-lg font-semibold">
-          Shop Overview
-        </h2>
-        <ShopStats artisan={selectedArtisan} />
-      </section>
-
-      {/* Contextual Nudges */}
-      <section className="mb-10 space-y-4">
-        {/* No products nudge */}
-        {!hasProducts && (
+      {!selectedArtisan ? (
+        <section className="mb-10">
           <NudgeCard
-            icon={AlertCircle}
-            title="Add your first product"
-            description="Your shop doesn't have any products yet. Add products to help customers discover your work and drive traffic to your shop."
-            actionLabel="Add Products"
-            href="/admin/products"
+            icon={Store}
+            title="You don't have a shop yet"
+            description="Create your shop to add products and services, show up in the artisan directory, and get a free website."
+            actionLabel="Create My Shop"
+            href="/admin/shops/new"
             variant="highlight"
           />
-        )}
+        </section>
+      ) : (
+        <>
+          {/* Shop Stats */}
+          <section className="mb-10">
+            <h2 className="text-foreground mb-4 text-lg font-semibold">
+              Shop Overview
+            </h2>
+            <ShopStats artisan={selectedArtisan} />
+          </section>
 
-        {/* Hidden services nudge */}
-        {hiddenServicesCount > 0 && (
-          <NudgeCard
-            icon={EyeOff}
-            title="Hidden services"
-            description={`${hiddenServicesCount} service(s) are hidden from buyers — mark them public so they show up.`}
-            actionLabel="Manage Services"
-            href="/admin/services"
-          />
-        )}
-
-        {/* Hidden products nudge */}
-        {hiddenProductsCount > 0 && (
-          <NudgeCard
-            icon={EyeOff}
-            title="Hidden products"
-            description={`${hiddenProductsCount} product(s) are hidden from buyers — mark them public so they show up.`}
-            actionLabel="Manage Products"
-            href="/admin/products"
-          />
-        )}
-
-        {/* Products missing images nudge */}
-        {productsMissingImagesCount > 0 && (
-          <NudgeCard
-            icon={ImageOff}
-            title="Products missing photos"
-            description={`${productsMissingImagesCount} product(s) have no photo — products with photos get far more attention.`}
-            actionLabel="Manage Products"
-            href="/admin/products"
-          />
-        )}
-
-        {/* Website nudges */}
-        {selectedArtisan?.websiteProvision?.status !==
-          ProvisionStatus.ACTIVE && (
-          <>
-            {hasWebsite ? (
+          {/* Contextual Nudges */}
+          <section className="mb-10 space-y-4">
+            {/* No products nudge */}
+            {!hasProducts && (
               <NudgeCard
-                icon={Server}
-                title="Free website hosting available"
-                description={`We noticed ${selectedArtisan?.name} has a website at ${selectedArtisan?.website}. Did you know we offer free hosting? Migrate your site and save on hosting costs.`}
-                actionLabel="Learn About Hosting"
-                href="/admin/website"
-              />
-            ) : (
-              <NudgeCard
-                icon={Globe}
-                title="Create your free website"
-                description="You don't have a website yet. We offer free, beautifully designed sites for artisans to showcase their work and start selling online. No technical skills required."
-                actionLabel="Create My Site"
-                href="/admin/website"
+                icon={AlertCircle}
+                title="Add your first product"
+                description="Your shop doesn't have any products yet. Add products to help customers discover your work and drive traffic to your shop."
+                actionLabel="Add Products"
+                href="/admin/products"
                 variant="highlight"
               />
             )}
-          </>
-        )}
-      </section>
+
+            {/* Hidden services nudge */}
+            {hiddenServicesCount > 0 && (
+              <NudgeCard
+                icon={EyeOff}
+                title="Hidden services"
+                description={`${hiddenServicesCount} service(s) are hidden from buyers — mark them public so they show up.`}
+                actionLabel="Manage Services"
+                href="/admin/services"
+              />
+            )}
+
+            {/* Hidden products nudge */}
+            {hiddenProductsCount > 0 && (
+              <NudgeCard
+                icon={EyeOff}
+                title="Hidden products"
+                description={`${hiddenProductsCount} product(s) are hidden from buyers — mark them public so they show up.`}
+                actionLabel="Manage Products"
+                href="/admin/products"
+              />
+            )}
+
+            {/* Products missing images nudge */}
+            {productsMissingImagesCount > 0 && (
+              <NudgeCard
+                icon={ImageOff}
+                title="Products missing photos"
+                description={`${productsMissingImagesCount} product(s) have no photo — products with photos get far more attention.`}
+                actionLabel="Manage Products"
+                href="/admin/products"
+              />
+            )}
+
+            {/* Website nudges */}
+            {provisionStatus !== ProvisionStatus.ACTIVE &&
+              (provisionStatus &&
+              IN_PROGRESS_STATUSES.includes(provisionStatus) ? (
+                <NudgeCard
+                  icon={Server}
+                  title="Your website is being set up"
+                  description="We're building your free site. This can take a little while — check the status for the latest progress."
+                  actionLabel="View Status"
+                  href="/admin/website"
+                />
+              ) : provisionStatus === ProvisionStatus.FAILED ? (
+                <NudgeCard
+                  icon={AlertTriangle}
+                  title="Website setup failed"
+                  description="Something went wrong while setting up your site. Open the website page to see what happened and try again."
+                  actionLabel="Review Website"
+                  href="/admin/website"
+                />
+              ) : hasWebsite ? (
+                <NudgeCard
+                  icon={Server}
+                  title="Free website hosting available"
+                  description={`We noticed ${selectedArtisan.name} has a website at ${selectedArtisan.website}. Did you know we offer free hosting? Migrate your site and save on hosting costs.`}
+                  actionLabel="Learn About Hosting"
+                  href="/admin/website"
+                />
+              ) : (
+                <NudgeCard
+                  icon={Globe}
+                  title="Create your free website"
+                  description="You don't have a website yet. We offer free, beautifully designed sites for artisans to showcase their work and start selling online. No technical skills required."
+                  actionLabel="Create My Site"
+                  href="/admin/website"
+                  variant="highlight"
+                />
+              ))}
+          </section>
+        </>
+      )}
 
       {/* Platform Tools */}
       <section className="mb-10">
@@ -737,7 +805,7 @@ export function DashboardClient({
 
           {/* UPCY */}
           <a
-            href="https://generate.dev.artisanalfutures.org/"
+            href={UPCY_BASE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="group border-border bg-card hover:border-ring/30 flex flex-col gap-4 rounded-xl border p-6 transition-all hover:shadow-md"
@@ -817,36 +885,6 @@ export function DashboardClient({
             {shopView}
           </>
         )}
-
-        {/* Quick Links
-        <section>
-          <div className="text-muted-foreground flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-            <Link
-              href={`/shops/${selectedArtisan?.id}`}
-              className="hover:text-foreground transition-colors"
-            >
-              View public profile
-            </Link>
-            <Link
-              href="/products"
-              className="hover:text-foreground transition-colors"
-            >
-              Browse all products
-            </Link>
-            <Link
-              href="/shops"
-              className="hover:text-foreground transition-colors"
-            >
-              Artisan directory
-            </Link>
-            <Link
-              href="/join"
-              className="hover:text-foreground transition-colors"
-            >
-              Invite an artisan
-            </Link>
-          </div>
-        </section> */}
       </div>
     </div>
   );

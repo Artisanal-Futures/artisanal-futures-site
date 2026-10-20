@@ -108,7 +108,7 @@ export function ItemDialog<T>({
   const defaultButtonClassName =
     mode === "create"
       ? "h-8 text-xs"
-      : "bg-blue-500 text-xs hover:bg-blue-600 h-8";
+      : "bg-blue-500 text-xs text-white hover:bg-blue-600 h-8";
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

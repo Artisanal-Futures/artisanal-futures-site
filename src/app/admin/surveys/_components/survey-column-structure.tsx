@@ -42,7 +42,7 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
       <AdvancedDataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm text-gray-500">{row.original.id}</span>
+      <span className="text-muted-foreground text-sm">{row.original.id}</span>
     ),
   },
   {
@@ -55,7 +55,7 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
     filterFn: "arrIncludesSome",
     cell: ({ row }) => (
       <div className="flex flex-col space-y-1">
-        <span className="text-xs text-muted-foreground">
+        <span className="text-muted-foreground text-xs">
           Owner ID: {row.original.ownerId}
         </span>
       </div>
@@ -68,15 +68,14 @@ export const surveyColumns: ColumnDef<Survey & { isAdmin: boolean }>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Created on" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm text-gray-500">
+      <span className="text-muted-foreground text-sm">
         {row.original.createdAt.toLocaleDateString()}
       </span>
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 280,
-    header: "Options",
     enableSorting: false,
     cell: ({ row }) => (
       <div className="flex gap-2">

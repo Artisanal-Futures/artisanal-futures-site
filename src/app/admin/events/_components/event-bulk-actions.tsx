@@ -1,22 +1,11 @@
 "use client";
 
-import { Trash2Icon, XIcon } from "lucide-react";
-import { toast } from "sonner";
+import { XIcon } from "lucide-react";
 
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
+
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedEventIds: string[];
@@ -27,19 +16,7 @@ export function EventBulkActions({ selectedEventIds, onClear }: Props) {
   const apiUtils = api.useUtils();
 
   const deleteEvents = api.event.deleteMany.useMutation({
-    onMutate: () => {
-      toast.loading("Deleting events, please wait...");
-    },
-    onSuccess: async () => {
-      toast.dismiss();
-      toast.success("Events deleted successfully.");
-      await apiUtils.event.invalidate();
-      onClear();
-    },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete events.");
-    },
+    onSuccess: () => apiUtils.event.invalidate(),
   });
 
   return (
@@ -50,42 +27,13 @@ export function EventBulkActions({ selectedEventIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button
-            variant="destructive"
-            className="h-8 text-xs lg:px-3"
-            disabled={deleteEvents.isPending}
-          >
-            <Trash2Icon className="mr-2 h-4 w-4" />
-            Delete ({selectedEventIds.length})
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent size="sm">
-          <AlertDialogHeader>
-            <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-              <Trash2Icon />
-            </AlertDialogMedia>
-            <AlertDialogTitle>
-              Delete {selectedEventIds.length} event
-              {selectedEventIds.length !== 1 ? "s" : ""}?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete these events and remove the data from
-              our servers. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => deleteEvents.mutate(selectedEventIds)}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <BulkDeleteButton
+        ids={selectedEventIds}
+        itemLabel={{ singular: "event", plural: "events" }}
+        onDelete={deleteEvents.mutateAsync}
+        isPending={deleteEvents.isPending}
+        onSuccess={onClear}
+      />
 
       <div className="h-4 w-px bg-border" />
 

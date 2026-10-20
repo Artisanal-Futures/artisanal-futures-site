@@ -5,17 +5,53 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Info } from "lucide-react";
 
+import { buildMetadata, truncate } from "~/lib/seo/site";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
+import { canViewSubreddit } from "~/server/forum/access";
 import { buttonVariants } from "~/components/ui/button";
 import { SubscribeLeaveToggle } from "~/app/forums/_components/subscribe-leave-toggle";
 import { ToFeedButton } from "~/app/forums/_components/to-feed-button";
 
 import { SubredditEditButton } from "../../_components/subreddit-edit-button";
 
-export const metadata: Metadata = {
-  title: "Artisanal Futures Forums",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const path = `/forums/r/${slug}`;
+  const session = await getSession();
+
+  const subreddit = await db.subreddit.findFirst({
+    where: { name: slug },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      isPublic: true,
+      creatorId: true,
+    },
+  });
+
+  if (!subreddit) {
+    return { title: "Community", robots: { index: false, follow: false } };
+  }
+
+  // A private community's description is only for its members; the name is
+  // already in the URL.
+  const canView = await canViewSubreddit(db, subreddit, session?.user.id);
+
+  return buildMetadata({
+    title: `r/${subreddit.name}`,
+    description:
+      (canView ? truncate(subreddit.description) : "") ||
+      `Join the ${subreddit.name} community on the Artisanal Futures forums.`,
+    path,
+    noIndex: !subreddit.isPublic,
+  });
+}
 
 const Layout = async ({
   children,
@@ -30,14 +66,6 @@ const Layout = async ({
   const subreddit = await db.subreddit.findFirst({
     where: {
       name: slug,
-    },
-    include: {
-      posts: {
-        include: {
-          author: true,
-          votes: true,
-        },
-      },
     },
   });
 
@@ -58,6 +86,10 @@ const Layout = async ({
 
   if (!subreddit) return notFound();
 
+  // A private community's description is only for its members; non-members
+  // can still see the name and join.
+  const canView = await canViewSubreddit(db, subreddit, session?.user.id);
+
   const memberCount = await db.subscription.count({
     where: {
       subreddit: {
@@ -75,7 +107,7 @@ const Layout = async ({
           <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
           {/* info sidebar */}
-          <div className="border-border order-first h-fit overflow-hidden rounded-2xl border bg-card md:order-last">
+          <div className="border-border bg-card order-first h-fit overflow-hidden rounded-2xl border md:order-last">
             <div className="bg-secondary flex items-center justify-between px-6 py-4">
               <p className="text-foreground flex items-center gap-1.5 py-3 font-semibold">
                 <Info className="h-4 w-4" />
@@ -93,7 +125,7 @@ const Layout = async ({
               )}
             </div>
             <div className="divide-border bg-background divide-y px-6 text-sm leading-6">
-              {subreddit.description && (
+              {canView && subreddit.description && (
                 <div className="py-3">
                   <p className="text-foreground">{subreddit.description}</p>
                 </div>

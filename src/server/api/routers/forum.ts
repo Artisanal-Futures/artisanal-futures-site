@@ -1,23 +1,32 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { publicUserSelect } from "~/lib/public-user";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import {
+  assertCanCommentOnPost,
+  assertCanViewComment,
+  assertCanViewPost,
+} from "~/server/forum/access";
 
 export const forumRouter = createTRPCRouter({
   getPostComments: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input: postId }) => {
+      // comments in a private community are only for its members
+      await assertCanViewPost(ctx.db, postId, ctx.session?.user.id);
+
       const comments = await ctx.db.forumComment.findMany({
         where: {
           postId: postId,
           replyToId: null, // only fetch top-level comments
         },
         include: {
-          author: true,
+          author: { select: publicUserSelect },
           votes: true,
           post: {
             select: {
@@ -28,7 +37,7 @@ export const forumRouter = createTRPCRouter({
           replies: {
             // first level replies
             include: {
-              author: true,
+              author: { select: publicUserSelect },
               votes: true,
             },
           },
@@ -49,6 +58,9 @@ export const forumRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // only members of a private community may comment on its posts
+      await assertCanCommentOnPost(ctx.db, input, ctx.session.user.id);
+
       const comment = await ctx.db.forumComment.create({
         data: {
           text: input.text,
@@ -155,6 +167,13 @@ export const forumRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       try {
+        // only members of a private community may vote on its comments
+        await assertCanViewComment(
+          ctx.db,
+          input.commentId,
+          ctx.session.user.id,
+        );
+
         // check if user has already voted on this post
         const existingVote = await ctx.db.commentVote.findFirst({
           where: {
@@ -212,6 +231,7 @@ export const forumRouter = createTRPCRouter({
           message: "Vote created successfully",
         };
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

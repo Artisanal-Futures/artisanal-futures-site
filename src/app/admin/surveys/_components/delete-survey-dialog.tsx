@@ -11,18 +11,21 @@ type Props = { surveyId: string };
 export function DeleteSurveyDialog({ surveyId }: Props) {
   const router = useRouter();
   const apiUtils = api.useUtils();
-  const deleteShop = api.survey.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.success(message);
+  const deleteSurvey = api.survey.delete.useMutation({
+    onMutate: () => ({
+      toastId: toast.loading("Deleting survey, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.survey.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? "Failed to delete survey.");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 
-  const onSubmit = () => deleteShop.mutate({ surveyId });
+  const onSubmit = () => deleteSurvey.mutate({ id: surveyId });
 
   return (
     <SingleActionDialog
@@ -33,7 +36,7 @@ export function DeleteSurveyDialog({ surveyId }: Props) {
         Are you sure you want to delete this survey?`}
       title="Delete survey?"
       icon={TrashIcon}
-      isLoading={deleteShop.isPending}
+      isLoading={deleteSurvey.isPending}
     />
   );
 }

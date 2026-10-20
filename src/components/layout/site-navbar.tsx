@@ -39,6 +39,9 @@ const navLinks = [
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
+const isActiveLink = (pathname: string, href: string) =>
+  pathname === href || pathname.startsWith(`${href}/`);
+
 export const SiteNavbar = () => {
   const { theme } = useTheme();
   const { data: sessionData, isPending } = authClient.useSession();
@@ -59,6 +62,15 @@ export const SiteNavbar = () => {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileMenuOpen(false);
+    };
+    desktop.addEventListener("change", handleChange);
+    return () => desktop.removeEventListener("change", handleChange);
+  }, []);
 
   const closeMenu = () => setMobileMenuOpen(false);
 
@@ -132,10 +144,15 @@ export const SiteNavbar = () => {
                 <Link
                   key={route.href}
                   href={route.href}
+                  aria-current={
+                    isActiveLink(pathname, route.href) ? "page" : undefined
+                  }
                   className={cn(
-                    "text-lg font-medium transition-colors hover:text-black lg:text-sm",
-                    pathname === route.href ? "text-black" : "text-neutral-500",
                     navigationMenuTriggerStyle(),
+                    "text-sm transition-colors hover:text-foreground",
+                    isActiveLink(pathname, route.href)
+                      ? "text-foreground"
+                      : "text-muted-foreground",
                   )}
                 >
                   {route.label}
@@ -149,8 +166,10 @@ export const SiteNavbar = () => {
             <Link
               href="/donate"
               className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-colors hover:text-black lg:block",
-                pathname === "/donate" ? "text-black" : "text-neutral-500",
+                "hover:text-foreground hidden items-center space-x-1 text-sm font-medium transition-colors sm:flex lg:block",
+                pathname === "/donate"
+                  ? "text-foreground"
+                  : "text-muted-foreground",
               )}
             >
               <span className="block lg:hidden" role="img" aria-label="heart">
@@ -169,7 +188,7 @@ export const SiteNavbar = () => {
           <button
             type="button"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            className="flex touch-manipulation items-center justify-center p-2 md:hidden"
+            className="flex touch-manipulation items-center justify-center p-2 lg:hidden"
             onClick={() => setMobileMenuOpen((o) => !o)}
           >
             <HamburgerIcon open={mobileMenuOpen} />
@@ -177,9 +196,9 @@ export const SiteNavbar = () => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay - covers navbar (z-[60] > header z-50) */}
+      {/* Mobile Menu Overlay - covers navbar (z-[60] > header z-20) */}
       <motion.div
-        className="bg-background fixed inset-0 z-60 flex flex-col md:hidden"
+        className="bg-background fixed inset-0 z-60 flex flex-col lg:hidden"
         initial={false}
         animate={{
           opacity: mobileMenuOpen ? 1 : 0,
@@ -210,8 +229,7 @@ export const SiteNavbar = () => {
         <nav className="flex-1 overflow-y-auto p-4">
           <div className="flex flex-col gap-1">
             {navLinks.map(({ href, label, icon: Icon }, i) => {
-              const isActive =
-                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              const isActive = isActiveLink(pathname, href);
               return (
                 <motion.div
                   key={href}
@@ -229,6 +247,7 @@ export const SiteNavbar = () => {
                   <Link
                     href={href}
                     onClick={closeMenu}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex items-center gap-3 rounded-xl px-3 py-3.5 text-base transition-colors",
                       isActive

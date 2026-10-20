@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { UPCY_BASE_URL } from "~/lib/upcy";
 import { getSession } from "~/server/better-auth/server";
 import {
   Card,
@@ -9,8 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-
-const UPCY_URL = "https://generate.dev.artisanalfutures.org";
 
 export default async function GuestWelcomePage() {
   const session = await getSession();
@@ -47,12 +46,12 @@ export default async function GuestWelcomePage() {
               </p>
               <p>
                 <Link
-                  href={UPCY_URL}
+                  href={UPCY_BASE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary font-medium underline underline-offset-4 hover:no-underline"
                 >
-                  Open UPCY → {UPCY_URL}
+                  Open UPCY → {UPCY_BASE_URL}
                 </Link>
               </p>
             </CardContent>
@@ -65,4 +64,5 @@ export default async function GuestWelcomePage() {
 
 export const metadata = {
   title: "Welcome",
+  robots: { index: false, follow: false },
 };

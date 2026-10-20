@@ -34,10 +34,10 @@ export function SingleActionDialog({
   isLoading,
 }: Props) {
   const colorClasses = {
-    red: "bg-red-500 hover:bg-red-500/90 bg-destructive text-white hover:bg-destructive/90",
-    green: "bg-green-500 hover:bg-green-500/90",
-    blue: "bg-blue-500 hover:bg-blue-500/90",
-    orange: "bg-orange-500 hover:bg-orange-500/90",
+    red: "bg-destructive text-white hover:bg-destructive/90",
+    green: "bg-green-500 text-white hover:bg-green-500/90",
+    blue: "bg-blue-500 text-white hover:bg-blue-500/90",
+    orange: "bg-orange-500 text-white hover:bg-orange-500/90",
   };
 
   return (
@@ -65,7 +65,7 @@ export function SingleActionDialog({
           </AlertDialogCancel>
 
           <AlertDialogAction
-            className={cn(colorClasses[color], `text-background`)}
+            className={colorClasses[color]}
             onClick={onSubmit}
           >
             Continue

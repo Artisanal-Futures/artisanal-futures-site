@@ -2,7 +2,15 @@ import Link from "next/link";
 import { Cog, GraduationCap, Store } from "lucide-react";
 
 import { selectHomepageEvents } from "~/lib/select-homepage-events";
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+import {
+  eventSchema,
+  organizationSchema,
+  websiteSchema,
+} from "~/lib/seo/schema";
+import { getSiteSettings } from "~/server/seo/settings";
 import { api } from "~/trpc/server";
+import { JsonLd } from "~/components/seo/json-ld";
 
 import { EventsBoard } from "./_components/events-board";
 import { Hero } from "./_components/hero";
@@ -29,12 +37,45 @@ const CARD_DATA = [
   },
 ];
 
+export async function generateMetadata() {
+  const settings = await getSiteSettings();
+
+  return buildPageMetadata({
+    // Google derives the site name from the homepage title and WebSite data,
+    // so lead with the exact brand and skip the " – Artisanal Futures"
+    // template. An /admin/seo override replaces the whole title.
+    title: `${settings.siteName} – Worker-owned artisan marketplace`,
+    absoluteTitle: true,
+    description:
+      "Shop worker-owned artisan stores, find local makers and services, and share knowledge and tools as part of the transition to a decolonized circular economy.",
+    path: "/",
+  });
+}
+
 export default async function HomePage() {
-  const events = await api.event.getHomepageEvents();
+  const [events, settings] = await Promise.all([
+    api.event.getHomepageEvents(),
+    getSiteSettings(),
+  ]);
   const { featured, rest } = selectHomepageEvents(events);
+
+  // The bulletin board also keeps "persisted" past events on show, but only
+  // events that haven't ended belong in structured data.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const upcomingEvents = events.filter(
+    (event) => (event.endDate ?? event.startDate) >= startOfToday,
+  );
 
   return (
     <div className="page-container">
+      <JsonLd
+        data={[
+          organizationSchema(settings),
+          websiteSchema(settings),
+          ...upcomingEvents.map(eventSchema),
+        ]}
+      />
       <Hero />
       <div className="bg-accent dark:border-accent/20 mt-12 grid grid-cols-1 gap-5 rounded-lg p-4 md:grid-cols-2 md:gap-10 dark:border">
         {CARD_DATA.map((item, idx) => (

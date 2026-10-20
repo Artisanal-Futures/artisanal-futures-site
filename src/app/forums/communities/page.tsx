@@ -1,8 +1,18 @@
 import Link from 'next/link'
 import { Home as HomeIcon } from 'lucide-react'
 
+import { buildPageMetadata } from '~/lib/seo/page-metadata'
 import { buttonVariants } from '~/components/ui/button'
 import { GeneralSubredditFeed } from '../_components/subreddits/general-subreddit-feed'
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: 'All Communities',
+    description:
+      'Browse every community on the Artisanal Futures forums and find one to join.',
+    path: '/forums/communities',
+  })
+}
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'

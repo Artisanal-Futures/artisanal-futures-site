@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/select";
 import { MultiSelectFormField } from "~/components/inputs/multi-select-form-field";
 
-import { DeleteMultipleServicesDialog } from "./delete-multiple-services";
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedServiceIds: string[];
@@ -34,27 +34,31 @@ export function ServiceBulkActions({ selectedServiceIds, onClear }: Props) {
   const router = useRouter();
 
   const { data: categories } = api.category.getAll.useQuery();
-  const { data: shops } = api.shop.getAll.useQuery();
+  const { data: shops } = api.shop.getOptions.useQuery();
 
   const [categoryPopoverOpen, setCategoryPopoverOpen] = React.useState(false);
   const [storePopoverOpen, setStorePopoverOpen] = React.useState(false);
   const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<string[]>([]);
   const [selectedShopId, setSelectedShopId] = React.useState<string | undefined>(undefined);
 
+  const deleteServices = api.service.deleteMany.useMutation({
+    onSuccess: () => apiUtils.service.invalidate(),
+  });
+
   const bulkUpdate = api.service.bulkUpdate.useMutation({
-    onMutate: () => {
-      toast.loading("Updating services…");
-    },
-    onSuccess: async (data) => {
-      toast.dismiss();
-      toast.success(data.message);
+    onMutate: () => ({
+      toastId: toast.loading("Updating services…"),
+    }),
+    onSuccess: async (data, _input, context) => {
+      toast.success(data.message, { id: context?.toastId });
       await apiUtils.service.invalidate();
       router.refresh();
       onClear();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update services.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update services.", {
+        id: context?.toastId,
+      });
     },
   });
 
@@ -91,9 +95,12 @@ export function ServiceBulkActions({ selectedServiceIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <DeleteMultipleServicesDialog
-        serviceIds={selectedServiceIds}
-        onSuccessCallback={onClear}
+      <BulkDeleteButton
+        ids={selectedServiceIds}
+        itemLabel={{ singular: "service", plural: "services" }}
+        onDelete={deleteServices.mutateAsync}
+        isPending={deleteServices.isPending}
+        onSuccess={onClear}
       />
 
       <Button

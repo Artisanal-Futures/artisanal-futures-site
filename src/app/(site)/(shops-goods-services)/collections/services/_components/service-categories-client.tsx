@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { RouterOutputs } from "~/trpc/react";
 import type { ServiceWithShop } from "~/types/service";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 
@@ -18,7 +19,11 @@ type Props = {
 };
 
 type Product = NonNullable<RouterOutputs["shop"]["get"]>["products"][number];
-type Service = NonNullable<RouterOutputs["shop"]["get"]>["services"][number];
+// These category items are loaded without their categories.
+type Service = Omit<
+  NonNullable<RouterOutputs["shop"]["get"]>["services"][number],
+  "categories"
+>;
 
 export function ServiceCategoriesClient({ categories }: Props) {
   const [selectedItem, setSelectedItem] = useState<Product | Service | null>(
@@ -67,18 +72,6 @@ export function ServiceCategoriesClient({ categories }: Props) {
             </div>
           )}
 
-          <ProductDetailDialog
-            item={selectedItem as Service}
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
-            createdBy={(selectedItem as ServiceWithShop)?.shop?.name ?? ""}
-            shopPrinciples={
-              (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
-            }
-            linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
-            fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
-          />
-
           {category?.items?.length === 0 && (
             <p className="text-muted-foreground text-left">
               No services found for the selected filters.
@@ -86,6 +79,21 @@ export function ServiceCategoriesClient({ categories }: Props) {
           )}
         </div>
       ))}
+
+      <ProductDetailDialog
+        item={selectedItem as Service}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        createdBy={(selectedItem as ServiceWithShop)?.shop?.name ?? ""}
+        shopPrinciples={
+          (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
+        }
+        linkToProfile={shopPath({
+          id: (selectedItem as ServiceWithShop)?.shop?.id ?? "",
+          slug: (selectedItem as ServiceWithShop)?.shop?.slug,
+        })}
+        fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
+      />
     </div>
   );
 }

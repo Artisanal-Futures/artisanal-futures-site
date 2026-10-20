@@ -10,7 +10,7 @@ export default async function AdminWebsitesPage() {
 
   return (
     <>
-      <TrailHeader breadcrumbs={[{ label: "Websites Provisions" }]} />
+      <TrailHeader breadcrumbs={[{ label: "Website Provisions" }]} />
       <div className="admin-container">
         <div className="admin-header">
           <div>
@@ -34,5 +34,5 @@ export default async function AdminWebsitesPage() {
 }
 
 export const metadata = {
-  title: "Websites",
+  title: "Website Provisions",
 };

@@ -12,6 +12,8 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 
+const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
+
 export function NavSecondary({
   items,
   ...props
@@ -35,6 +37,10 @@ export function NavSecondary({
               <SidebarMenuButton asChild>
                 <a
                   href={item.url}
+                  target={isExternalUrl(item.url) ? "_blank" : undefined}
+                  rel={
+                    isExternalUrl(item.url) ? "noopener noreferrer" : undefined
+                  }
                   className={
                     isActive(item.url)
                       ? "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary active:bg-primary/20 font-semibold"

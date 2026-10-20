@@ -22,13 +22,13 @@ export default async function SignInPage({ searchParams }: Props) {
           <h1 className="mb-4 text-4xl font-bold text-balance">
             Welcome Back to Artisanal Futures
           </h1>
-          <p className="text-primary-foreground/80 mb-8 text-lg">
+          <p className="mb-8 text-lg text-white/85">
             Sign in to access your account, browse our shops, and stay
             connected within our artisan community.
           </p>
         </>
       }
-      asideImage="/image-bench.png"
+      asideImage="/img/contact-us.png"
       footer={
         <>
           By signing in, you agree to our{" "}

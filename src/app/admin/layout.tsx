@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { env } from "~/env";
@@ -6,6 +7,11 @@ import { HydrateClient } from "~/trpc/server";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
 import { AppSidebar } from "./_components/app-sidebar";
+
+// The admin panel is private.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 type Props = {
   children: React.ReactNode;
@@ -38,7 +44,7 @@ export default async function AdminPanelLayout(props: Props) {
       >
         <AppSidebar variant="inset" session={session} />
         <SidebarInset className="min-w-0 overflow-x-hidden">
-          <div className="min-h-screen bg-gray-50">{props.children}</div>
+          <div className="min-w-0 flex-1">{props.children}</div>
         </SidebarInset>
       </SidebarProvider>
     </HydrateClient>

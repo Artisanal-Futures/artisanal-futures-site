@@ -131,6 +131,16 @@ export function AdvancedDataTable<TData, TValue>({
     }
   };
 
+  // autoResetAll is off, so jump back to the first page ourselves when the
+  // search/filters change — otherwise a narrowed result can sit on an
+  // out-of-range page ("Page 2 of 1") and look empty.
+  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (
+    updater,
+  ) => {
+    setColumnFilters(updater);
+    handlePaginationChange((prev) => ({ ...prev, pageIndex: 0 }));
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -145,7 +155,7 @@ export function AdvancedDataTable<TData, TValue>({
     autoResetAll: false,
     onRowSelectionChange,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: handlePaginationChange,
     getCoreRowModel: getCoreRowModel(),

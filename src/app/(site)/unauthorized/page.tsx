@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Store } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import { RefreshButton } from "~/components/refresh-button";
+
+export const metadata: Metadata = {
+  title: "Unauthorized",
+  robots: { index: false, follow: false },
+};
 
 export default async function NotFound() {
   return (

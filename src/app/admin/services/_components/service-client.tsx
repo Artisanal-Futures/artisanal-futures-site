@@ -21,11 +21,11 @@ import { createServiceFilter } from "./service-filters";
 
 type Props = {
   services: ServiceWithShop[];
-  shops: RouterOutputs["shop"]["getAll"];
+  shops: RouterOutputs["shop"]["getOptions"];
 };
 
 export function ServiceClient({ services, shops }: Props) {
-  const { isElevated, isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -82,11 +82,6 @@ export function ServiceClient({ services, shops }: Props) {
     [isAdmin],
   );
 
-  const columnVisibility = useMemo(
-    () => ({ user_id: isElevated }),
-    [isElevated],
-  );
-
   return (
     <div className="py-4">
       <AdvancedDataTable
@@ -102,7 +97,6 @@ export function ServiceClient({ services, shops }: Props) {
             onClear={() => setRowSelection({})}
           />
         }
-        defaultColumnVisibility={columnVisibility}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         addButton={addButtonNode}

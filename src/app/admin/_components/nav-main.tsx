@@ -53,10 +53,22 @@ export function NavMain({
                 }
                 aria-current={isActive(item.url) ? "page" : undefined}
               >
-                <Link href={item.url} tabIndex={0}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </Link>
+                {/^https?:\/\//.test(item.url) ? (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={0}
+                  >
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </a>
+                ) : (
+                  <Link href={item.url} tabIndex={0}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </Link>
+                )}
               </SidebarMenuButton>
               {!!item.badge && item.badge > 0 && (
                 <SidebarMenuBadge

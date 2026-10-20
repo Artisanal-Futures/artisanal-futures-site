@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
 
+import { publicUserSelect } from "~/lib/public-user";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
 import { MiniCreatePost } from "~/app/forums/_components/mini-create-post";
@@ -24,14 +25,12 @@ const page = async ({ params }: Props) => {
       subscribers: true,
       posts: {
         include: {
-          author: true,
+          author: { select: publicUserSelect },
           votes: true,
           comments: true,
           subreddit: true,
         },
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         take: INFINITE_SCROLL_PAGINATION_RESULTS,
       },
     },

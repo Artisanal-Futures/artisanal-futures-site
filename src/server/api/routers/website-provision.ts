@@ -4,16 +4,8 @@ import { PrismaClient } from "generated/prisma";
 import { z } from "zod";
 
 import { sendWebsiteReadyEmail } from "~/lib/email/templates";
-import {
-  createCoolifyDeployment,
-  deleteCoolifyDeployment,
-  verifyDeployment,
-} from "~/lib/coolify";
-import {
-  cancelProvisionSchema,
-  createProvisionSchema,
-} from "~/lib/validators/website-provision";
-import { generateSecurePassword } from "~/lib/website-provisions/generate-secure-password";
+import { deleteCoolifyDeployment } from "~/lib/coolify";
+import { cancelProvisionSchema } from "~/lib/validators/website-provision";
 import {
   checkSimplePressConnection,
   provisionSimplePressSite,
@@ -169,10 +161,29 @@ export const websiteProvisionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const shop = await ctx.db.shop.findUnique({
         where: { id: input.shopId },
-        include: {
-          owner: true,
-          address: true,
-          websiteProvision: true,
+        // Narrow `select` on purpose: this goes to the admin browser, so never
+        // pull the owner row or the full provision (tokens, config, passwords,
+        // Coolify ids).
+        select: {
+          name: true,
+          ownerName: true,
+          email: true,
+          phone: true,
+          bio: true,
+          logoPhoto: true,
+          coverPhoto: true,
+          website: true,
+          owner: { select: { email: true } },
+          address: {
+            select: {
+              street: true,
+              city: true,
+              state: true,
+              zip: true,
+              country: true,
+            },
+          },
+          websiteProvision: { select: { status: true } },
         },
       });
 
@@ -184,7 +195,11 @@ export const websiteProvisionRouter = createTRPCRouter({
       }
 
       return {
-        shop,
+        shop: {
+          websiteProvision: shop.websiteProvision
+            ? { status: shop.websiteProvision.status }
+            : null,
+        },
         hasProvision: !!shop.websiteProvision,
         onboardingData: {
           businessName: shop.name,
@@ -206,109 +221,6 @@ export const websiteProvisionRouter = createTRPCRouter({
           website: shop.website,
         },
       };
-    }),
-
-  create: adminOnlyProcedure
-    .input(createProvisionSchema)
-    .mutation(async ({ ctx, input }) => {
-      const adminUser = "af_admin";
-      const adminPassword = generateSecurePassword();
-
-      if (!adminPassword) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Password could not be generated",
-        });
-      }
-
-      const existingProvision = await ctx.db.websiteProvision.findUnique({
-        where: { shopId: input.shopId },
-      });
-
-      if (existingProvision) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "This shop already has an active website provision",
-        });
-      }
-
-      const config = {
-        ...input.config,
-        adminUser,
-        adminPassword,
-        adminEmail: input.config?.adminEmail ?? input.contactEmail,
-        plugins: input.config?.plugins ?? [
-          "woocommerce",
-          "better-wp-security",
-          "all-in-one-wp-migration",
-          "admin-site-enhancements",
-        ],
-        theme: input.config?.theme ?? "storefront",
-      };
-
-      const provision = await ctx.db.websiteProvision.create({
-        data: {
-          userId: input.userId,
-          shopId: input.shopId,
-          framework: input.framework,
-          siteType: input.siteType,
-          status: "PENDING",
-          businessName: input.businessName,
-          contactEmail: input.contactEmail,
-          config: config,
-        },
-        include: { user: true },
-      });
-
-      try {
-        const coolifyResult = await createCoolifyDeployment(provision);
-        const isLive = await verifyDeployment(
-          `https://${coolifyResult.domain}`,
-        );
-
-        if (!isLive) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message:
-              "Website deployment failed verification - site is not accessible",
-          });
-        }
-
-        const updateProvision = await ctx.db.websiteProvision.update({
-          where: { id: provision.id },
-          data: {
-            status: isLive ? "ACTIVE" : "PROVISIONING",
-            coolifyProjectUuid: coolifyResult.projectUuid,
-            coolifyServiceUuid: coolifyResult.serviceUuid,
-            coolifyServerUuid: coolifyResult.serverUuid,
-            customDomain: coolifyResult.domain,
-            hasCustomDomain: true,
-            adminUser: adminUser,
-            // adminPasswordEncrypted: encryptedPassword,
-          },
-          include: { user: true },
-        });
-
-        return {
-          provision: updateProvision,
-          redirectUrl: `https://${coolifyResult.domain}`,
-        };
-      } catch (coolifyError) {
-        await ctx.db.websiteProvision.update({
-          where: { id: provision.id },
-          data: {
-            status: "FAILED",
-            errorMessage:
-              coolifyError instanceof Error
-                ? coolifyError.message
-                : "Unknown error",
-          },
-        });
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `Deployment failed: ${coolifyError instanceof Error ? coolifyError.message : " Unknown"}`,
-        });
-      }
     }),
 
   // Shops the caller may act on, for pickers. ADMIN → all shops; otherwise the

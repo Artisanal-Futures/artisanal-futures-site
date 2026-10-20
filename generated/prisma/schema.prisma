@@ -288,6 +288,39 @@ enum ProductScrapeMethod {
   SQUARE
 }
 
+/// Site-wide search/share settings, edited at /admin/seo. Singleton: id "default".
+model SiteSettings {
+  id                 String   @id @default("default")
+  siteName           String   @default("Artisanal Futures")
+  alternateNames     String[]
+  tagline            String?
+  defaultTitle       String?
+  defaultDescription String?
+  defaultOgImage     String?
+  logo               String?
+  contactEmail       String?
+  /// Organization profiles (social, Wikidata, ...). Feed schema.org `sameAs`.
+  socialLinks        String[]
+  twitterHandle      String?
+  googleVerification String?
+  bingVerification   String?
+  allowAiCrawlers    Boolean  @default(true)
+  /// Markdown intro for /llms.txt.
+  llmsIntro          String?
+  updatedAt          DateTime @updatedAt
+}
+
+/// Admin overrides for a static public page's metadata, keyed by path ("/about-us").
+model PageSeo {
+  id          String   @id @default(cuid())
+  path        String   @unique
+  title       String?
+  description String?
+  ogImage     String?
+  noIndex     Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}
+
 model Shop {
   id            String   @id @default(cuid())
   ownerName     String
@@ -306,6 +339,20 @@ model Shop {
   name          String
   isPublic      Boolean  @default(true)
 
+  /// Public profile URL is /shops/{slug}. Optional until every shop is
+  /// backfilled (scripts/backfill-shop-slugs.ts). Old slugs keep 301ing.
+  slug          String?  @unique
+  previousSlugs String[]
+  /// Artisan-editable profile links (Instagram, Facebook, Etsy, ...). Feed the
+  /// shop's schema.org `sameAs`.
+  socialLinks   String[]
+
+  /// Admin-only search/share overrides. Blank = derived from the profile.
+  seoTitle       String?
+  seoDescription String?
+  seoImage       String?
+  seoNoIndex     Boolean @default(false)
+
   /// Scheduled product-sync configuration. `syncPlatform` reuses the
   /// per-product scrape enum so there is one platform vocabulary; shops on
   /// SQUARE or MANUAL simply leave `syncEnabled` false and the cron skips them.
@@ -322,11 +369,12 @@ model Shop {
   events           Event[]
   products         Product[]
   services         Service[]
-  invites          PlatformInvite[]  @relation("ShopInvites")
-  owner            User              @relation(fields: [ownerId], references: [id], onDelete: NoAction)
+  invites          PlatformInvite[]    @relation("ShopInvites")
+  owner            User                @relation(fields: [ownerId], references: [id], onDelete: NoAction)
   address          ShopAddress?
   websiteProvision WebsiteProvision?
   syncRuns         ProductSyncRun[]
+  privateContact   ShopPrivateContact?
 }
 
 model ShopAddress {
@@ -340,6 +388,27 @@ model ShopAddress {
   shopId     String? @unique
   street     String?
   shop       Shop?   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  latitude     Float?
+  longitude    Float?
+  /// Normalized locality query last geocoded (zip/city/state/country only).
+  geocodeQuery String?
+  geocodedAt   DateTime?
+}
+
+/// Admin-only private contact for the artisan behind a shop. Kept in its own
+/// table so it is never returned by queries that include/spread a Shop row.
+model ShopPrivateContact {
+  id          String   @id @default(cuid())
+  shopId      String   @unique
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name        String?
+  email       String?
+  phone       String?
+  notes       String?  @db.Text
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Member {

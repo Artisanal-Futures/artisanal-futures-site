@@ -3,23 +3,21 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { getInitials } from "~/lib/get-initials";
 import { handleImageUrl } from "~/lib/handle-image-url";
+import { shopPath } from "~/lib/seo/paths";
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
+/** Only the fields the card renders, so landing pages can pass lighter rows. */
+type Shop = Pick<
+  NonNullable<RouterOutputs["shop"]["getAllPublic"][number]>,
+  "id" | "slug" | "name" | "ownerName" | "ownerPhoto" | "logoPhoto" | "website"
+>;
 
-type Shop = NonNullable<RouterOutputs["shop"]["getAllPublic"][number]>;
 export function ShopCard({ shop }: { shop: Shop }) {
   return (
     <article className="group border-border bg-card hover:border-ring/30 relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all hover:shadow-md">
       {/* Owner portrait */}
-      <Link href={`/shops/${shop?.id}`}>
+      <Link href={shopPath(shop)}>
         {shop?.ownerPhoto ? (
           <div className="bg-muted relative aspect-square w-full overflow-hidden">
             <Image
@@ -58,7 +56,7 @@ export function ShopCard({ shop }: { shop: Shop }) {
       {/* Footer actions */}
       <div className="border-border mt-auto flex items-center border-t">
         <Link
-          href={`/shops/${shop?.id}`}
+          href={shopPath(shop)}
           className="text-foreground hover:bg-secondary flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
         >
           View Profile

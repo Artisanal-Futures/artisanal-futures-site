@@ -54,22 +54,24 @@ export function ContactForm() {
   });
 
   const { mutate, isPending } = api.contact.send.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       setCaptchaToken("");
       const handle = captchaRef.current;
       if (handle) handle.reset();
       form.reset();
     },
-    onError: (err: { message?: string }) => {
-      toast.dismiss();
-      toast.error(err.message ?? "Something went wrong. Please try again.");
+    onError: (err: { message?: string }, _input, context) => {
+      toast.error(err.message ?? "Something went wrong. Please try again.", {
+        id: context?.toastId,
+      });
       const handle = captchaRef.current;
       if (handle) handle.reset();
       setCaptchaToken("");
     },
-    onMutate: () => toast.loading("Sending message..."),
+    onMutate: () => ({
+      toastId: toast.loading("Sending message..."),
+    }),
   });
 
   const messageLength =
@@ -103,9 +105,9 @@ export function ContactForm() {
 
   if (isSuccess) {
     return (
-      <Alert className="border-green-200 bg-green-50">
+      <Alert className="border-green-200 bg-green-50 dark:border-green-900/50 dark:bg-green-950/40">
         <CheckCircle className="h-5 w-5 text-green-600" />
-        <AlertDescription className="text-green-800">
+        <AlertDescription className="text-green-800 dark:text-green-200">
           <strong>Message sent successfully!</strong>
           <br />
           We&apos;ve received your message and will get back to you soon.

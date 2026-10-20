@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
+
 import { CreateCommunityWrapper } from "./_components/create-community-wrapper";
+
+export const metadata: Metadata = {
+  title: "Create Community",
+  robots: { index: false, follow: false },
+};
 
 function CreateCommunityFallback() {
   return (

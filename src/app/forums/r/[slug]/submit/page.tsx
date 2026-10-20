@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { db } from "~/server/db";
 import { Button } from "~/components/ui/button";
 import { Editor } from "~/app/forums/_components/default-editor";
+
+export const metadata: Metadata = {
+  title: "Create Post",
+  robots: { index: false, follow: false },
+};
 
 type Props = {
   params: Promise<{

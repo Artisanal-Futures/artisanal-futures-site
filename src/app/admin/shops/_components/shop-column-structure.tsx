@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EyeIcon, PencilIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -73,10 +74,9 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
     filterFn: "includesString",
     cell: ({ row }) => (
       <RowImageLink
-        id={row.original.id}
         name={`${row.original.name} `}
+        href={`/admin/shops/${row.original.id}`}
         image={toImageSrc(row.original?.logoPhoto)}
-        hasLink={false}
         subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
       />
     ),
@@ -111,15 +111,14 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Created on" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm text-gray-500">
+      <span className="text-muted-foreground text-sm">
         {row.original.createdAt.toLocaleDateString()}
       </span>
     ),
   },
   {
-    id: "options",
+    id: "actions",
     size: 280,
-    header: "Options",
     enableSorting: false,
     cell: ({ row }) => (
       <div className="flex gap-2">
@@ -130,7 +129,7 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
           className={cn(
             buttonVariants({
               variant: "default",
-              className: "h-8 bg-blue-500 text-xs hover:bg-blue-600",
+              className: "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",
             }),
           )}
         >
@@ -138,7 +137,7 @@ export const shopColumns: ColumnDef<ShopRow>[] = [
         </Link>
 
         <Link
-          href={`/shops/${row.original.id}`}
+          href={shopPath(row.original)}
           className={cn(
             buttonVariants({
               variant: "default",

@@ -2,6 +2,7 @@
 
 import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   AlertTriangle,
@@ -115,21 +116,23 @@ export function ProductImportWizard({
   }, [parsedProducts, currentPage]);
 
   const apiUtils = api.useUtils();
+  const router = useRouter();
 
   const productMigration = api.product.importProducts.useMutation({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success("Products imported successfully");
+    onSuccess: (_data, _input, context) => {
+      toast.success("Products imported successfully", { id: context?.toastId });
       void apiUtils.product.invalidate();
+      router.refresh();
       setStep("success");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to import products");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to import products", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Importing products, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Importing products, please wait..."),
+    }),
   });
 
   const parseJsonString = async (raw: string) => {
@@ -171,10 +174,11 @@ export function ProductImportWizard({
   };
 
   const fetchFromStore = api.product.fetchFromStore.useMutation({
-    onSuccess: async ({ json, count, insecureTLSCode }) => {
-      toast.dismiss();
+    onSuccess: async ({ json, count, insecureTLSCode }, _input, context) => {
       if (count === 0) {
-        toast.error("No products found at your store.");
+        toast.error("No products found at your store.", {
+          id: context?.toastId,
+        });
         return;
       }
       setCertWarning(
@@ -185,16 +189,20 @@ export function ProductImportWizard({
       setJsonInput(json);
       toast.success(
         `Fetched ${count} product${count !== 1 ? "s" : ""} from your store.`,
+        { id: context?.toastId },
       );
       await parseJsonString(json);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Could not fetch from your store.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Could not fetch from your store.", {
+        id: context?.toastId,
+      });
     },
     onMutate: () => {
       setCertWarning(null);
-      toast.loading("Fetching products from your store...");
+      return {
+        toastId: toast.loading("Fetching products from your store..."),
+      };
     },
   });
 

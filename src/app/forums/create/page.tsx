@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { getSession } from "~/server/better-auth/server";
@@ -7,6 +8,11 @@ import { Button } from "~/components/ui/button";
 
 import { EditorGeneric } from "../_components/editor-generic";
 import CreateLayout from "./_components/create-layout";
+
+export const metadata: Metadata = {
+  title: "Create Post",
+  robots: { index: false, follow: false },
+};
 
 interface CreatePostPageProps {
   searchParams: Promise<{ slug?: string }>;

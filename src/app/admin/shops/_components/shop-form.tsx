@@ -1,18 +1,18 @@
 "use client";
 
+import type { Resolver } from "react-hook-form";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUploadFile } from "@better-upload/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
-import type { Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUploadFile } from "@better-upload/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import type { ShopFormData } from "~/lib/validators/shop";
 import type { RouterOutputs } from "~/trpc/react";
+import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { cn, slugify } from "~/lib/utils";
 import { shopFormSchema } from "~/lib/validators/shop";
@@ -45,23 +45,15 @@ import { ImageUploadFormField } from "~/components/inputs/image-upload-form-fiel
 import { InputFormField } from "~/components/inputs/input-form-field";
 import { SelectFormField } from "~/components/inputs/select-form-field";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
+import { UrlListFormField } from "~/components/inputs/url-list-form-field";
+
+import { ShopSeoCard } from "./shop-seo-card";
 
 type Props = {
   initialData: RouterOutputs["shop"]["get"];
   userRole: string;
   potentialShopOwners: RouterOutputs["shop"]["getShopOwners"];
 };
-
-const STORE_ATTRIBUTES = [
-  "African American Culture",
-  "African Culture",
-  "African American Civil Rights",
-  "Black Owned",
-  "Woman Owned",
-  "Worker Owned",
-  "Community Education",
-  "Food Sovereignty",
-] as const;
 
 export function ShopForm({
   initialData,
@@ -76,6 +68,12 @@ export function ShopForm({
   const formRef = useRef<HTMLFormElement>(null);
   const logoFileInputRef = useRef<HTMLInputElement | null>(null);
   const ownerFileInputRef = useRef<HTMLInputElement | null>(null);
+  const coverFileInputRef = useRef<HTMLInputElement | null>(null);
+  const seoImageInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Slug and search/share fields are admin-only, and only admins' requests
+  // may carry them (shop.create/update reject `seo` from anyone else).
+  const isAdmin = userRole === "ADMIN";
 
   const initialFormValues: ShopFormData = {
     name: initialData?.name ?? "",
@@ -91,6 +89,7 @@ export function ShopForm({
     zip: initialData?.address?.zip ?? "",
     country: initialData?.address?.country ?? "US",
     attributeTags: initialData?.attributeTags ?? [],
+    socialLinks: initialData?.socialLinks ?? [],
     ownerId: initialData?.ownerId ?? "",
     isPublic: initialData?.isPublic ?? true,
 
@@ -100,9 +99,26 @@ export function ShopForm({
     logoPhotoUrl: initialData?.logoPhoto
       ? handleImageUrl(initialData.logoPhoto)
       : undefined,
+    coverPhotoUrl: initialData?.coverPhoto
+      ? handleImageUrl(initialData.coverPhoto)
+      : undefined,
 
     ownerPhotoFile: null,
     logoPhotoFile: null,
+    coverPhotoFile: null,
+    seoImageFile: null,
+
+    ...(isAdmin
+      ? {
+          seo: {
+            slug: initialData?.slug ?? "",
+            seoTitle: initialData?.seoTitle ?? "",
+            seoDescription: initialData?.seoDescription ?? "",
+            seoImageUrl: initialData?.seoImage ?? "",
+            seoNoIndex: initialData?.seoNoIndex ?? false,
+          },
+        }
+      : {}),
   };
 
   const form = useForm<ShopFormData>({
@@ -111,52 +127,51 @@ export function ShopForm({
   });
 
   const updateShop = api.shop.update.useMutation({
-    onSuccess: ({ data, message }) => {
-      toast.dismiss();
-      toast.success(message);
-      handleReset(data);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating shop, please wait..."),
+    }),
   });
 
   const createShop = api.shop.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.push(`/admin/shops/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating shop, please wait..."),
+    }),
   });
 
   const deleteShop = api.shop.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.push("/admin/shops");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete shop.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting shop, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting shop, please wait..."),
+    }),
   });
 
   const imageUploader = useUploadFile({
@@ -167,60 +182,89 @@ export function ShopForm({
     },
   });
 
+  /** Uploads a newly picked image; returns its URL, or false on failure. */
+  const uploadImage = async (
+    file: File | null | undefined,
+    businessSlug: string,
+    label: string,
+  ): Promise<string | undefined | false> => {
+    if (!(file instanceof File)) return undefined;
+    try {
+      const response = await imageUploader.upload(file, {
+        metadata: { businessSlug },
+      });
+      const fileLocation =
+        (response.file.objectInfo.metadata?.pathname as string | undefined) ??
+        "";
+      return fileLocation === "" ? undefined : fileLocation;
+    } catch {
+      toast.error(`Failed to upload ${label}.`);
+      return false;
+    }
+  };
+
   const handleSubmit = async (data: ShopFormData) => {
     const businessSlug = slugify(data.name);
 
-    let logoPhotoUrl: string | undefined = data.logoPhotoUrl ?? undefined;
-    let ownerPhotoUrl: string | undefined = data.ownerPhotoUrl ?? undefined;
-    const logoFile = data.logoPhotoFile;
-    const ownerFile = data.ownerPhotoFile;
+    const uploads = await Promise.all([
+      uploadImage(data.logoPhotoFile, businessSlug, "logo"),
+      uploadImage(data.ownerPhotoFile, businessSlug, "owner photo"),
+      uploadImage(data.coverPhotoFile, businessSlug, "cover photo"),
+      uploadImage(data.seoImageFile, businessSlug, "share image"),
+    ]);
+    if (uploads.includes(false)) return;
+    const [logoUpload, ownerUpload, coverUpload, seoImageUpload] = uploads as (
+      | string
+      | undefined
+    )[];
 
-    if (logoFile instanceof File) {
-      try {
-        const response = await imageUploader.upload(logoFile, {
-          metadata: { businessSlug },
-        });
-        const fileLocation =
-          (response.file.objectInfo.metadata?.pathname as string | undefined) ??
-          "";
-        if (fileLocation) logoPhotoUrl = fileLocation;
-      } catch {
-        toast.error("Failed to upload logo.");
-        return;
-      }
-    }
+    const logoPhotoUrl = logoUpload ?? data.logoPhotoUrl ?? undefined;
+    const ownerPhotoUrl = ownerUpload ?? data.ownerPhotoUrl ?? undefined;
+    const coverPhotoUrl = coverUpload ?? data.coverPhotoUrl ?? undefined;
 
-    if (ownerFile instanceof File) {
-      try {
-        const response = await imageUploader.upload(ownerFile, {
-          metadata: { businessSlug },
-        });
+    // Never send `seo` for artisans: the server rejects it.
+    const seo =
+      isAdmin && data.seo
+        ? {
+            ...data.seo,
+            seoImageUrl: seoImageUpload ?? data.seo.seoImageUrl,
+          }
+        : undefined;
 
-        const fileLocation =
-          (response.file.objectInfo.metadata?.pathname as string | undefined) ??
-          "";
-        if (fileLocation) ownerPhotoUrl = fileLocation;
-
-        console.log(ownerPhotoUrl);
-      } catch {
-        toast.error("Failed to upload owner photo.");
-        return;
-      }
-    }
+    const payload = {
+      ...data,
+      ownerPhotoUrl,
+      logoPhotoUrl,
+      coverPhotoUrl,
+      seo,
+    };
 
     if (!initialData) {
-      createShop.mutate({
-        ...data,
-        ownerPhotoUrl,
-        logoPhotoUrl,
-      });
+      createShop.mutate(payload);
     } else {
-      updateShop.mutate({
-        id: initialData.id,
-        ...data,
-        ownerPhotoUrl,
-        logoPhotoUrl,
-      });
+      updateShop.mutate(
+        { id: initialData.id, ...payload },
+        {
+          // Keep what was saved (incl. uploaded URLs and an auto-assigned
+          // slug) as the new clean state.
+          onSuccess: ({ data: saved }) =>
+            handleReset({
+              ...payload,
+              ...(seo
+                ? {
+                    // Validated values use null for blanks; inputs want "".
+                    seo: {
+                      slug: saved.slug ?? seo.slug,
+                      seoTitle: seo.seoTitle ?? "",
+                      seoDescription: seo.seoDescription ?? "",
+                      seoImageUrl: seo.seoImageUrl ?? "",
+                      seoNoIndex: seo.seoNoIndex,
+                    },
+                  }
+                : {}),
+            }),
+        },
+      );
     }
   };
 
@@ -230,11 +274,15 @@ export function ShopForm({
         ...data,
         ownerPhotoFile: null,
         logoPhotoFile: null,
+        coverPhotoFile: null,
+        seoImageFile: null,
       });
     else form.reset(initialFormValues);
 
     if (logoFileInputRef.current) logoFileInputRef.current.value = "";
     if (ownerFileInputRef.current) ownerFileInputRef.current.value = "";
+    if (coverFileInputRef.current) coverFileInputRef.current.value = "";
+    if (seoImageInputRef.current) seoImageInputRef.current.value = "";
   };
 
   const isPending =
@@ -478,6 +526,24 @@ export function ShopForm({
                       inputRef={logoFileInputRef}
                     />
 
+                    <ImageUploadFormField
+                      form={form}
+                      name="coverPhotoFile"
+                      label="Cover photo"
+                      description="A wide photo of your work or workspace. Also used when your shop is shared online."
+                      disabled={isPending}
+                      existingPreviewUrl={initialData?.coverPhoto ?? undefined}
+                      inputRef={coverFileInputRef}
+                    />
+
+                    <UrlListFormField
+                      form={form}
+                      name="socialLinks"
+                      label="Social links"
+                      description="Your shop's profiles elsewhere (Instagram, Facebook, Etsy, ...). Full URLs, starting with https://."
+                      disabled={isPending}
+                    />
+
                     <div className="space-y-2">
                       <FormLabel htmlFor="shop-attributes">
                         Shop Attributes
@@ -564,9 +630,25 @@ export function ShopForm({
                           placeholder="e.g. 48201"
                         />
                       </div>
+                      <InputFormField
+                        form={form}
+                        name="country"
+                        label="Country"
+                        className="w-full"
+                        placeholder="e.g. US"
+                      />
                     </div>
                   </CardContent>
                 </Card>
+
+                {isAdmin && (
+                  <ShopSeoCard
+                    form={form}
+                    shop={initialData}
+                    disabled={isPending}
+                    seoImageInputRef={seoImageInputRef}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -591,7 +673,7 @@ export function ShopForm({
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                deleteShop.mutate({ shopId: initialData?.id ?? "" });
+                deleteShop.mutate({ id: initialData?.id ?? "" });
               }}
               disabled={deleteShop.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

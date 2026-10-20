@@ -4,16 +4,12 @@ import axios from "axios";
 import { z } from "zod";
 
 import { env } from "~/env";
-import {
-  adminOnlyProcedure,
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { adminOnlyProcedure, createTRPCRouter } from "~/server/api/trpc";
 
 const AI_AGENT_BACKEND_URL = `${env.AI_AGENT_BACKEND_URL}/sdm/api/v2`;
 
 export const upcyclingRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: adminOnlyProcedure.query(async ({ ctx }) => {
     const response = await axios.get(`${AI_AGENT_BACKEND_URL}/list/upcycle`);
 
     const generations = response.data as UpcyclingItem[];

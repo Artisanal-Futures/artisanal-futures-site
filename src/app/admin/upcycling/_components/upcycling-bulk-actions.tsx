@@ -1,22 +1,11 @@
 "use client";
 
-import { Trash2Icon, XIcon } from "lucide-react";
-import { toast } from "sonner";
+import { XIcon } from "lucide-react";
 
 import { api } from "~/trpc/react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
+
+import { BulkDeleteButton } from "../../_components/bulk-delete-button";
 
 type Props = {
   selectedIds: number[];
@@ -27,19 +16,7 @@ export function UpcyclingBulkActions({ selectedIds, onClear }: Props) {
   const apiUtils = api.useUtils();
 
   const deleteItems = api.upcycling.deleteMany.useMutation({
-    onMutate: () => {
-      toast.loading("Deleting upcycling items, please wait...");
-    },
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
-      void apiUtils.upcycling.invalidate();
-      onClear();
-    },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete upcycling items.");
-    },
+    onSuccess: () => apiUtils.upcycling.invalidate(),
   });
 
   return (
@@ -50,41 +27,13 @@ export function UpcyclingBulkActions({ selectedIds, onClear }: Props) {
 
       <div className="h-4 w-px bg-border" />
 
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button
-            variant="destructive"
-            className="h-8 text-xs lg:px-3"
-            disabled={deleteItems.isPending}
-          >
-            <Trash2Icon className="mr-2 h-4 w-4" />
-            Delete ({selectedIds.length})
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent size="sm">
-          <AlertDialogHeader>
-            <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-              <Trash2Icon />
-            </AlertDialogMedia>
-            <AlertDialogTitle>
-              Delete {selectedIds.length} upcycling item(s)?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the selected upcycling items. This
-              action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => deleteItems.mutate(selectedIds)}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <BulkDeleteButton
+        ids={selectedIds}
+        itemLabel={{ singular: "upcycling item", plural: "upcycling items" }}
+        onDelete={deleteItems.mutateAsync}
+        isPending={deleteItems.isPending}
+        onSuccess={onClear}
+      />
 
       <div className="h-4 w-px bg-border" />
 

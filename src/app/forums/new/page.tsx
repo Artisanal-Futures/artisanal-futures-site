@@ -1,15 +1,18 @@
 import Link from 'next/link'
 import { Home as HomeIcon } from 'lucide-react'
 
+import { buildMetadata } from '~/lib/seo/site'
 import { GeneralFeed } from '~/app/forums/_components/homepage/general-feed'
 import { buttonVariants } from '~/components/ui/button'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
-export const metadata = {
-  title: 'New Subreddits',
-}
+export const metadata = buildMetadata({
+  title: 'New Communities',
+  description: 'The newest communities on the Artisanal Futures forums.',
+  path: '/forums/new',
+})
 
 export default function NewSubredditsPage() {
   return (

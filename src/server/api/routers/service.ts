@@ -43,7 +43,7 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Service does not belong to current user",
         });
       }
@@ -55,20 +55,17 @@ export const serviceRouter = createTRPCRouter({
       return addFullServiceImageUrl(service);
     }),
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
+    // Admins see every service; artisans only see services for shops they own.
     const services = await ctx.db.service.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { shop: { ownerId: ctx.session.user.id } },
       include: { shop: true, categories: true },
       orderBy: { createdAt: "desc" },
     });
 
-    let servicesWithFullUrls = services.map(addFullServiceImageUrl);
-
-    if (ctx.session.user.role !== "ADMIN") {
-      servicesWithFullUrls = servicesWithFullUrls.filter(
-        (service) => service?.shop?.ownerId === ctx.session.user.id,
-      );
-    }
-
-    return servicesWithFullUrls;
+    return services.map(addFullServiceImageUrl);
   }),
 
   getAllByCategory: publicProcedure
@@ -233,7 +230,7 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more services do not belong to current user",
         });
       }
@@ -246,7 +243,7 @@ export const serviceRouter = createTRPCRouter({
 
         if (!isShopOwner) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
+            code: "FORBIDDEN",
             message: "Shop does not belong to current user",
           });
         }
@@ -290,12 +287,17 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Shop does not belong to current user",
         });
       }
 
       const { categoryIds, tags, ...serviceData } = input;
+
+      // Featuring is an admin-only curation flag.
+      if (ctx.session.user.role !== "ADMIN") {
+        serviceData.isFeatured = false;
+      }
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
@@ -330,12 +332,35 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Product does not belong to current user",
+          code: "FORBIDDEN",
+          message: "Service does not belong to current user",
+        });
+      }
+
+      // The service may be moved to another shop: the caller must own that
+      // shop too.
+      const isTargetShopOwner = await checkUserShopPermissions(
+        ctx.session,
+        input.shopId,
+      );
+
+      if (!isTargetShopOwner) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Shop does not belong to current user",
         });
       }
 
       const { id, categoryIds, tags, ...serviceData } = input;
+
+      // Featuring is an admin-only curation flag: keep the existing value.
+      if (ctx.session.user.role !== "ADMIN") {
+        const existing = await ctx.db.service.findUnique({
+          where: { id },
+          select: { isFeatured: true },
+        });
+        serviceData.isFeatured = existing?.isFeatured ?? false;
+      }
 
       const allCategoryIds = await getCategoriesWithParents(
         ctx.db,
@@ -378,7 +403,7 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isOwner) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more services do not belong to current user",
         });
       }
@@ -397,22 +422,22 @@ export const serviceRouter = createTRPCRouter({
     }),
 
   delete: adminArtisanProcedure
-    .input(z.string())
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const isUserAuthorized = await checkUserServicePermissions(
         ctx.session,
-        input,
+        input.id,
       );
 
       if (!isUserAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Service does not belong to current user",
         });
       }
 
       await ctx.db.service.delete({
-        where: { id: input },
+        where: { id: input.id },
       });
       return {
         data: null,
@@ -420,7 +445,7 @@ export const serviceRouter = createTRPCRouter({
       };
     }),
 
-  deleteMultiple: adminArtisanProcedure
+  deleteMany: adminArtisanProcedure
     .input(z.array(z.string()))
     .mutation(async ({ ctx, input }) => {
       const isAuthorized = await Promise.all(
@@ -433,7 +458,7 @@ export const serviceRouter = createTRPCRouter({
 
       if (!isAuthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "One or more services do not belong to current user",
         });
       }

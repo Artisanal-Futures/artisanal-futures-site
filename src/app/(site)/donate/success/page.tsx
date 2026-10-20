@@ -48,4 +48,5 @@ export default function DonateSuccessPage() {
 
 export const metadata = {
   title: "Donation Successful",
+  robots: { index: false, follow: false },
 };

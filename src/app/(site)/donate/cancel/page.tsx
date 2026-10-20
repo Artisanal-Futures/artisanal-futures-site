@@ -54,4 +54,5 @@ export default function DonateCancelPage() {
 
 export const metadata = {
   title: "Donation Canceled",
+  robots: { index: false, follow: false },
 };

@@ -51,7 +51,7 @@ function ConnectionIndicator() {
   if (connectionQuery.isPending) {
     return (
       <div className="text-muted-foreground mb-6 flex items-center gap-2 text-xs">
-        <span className="size-2 animate-pulse rounded-full bg-gray-400" />
+        <span className="bg-muted-foreground size-2 animate-pulse rounded-full" />
         Checking connection to SimplePress...
       </div>
     );
@@ -68,14 +68,14 @@ function ConnectionIndicator() {
             connected ? "bg-green-500" : "bg-red-500"
           }`}
         />
-        <span className={connected ? "text-muted-foreground" : "text-red-600"}>
+        <span className={connected ? "text-muted-foreground" : "text-red-600 dark:text-red-400"}>
           {connected
             ? "Connected to SimplePress"
             : "Can't reach SimplePress right now"}
         </span>
       </div>
       {!connected && data?.detail && (
-        <p className="mt-1 pl-4 text-xs text-red-600/80">{data.detail}</p>
+        <p className="mt-1 pl-4 text-xs text-red-600/80 dark:text-red-400/80">{data.detail}</p>
       )}
     </div>
   );
@@ -99,7 +99,7 @@ const siteOptions = {
       "Can be overwhelming for beginners",
     ],
     icon: Code,
-    color: "bg-blue-500/10 text-blue-600",
+    color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
   simplepress: {
     name: "SimplePress",
@@ -118,7 +118,7 @@ const siteOptions = {
       "Newer platform (still in development)",
     ],
     icon: Sparkles,
-    color: "bg-amber-500/10 text-amber-600",
+    color: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
   },
 };
 
@@ -132,7 +132,7 @@ function FeatureItem({
   return (
     <li className="flex items-start gap-2 text-sm">
       {type === "pro" ? (
-        <Check className="mt-0.5 size-4 shrink-0 text-green-600" />
+        <Check className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-400" />
       ) : (
         <X className="text-muted-foreground mt-0.5 size-4 shrink-0" />
       )}
@@ -355,12 +355,14 @@ function ProvisionGate({ shopId }: { shopId: string }) {
       </div>
 
       {/* Early stage notice */}
-      <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4">
+      <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/50 dark:bg-amber-950/40">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
           <div>
-            <p className="font-medium text-amber-900">Early stage program</p>
-            <p className="mt-1 text-sm text-amber-800">
+            <p className="font-medium text-amber-900 dark:text-amber-200">
+              Early stage program
+            </p>
+            <p className="mt-1 text-sm text-amber-800 dark:text-amber-300">
               SimplePress hosting is in early stages. You may encounter
               occasional bugs or limitations. Our team is here to help - just
               reach out if you need anything.
@@ -431,7 +433,7 @@ function ProvisionGate({ shopId }: { shopId: string }) {
         </AlertDialogContent>
       </AlertDialog>
       {simplePressUnreachable && (
-        <p className="mt-3 text-sm text-red-600">
+        <p className="mt-3 text-sm text-red-600 dark:text-red-400">
           We can&apos;t connect to SimplePress right now, so new websites
           can&apos;t be built. Please try again later.
         </p>

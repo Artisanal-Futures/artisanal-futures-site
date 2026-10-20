@@ -1,3 +1,6 @@
+import { cache } from "react";
+import { notFound } from "next/navigation";
+
 import { api } from "~/trpc/server";
 
 import { CategoryForm } from "../_components/category-form";
@@ -6,10 +9,17 @@ import { TrailHeader } from "../../_components/trail-header";
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+// Deduped per request so the page and generateMetadata share one query.
+const getCategory = cache((id: string) => api.category.get(id));
+
 export default async function EditCategoryPage({ params }: Props) {
   const { id } = await params;
-  const category = await api.category.get(id);
-  const categories = await api.category.getAll();
+  const [category, categories] = await Promise.all([
+    getCategory(id),
+    api.category.getAll(),
+  ]);
+  if (!category) notFound();
 
   return (
     <>
@@ -26,7 +36,7 @@ export default async function EditCategoryPage({ params }: Props) {
 }
 export const generateMetadata = async ({ params }: Props) => {
   const { id } = await params;
-  const category = await api.category.get(id);
+  const category = await getCategory(id).catch(() => null);
   if (!category) {
     return {
       title: "Category Not Found",

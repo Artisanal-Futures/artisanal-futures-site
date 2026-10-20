@@ -12,17 +12,20 @@ export function DeleteShopDialog({ shopId }: Props) {
   const router = useRouter();
   const apiUtils = api.useUtils();
   const deleteShop = api.shop.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.success(message);
+    onMutate: () => ({
+      toastId: toast.loading("Deleting shop, please wait..."),
+    }),
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.shop.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.error(error.message ?? "Failed to delete shop.");
+    onError: (error, _input, context) => {
+      toast.error(error.message, { id: context?.toastId });
     },
   });
 
-  const onSubmit = () => deleteShop.mutate({ shopId });
+  const onSubmit = () => deleteShop.mutate({ id: shopId });
 
   return (
     <SingleActionDialog

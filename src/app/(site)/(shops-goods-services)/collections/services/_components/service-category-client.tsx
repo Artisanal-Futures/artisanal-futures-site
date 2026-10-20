@@ -6,6 +6,7 @@ import { type Category } from "generated/prisma";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { type ServiceWithShop } from "~/types/service";
+import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { FilterControls } from "~/app/(site)/(shops-goods-services)/_components/filter-controls";
@@ -188,7 +189,10 @@ export function ServiceCategoryClient({
           shopPrinciples={
             (selectedItem as ServiceWithShop)?.shop?.attributeTags ?? []
           }
-          linkToProfile={`/shops/${(selectedItem as ServiceWithShop)?.shop?.id}`}
+          linkToProfile={shopPath({
+            id: (selectedItem as ServiceWithShop)?.shop?.id ?? "",
+            slug: (selectedItem as ServiceWithShop)?.shop?.slug,
+          })}
           fallbackImage={(selectedItem as ServiceWithShop)?.shop?.logoPhoto}
         />
 

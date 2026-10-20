@@ -65,4 +65,5 @@ export default function DonateErrorPage() {
 
 export const metadata = {
   title: "Donation Error",
+  robots: { index: false, follow: false },
 };

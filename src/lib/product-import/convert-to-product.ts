@@ -31,13 +31,13 @@ export async function convertToProduct(
 ) {
   // Handle Shopify product
   if ("body_html" in product) {
+    // "0.00" means no real price; NaN (missing price) also fails the check
+    const cents = Math.round(parseFloat(product.variants[0]?.price ?? "") * 100);
     return {
       shopProductId: product.id.toString(),
       name: product.title,
       description: removeHtmlTags(product.body_html),
-      priceInCents: product.variants[0]?.price
-        ? Math.round(parseFloat(product.variants[0].price) * 100)
-        : null,
+      priceInCents: cents > 0 ? cents : null,
       currency: "USD", // Shopify typically uses USD
       imageUrl: product.images[0]?.src ?? fallbackImageUrl ?? null,
       productUrl: siteUrl
@@ -160,11 +160,12 @@ export async function convertToProduct(
 
   const imageUrl =
     product.items?.[0]?.assetUrl ?? product.assetUrl ?? fallbackImageUrl ?? null;
+  const price = product.structuredContent?.variants?.[0]?.price;
   return {
     shopProductId: product.id,
     name: product.title,
     description: removeHtmlTags(product.body ?? product.excerpt),
-    priceInCents: product.structuredContent?.variants?.[0]?.price ?? null,
+    priceInCents: price && price > 0 ? price : null,
     currency: product.structuredContent?.priceMoney?.currency ?? null,
     imageUrl: imageUrl,
     productUrl: siteUrl

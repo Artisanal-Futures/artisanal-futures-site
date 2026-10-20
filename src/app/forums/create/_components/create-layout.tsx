@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
+import { publicUserSelect } from "~/lib/public-user";
 import { getSession } from "~/server/better-auth/server";
 import { db } from "~/server/db";
 import { buttonVariants } from "~/components/ui/button";
@@ -42,7 +43,7 @@ export default async function CreateLayout({
     include: {
       posts: {
         include: {
-          author: true,
+          author: { select: publicUserSelect },
           votes: true,
         },
       },

@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Link from "next/link";
 
 import {
   Breadcrumb,
@@ -8,9 +9,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { SidebarTrigger } from "~/components/ui/sidebar";
+import { ModeToggle } from "~/components/common/mode-toggle";
 
 type Props = {
   breadcrumbs: {
@@ -31,39 +32,41 @@ export function TrailHeader({ breadcrumbs }: Props) {
 
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            {breadcrumbs.map((breadcrumb) =>
-              breadcrumb.href ? (
-                <Fragment key={breadcrumb.label}>
-                  <BreadcrumbItem key={breadcrumb.label}>
-                    <BreadcrumbLink href={breadcrumb.href}>
-                      {breadcrumb.label}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                </Fragment>
-              ) : (
-                <BreadcrumbItem key={breadcrumb.label}>
-                  <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+            {breadcrumbs.length === 0 ? (
+              <BreadcrumbItem>
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              </BreadcrumbItem>
+            ) : (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href="/admin/dashboard">Dashboard</Link>
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
-              ),
+                <BreadcrumbSeparator />
+                {breadcrumbs.map((breadcrumb) =>
+                  breadcrumb.href ? (
+                    <Fragment key={breadcrumb.label}>
+                      <BreadcrumbItem key={breadcrumb.label}>
+                        <BreadcrumbLink asChild>
+                          <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                    </Fragment>
+                  ) : (
+                    <BreadcrumbItem key={breadcrumb.label}>
+                      <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  ),
+                )}
+              </>
             )}
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-              href="https://github.com/Artisanal-Futures/artisanal-futures-site"
-              rel="noopener noreferrer"
-              target="_blank"
-              className="dark:text-foreground"
-            >
-              GitHub
-            </a>
-          </Button>
+
+        <div className="ml-auto">
+          <ModeToggle />
         </div>
       </div>
     </header>

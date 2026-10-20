@@ -1,9 +1,14 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Takedown Policy",
-  description: "The notice-and-takedown policy for Artisanal Futures",
-};
+import { buildPageMetadata } from "~/lib/seo/page-metadata";
+
+export async function generateMetadata() {
+  return buildPageMetadata({
+    title: "Takedown Policy",
+    description: "The notice-and-takedown policy for Artisanal Futures",
+    path: "/legal/takedown",
+  });
+}
 
 export default function TakedownPolicyPage() {
   return (

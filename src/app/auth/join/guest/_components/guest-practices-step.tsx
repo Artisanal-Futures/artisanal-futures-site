@@ -47,21 +47,23 @@ export function GuestPracticesStep() {
   const router = useRouter();
 
   const guestCreate = api.onboarding.onboardGuest.useMutation({
-    onSuccess: (data) => {
-      toast.dismiss();
-      toast.success(data.message ?? "Welcome to the platform!");
+    onSuccess: (data, _input, context) => {
+      toast.success(data.message ?? "Welcome to the platform!", {
+        id: context?.toastId,
+      });
       setCaptchaToken("");
       const handle = captchaRef.current;
       if (handle) handle.reset();
       router.push("/join/welcome");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to onboard guest");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to onboard guest", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Hold on... we're onboarding you!");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Hold on... we're onboarding you!"),
+    }),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

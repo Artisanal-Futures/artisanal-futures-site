@@ -210,29 +210,13 @@ export const userRouter = createTRPCRouter({
     }),
 
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    const users = await ctx.db.user.findMany();
-
-    if (ctx.session.user.role !== "ADMIN") {
-      return users.filter((user) => user.id === ctx.session.user.id);
-    }
-
-    return users;
+    return ctx.db.user.findMany({
+      where:
+        ctx.session.user.role === "ADMIN"
+          ? {}
+          : { id: ctx.session.user.id },
+    });
   }),
-
-  get: adminOnlyProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const user = await ctx.db.user.findUnique({
-        where: { id: input.userId },
-        include: {
-          accounts: true,
-          sessions: true,
-          posts: true,
-        },
-      });
-
-      return user;
-    }),
 
   /**
    * Hybrid delete: hard-deletes the user's commerce and system data, but
@@ -240,9 +224,9 @@ export const userRouter = createTRPCRouter({
    * the "Deleted User" sentinel account so threads stay readable.
    */
   delete: adminOnlyProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { userId } = input;
+      const { id: userId } = input;
 
       if (userId === ctx.session.user.id) {
         throw new TRPCError({

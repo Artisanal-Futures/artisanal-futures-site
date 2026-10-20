@@ -1,12 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
+import Link from "next/link";
 import { type RowSelectionState } from "@tanstack/react-table";
+import { PlusIcon } from "lucide-react";
 
 import type { FilterOption } from "~/components/tables/advanced-data-table";
 import type { RouterOutputs } from "~/trpc/react";
 import { usePermissions } from "~/hooks/use-permissions";
+import { cn } from "~/lib/utils";
+import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ShopBulkActions } from "./shop-bulk-actions";
@@ -31,6 +34,20 @@ export function ShopClient({ shops }: Props) {
       .filter((id): id is string => !!id);
   }, [rowSelection, shops]);
 
+  const addButtonNode = useMemo(
+    () =>
+      isAdmin ? (
+        <Link
+          href="/admin/shops/new"
+          className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
+        >
+          <PlusIcon className="mr-1 h-4 w-4" />
+          New Shop
+        </Link>
+      ) : undefined,
+    [isAdmin],
+  );
+
   return (
     <div className="py-4">
       <AdvancedDataTable
@@ -45,6 +62,7 @@ export function ShopClient({ shops }: Props) {
         }}
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
+        addButton={addButtonNode}
         selectionActions={
           <ShopBulkActions
             selectedShopIds={selectedShopIds}

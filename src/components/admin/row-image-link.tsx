@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
+
 import { ImageWithFallback } from "~/components/image-with-fallback";
 
 type Props = {
-  id: string;
   name: string;
   image?: string;
-  hasLink?: boolean;
+  href?: string;
   subheader?: string;
   /** Shown if `image` fails to load (e.g. a store image behind a broken cert). */
   fallbackImage?: string | null;
@@ -14,6 +15,7 @@ type Props = {
 
 export const RowImageLink = ({
   name,
+  href,
   image,
   subheader,
   fallbackImage,
@@ -31,7 +33,17 @@ export const RowImageLink = ({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="truncate text-sm text-gray-500">{name}</span>
+        {href ? (
+          <Link
+            href={href}
+            onClick={(e) => e.stopPropagation()}
+            className="truncate text-sm font-medium text-foreground hover:underline"
+          >
+            {name}
+          </Link>
+        ) : (
+          <span className="text-muted-foreground truncate text-sm">{name}</span>
+        )}
         {subheader && (
           <span className="truncate text-xs text-muted-foreground">{subheader}</span>
         )}

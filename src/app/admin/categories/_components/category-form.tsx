@@ -44,53 +44,53 @@ export function CategoryForm({ initialData, categories }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const createCategory = api.category.create.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.category.invalidate();
       router.push(`/admin/categories/${data.id}`);
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to create category.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to create category.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Creating category, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Creating category, please wait..."),
+    }),
   });
 
   const updateCategory = api.category.update.useMutation({
-    onSuccess: ({ message, data }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message, data }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.category.invalidate();
       router.refresh();
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to update category.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to update category.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Updating product, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Updating category, please wait..."),
+    }),
   });
 
   const deleteCategory = api.category.delete.useMutation({
-    onSuccess: ({ message }) => {
-      toast.dismiss();
-      toast.success(message);
+    onSuccess: ({ message }, _input, context) => {
+      toast.success(message, { id: context?.toastId });
       void apiUtils.category.invalidate();
       router.push("/admin/categories");
     },
-    onError: (error) => {
-      toast.dismiss();
-      toast.error(error.message ?? "Failed to delete category.");
+    onError: (error, _input, context) => {
+      toast.error(error.message ?? "Failed to delete category.", {
+        id: context?.toastId,
+      });
     },
-    onMutate: () => {
-      toast.loading("Deleting category, please wait...");
-    },
+    onMutate: () => ({
+      toastId: toast.loading("Deleting category, please wait..."),
+    }),
   });
   const defaultValues: CategoryFormValues = {
     name: initialData?.name ?? "",
@@ -103,7 +103,14 @@ export function CategoryForm({ initialData, categories }: Props) {
     defaultValues,
   });
 
-  const handleSubmit = async (data: CategoryFormValues) => {
+  const handleSubmit = async (formData: CategoryFormValues) => {
+    const data: CategoryFormValues = {
+      ...formData,
+      parentId:
+        !formData.parentId || formData.parentId === "null"
+          ? null
+          : formData.parentId,
+    };
     if (initialData) {
       updateCategory.mutate({ id: initialData.id, ...data });
     } else {

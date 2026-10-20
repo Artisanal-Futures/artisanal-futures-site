@@ -81,24 +81,18 @@ export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 
 /**
- * Middleware for timing procedure execution and adding an artificial delay in development.
- *
- * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
- * network latency that would occur in production but not in local development.
+ * Middleware for timing procedure execution. Timings are only logged in
+ * development; there is no artificial delay.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
 
-  if (t._config.isDev) {
-    // artificial delay in dev
-    const waitMs = Math.floor(Math.random() * 400) + 100;
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
-  }
-
   const result = await next();
 
-  const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  if (t._config.isDev) {
+    const end = Date.now();
+    console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  }
 
   return result;
 });
@@ -145,7 +139,7 @@ export const adminArtisanProcedure = t.procedure
 
     if (!validRoles.includes(ctx.session.user.role))
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "You are not authorized to perform this action.",
       });
 
@@ -166,7 +160,7 @@ export const adminOnlyProcedure = t.procedure
 
     if (ctx.session.user.role !== "ADMIN") {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "Only administrators can perform this action.",
       });
     }
@@ -207,10 +201,12 @@ export const artisanProcedure = t.procedure
       ctx.session.user.role !== "ARTISAN" &&
       ctx.session.user.role !== "ADMIN"
     ) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({ code: "FORBIDDEN" });
     }
 
+    // Consumers only need shop ids (see product-sync / website-provision).
     const shopsAvailable = await ctx.db.shop.findMany({
+      select: { id: true },
       where:
         ctx.session.user.role === "ADMIN"
           ? {}

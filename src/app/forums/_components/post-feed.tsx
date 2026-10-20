@@ -2,10 +2,8 @@
 
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
-// import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from "~/config";
-// import axios from "axios";
 import { Loader2, MessageSquareText } from "lucide-react";
 
 import type { ExtendedPost } from "~/types/post";
@@ -18,9 +16,14 @@ import { SinglePost } from "./single-post";
 type Props = {
   initialPosts: ExtendedPost[];
   subredditName?: string;
+  followedOnly?: boolean;
 };
 
-export const PostFeed: FC<Props> = ({ initialPosts, subredditName }) => {
+export const PostFeed: FC<Props> = ({
+  initialPosts,
+  subredditName,
+  followedOnly,
+}) => {
   const lastPostRef = useRef<HTMLElement>(null);
   const { ref, entry } = useIntersection({
     root: lastPostRef.current,
@@ -28,42 +31,38 @@ export const PostFeed: FC<Props> = ({ initialPosts, subredditName }) => {
   });
   const { data: session } = authClient.useSession();
 
-  // const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-  //   ["infinite-query"],
-  //   async ({ pageParam = 1 }) => {
-  //     const query =
-  //       `/api/posts?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}` +
-  //       (!!subredditName ? `&subredditName=${subredditName}` : "");
-
-  //     const { data } = await axios.get(query);
-  //     return data as ExtendedPost[];
-  //   },
-
-  //   {
-  //     getNextPageParam: (_, pages) => {
-  //       return pages.length + 1;
-  //     },
-  //     initialData: { pages: [initialPosts], pageParams: [1] },
-  //   },
-  // );
-
-  const { data, fetchNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.forumSubreddit.getPosts.useInfiniteQuery(
       {
         limit: `${INFINITE_SCROLL_PAGINATION_RESULTS}`,
         page: "1",
         subredditName,
+        followedOnly,
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
+        // Seed with the server-rendered first page so it is not refetched
+        initialData: {
+          pages: [
+            {
+              posts: initialPosts,
+              nextCursor:
+                initialPosts.length >= INFINITE_SCROLL_PAGINATION_RESULTS
+                  ? initialPosts[initialPosts.length - 1]?.id
+                  : undefined,
+            },
+          ],
+          pageParams: [null],
+        },
+        staleTime: Infinity,
       },
     );
 
   useEffect(() => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
       void fetchNextPage(); // Load more posts when the last post comes into view
     }
-  }, [entry, fetchNextPage]);
+  }, [entry, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const posts = data?.pages?.flatMap((page) => page?.posts) ?? initialPosts;
 

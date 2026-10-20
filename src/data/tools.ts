@@ -1,4 +1,6 @@
-export const UPCY_URL = "https://generate.dev.artisanalfutures.org/";
+import { UPCY_BASE_URL } from "~/lib/upcy";
+
+export const UPCY_URL = `${UPCY_BASE_URL}/`;
 
 export type Tool = {
   title: string;
@@ -26,6 +28,13 @@ export const TOOLS_DATA: Tool[] = [
   //   url: 'https://artisanal-futures-style-transfer.netlify.app/',
   // },
 
+  {
+    title: "Artisan Map",
+    subtitle: "Explore artisans near you and around the world",
+    type: "Community",
+    image: "img/artisan_map.png",
+    url: "/tools/artisan-map",
+  },
   {
     title: "Shop Rate Calculator",
     subtitle: "Calculate your shop rate",
