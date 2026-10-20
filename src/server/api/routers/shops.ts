@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import type { Role } from "generated/prisma";
 import { z } from "zod";
 
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
@@ -35,6 +36,35 @@ const publicAddressSelect = {
   shopId: true,
 } as const;
 
+/** One row of the admin Artisan Directory: a shop, or an artisan with no shop. */
+export type DirectoryRow = {
+  /** shop.id, or `user_${user.id}` for shopless artisans */
+  id: string;
+  kind: "shop" | "no-shop";
+  shopId: string | null;
+  shopName: string | null;
+  logoPhoto: string | null;
+  contactName: string;
+  contactEmail: string | null;
+  shopEmail: string | null;
+  accountEmail: string | null;
+  phone: string | null;
+  website: string | null;
+  isPublic: boolean | null;
+  location: string | null;
+  address: {
+    address: string | null;
+    additional: string | null;
+    street: string | null;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+    country: string | null;
+  } | null;
+  owner: { id: string; name: string | null; email: string | null; role: Role };
+  createdAt: Date;
+};
+
 export const shopsRouter = createTRPCRouter({
   getAllWithWebsites: adminOnlyProcedure.query(async ({ ctx }) => {
     const shops = ctx.db.shop.findMany({
@@ -43,6 +73,117 @@ export const shopsRouter = createTRPCRouter({
     });
     return shops;
   }),
+
+  getDirectory: adminOnlyProcedure.query(
+    async ({ ctx }): Promise<DirectoryRow[]> => {
+      const [shops, shoplessArtisans] = await Promise.all([
+        ctx.db.shop.findMany({
+          select: {
+            id: true,
+            name: true,
+            ownerName: true,
+            email: true,
+            phone: true,
+            website: true,
+            isPublic: true,
+            logoPhoto: true,
+            createdAt: true,
+            address: {
+              select: {
+                address: true,
+                additional: true,
+                street: true,
+                city: true,
+                state: true,
+                zip: true,
+                country: true,
+              },
+            },
+            owner: {
+              select: { id: true, name: true, email: true, role: true },
+            },
+          },
+          orderBy: { name: "asc" },
+        }),
+        ctx.db.user.findMany({
+          where: { role: "ARTISAN", shops: { none: {} } },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            createdAt: true,
+          },
+          orderBy: { name: "asc" },
+        }),
+      ]);
+
+      const shopRows: DirectoryRow[] = shops.map((shop) => {
+        const shopEmail = blankToNull(shop.email);
+        const accountEmail = blankToNull(shop.owner.email);
+
+        return {
+          id: shop.id,
+          kind: "shop",
+          shopId: shop.id,
+          shopName: blankToNull(shop.name),
+          logoPhoto: blankToNull(shop.logoPhoto),
+          contactName:
+            blankToNull(shop.ownerName) ?? blankToNull(shop.owner.name) ?? "",
+          contactEmail: shopEmail ?? accountEmail,
+          shopEmail,
+          accountEmail,
+          phone: blankToNull(shop.phone),
+          website: blankToNull(shop.website),
+          isPublic: shop.isPublic,
+          location: formatLocality(shop.address?.city, shop.address?.state),
+          address: shop.address
+            ? {
+                address: blankToNull(shop.address.address),
+                additional: blankToNull(shop.address.additional),
+                street: blankToNull(shop.address.street),
+                city: blankToNull(shop.address.city),
+                state: blankToNull(shop.address.state),
+                zip: blankToNull(shop.address.zip),
+                country: blankToNull(shop.address.country),
+              }
+            : null,
+          owner: shop.owner,
+          createdAt: shop.createdAt,
+        };
+      });
+
+      const noShopRows: DirectoryRow[] = shoplessArtisans.map((user) => {
+        const accountEmail = blankToNull(user.email);
+
+        return {
+          id: `user_${user.id}`,
+          kind: "no-shop",
+          shopId: null,
+          shopName: null,
+          logoPhoto: null,
+          contactName: blankToNull(user.name) ?? "",
+          contactEmail: accountEmail,
+          shopEmail: null,
+          accountEmail,
+          phone: null,
+          website: null,
+          isPublic: null,
+          location: null,
+          address: null,
+          owner: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+          createdAt: user.createdAt,
+        };
+      });
+
+      return [...shopRows, ...noShopRows];
+    },
+  ),
 
   getShopOwners: publicProcedure.query(async ({ ctx }) => {
     const users = await ctx.db.user.findMany({

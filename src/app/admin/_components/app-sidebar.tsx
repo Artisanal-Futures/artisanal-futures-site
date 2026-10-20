@@ -5,6 +5,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  IconAddressBook,
   IconCalendar,
   IconCode,
   IconDashboard,
@@ -113,6 +114,11 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
             title: "Shops",
             url: "/admin/shops",
             icon: IconShoppingCart,
+          },
+          {
+            title: "Artisan Directory",
+            url: "/admin/directory",
+            icon: IconAddressBook,
           },
           {
             title: "Categories",
