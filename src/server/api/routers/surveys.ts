@@ -37,8 +37,16 @@ export const surveysRouter = createTRPCRouter({
       where: { ownerId: ctx.session.user.id },
     });
     const shop = await ctx.db.shop.findFirst({
-      where: { OR: [{ ownerId: ctx.session.user.id }, { id: survey?.shopId }] },
-      include: { owner: true },
+      where: {
+        OR: [
+          { ownerId: ctx.session.user.id },
+          // Only match by survey.shopId when it exists: an `{ id: undefined }`
+          // branch collapses to `{}` in Prisma and would match any shop.
+          ...(survey?.shopId ? [{ id: survey.shopId }] : []),
+        ],
+      },
+      // Narrow select: never return the owner's User row.
+      select: { id: true, name: true },
     });
 
     return {
