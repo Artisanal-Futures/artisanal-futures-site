@@ -1,5 +1,7 @@
 export type MapShop = {
   id: string;
+  /** Public profile slug; null until one is generated. */
+  slug: string | null;
   name: string;
   ownerName: string;
   logoPhoto: string | null;
@@ -19,4 +21,10 @@ export type MapShop = {
   precision: "exact" | "approximate";
   /** Public street line, only for an exact (storefront) pin. */
   streetAddress?: string | null;
+  /** Public products listed by the shop. */
+  productCount: number;
+  /** Public services listed by the shop. */
+  serviceCount: number;
+  /** Joined within the last 30 days. */
+  isNew: boolean;
 };

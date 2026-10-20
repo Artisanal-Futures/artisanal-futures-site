@@ -45,6 +45,7 @@ import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 
 import { groupCoLocatedShops } from "../_lib/co-located";
+import { MapLegend } from "./map-legend";
 import {
   MAP_BRAND_COLORS,
   MAP_FONT_BOLD,
@@ -157,6 +158,8 @@ export type ArtisanMapProps = {
   renderPopup?: (shop: MapShop) => ReactNode;
   /** False on mobile, where the parent shows a bottom sheet instead. Default true. */
   showPopup?: boolean;
+  /** Called when "Near me" resolves the viewer's position (used for distances in the list). */
+  onUserLocationChange?: (loc: { lat: number; lng: number } | null) => void;
   className?: string;
 };
 
@@ -507,6 +510,7 @@ export default function ArtisanMap({
   onHoverShop,
   renderPopup,
   showPopup = true,
+  onUserLocationChange,
   className,
 }: ArtisanMapProps) {
   const mapStyle = useArtisanMapStyle();
@@ -528,10 +532,12 @@ export default function ArtisanMap({
   // Keep latest callbacks in refs so map event handlers stay stable.
   const onSelectRef = useRef(onSelectShop);
   const onHoverRef = useRef(onHoverShop);
+  const onUserLocationRef = useRef(onUserLocationChange);
   const selectedIdRef = useRef(selectedShopId);
   useEffect(() => {
     onSelectRef.current = onSelectShop;
     onHoverRef.current = onHoverShop;
+    onUserLocationRef.current = onUserLocationChange;
     selectedIdRef.current = selectedShopId;
   });
 
@@ -823,12 +829,14 @@ export default function ArtisanMap({
       return;
     }
     setLocating(true);
-    // The position stays in this component: it's only used to move the map.
+    // The position moves the map and is handed to the parent for client-side
+    // distance sorting. It is never sent to the server.
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
         const next = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setUserLocation(next);
+        onUserLocationRef.current?.(next);
         mapRef.current?.flyTo({
           center: [next.lng, next.lat],
           zoom: NEAR_ME_ZOOM,
@@ -951,6 +959,8 @@ export default function ArtisanMap({
         <NavigationControl position="top-right" showCompass={false} />
         <AttributionControl position="bottom-right" compact />
       </MapGL>
+
+      <MapLegend colors={colors} showUserLocation={!!userLocation} />
 
       <Button
         type="button"

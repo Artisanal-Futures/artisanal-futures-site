@@ -5,8 +5,11 @@ import { useEffect, useId, useRef, useState } from "react";
 import {
   MapPin,
   MapPinOff,
+  Navigation,
+  Package,
   SearchIcon,
   SlidersHorizontal,
+  Store,
   X,
 } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
@@ -37,7 +40,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { Toggle } from "~/components/ui/toggle";
 
+import { formatDistance } from "../_lib/map-stats";
 import { ShopAvatar } from "./shop-avatar";
 import { ShopMapCard } from "./shop-map-card";
 
@@ -116,14 +121,22 @@ export function SearchBox({ value, onChange, className }: SearchBoxProps) {
 type AttributeProps = {
   selected: string[];
   onToggle: (attribute: string, checked: boolean) => void;
+  /** Matches per attribute under the other active filters. */
+  counts?: Map<string, number>;
 };
 
-export function AttributeChecklist({ selected, onToggle }: AttributeProps) {
+export function AttributeChecklist({
+  selected,
+  onToggle,
+  counts,
+}: AttributeProps) {
   const uid = useId();
   return (
     <div className="flex flex-col gap-1">
       {STORE_ATTRIBUTES.map((attribute, i) => {
         const id = `${uid}-${i}`;
+        const isSelected = selected.includes(attribute);
+        const count = counts?.get(attribute);
         return (
           <div
             key={attribute}
@@ -131,14 +144,25 @@ export function AttributeChecklist({ selected, onToggle }: AttributeProps) {
           >
             <Checkbox
               id={id}
-              checked={selected.includes(attribute)}
+              checked={isSelected}
               onCheckedChange={(checked) =>
                 onToggle(attribute, checked === true)
               }
             />
-            <Label htmlFor={id} className="flex-1 cursor-pointer text-sm">
+            <Label
+              htmlFor={id}
+              className={cn(
+                "flex-1 cursor-pointer text-sm",
+                count === 0 && !isSelected && "opacity-60",
+              )}
+            >
               {attribute}
             </Label>
+            {count !== undefined && (
+              <span className="text-muted-foreground ml-auto text-xs tabular-nums">
+                {count}
+              </span>
+            )}
           </div>
         );
       })}
@@ -146,7 +170,7 @@ export function AttributeChecklist({ selected, onToggle }: AttributeProps) {
   );
 }
 
-function AttributeFilter({ selected, onToggle }: AttributeProps) {
+function AttributeFilter({ selected, onToggle, counts }: AttributeProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -173,7 +197,11 @@ function AttributeFilter({ selected, onToggle }: AttributeProps) {
         <p className="text-muted-foreground px-2 pt-1 pb-2 text-xs">
           Show artisans with any of these
         </p>
-        <AttributeChecklist selected={selected} onToggle={onToggle} />
+        <AttributeChecklist
+          selected={selected}
+          onToggle={onToggle}
+          counts={counts}
+        />
       </PopoverContent>
     </Popover>
   );
@@ -214,6 +242,13 @@ export type MapSidebarProps = {
   onQueryChange: (value: string) => void;
   attributes: string[];
   onToggleAttribute: AttributeProps["onToggle"];
+  /** Only show storefronts pinned at a public street address. */
+  inPerson: boolean;
+  onInPersonChange: (on: boolean) => void;
+  /** Per-attribute facet counts (ignoring the attribute filter itself). */
+  attributeCounts?: Map<string, number>;
+  /** Miles from the user, keyed by shop id; null until "Near me" is used. */
+  distances?: Map<string, number> | null;
   hasFilters: boolean;
   onClearFilters: () => void;
   selectedShopId: string | null;
@@ -236,6 +271,10 @@ export function MapSidebar({
   onQueryChange,
   attributes,
   onToggleAttribute,
+  inPerson,
+  onInPersonChange,
+  attributeCounts,
+  distances,
   hasFilters,
   onClearFilters,
   selectedShopId,
@@ -248,6 +287,13 @@ export function MapSidebar({
   className,
 }: MapSidebarProps) {
   const located = shops.filter((s) => s.location !== null);
+  // Nearest-first once the user has shared their location.
+  if (distances) {
+    located.sort(
+      (a, b) =>
+        (distances.get(a.id) ?? Infinity) - (distances.get(b.id) ?? Infinity),
+    );
+  }
   const unlocated = shops.filter((s) => s.location === null);
 
   const itemRefs = useRef(new Map<string, HTMLLIElement>());
@@ -265,6 +311,16 @@ export function MapSidebar({
     const showOwner =
       !!shop.ownerName &&
       shop.ownerName.trim().toLowerCase() !== shop.name.trim().toLowerCase();
+    const distance = distances?.get(shop.id);
+    const meta = [
+      shop.productCount > 0
+        ? `${shop.productCount} ${shop.productCount === 1 ? "product" : "products"}`
+        : null,
+      shop.serviceCount > 0
+        ? `${shop.serviceCount} ${shop.serviceCount === 1 ? "service" : "services"}`
+        : null,
+    ].filter(Boolean);
+    const approximate = shop.precision === "approximate";
     return (
       <li
         key={shop.id}
@@ -294,8 +350,13 @@ export function MapSidebar({
         >
           <ShopAvatar shop={shop} size={40} />
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-sm leading-tight font-medium">
-              {shop.name}
+            <span className="flex min-w-0 items-center gap-1.5">
+              <span className="truncate text-sm leading-tight font-medium">
+                {shop.name}
+              </span>
+              {shop.isNew && (
+                <Badge className="shrink-0 px-1.5 py-0 text-[10px]">New</Badge>
+              )}
             </span>
             {showOwner && (
               <span className="text-muted-foreground truncate text-xs">
@@ -315,6 +376,12 @@ export function MapSidebar({
                 {shop.locality ?? "Location not listed"}
               </span>
             </span>
+            {meta.length > 0 && (
+              <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                <Package className="size-3 shrink-0" aria-hidden />
+                <span className="truncate">{meta.join(" · ")}</span>
+              </span>
+            )}
             {shop.attributeTags.length > 0 && (
               <span className="mt-0.5 flex flex-wrap gap-1">
                 {shop.attributeTags.slice(0, 2).map((tag) => (
@@ -337,6 +404,14 @@ export function MapSidebar({
               </span>
             )}
           </span>
+          {distance !== undefined && (
+            <span
+              title={approximate ? "Approximate distance" : undefined}
+              className="text-muted-foreground shrink-0 self-start text-xs tabular-nums"
+            >
+              {formatDistance(distance, approximate)}
+            </span>
+          )}
         </button>
         {expanded && (
           <div className="px-1 pt-1 pb-2">
@@ -368,7 +443,20 @@ export function MapSidebar({
               <AttributeFilter
                 selected={attributes}
                 onToggle={onToggleAttribute}
+                counts={attributeCounts}
               />
+              <Toggle
+                variant="outline"
+                size="sm"
+                pressed={inPerson}
+                onPressedChange={onInPersonChange}
+                aria-label="Only storefronts you can visit"
+                title="Only storefronts you can visit"
+                className="gap-1.5 px-2.5"
+              >
+                <Store aria-hidden />
+                Storefronts
+              </Toggle>
             </div>
             <ActiveAttributeChips
               selected={attributes}
@@ -432,9 +520,13 @@ export function MapSidebar({
         ) : (
           <>
             {section(
-              "On the map",
+              distances ? "Nearest to you" : "On the map",
               located,
-              <MapPin className="size-3.5" aria-hidden />,
+              distances ? (
+                <Navigation className="size-3.5" aria-hidden />
+              ) : (
+                <MapPin className="size-3.5" aria-hidden />
+              ),
             )}
             {section(
               "Online / location unknown",

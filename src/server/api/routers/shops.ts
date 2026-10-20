@@ -62,6 +62,9 @@ function streetFieldsFor(
     : { address: address ?? "" };
 }
 
+/** A shop counts as "new" on the map for this long after it joins. */
+const NEW_SHOP_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+
 /** A storefront's street line for the map card, e.g. "123 Main St". */
 function formatStreetLine(address: {
   address: string | null;
@@ -623,6 +626,14 @@ export const shopsRouter = createTRPCRouter({
           phone: true,
           attributeTags: true,
           locationType: true,
+          createdAt: true,
+          // Public listings only, for the map's catalog counts.
+          _count: {
+            select: {
+              products: { where: { isPublic: true } },
+              services: { where: { isPublic: true } },
+            },
+          },
           // Locality + coordinates, plus the street lines, which are only
           // returned for a storefront pinned at street precision (below).
           // Never zip/geocodeQuery.
@@ -639,6 +650,8 @@ export const shopsRouter = createTRPCRouter({
           },
         },
       });
+
+      const newSince = Date.now() - NEW_SHOP_WINDOW_MS;
 
       return shops.map((shop): MapShopLocation => {
         const { latitude, longitude } = shop.address ?? {};
@@ -681,6 +694,9 @@ export const shopsRouter = createTRPCRouter({
           precision: isExact ? "exact" : "approximate",
           streetAddress:
             isExact && shop.address ? formatStreetLine(shop.address) : null,
+          productCount: shop._count.products,
+          serviceCount: shop._count.services,
+          isNew: shop.createdAt.getTime() >= newSince,
         };
       });
     },
