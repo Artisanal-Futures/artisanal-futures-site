@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
 import {
   type PaginationState,
   type RowSelectionState,
@@ -17,15 +16,21 @@ import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ProductBulkActions } from "./product-bulk-actions";
-import { productColumns } from "./product-column-structure";
+import { getProductColumns } from "./product-column-structure";
 import { createProductFilter } from "./product-filters";
 
 type Props = {
   products: ProductWithRelations[];
   shops: RouterOutputs["shop"]["getOptions"];
+  /**
+   * Narrows the table to one shop (the shop hub's Products tab). Hides the
+   * shop column/filter and the global toolbar actions, and sends edit links
+   * back to `returnTo`.
+   */
+  scope?: { shopId: string; returnTo: string };
 };
 
-export function ProductClient({ products, shops }: Props) {
+export function ProductClient({ products, shops, scope }: Props) {
   const { isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
@@ -47,8 +52,16 @@ export function ProductClient({ products, shops }: Props) {
   }, [rowSelection, products]);
 
   const productFilters = useMemo(
-    () => createProductFilter(products ?? [], shops ?? []),
-    [products, shops],
+    () =>
+      createProductFilter(products ?? [], shops ?? [], {
+        hideShopFilter: !!scope,
+      }),
+    [products, shops, scope],
+  );
+
+  const columns = useMemo(
+    () => getProductColumns({ returnTo: scope?.returnTo }),
+    [scope?.returnTo],
   );
 
   const enhancedProducts = useMemo(() => {
@@ -60,50 +73,71 @@ export function ProductClient({ products, shops }: Props) {
   }, [products]);
 
   const addButtonNode = useMemo(
-    () => (
-      <>
+    () =>
+      scope ? (
         <Link
-          href="/admin/products/sync"
-          className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
-          title="Check your website for product changes and review them before they go live"
-        >
-          Sync from Website
-        </Link>
-
-        <Link
-          href="/admin/products/migrate"
-          className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
-        >
-          Migrate Products
-        </Link>
-
-        {isAdmin && (
-          <Link
-            href="/admin/csv-import?type=products"
-            className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
-            title="Bulk-create products from a CSV file"
-          >
-            Import CSV
-          </Link>
-        )}
-
-        <Link
-          href="/admin/products/new"
+          href={`/admin/products/new?shopId=${encodeURIComponent(scope.shopId)}&returnTo=${encodeURIComponent(scope.returnTo)}`}
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
         >
           New Product
         </Link>
-      </>
-    ),
-    [isAdmin],
+      ) : (
+        <>
+          <Link
+            href="/admin/products/sync"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-8 text-xs",
+            )}
+            title="Check your website for product changes and review them before they go live"
+          >
+            Sync from Website
+          </Link>
+
+          <Link
+            href="/admin/products/migrate"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-8 text-xs",
+            )}
+          >
+            Migrate Products
+          </Link>
+
+          {isAdmin && (
+            <Link
+              href="/admin/csv-import?type=products"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-8 text-xs",
+              )}
+              title="Bulk-create products from a CSV file"
+            >
+              Import CSV
+            </Link>
+          )}
+
+          <Link
+            href="/admin/products/new"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "h-8 text-xs",
+            )}
+          >
+            New Product
+          </Link>
+        </>
+      ),
+    [isAdmin, scope],
   );
 
   const columnVisibility = useMemo(
     () => ({
       categoryIds: false,
       priceStatus: false,
+      ...(scope ? { shopId: false } : {}),
     }),
-    [],
+    [scope],
   );
 
   return (
@@ -111,7 +145,7 @@ export function ProductClient({ products, shops }: Props) {
       <AdvancedDataTable
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
-        columns={productColumns}
+        columns={columns}
         data={enhancedProducts}
         filters={productFilters}
         selectionActions={

@@ -33,19 +33,24 @@ import { getCategoriesWithParents } from "~/server/api/shared/categories";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
 
 export const productRouter = createTRPCRouter({
-  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    // Admins see every product; artisans only see products for shops they own.
-    const products = await ctx.db.product.findMany({
-      where:
-        ctx.session.user.role === "ADMIN"
-          ? {}
-          : { shop: { ownerId: ctx.session.user.id } },
-      include: { shop: true, categories: true },
-      orderBy: { createdAt: "desc" },
-    });
+  getAll: adminArtisanProcedure
+    .input(z.object({ shopId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      // Admins see every product; artisans only see products for shops they own.
+      // `shopId` narrows further; it never widens the owner scope.
+      const products = await ctx.db.product.findMany({
+        where: {
+          ...(ctx.session.user.role === "ADMIN"
+            ? {}
+            : { shop: { ownerId: ctx.session.user.id } }),
+          ...(input?.shopId ? { shopId: input.shopId } : {}),
+        },
+        include: { shop: true, categories: true },
+        orderBy: { createdAt: "desc" },
+      });
 
-    return products.map(addFullProductImageUrl);
-  }),
+      return products.map(addFullProductImageUrl);
+    }),
 
   get: adminArtisanProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const isUserAuthorized = await checkUserProductPermissions(

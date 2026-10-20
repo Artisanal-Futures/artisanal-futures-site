@@ -54,19 +54,24 @@ export const serviceRouter = createTRPCRouter({
       });
       return addFullServiceImageUrl(service);
     }),
-  getAll: adminArtisanProcedure.query(async ({ ctx }) => {
-    // Admins see every service; artisans only see services for shops they own.
-    const services = await ctx.db.service.findMany({
-      where:
-        ctx.session.user.role === "ADMIN"
-          ? {}
-          : { shop: { ownerId: ctx.session.user.id } },
-      include: { shop: true, categories: true },
-      orderBy: { createdAt: "desc" },
-    });
+  getAll: adminArtisanProcedure
+    .input(z.object({ shopId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      // Admins see every service; artisans only see services for shops they own.
+      // `shopId` narrows further; it never widens the owner scope.
+      const services = await ctx.db.service.findMany({
+        where: {
+          ...(ctx.session.user.role === "ADMIN"
+            ? {}
+            : { shop: { ownerId: ctx.session.user.id } }),
+          ...(input?.shopId ? { shopId: input.shopId } : {}),
+        },
+        include: { shop: true, categories: true },
+        orderBy: { createdAt: "desc" },
+      });
 
-    return services.map(addFullServiceImageUrl);
-  }),
+      return services.map(addFullServiceImageUrl);
+    }),
 
   getAllByCategory: publicProcedure
     .input(catalogSearchInput)

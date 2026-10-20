@@ -3,8 +3,17 @@ import { api } from "~/trpc/server";
 import { TrailHeader } from "../../_components/trail-header";
 import { ProductImportWizard } from "./_components/product-import-wizard";
 
-export default async function DatabaseMigrationPage() {
+type Props = {
+  searchParams: Promise<{ shopId?: string | string[] }>;
+};
+
+export default async function DatabaseMigrationPage({ searchParams }: Props) {
+  const query = await searchParams;
   const shops = await api.shop.getAll();
+
+  // Only preselect a shop that is actually in the list.
+  const initialShopId = shops.find((shop) => shop.id === query.shopId)?.id;
+
   return (
     <>
       <TrailHeader
@@ -14,7 +23,7 @@ export default async function DatabaseMigrationPage() {
         ]}
       />
       <div className="admin-container">
-        <ProductImportWizard shops={shops} />
+        <ProductImportWizard shops={shops} initialShopId={initialShopId} />
       </div>
     </>
   );

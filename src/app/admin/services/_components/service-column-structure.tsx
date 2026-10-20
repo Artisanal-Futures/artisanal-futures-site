@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { PencilIcon } from "lucide-react";
-
 import { type ColumnDef } from "@tanstack/react-table";
+import { PencilIcon } from "lucide-react";
 
 import type { ServiceWithShop } from "~/types/service";
 import { cn } from "~/lib/utils";
@@ -19,7 +18,15 @@ export type ServiceColumnEntry = ServiceWithShop & {
   searchableString: string;
 };
 
-export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
+/** Appends `?returnTo=` so edit pages can send the user back where they came from. */
+const withReturnTo = (href: string, returnTo?: string) =>
+  returnTo ? `${href}?returnTo=${encodeURIComponent(returnTo)}` : href;
+
+export const getServiceColumns = ({
+  returnTo,
+}: {
+  returnTo?: string;
+} = {}): ColumnDef<ServiceColumnEntry>[] => [
   {
     id: "select",
     size: 48,
@@ -55,7 +62,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
       <>
         <RowImageLink
           name={`${row.original.name} • #${row.original.id}`}
-          href={`/admin/services/${row.original.id}`}
+          href={withReturnTo(`/admin/services/${row.original.id}`, returnTo)}
           image={row.original.imageUrl ?? ""}
           subheader={`Created on ${row.original.createdAt.toLocaleDateString()}`}
         />
@@ -131,7 +138,10 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
           Public
         </Badge>
       ) : (
-        <Badge variant="outline" className="text-muted-foreground text-xs font-normal">
+        <Badge
+          variant="outline"
+          className="text-muted-foreground text-xs font-normal"
+        >
           Hidden
         </Badge>
       ),
@@ -144,7 +154,7 @@ export const serviceColumns: ColumnDef<ServiceColumnEntry>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <Link
-          href={`/admin/services/${row.original.id}`}
+          href={withReturnTo(`/admin/services/${row.original.id}`, returnTo)}
           className={cn(
             buttonVariants({ variant: "default" }),
             "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",

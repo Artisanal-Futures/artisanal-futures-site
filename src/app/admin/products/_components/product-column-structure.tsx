@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { type ColumnDef, type FilterFn } from "@tanstack/react-table";
 import { PencilIcon } from "lucide-react";
 
-import { type ColumnDef, type FilterFn } from "@tanstack/react-table";
-
 import type { ProductWithRelations } from "~/types/product";
-import { cn } from "~/lib/utils";
 import { handleImageUrl } from "~/lib/handle-image-url";
+import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -20,7 +19,15 @@ export type ProductColumnEntry = ProductWithRelations & {
   searchableString: string;
 };
 
-export const productColumns: ColumnDef<ProductColumnEntry>[] = [
+/** Appends `?returnTo=` so edit pages can send the user back where they came from. */
+const withReturnTo = (href: string, returnTo?: string) =>
+  returnTo ? `${href}?returnTo=${encodeURIComponent(returnTo)}` : href;
+
+export const getProductColumns = ({
+  returnTo,
+}: {
+  returnTo?: string;
+} = {}): ColumnDef<ProductColumnEntry>[] => [
   {
     id: "select",
     size: 48,
@@ -56,7 +63,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
       <>
         <RowImageLink
           name={`${row.original.name}`}
-          href={`/admin/products/${row.original.id}`}
+          href={withReturnTo(`/admin/products/${row.original.id}`, returnTo)}
           image={row.original.imageUrl ?? ""}
           fallbackImage={(() => {
             const logo = row.original.shop?.logoPhoto;
@@ -137,7 +144,10 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
           Public
         </Badge>
       ) : (
-        <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
+        <Badge
+          variant="outline"
+          className="text-muted-foreground text-xs font-normal"
+        >
           Hidden
         </Badge>
       ),
@@ -154,7 +164,7 @@ export const productColumns: ColumnDef<ProductColumnEntry>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <Link
-          href={`/admin/products/${row.original.id}`}
+          href={withReturnTo(`/admin/products/${row.original.id}`, returnTo)}
           className={cn(
             buttonVariants({ variant: "default" }),
             "h-8 bg-blue-500 text-xs text-white hover:bg-blue-600",

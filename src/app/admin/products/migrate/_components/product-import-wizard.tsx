@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import type { ProductData } from "~/lib/product-import/convert-to-product";
 import type { RouterOutputs } from "~/trpc/react";
 import type { ProductWithRelations } from "~/types/product";
+import { handleImageUrl } from "~/lib/handle-image-url";
+import { mapProducts } from "~/lib/product-import/convert-to-product";
 import { api } from "~/trpc/react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -42,14 +44,15 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Textarea } from "~/components/ui/textarea";
-
-import { handleImageUrl } from "~/lib/handle-image-url";
 import { ImageWithFallback } from "~/components/image-with-fallback";
-import { mapProducts } from "~/lib/product-import/convert-to-product";
 
 // Platforms we can pull from automatically. Square (square.site) has no public
 // product feed, so it's paste-only and excluded here.
-type FetchablePlatform = "squarespace" | "wordpress" | "shopify" | "simplepress";
+type FetchablePlatform =
+  | "squarespace"
+  | "wordpress"
+  | "shopify"
+  | "simplepress";
 type Platform = FetchablePlatform | "square";
 
 const FETCHABLE_PLATFORMS: FetchablePlatform[] = [
@@ -90,12 +93,20 @@ const ITEMS_PER_PAGE = 20;
 
 export function ProductImportWizard({
   shops,
+  initialShopId,
 }: {
   shops: RouterOutputs["shop"]["getAll"];
+  /** Preselects a shop (and its site URL), e.g. when arriving from the shop hub. */
+  initialShopId?: string;
 }) {
   const [step, setStep] = useState<Step>("select");
-  const [selectedShop, setSelectedShop] = useState<string>("");
-  const [selectedSiteUrl, setSelectedSiteUrl] = useState<string | null>(null);
+  const [selectedShop, setSelectedShop] = useState<string>(initialShopId ?? "");
+  const [selectedSiteUrl, setSelectedSiteUrl] = useState<string | null>(
+    () =>
+      (initialShopId
+        ? shops.find((shop) => shop.id === initialShopId)?.website
+        : null) ?? null,
+  );
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | "">("");
   const [jsonInput, setJsonInput] = useState<string>("");
   const [parsedProducts, setParsedProducts] = useState<ProductWithRelations[]>(
@@ -359,7 +370,10 @@ export function ProductImportWizard({
                   value={selectedPlatform}
                   onValueChange={(v) => setSelectedPlatform(v as Platform)}
                 >
-                  <SelectTrigger className="w-full" aria-label="Current Platform">
+                  <SelectTrigger
+                    className="w-full"
+                    aria-label="Current Platform"
+                  >
                     <SelectValue placeholder="Select a platform" />
                   </SelectTrigger>
                   <SelectContent>
@@ -439,8 +453,9 @@ export function ProductImportWizard({
                         filter
                       </p>
                       <p>
-                        4. Find a request starting with &quot;products?page&quot;,
-                        open its Response, and copy the entire JSON
+                        4. Find a request starting with
+                        &quot;products?page&quot;, open its Response, and copy
+                        the entire JSON
                       </p>
                     </>
                   )}
@@ -510,14 +525,14 @@ export function ProductImportWizard({
                   </Button>
                 </div>
                 {selectedPlatform === "squarespace" && (
-                  <p className="text-muted-foreground mt-3 flex items-start gap-2 border-t border-border pt-3 text-xs">
+                  <p className="text-muted-foreground border-border mt-3 flex items-start gap-2 border-t pt-3 text-xs">
                     <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
                     <span>
                       Squarespace only works if your shop&apos;s website is set
                       to the exact page that lists your products (e.g.{" "}
                       <span className="font-medium">business.com/store</span>).
-                      If it points at your homepage, this may return nothing — in
-                      that case, paste the JSON manually instead.
+                      If it points at your homepage, this may return nothing —
+                      in that case, paste the JSON manually instead.
                     </span>
                   </p>
                 )}
@@ -536,7 +551,10 @@ export function ProductImportWizard({
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="json-data-input" className="text-foreground text-sm font-medium">
+                <label
+                  htmlFor="json-data-input"
+                  className="text-foreground text-sm font-medium"
+                >
                   JSON Data
                 </label>
                 <span className="text-muted-foreground text-xs">
@@ -632,13 +650,21 @@ export function ProductImportWizard({
                             <button
                               onClick={() => toggleRowExpand(product.id)}
                               className="hover:bg-muted rounded p-1 md:hidden"
-                              aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                              aria-label={
+                                isExpanded ? "Collapse row" : "Expand row"
+                              }
                               aria-expanded={isExpanded}
                             >
                               {isExpanded ? (
-                                <ChevronUp className="size-4" aria-hidden="true" />
+                                <ChevronUp
+                                  className="size-4"
+                                  aria-hidden="true"
+                                />
                               ) : (
-                                <ChevronDown className="size-4" aria-hidden="true" />
+                                <ChevronDown
+                                  className="size-4"
+                                  aria-hidden="true"
+                                />
                               )}
                             </button>
                           </TableCell>

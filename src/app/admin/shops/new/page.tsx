@@ -2,6 +2,7 @@ import { getSession } from "~/server/better-auth/server";
 import { api } from "~/trpc/server";
 
 import { ShopForm } from "../_components/shop-form";
+import { ShopHubShell } from "../_components/shop-hub-shell";
 import { TrailHeader } from "../../_components/trail-header";
 
 export default async function NewShopPage() {
@@ -22,11 +23,13 @@ export default async function NewShopPage() {
         ]}
       />
 
-      <ShopForm
-        initialData={null}
-        userRole={userRole}
-        potentialShopOwners={potentialShopOwners}
-      />
+      <ShopHubShell title="New Shop">
+        <ShopForm
+          initialData={null}
+          userRole={userRole}
+          potentialShopOwners={potentialShopOwners}
+        />
+      </ShopHubShell>
     </>
   );
 }

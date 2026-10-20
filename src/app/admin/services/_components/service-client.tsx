@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import {
   type PaginationState,
   type RowSelectionState,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 import type { RouterOutputs } from "~/trpc/react";
@@ -16,15 +17,21 @@ import { buttonVariants } from "~/components/ui/button";
 import { AdvancedDataTable } from "~/components/tables/advanced-data-table";
 
 import { ServiceBulkActions } from "./service-bulk-actions";
-import { serviceColumns } from "./service-column-structure";
+import { getServiceColumns } from "./service-column-structure";
 import { createServiceFilter } from "./service-filters";
 
 type Props = {
   services: ServiceWithShop[];
   shops: RouterOutputs["shop"]["getOptions"];
+  /**
+   * Narrows the table to one shop (the shop hub's Services tab). Hides the
+   * shop column/filter and the global toolbar actions, and sends edit links
+   * back to `returnTo`.
+   */
+  scope?: { shopId: string; returnTo: string };
 };
 
-export function ServiceClient({ services, shops }: Props) {
+export function ServiceClient({ services, shops, scope }: Props) {
   const { isAdmin } = usePermissions();
   const searchParams = useSearchParams();
 
@@ -46,9 +53,23 @@ export function ServiceClient({ services, shops }: Props) {
   }, [rowSelection, services]);
 
   const serviceFilters = useMemo(
-    () => createServiceFilter(services ?? [], shops ?? []),
-    [services, shops],
+    () =>
+      createServiceFilter(services ?? [], shops ?? [], {
+        hideShopFilter: !!scope,
+      }),
+    [services, shops, scope],
   );
+
+  const columns = useMemo(
+    () => getServiceColumns({ returnTo: scope?.returnTo }),
+    [scope?.returnTo],
+  );
+
+  const columnVisibility = useMemo(() => {
+    const visibility: VisibilityState = {};
+    if (scope) visibility.shopId = false;
+    return visibility;
+  }, [scope]);
 
   const enhancedServices = useMemo(() => {
     return (services ?? []).map((service) => ({
@@ -59,27 +80,41 @@ export function ServiceClient({ services, shops }: Props) {
   }, [services]);
 
   const addButtonNode = useMemo(
-    () => (
-      <>
-        {isAdmin && (
-          <Link
-            href="/admin/csv-import?type=services"
-            className={cn(buttonVariants({ variant: "outline" }), "h-8 text-xs")}
-            title="Bulk-create services from a CSV file"
-          >
-            Import CSV
-          </Link>
-        )}
-
+    () =>
+      scope ? (
         <Link
-          href="/admin/services/new"
+          href={`/admin/services/new?shopId=${encodeURIComponent(scope.shopId)}&returnTo=${encodeURIComponent(scope.returnTo)}`}
           className={cn(buttonVariants({ variant: "default" }), "h-8 text-xs")}
         >
           New Service
         </Link>
-      </>
-    ),
-    [isAdmin],
+      ) : (
+        <>
+          {isAdmin && (
+            <Link
+              href="/admin/csv-import?type=services"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "h-8 text-xs",
+              )}
+              title="Bulk-create services from a CSV file"
+            >
+              Import CSV
+            </Link>
+          )}
+
+          <Link
+            href="/admin/services/new"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "h-8 text-xs",
+            )}
+          >
+            New Service
+          </Link>
+        </>
+      ),
+    [isAdmin, scope],
   );
 
   return (
@@ -87,7 +122,8 @@ export function ServiceClient({ services, shops }: Props) {
       <AdvancedDataTable
         searchKey="searchableString"
         searchPlaceholder="Search by title, description, or ID..."
-        columns={serviceColumns}
+        columns={columns}
+        defaultColumnVisibility={columnVisibility}
         mobileHiddenColumnIds={["shopId", "categories", "priceInCents"]}
         data={enhancedServices}
         filters={serviceFilters}

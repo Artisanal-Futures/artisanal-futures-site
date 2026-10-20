@@ -5,6 +5,7 @@ import { type ProductWithRelations } from "~/types/product";
 export const createProductFilter = (
   products: ProductWithRelations[],
   shops: { id: string; name: string }[],
+  { hideShopFilter = false }: { hideShopFilter?: boolean } = {},
 ) => {
   // Build distinct category options from all products in the current data set
   const categoryMap = new Map<string, string>();
@@ -22,16 +23,20 @@ export const createProductFilter = (
   const shopsWithProducts = new Set(products.map((product) => product.shopId));
 
   return [
-    {
-      column: "shopId",
-      title: "Shop",
-      filters: shops
-        .filter((shop) => shopsWithProducts.has(shop.id))
-        .map((shop) => ({
-          value: shop.id,
-          label: shop.name,
-        })),
-    },
+    ...(hideShopFilter
+      ? []
+      : [
+          {
+            column: "shopId",
+            title: "Shop",
+            filters: shops
+              .filter((shop) => shopsWithProducts.has(shop.id))
+              .map((shop) => ({
+                value: shop.id,
+                label: shop.name,
+              })),
+          },
+        ]),
     {
       column: "isPublic",
       title: "Visibility",
