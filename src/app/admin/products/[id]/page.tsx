@@ -7,9 +7,11 @@ import { api } from "~/trpc/server";
 
 import { ProductForm } from "../_components/product-form";
 import { TrailHeader } from "../../_components/trail-header";
+import { safeAdminReturnTo } from "../../_lib/safe-return-to";
 
 type Props = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 };
 // Deduped per request so the page and generateMetadata share one query.
 const getProduct = cache((id: string) => api.product.get(id));
@@ -32,8 +34,9 @@ async function getProductOrNotFound(id: string) {
   }
 }
 
-export default async function EditProductPage({ params }: Props) {
+export default async function EditProductPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const query = await searchParams;
   const [product, shops, categories, session] = await Promise.all([
     getProductOrNotFound(id),
     api.shop.getOptions(),
@@ -42,6 +45,7 @@ export default async function EditProductPage({ params }: Props) {
   ]);
 
   const userRole = session?.user.role ?? "ARTISAN";
+  const returnTo = safeAdminReturnTo(query.returnTo) ?? undefined;
 
   return (
     <>
@@ -57,6 +61,7 @@ export default async function EditProductPage({ params }: Props) {
         shops={shops}
         categories={categories}
         userRole={userRole}
+        returnTo={returnTo}
       />
     </>
   );

@@ -1,0 +1,32 @@
+enum OutboundTarget {
+  PRODUCT
+  SERVICE
+  WEBSITE
+}
+
+enum OutboundSource {
+  SHOP_PROFILE
+  SHOP_HERO
+  COLLECTIONS
+  SHOP_CARD
+  ARTISAN_MAP
+}
+
+/// One row per click on a link to an artisan's own site. Deliberately holds no
+/// visitor identifier (no IP, cookie or user id) — see the privacy policy.
+model OutboundClick {
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+  shopId    String
+  productId String?
+  serviceId String?
+  target    OutboundTarget
+  source    OutboundSource
+  shop      Shop           @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  product   Product?       @relation(fields: [productId], references: [id], onDelete: SetNull)
+  service   Service?       @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([shopId, createdAt])
+  @@index([productId])
+  @@index([serviceId])
+}

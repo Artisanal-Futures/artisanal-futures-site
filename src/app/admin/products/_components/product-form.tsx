@@ -46,6 +46,10 @@ type Props = {
   shops: RouterOutputs["shop"]["getOptions"];
   categories: RouterOutputs["category"]["getAll"];
   userRole: string;
+  /** Preselects the shop on a new record; ignored when editing. */
+  defaultShopId?: string;
+  /** Sanitized same-origin `/admin/...` path to return to after actions. */
+  returnTo?: string;
 };
 
 export function ProductForm({
@@ -53,6 +57,8 @@ export function ProductForm({
   shops,
   categories,
   userRole,
+  defaultShopId,
+  returnTo,
 }: Props) {
   const imageUploader = useUploadFile({
     api: "/api/upload",
@@ -79,7 +85,7 @@ export function ProductForm({
     materialTags: initialData?.materialTags ?? [],
     environmentalTags: initialData?.environmentalTags ?? [],
     aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
-    shopId: initialData?.shopId ?? "",
+    shopId: initialData?.shopId ?? defaultShopId ?? "",
     shopProductId: initialData?.shopProductId ?? `af${createId()}`,
     scrapeMethod: initialData?.scrapeMethod ?? "MANUAL",
     imageUrl: initialData?.imageUrl ?? "",
@@ -100,7 +106,7 @@ export function ProductForm({
       toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.product.invalidate();
-      router.push(`/admin/products/${data.id}`);
+      router.push(returnTo ?? `/admin/products/${data.id}`);
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to create product.", {
@@ -133,7 +139,7 @@ export function ProductForm({
     onSuccess: ({ message }, _input, context) => {
       toast.success(message, { id: context?.toastId });
       void apiUtils.product.invalidate();
-      router.push("/admin/products");
+      router.push(returnTo ?? "/admin/products");
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to delete product.", {
@@ -219,7 +225,7 @@ export function ProductForm({
           <div className={cn("admin-form-toolbar", isDirty ? "dirty" : "")}>
             <div className="toolbar-info">
               <Button variant="ghost" size="sm" asChild className="shrink-0">
-                <Link href="/admin/products">
+                <Link href={returnTo ?? "/admin/products"}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Link>

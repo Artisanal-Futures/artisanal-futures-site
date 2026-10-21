@@ -1,7 +1,18 @@
 "use client";
 
+import type { KeyboardEvent } from "react";
 import Link from "next/link";
-import { ExternalLink, Link2, Mail, MapPin, Phone, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Link2,
+  Mail,
+  MapPin,
+  Phone,
+  Store,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import type { MapShop } from "../_lib/types";
@@ -9,6 +20,7 @@ import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { OutboundLink } from "~/components/outbound-link";
 
 import { ShopAvatar } from "./shop-avatar";
 
@@ -33,13 +45,28 @@ function phoneHref(raw: string): string | null {
   return digits.replace(/\+/g, "").length > 0 ? `tel:${digits}` : null;
 }
 
+/** Cycles through the shops that share one map pin. `index` is zero-based. */
+export type ShopMapCardPager = {
+  index: number;
+  total: number;
+  onPrev: () => void;
+  onNext: () => void;
+};
+
 type ShopMapCardProps = {
   shop: MapShop;
   onClose?: () => void;
+  /** Set when other shops share this pin; adds a "1 of N" strip at the bottom. */
+  pager?: ShopMapCardPager;
   className?: string;
 };
 
-export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
+export function ShopMapCard({
+  shop,
+  onClose,
+  pager,
+  className,
+}: ShopMapCardProps) {
   const website = normalizeWebsite(shop.website);
   const email = blankToNull(shop.email);
   const phone = blankToNull(shop.phone);
@@ -55,6 +82,17 @@ export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
       toast.success("Link copied");
     } catch {
       toast.error("Couldn't copy the link");
+    }
+  };
+
+  const handlePagerKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!pager) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      pager.onPrev();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      pager.onNext();
     }
   };
 
@@ -171,11 +209,18 @@ export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
       <div className="flex items-center gap-2 pt-1">
         {website && (
           <Button asChild variant="outline" size="sm" className="flex-1">
-            <a href={website} target="_blank" rel="noopener noreferrer">
+            <OutboundLink
+              href={website}
+              track={{
+                shopId: shop.id,
+                target: "WEBSITE",
+                source: "ARTISAN_MAP",
+              }}
+            >
               Website
               <ExternalLink aria-hidden />
               <span className="sr-only">(opens in a new tab)</span>
-            </a>
+            </OutboundLink>
           </Button>
         )}
         <Button asChild size="sm" className="flex-1">
@@ -192,6 +237,50 @@ export function ShopMapCard({ shop, onClose, className }: ShopMapCardProps) {
           <Link2 aria-hidden />
         </Button>
       </div>
+
+      {pager && (
+        // Footer, not header: the popup sits above the pin and the mobile
+        // sheet at the screen bottom, so the card's bottom edge stays put
+        // while its height changes from shop to shop and the arrows don't
+        // move under the pointer. Negative margins bleed it to the card edge.
+        <div
+          role="group"
+          aria-label="Shops at this location"
+          onKeyDown={handlePagerKeyDown}
+          className="-mx-4 -mb-4 flex items-center gap-1 border-t py-1.5 pr-2 pl-4"
+        >
+          <p className="text-muted-foreground flex min-w-0 flex-1 items-center gap-1.5 text-xs">
+            <Store className="size-3.5 shrink-0" aria-hidden />
+            <span className="truncate">
+              {pager.total} shops at this location
+            </span>
+          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Previous shop at this location"
+            onClick={pager.onPrev}
+          >
+            <ChevronLeft aria-hidden />
+          </Button>
+          <span
+            aria-live="polite"
+            className="text-muted-foreground text-xs tabular-nums"
+          >
+            {pager.index + 1} of {pager.total}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label="Next shop at this location"
+            onClick={pager.onNext}
+          >
+            <ChevronRight aria-hidden />
+          </Button>
+        </div>
+      )}
     </article>
   );
 }

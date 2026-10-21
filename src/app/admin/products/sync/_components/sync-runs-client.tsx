@@ -141,17 +141,37 @@ export function SyncRunsClient({
   );
 }
 
-function RunsTable({ runs, isAdmin }: { runs: Runs; isAdmin: boolean }) {
+export function RunsTable({
+  runs,
+  isAdmin,
+  hideShopColumn = false,
+}: {
+  runs: Runs;
+  isAdmin: boolean;
+  /** Drop the Shop column when every run belongs to the same shop. */
+  hideShopColumn?: boolean;
+}) {
   if (runs.length === 0) {
     return (
       <Card>
         <CardContent className="text-muted-foreground py-12 text-center">
           <p>No sync runs yet.</p>
           <p className="mt-1 text-sm">
-            Set up your store under{" "}
-            <strong>{isAdmin ? "Shop settings" : "My shop settings"}</strong>,
-            then use <strong>Sync now</strong> to try it — or wait for the
-            weekly check.
+            {hideShopColumn ? (
+              <>
+                Set up the store above, then use <strong>Sync now</strong> to
+                try it — or wait for the weekly check.
+              </>
+            ) : (
+              <>
+                Set up your store under{" "}
+                <strong>
+                  {isAdmin ? "Shop settings" : "My shop settings"}
+                </strong>
+                , then use <strong>Sync now</strong> to try it — or wait for the
+                weekly check.
+              </>
+            )}
           </p>
         </CardContent>
       </Card>
@@ -164,7 +184,7 @@ function RunsTable({ runs, isAdmin }: { runs: Runs; isAdmin: boolean }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Shop</TableHead>
+              {!hideShopColumn && <TableHead>Shop</TableHead>}
               <TableHead>Platform</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">New</TableHead>
@@ -177,30 +197,16 @@ function RunsTable({ runs, isAdmin }: { runs: Runs; isAdmin: boolean }) {
           <TableBody>
             {runs.map((run) => (
               <TableRow key={run.id}>
-                <TableCell className="font-medium">
-                  {run.shop.name}
-                  {run.triggeredManually && (
-                    <span className="text-muted-foreground ml-2 text-xs">
-                      (manual)
-                    </span>
-                  )}
-                  {run.insecureTLSCode && (
-                    <span
-                      className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
-                      title={`TLS verification was skipped (${run.insecureTLSCode})`}
-                    >
-                      <AlertTriangle className="h-3 w-3" />
-                      Certificate problem
-                    </span>
-                  )}
-                  {run.errorMessage && (
-                    <p className="text-muted-foreground mt-1 max-w-md text-xs">
-                      {run.errorMessage}
-                    </p>
-                  )}
-                </TableCell>
+                {!hideShopColumn && (
+                  <TableCell className="font-medium">
+                    {run.shop.name}
+                    <RunNotes run={run} />
+                  </TableCell>
+                )}
                 <TableCell className="text-muted-foreground text-sm">
                   {run.platform}
+                  {/* Without the Shop cell, its flags and error text live here. */}
+                  {hideShopColumn && <RunNotes run={run} />}
                 </TableCell>
                 <TableCell>
                   <SyncStatusBadge status={run.status} />
@@ -241,6 +247,30 @@ function RunsTable({ runs, isAdmin }: { runs: Runs; isAdmin: boolean }) {
   );
 }
 
+function RunNotes({ run }: { run: Runs[number] }) {
+  return (
+    <>
+      {run.triggeredManually && (
+        <span className="text-muted-foreground ml-2 text-xs">(manual)</span>
+      )}
+      {run.insecureTLSCode && (
+        <span
+          className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400"
+          title={`TLS verification was skipped (${run.insecureTLSCode})`}
+        >
+          <AlertTriangle className="h-3 w-3" />
+          Certificate problem
+        </span>
+      )}
+      {run.errorMessage && (
+        <p className="text-muted-foreground mt-1 max-w-md text-xs">
+          {run.errorMessage}
+        </p>
+      )}
+    </>
+  );
+}
+
 function ShopSettings({
   shopConfigs,
   isAdmin,
@@ -272,7 +302,7 @@ function ShopSettings({
   );
 }
 
-function ShopSyncCard({
+export function ShopSyncCard({
   shop,
   isAdmin,
 }: {
@@ -280,9 +310,7 @@ function ShopSyncCard({
   isAdmin: boolean;
 }) {
   const router = useRouter();
-  const [platform, setPlatform] = useState<string>(
-    shop.syncPlatform ?? "NONE",
-  );
+  const [platform, setPlatform] = useState<string>(shop.syncPlatform ?? "NONE");
   const [enabled, setEnabled] = useState(shop.syncEnabled);
   const [syncUrl, setSyncUrl] = useState(shop.syncUrl ?? "");
   const [allowInsecure, setAllowInsecure] = useState(shop.allowInsecureOrigin);
@@ -415,9 +443,9 @@ function ShopSyncCard({
               {platform === "SQUARESPACE" ? (
                 <>
                   Squarespace doesn&apos;t publish a site-wide product list, so
-                  we read the page your products are actually on. Open your
-                  shop page in a browser and copy the address from the bar —
-                  usually something like{" "}
+                  we read the page your products are actually on. Open your shop
+                  page in a browser and copy the address from the bar — usually
+                  something like{" "}
                   <code className="text-foreground">yoursite.com/shop</code> or{" "}
                   <code className="text-foreground">yoursite.com/store</code>.
                   Your homepage won&apos;t work.

@@ -392,24 +392,33 @@ export const productSyncRouter = createTRPCRouter({
       return { message: "Sync run discarded." };
     }),
 
-  /** The caller's shops with their sync configuration. */
-  listShopConfigs: artisanProcedure.query(({ ctx }) =>
-    ctx.db.shop.findMany({
-      where: { id: { in: allowedShopIds(ctx) } },
-      select: {
-        id: true,
-        name: true,
-        website: true,
-        syncPlatform: true,
-        syncEnabled: true,
-        syncUrl: true,
-        allowInsecureOrigin: true,
-        lastSyncedAt: true,
-        _count: { select: { products: true } },
-      },
-      orderBy: { name: "asc" },
+  /**
+   * The caller's shops with their sync configuration, optionally narrowed to
+   * one shop.
+   */
+  listShopConfigs: artisanProcedure
+    .input(z.object({ shopId: z.string().optional() }).optional())
+    .query(({ ctx, input }) => {
+      if (input?.shopId) assertShopAccess(ctx, input.shopId);
+
+      return ctx.db.shop.findMany({
+        where: input?.shopId
+          ? { id: input.shopId }
+          : { id: { in: allowedShopIds(ctx) } },
+        select: {
+          id: true,
+          name: true,
+          website: true,
+          syncPlatform: true,
+          syncEnabled: true,
+          syncUrl: true,
+          allowInsecureOrigin: true,
+          lastSyncedAt: true,
+          _count: { select: { products: true } },
+        },
+        orderBy: { name: "asc" },
+      });
     }),
-  ),
 
   /**
    * Update one shop's sync configuration.

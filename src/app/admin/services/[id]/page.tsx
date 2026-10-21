@@ -7,9 +7,11 @@ import { api } from "~/trpc/server";
 
 import { ServiceForm } from "../_components/service-form";
 import { TrailHeader } from "../../_components/trail-header";
+import { safeAdminReturnTo } from "../../_lib/safe-return-to";
 
 type Props = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string | string[] }>;
 };
 // Deduped per request so the page and generateMetadata share one query.
 const getService = cache((id: string) => api.service.get(id));
@@ -32,8 +34,9 @@ async function getServiceOrNotFound(id: string) {
   }
 }
 
-export default async function EditServicePage({ params }: Props) {
+export default async function EditServicePage({ params, searchParams }: Props) {
   const { id } = await params;
+  const query = await searchParams;
   const [service, shops, categories, session] = await Promise.all([
     getServiceOrNotFound(id),
     api.shop.getOptions(),
@@ -41,6 +44,7 @@ export default async function EditServicePage({ params }: Props) {
     getSession(),
   ]);
   const userRole = session?.user.role ?? "ARTISAN";
+  const returnTo = safeAdminReturnTo(query.returnTo) ?? undefined;
   return (
     <>
       <TrailHeader
@@ -55,6 +59,7 @@ export default async function EditServicePage({ params }: Props) {
         shops={shops}
         categories={categories}
         userRole={userRole}
+        returnTo={returnTo}
       />
     </>
   );

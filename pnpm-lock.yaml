@@ -71,9 +71,6 @@ importers:
       '@formkit/auto-animate':
         specifier: ^0.8.2
         version: 0.8.4
-      '@hcaptcha/react-hcaptcha':
-        specifier: ^2.0.2
-        version: 2.0.2
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1444,9 +1441,6 @@ packages:
     peerDependencies:
       react: '>= 16.3.0'
       react-dom: '>= 16.3.0'
-
-  '@hcaptcha/react-hcaptcha@2.0.2':
-    resolution: {integrity: sha512-VbuH6VJ6m3BHmVBHs0fL9t+suZd7PQEqCzqL2BiUbBvbHI3XfvSgdiug2QiEPN8zskbPTIV/FfGPF53JCckrow==}
 
   '@headlessui/react@1.7.19':
     resolution: {integrity: sha512-Ll+8q3OlMJfJbAKM/+/Y2q6PPYbryqNTXDbryx7SXLIDamkF6iQFbriYHga0dY44PvDhvvBWCx1Xj4U5+G4hOw==}
@@ -9280,8 +9274,6 @@ snapshots:
       '@hcaptcha/loader': 2.3.0
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
-
-  '@hcaptcha/react-hcaptcha@2.0.2': {}
 
   '@headlessui/react@1.7.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:

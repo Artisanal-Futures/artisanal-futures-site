@@ -51,7 +51,9 @@ export const env = createEnv({
     // DEPRECATED: replaced by SIMPLEPRESS_CALLBACK_TOKEN + AF_SP_WEBHOOK_SECRET; remove at cutover
     SIMPLEPRESS_HASH_SECRET: z.string().min(1),
 
-    HCAPTCHA_SECRET_KEY: z.string(),
+    // Google reCAPTCHA v3 secret + minimum accepted score (0-1).
+    RECAPTCHA_SECRET_KEY: z.string(),
+    RECAPTCHA_MIN_SCORE: z.coerce.number().min(0).max(1).default(0.5),
 
     // Bearer token for POST /api/cron/sync-products, called by the Coolify
     // Scheduled Task that runs the weekly product sync. Generate with
@@ -101,9 +103,11 @@ export const env = createEnv({
     NEXT_PUBLIC_STORAGE_BUCKET_NAME: z.string().min(1),
     NEXT_PUBLIC_EMAIL_FROM_NOREPLY: z.string(),
     NEXT_PUBLIC_EMAIL_FROM_SUPPORT: z.string(),
-    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: z.string(),
+    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string(),
 
     NEXT_PUBLIC_HELP_DOCS_URL: z.string(),
+    // Base URL of the UPCY generator app (no trailing slash).
+    NEXT_PUBLIC_UPCY_URL: z.string().url(),
 
     // Canonical origin of this deployment (no trailing slash needed). Optional
     // so a deploy never fails if it isn't set; src/lib/seo/site-url.ts falls
@@ -146,8 +150,9 @@ export const env = createEnv({
 
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
 
-    HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
-    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
+    RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
+    RECAPTCHA_MIN_SCORE: process.env.RECAPTCHA_MIN_SCORE,
+    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
 
     CRON_SECRET: process.env.CRON_SECRET,
     INDEXNOW_KEY: process.env.INDEXNOW_KEY,
@@ -169,6 +174,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
 
     NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
+    NEXT_PUBLIC_UPCY_URL: process.env.NEXT_PUBLIC_UPCY_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
   /**

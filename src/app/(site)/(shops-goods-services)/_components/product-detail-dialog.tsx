@@ -4,10 +4,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Clock, ExternalLink, MapPin, Store } from "lucide-react";
 
+import type { OutboundSource } from "~/lib/analytics/track-outbound";
 import type { RouterOutputs } from "~/trpc/react";
 import { formatPrice } from "~/lib/format-price";
-import { cn } from "~/lib/utils";
 import { handleImageUrl } from "~/lib/handle-image-url";
+import { cn } from "~/lib/utils";
 import {
   Dialog,
   DialogContentHighContrast,
@@ -16,6 +17,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { ImageWithFallback } from "~/components/image-with-fallback";
+import { OutboundLink } from "~/components/outbound-link";
 
 type Product = Omit<
   NonNullable<RouterOutputs["shop"]["get"]>["products"][number],
@@ -36,6 +38,10 @@ type Props = {
   linkToWebsite?: string;
   /** Business logo, shown if the product image fails to load. */
   fallbackImage?: string | null;
+  /** For outbound click tracking, when the item itself doesn't carry a shopId. */
+  shopId?: string;
+  /** Where the dialog was opened from, recorded with outbound clicks. */
+  trackingSource: OutboundSource;
 };
 
 const removeHtmlTags = (text: string) => {
@@ -117,6 +123,8 @@ export function ProductDetailDialog({
   linkToWebsite,
   createdBy,
   fallbackImage,
+  shopId,
+  trackingSource,
 }: Props) {
   if (!item) return null;
 
@@ -138,6 +146,13 @@ export function ProductDetailDialog({
   const duration = "durationInMinutes" in item ? item.durationInMinutes : null;
   const locationType = "locationType" in item ? item.locationType : null;
   const hasFacts = !!duration || !!locationType;
+
+  // Collections items carry their shopId; the shop profile passes it as a prop
+  const itemShopId =
+    "shopId" in item && typeof item.shopId === "string" && item.shopId !== ""
+      ? item.shopId
+      : null;
+  const trackedShopId = itemShopId ?? shopId;
 
   const hasOutboundLink = !!itemUrl || !!linkToWebsite;
   const initials = createdBy ? getInitials(createdBy) : "";
@@ -279,25 +294,41 @@ export function ProductDetailDialog({
                 {(hasOutboundLink || linkToProfile) && (
                   <div className="flex items-stretch gap-2">
                     {itemUrl ? (
-                      <a
+                      <OutboundLink
                         href={itemUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className={primaryButtonClass}
+                        track={
+                          trackedShopId
+                            ? {
+                                shopId: trackedShopId,
+                                productId: isService ? null : item.id,
+                                serviceId: isService ? item.id : null,
+                                target: isService ? "SERVICE" : "PRODUCT",
+                                source: trackingSource,
+                              }
+                            : null
+                        }
                       >
                         {isService ? "Book on their site" : "Buy on their site"}
                         <ExternalLink className="size-3.5" />
-                      </a>
+                      </OutboundLink>
                     ) : linkToWebsite ? (
-                      <Link
+                      <OutboundLink
                         href={linkToWebsite}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className={primaryButtonClass}
+                        track={
+                          trackedShopId
+                            ? {
+                                shopId: trackedShopId,
+                                target: "WEBSITE",
+                                source: trackingSource,
+                              }
+                            : null
+                        }
                       >
                         Visit their site
                         <ExternalLink className="size-3.5" />
-                      </Link>
+                      </OutboundLink>
                     ) : null}
                     {linkToProfile && (
                       <Link

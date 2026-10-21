@@ -6,6 +6,7 @@ import type { RouterOutputs } from "~/trpc/react";
 import { getInitials } from "~/lib/get-initials";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { shopPath } from "~/lib/seo/paths";
+import { OutboundLink } from "~/components/outbound-link";
 
 /** Only the fields the card renders, so landing pages can pass lighter rows. */
 type Shop = Pick<
@@ -64,15 +65,18 @@ export function ShopCard({ shop }: { shop: Shop }) {
         {shop?.website && (
           <>
             <div className="bg-border h-8 w-px" />
-            <a
+            <OutboundLink
               href={shop?.website}
-              target="_blank"
-              rel="noopener noreferrer"
+              track={{
+                shopId: shop.id,
+                target: "WEBSITE",
+                source: "SHOP_CARD",
+              }}
               className="text-muted-foreground hover:bg-secondary hover:text-foreground flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors"
             >
               Website
               <ExternalLink className="size-3.5" />
-            </a>
+            </OutboundLink>
           </>
         )}
       </div>

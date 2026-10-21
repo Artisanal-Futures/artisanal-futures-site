@@ -91,7 +91,7 @@ export function UserIdentity({
   size = "default",
 }: {
   user: Pick<OwnerCandidate, "name" | "email" | "image">;
-  size?: "default" | "lg";
+  size?: "sm" | "default" | "lg";
 }) {
   const label = user.name ?? user.email ?? "Unnamed user";
   return (

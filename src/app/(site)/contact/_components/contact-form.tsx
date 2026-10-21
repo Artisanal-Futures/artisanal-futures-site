@@ -7,8 +7,8 @@ import { CheckCircle, Loader2, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { HCaptchaHandle } from "~/components/inputs/hcaptcha-form-field";
 import type { ContactFormData } from "~/lib/validators/contact";
+import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
 import { contactFormSchema } from "~/lib/validators/contact";
 import { api } from "~/trpc/react";
 import { useDirtyForm } from "~/hooks/use-dirty-form";
@@ -16,8 +16,8 @@ import { useKeyboardEnter } from "~/hooks/use-keyboard-enter";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Form } from "~/components/ui/form";
-import { HCaptchaField } from "~/components/inputs/hcaptcha-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { RecaptchaDisclosure } from "~/components/inputs/recaptcha-disclosure";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 type FormValues = {
@@ -36,11 +36,11 @@ export function ContactForm() {
 
   const schema = contactFormSchema(messageMaxLength);
 
-  const captchaRef = useRef<HCaptchaHandle>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [captchaToken, setCaptchaToken] = useState("");
+
+  const { execute } = useRecaptchaV3();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema) as Resolver<FormValues>,
@@ -56,18 +56,12 @@ export function ContactForm() {
   const { mutate, isPending } = api.contact.send.useMutation({
     onSuccess: ({ message }, _input, context) => {
       toast.success(message, { id: context?.toastId });
-      setCaptchaToken("");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
       form.reset();
     },
     onError: (err: { message?: string }, _input, context) => {
       toast.error(err.message ?? "Something went wrong. Please try again.", {
         id: context?.toastId,
       });
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
-      setCaptchaToken("");
     },
     onMutate: () => ({
       toastId: toast.loading("Sending message..."),
@@ -78,11 +72,8 @@ export function ContactForm() {
     (form.watch("message") as string | undefined)?.length ?? 0;
 
   const onSubmit = async (data: FormValues) => {
-    if (!captchaToken) {
-      toast.error("Please complete the captcha");
-      return;
-    }
     setError(null);
+    const captchaToken = (await execute("contact")) ?? "";
     const payload: ContactFormData = {
       name: data.name,
       email: data.email,
@@ -181,22 +172,9 @@ export function ContactForm() {
           required
         />
 
-        {/* hCaptcha */}
-        <HCaptchaField
-          ref={captchaRef}
-          onVerify={setCaptchaToken}
-          onExpire={() => setCaptchaToken("")}
-          onError={() => setCaptchaToken("")}
-          label="Verification"
-          required
-        />
+        <RecaptchaDisclosure />
 
-        <Button
-          type="submit"
-          disabled={isPending || !captchaToken}
-          size="lg"
-          className="w-full"
-        >
+        <Button type="submit" disabled={isPending} size="lg" className="w-full">
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />

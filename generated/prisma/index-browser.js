@@ -121,6 +121,16 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.OutboundClickScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  shopId: 'shopId',
+  productId: 'productId',
+  serviceId: 'serviceId',
+  target: 'target',
+  source: 'source'
+};
+
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -939,6 +949,20 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.OutboundTarget = exports.$Enums.OutboundTarget = {
+  PRODUCT: 'PRODUCT',
+  SERVICE: 'SERVICE',
+  WEBSITE: 'WEBSITE'
+};
+
+exports.OutboundSource = exports.$Enums.OutboundSource = {
+  SHOP_PROFILE: 'SHOP_PROFILE',
+  SHOP_HERO: 'SHOP_HERO',
+  COLLECTIONS: 'COLLECTIONS',
+  SHOP_CARD: 'SHOP_CARD',
+  ARTISAN_MAP: 'ARTISAN_MAP'
+};
+
 exports.CategoryType = exports.$Enums.CategoryType = {
   PRODUCT: 'PRODUCT',
   SERVICE: 'SERVICE'
@@ -1128,6 +1152,7 @@ exports.ProvisionStatus = exports.$Enums.ProvisionStatus = {
 };
 
 exports.Prisma.ModelName = {
+  OutboundClick: 'OutboundClick',
   Category: 'Category',
   Event: 'Event',
   Subreddit: 'Subreddit',

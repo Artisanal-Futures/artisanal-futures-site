@@ -52,7 +52,6 @@
     "@editorjs/paragraph": "^2.11.7",
     "@editorjs/table": "^2.4.3",
     "@formkit/auto-animate": "^0.8.2",
-    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@headlessui/react": "^1.7.19",
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "^14.2.23",

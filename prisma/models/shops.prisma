@@ -57,6 +57,7 @@ model Shop {
   websiteProvision WebsiteProvision?
   syncRuns         ProductSyncRun[]
   privateContact   ShopPrivateContact?
+  outboundClicks   OutboundClick[]
 }
 
 model ShopAddress {

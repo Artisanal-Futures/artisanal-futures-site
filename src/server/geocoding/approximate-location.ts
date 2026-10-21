@@ -29,6 +29,12 @@ export type MapShopLocation = {
   precision: "exact" | "approximate";
   /** Street line, only for an exact (storefront) pin. */
   streetAddress?: string | null;
+  /** Public products listed by the shop. */
+  productCount: number;
+  /** Public services listed by the shop. */
+  serviceCount: number;
+  /** Joined within the last 30 days. */
+  isNew: boolean;
 };
 
 /** Trim a string; empty/whitespace-only/nullish becomes null. */

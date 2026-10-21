@@ -70,16 +70,6 @@ export function SiteProviders({ children }: { children: ReactNode }) {
           },
         }}
         Link={Link}
-        // captcha={
-        //   process.env.NODE_ENV === "development"
-        //     ? {
-        //         provider: "hcaptcha",
-        //         siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
-        //         hideBadge: true,
-
-        //       }
-        //     : undefined
-        // }
         viewPaths={{
           SIGN_UP: "join",
         }}

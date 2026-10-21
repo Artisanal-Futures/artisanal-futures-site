@@ -14,6 +14,12 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model OutboundClick
+ * One row per click on a link to an artisan's own site. Deliberately holds no
+ * visitor identifier (no IP, cookie or user id) — see the privacy policy.
+ */
+export type OutboundClick = $Result.DefaultSelection<Prisma.$OutboundClickPayload>
+/**
  * Model Category
  * 
  */
@@ -314,7 +320,27 @@ export type Verification = $Result.DefaultSelection<Prisma.$VerificationPayload>
  * Enums
  */
 export namespace $Enums {
-  export const CategoryType: {
+  export const OutboundTarget: {
+  PRODUCT: 'PRODUCT',
+  SERVICE: 'SERVICE',
+  WEBSITE: 'WEBSITE'
+};
+
+export type OutboundTarget = (typeof OutboundTarget)[keyof typeof OutboundTarget]
+
+
+export const OutboundSource: {
+  SHOP_PROFILE: 'SHOP_PROFILE',
+  SHOP_HERO: 'SHOP_HERO',
+  COLLECTIONS: 'COLLECTIONS',
+  SHOP_CARD: 'SHOP_CARD',
+  ARTISAN_MAP: 'ARTISAN_MAP'
+};
+
+export type OutboundSource = (typeof OutboundSource)[keyof typeof OutboundSource]
+
+
+export const CategoryType: {
   PRODUCT: 'PRODUCT',
   SERVICE: 'SERVICE'
 };
@@ -578,6 +604,14 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 }
 
+export type OutboundTarget = $Enums.OutboundTarget
+
+export const OutboundTarget: typeof $Enums.OutboundTarget
+
+export type OutboundSource = $Enums.OutboundSource
+
+export const OutboundSource: typeof $Enums.OutboundSource
+
 export type CategoryType = $Enums.CategoryType
 
 export const CategoryType: typeof $Enums.CategoryType
@@ -685,8 +719,8 @@ export const Role: typeof $Enums.Role
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Categories
- * const categories = await prisma.category.findMany()
+ * // Fetch zero or more OutboundClicks
+ * const outboundClicks = await prisma.outboundClick.findMany()
  * ```
  *
  *
@@ -706,8 +740,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Categories
-   * const categories = await prisma.category.findMany()
+   * // Fetch zero or more OutboundClicks
+   * const outboundClicks = await prisma.outboundClick.findMany()
    * ```
    *
    *
@@ -797,6 +831,16 @@ export class PrismaClient<
   }>>
 
       /**
+   * `prisma.outboundClick`: Exposes CRUD operations for the **OutboundClick** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OutboundClicks
+    * const outboundClicks = await prisma.outboundClick.findMany()
+    * ```
+    */
+  get outboundClick(): Prisma.OutboundClickDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.category`: Exposes CRUD operations for the **Category** model.
     * Example usage:
     * ```ts
@@ -1816,6 +1860,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    OutboundClick: 'OutboundClick',
     Category: 'Category',
     Event: 'Event',
     Subreddit: 'Subreddit',
@@ -1892,10 +1937,84 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "siteSettings" | "pageSeo" | "shop" | "shopAddress" | "shopPrivateContact" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
+      modelProps: "outboundClick" | "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "siteSettings" | "pageSeo" | "shop" | "shopAddress" | "shopPrivateContact" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      OutboundClick: {
+        payload: Prisma.$OutboundClickPayload<ExtArgs>
+        fields: Prisma.OutboundClickFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OutboundClickFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OutboundClickFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          findFirst: {
+            args: Prisma.OutboundClickFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OutboundClickFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          findMany: {
+            args: Prisma.OutboundClickFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>[]
+          }
+          create: {
+            args: Prisma.OutboundClickCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          createMany: {
+            args: Prisma.OutboundClickCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OutboundClickCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>[]
+          }
+          delete: {
+            args: Prisma.OutboundClickDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          update: {
+            args: Prisma.OutboundClickUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          deleteMany: {
+            args: Prisma.OutboundClickDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OutboundClickUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OutboundClickUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>[]
+          }
+          upsert: {
+            args: Prisma.OutboundClickUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OutboundClickPayload>
+          }
+          aggregate: {
+            args: Prisma.OutboundClickAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOutboundClick>
+          }
+          groupBy: {
+            args: Prisma.OutboundClickGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OutboundClickGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OutboundClickCountArgs<ExtArgs>
+            result: $Utils.Optional<OutboundClickCountAggregateOutputType> | number
+          }
+        }
+      }
       Category: {
         payload: Prisma.$CategoryPayload<ExtArgs>
         fields: Prisma.CategoryFieldRefs
@@ -6284,6 +6403,7 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
+    outboundClick?: OutboundClickOmit
     category?: CategoryOmit
     event?: EventOmit
     subreddit?: SubredditOmit
@@ -6623,10 +6743,12 @@ export namespace Prisma {
 
   export type ServiceCountOutputType = {
     categories: number
+    outboundClicks: number
   }
 
   export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | ServiceCountOutputTypeCountCategoriesArgs
+    outboundClicks?: boolean | ServiceCountOutputTypeCountOutboundClicksArgs
   }
 
   // Custom InputTypes
@@ -6647,6 +6769,13 @@ export namespace Prisma {
     where?: CategoryWhereInput
   }
 
+  /**
+   * ServiceCountOutputType without action
+   */
+  export type ServiceCountOutputTypeCountOutboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OutboundClickWhereInput
+  }
+
 
   /**
    * Count Type ProductCountOutputType
@@ -6655,11 +6784,13 @@ export namespace Prisma {
   export type ProductCountOutputType = {
     categories: number
     syncProposals: number
+    outboundClicks: number
   }
 
   export type ProductCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | ProductCountOutputTypeCountCategoriesArgs
     syncProposals?: boolean | ProductCountOutputTypeCountSyncProposalsArgs
+    outboundClicks?: boolean | ProductCountOutputTypeCountOutboundClicksArgs
   }
 
   // Custom InputTypes
@@ -6687,6 +6818,13 @@ export namespace Prisma {
     where?: ProductSyncProposalWhereInput
   }
 
+  /**
+   * ProductCountOutputType without action
+   */
+  export type ProductCountOutputTypeCountOutboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OutboundClickWhereInput
+  }
+
 
   /**
    * Count Type ShopCountOutputType
@@ -6698,6 +6836,7 @@ export namespace Prisma {
     services: number
     invites: number
     syncRuns: number
+    outboundClicks: number
   }
 
   export type ShopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6706,6 +6845,7 @@ export namespace Prisma {
     services?: boolean | ShopCountOutputTypeCountServicesArgs
     invites?: boolean | ShopCountOutputTypeCountInvitesArgs
     syncRuns?: boolean | ShopCountOutputTypeCountSyncRunsArgs
+    outboundClicks?: boolean | ShopCountOutputTypeCountOutboundClicksArgs
   }
 
   // Custom InputTypes
@@ -6752,6 +6892,13 @@ export namespace Prisma {
    */
   export type ShopCountOutputTypeCountSyncRunsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProductSyncRunWhereInput
+  }
+
+  /**
+   * ShopCountOutputType without action
+   */
+  export type ShopCountOutputTypeCountOutboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OutboundClickWhereInput
   }
 
 
@@ -7556,6 +7703,1144 @@ export namespace Prisma {
   /**
    * Models
    */
+
+  /**
+   * Model OutboundClick
+   */
+
+  export type AggregateOutboundClick = {
+    _count: OutboundClickCountAggregateOutputType | null
+    _min: OutboundClickMinAggregateOutputType | null
+    _max: OutboundClickMaxAggregateOutputType | null
+  }
+
+  export type OutboundClickMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    shopId: string | null
+    productId: string | null
+    serviceId: string | null
+    target: $Enums.OutboundTarget | null
+    source: $Enums.OutboundSource | null
+  }
+
+  export type OutboundClickMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    shopId: string | null
+    productId: string | null
+    serviceId: string | null
+    target: $Enums.OutboundTarget | null
+    source: $Enums.OutboundSource | null
+  }
+
+  export type OutboundClickCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    shopId: number
+    productId: number
+    serviceId: number
+    target: number
+    source: number
+    _all: number
+  }
+
+
+  export type OutboundClickMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    productId?: true
+    serviceId?: true
+    target?: true
+    source?: true
+  }
+
+  export type OutboundClickMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    productId?: true
+    serviceId?: true
+    target?: true
+    source?: true
+  }
+
+  export type OutboundClickCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    productId?: true
+    serviceId?: true
+    target?: true
+    source?: true
+    _all?: true
+  }
+
+  export type OutboundClickAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OutboundClick to aggregate.
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OutboundClicks to fetch.
+     */
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OutboundClickWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OutboundClicks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OutboundClicks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OutboundClicks
+    **/
+    _count?: true | OutboundClickCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OutboundClickMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OutboundClickMaxAggregateInputType
+  }
+
+  export type GetOutboundClickAggregateType<T extends OutboundClickAggregateArgs> = {
+        [P in keyof T & keyof AggregateOutboundClick]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOutboundClick[P]>
+      : GetScalarType<T[P], AggregateOutboundClick[P]>
+  }
+
+
+
+
+  export type OutboundClickGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OutboundClickWhereInput
+    orderBy?: OutboundClickOrderByWithAggregationInput | OutboundClickOrderByWithAggregationInput[]
+    by: OutboundClickScalarFieldEnum[] | OutboundClickScalarFieldEnum
+    having?: OutboundClickScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OutboundClickCountAggregateInputType | true
+    _min?: OutboundClickMinAggregateInputType
+    _max?: OutboundClickMaxAggregateInputType
+  }
+
+  export type OutboundClickGroupByOutputType = {
+    id: string
+    createdAt: Date
+    shopId: string
+    productId: string | null
+    serviceId: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+    _count: OutboundClickCountAggregateOutputType | null
+    _min: OutboundClickMinAggregateOutputType | null
+    _max: OutboundClickMaxAggregateOutputType | null
+  }
+
+  type GetOutboundClickGroupByPayload<T extends OutboundClickGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OutboundClickGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OutboundClickGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OutboundClickGroupByOutputType[P]>
+            : GetScalarType<T[P], OutboundClickGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OutboundClickSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    productId?: boolean
+    serviceId?: boolean
+    target?: boolean
+    source?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["outboundClick"]>
+
+  export type OutboundClickSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    productId?: boolean
+    serviceId?: boolean
+    target?: boolean
+    source?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["outboundClick"]>
+
+  export type OutboundClickSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    productId?: boolean
+    serviceId?: boolean
+    target?: boolean
+    source?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }, ExtArgs["result"]["outboundClick"]>
+
+  export type OutboundClickSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    productId?: boolean
+    serviceId?: boolean
+    target?: boolean
+    source?: boolean
+  }
+
+  export type OutboundClickOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "shopId" | "productId" | "serviceId" | "target" | "source", ExtArgs["result"]["outboundClick"]>
+  export type OutboundClickInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }
+  export type OutboundClickIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }
+  export type OutboundClickIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+    product?: boolean | OutboundClick$productArgs<ExtArgs>
+    service?: boolean | OutboundClick$serviceArgs<ExtArgs>
+  }
+
+  export type $OutboundClickPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OutboundClick"
+    objects: {
+      shop: Prisma.$ShopPayload<ExtArgs>
+      product: Prisma.$ProductPayload<ExtArgs> | null
+      service: Prisma.$ServicePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      shopId: string
+      productId: string | null
+      serviceId: string | null
+      target: $Enums.OutboundTarget
+      source: $Enums.OutboundSource
+    }, ExtArgs["result"]["outboundClick"]>
+    composites: {}
+  }
+
+  type OutboundClickGetPayload<S extends boolean | null | undefined | OutboundClickDefaultArgs> = $Result.GetResult<Prisma.$OutboundClickPayload, S>
+
+  type OutboundClickCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OutboundClickFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OutboundClickCountAggregateInputType | true
+    }
+
+  export interface OutboundClickDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OutboundClick'], meta: { name: 'OutboundClick' } }
+    /**
+     * Find zero or one OutboundClick that matches the filter.
+     * @param {OutboundClickFindUniqueArgs} args - Arguments to find a OutboundClick
+     * @example
+     * // Get one OutboundClick
+     * const outboundClick = await prisma.outboundClick.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OutboundClickFindUniqueArgs>(args: SelectSubset<T, OutboundClickFindUniqueArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OutboundClick that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OutboundClickFindUniqueOrThrowArgs} args - Arguments to find a OutboundClick
+     * @example
+     * // Get one OutboundClick
+     * const outboundClick = await prisma.outboundClick.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OutboundClickFindUniqueOrThrowArgs>(args: SelectSubset<T, OutboundClickFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OutboundClick that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickFindFirstArgs} args - Arguments to find a OutboundClick
+     * @example
+     * // Get one OutboundClick
+     * const outboundClick = await prisma.outboundClick.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OutboundClickFindFirstArgs>(args?: SelectSubset<T, OutboundClickFindFirstArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OutboundClick that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickFindFirstOrThrowArgs} args - Arguments to find a OutboundClick
+     * @example
+     * // Get one OutboundClick
+     * const outboundClick = await prisma.outboundClick.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OutboundClickFindFirstOrThrowArgs>(args?: SelectSubset<T, OutboundClickFindFirstOrThrowArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OutboundClicks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OutboundClicks
+     * const outboundClicks = await prisma.outboundClick.findMany()
+     * 
+     * // Get first 10 OutboundClicks
+     * const outboundClicks = await prisma.outboundClick.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const outboundClickWithIdOnly = await prisma.outboundClick.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OutboundClickFindManyArgs>(args?: SelectSubset<T, OutboundClickFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OutboundClick.
+     * @param {OutboundClickCreateArgs} args - Arguments to create a OutboundClick.
+     * @example
+     * // Create one OutboundClick
+     * const OutboundClick = await prisma.outboundClick.create({
+     *   data: {
+     *     // ... data to create a OutboundClick
+     *   }
+     * })
+     * 
+     */
+    create<T extends OutboundClickCreateArgs>(args: SelectSubset<T, OutboundClickCreateArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OutboundClicks.
+     * @param {OutboundClickCreateManyArgs} args - Arguments to create many OutboundClicks.
+     * @example
+     * // Create many OutboundClicks
+     * const outboundClick = await prisma.outboundClick.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OutboundClickCreateManyArgs>(args?: SelectSubset<T, OutboundClickCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OutboundClicks and returns the data saved in the database.
+     * @param {OutboundClickCreateManyAndReturnArgs} args - Arguments to create many OutboundClicks.
+     * @example
+     * // Create many OutboundClicks
+     * const outboundClick = await prisma.outboundClick.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OutboundClicks and only return the `id`
+     * const outboundClickWithIdOnly = await prisma.outboundClick.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OutboundClickCreateManyAndReturnArgs>(args?: SelectSubset<T, OutboundClickCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OutboundClick.
+     * @param {OutboundClickDeleteArgs} args - Arguments to delete one OutboundClick.
+     * @example
+     * // Delete one OutboundClick
+     * const OutboundClick = await prisma.outboundClick.delete({
+     *   where: {
+     *     // ... filter to delete one OutboundClick
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OutboundClickDeleteArgs>(args: SelectSubset<T, OutboundClickDeleteArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OutboundClick.
+     * @param {OutboundClickUpdateArgs} args - Arguments to update one OutboundClick.
+     * @example
+     * // Update one OutboundClick
+     * const outboundClick = await prisma.outboundClick.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OutboundClickUpdateArgs>(args: SelectSubset<T, OutboundClickUpdateArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OutboundClicks.
+     * @param {OutboundClickDeleteManyArgs} args - Arguments to filter OutboundClicks to delete.
+     * @example
+     * // Delete a few OutboundClicks
+     * const { count } = await prisma.outboundClick.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OutboundClickDeleteManyArgs>(args?: SelectSubset<T, OutboundClickDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OutboundClicks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OutboundClicks
+     * const outboundClick = await prisma.outboundClick.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OutboundClickUpdateManyArgs>(args: SelectSubset<T, OutboundClickUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OutboundClicks and returns the data updated in the database.
+     * @param {OutboundClickUpdateManyAndReturnArgs} args - Arguments to update many OutboundClicks.
+     * @example
+     * // Update many OutboundClicks
+     * const outboundClick = await prisma.outboundClick.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OutboundClicks and only return the `id`
+     * const outboundClickWithIdOnly = await prisma.outboundClick.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OutboundClickUpdateManyAndReturnArgs>(args: SelectSubset<T, OutboundClickUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OutboundClick.
+     * @param {OutboundClickUpsertArgs} args - Arguments to update or create a OutboundClick.
+     * @example
+     * // Update or create a OutboundClick
+     * const outboundClick = await prisma.outboundClick.upsert({
+     *   create: {
+     *     // ... data to create a OutboundClick
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OutboundClick we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OutboundClickUpsertArgs>(args: SelectSubset<T, OutboundClickUpsertArgs<ExtArgs>>): Prisma__OutboundClickClient<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OutboundClicks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickCountArgs} args - Arguments to filter OutboundClicks to count.
+     * @example
+     * // Count the number of OutboundClicks
+     * const count = await prisma.outboundClick.count({
+     *   where: {
+     *     // ... the filter for the OutboundClicks we want to count
+     *   }
+     * })
+    **/
+    count<T extends OutboundClickCountArgs>(
+      args?: Subset<T, OutboundClickCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OutboundClickCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OutboundClick.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OutboundClickAggregateArgs>(args: Subset<T, OutboundClickAggregateArgs>): Prisma.PrismaPromise<GetOutboundClickAggregateType<T>>
+
+    /**
+     * Group by OutboundClick.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OutboundClickGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OutboundClickGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OutboundClickGroupByArgs['orderBy'] }
+        : { orderBy?: OutboundClickGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OutboundClickGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOutboundClickGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OutboundClick model
+   */
+  readonly fields: OutboundClickFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OutboundClick.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OutboundClickClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shop<T extends ShopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShopDefaultArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    product<T extends OutboundClick$productArgs<ExtArgs> = {}>(args?: Subset<T, OutboundClick$productArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    service<T extends OutboundClick$serviceArgs<ExtArgs> = {}>(args?: Subset<T, OutboundClick$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OutboundClick model
+   */
+  interface OutboundClickFieldRefs {
+    readonly id: FieldRef<"OutboundClick", 'String'>
+    readonly createdAt: FieldRef<"OutboundClick", 'DateTime'>
+    readonly shopId: FieldRef<"OutboundClick", 'String'>
+    readonly productId: FieldRef<"OutboundClick", 'String'>
+    readonly serviceId: FieldRef<"OutboundClick", 'String'>
+    readonly target: FieldRef<"OutboundClick", 'OutboundTarget'>
+    readonly source: FieldRef<"OutboundClick", 'OutboundSource'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OutboundClick findUnique
+   */
+  export type OutboundClickFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter, which OutboundClick to fetch.
+     */
+    where: OutboundClickWhereUniqueInput
+  }
+
+  /**
+   * OutboundClick findUniqueOrThrow
+   */
+  export type OutboundClickFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter, which OutboundClick to fetch.
+     */
+    where: OutboundClickWhereUniqueInput
+  }
+
+  /**
+   * OutboundClick findFirst
+   */
+  export type OutboundClickFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter, which OutboundClick to fetch.
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OutboundClicks to fetch.
+     */
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OutboundClicks.
+     */
+    cursor?: OutboundClickWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OutboundClicks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OutboundClicks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OutboundClicks.
+     */
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
+  }
+
+  /**
+   * OutboundClick findFirstOrThrow
+   */
+  export type OutboundClickFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter, which OutboundClick to fetch.
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OutboundClicks to fetch.
+     */
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OutboundClicks.
+     */
+    cursor?: OutboundClickWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OutboundClicks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OutboundClicks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OutboundClicks.
+     */
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
+  }
+
+  /**
+   * OutboundClick findMany
+   */
+  export type OutboundClickFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter, which OutboundClicks to fetch.
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OutboundClicks to fetch.
+     */
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OutboundClicks.
+     */
+    cursor?: OutboundClickWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OutboundClicks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OutboundClicks.
+     */
+    skip?: number
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
+  }
+
+  /**
+   * OutboundClick create
+   */
+  export type OutboundClickCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OutboundClick.
+     */
+    data: XOR<OutboundClickCreateInput, OutboundClickUncheckedCreateInput>
+  }
+
+  /**
+   * OutboundClick createMany
+   */
+  export type OutboundClickCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OutboundClicks.
+     */
+    data: OutboundClickCreateManyInput | OutboundClickCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OutboundClick createManyAndReturn
+   */
+  export type OutboundClickCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * The data used to create many OutboundClicks.
+     */
+    data: OutboundClickCreateManyInput | OutboundClickCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OutboundClick update
+   */
+  export type OutboundClickUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OutboundClick.
+     */
+    data: XOR<OutboundClickUpdateInput, OutboundClickUncheckedUpdateInput>
+    /**
+     * Choose, which OutboundClick to update.
+     */
+    where: OutboundClickWhereUniqueInput
+  }
+
+  /**
+   * OutboundClick updateMany
+   */
+  export type OutboundClickUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OutboundClicks.
+     */
+    data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyInput>
+    /**
+     * Filter which OutboundClicks to update
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * Limit how many OutboundClicks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OutboundClick updateManyAndReturn
+   */
+  export type OutboundClickUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * The data used to update OutboundClicks.
+     */
+    data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyInput>
+    /**
+     * Filter which OutboundClicks to update
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * Limit how many OutboundClicks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OutboundClick upsert
+   */
+  export type OutboundClickUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OutboundClick to update in case it exists.
+     */
+    where: OutboundClickWhereUniqueInput
+    /**
+     * In case the OutboundClick found by the `where` argument doesn't exist, create a new OutboundClick with this data.
+     */
+    create: XOR<OutboundClickCreateInput, OutboundClickUncheckedCreateInput>
+    /**
+     * In case the OutboundClick was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OutboundClickUpdateInput, OutboundClickUncheckedUpdateInput>
+  }
+
+  /**
+   * OutboundClick delete
+   */
+  export type OutboundClickDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    /**
+     * Filter which OutboundClick to delete.
+     */
+    where: OutboundClickWhereUniqueInput
+  }
+
+  /**
+   * OutboundClick deleteMany
+   */
+  export type OutboundClickDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OutboundClicks to delete
+     */
+    where?: OutboundClickWhereInput
+    /**
+     * Limit how many OutboundClicks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OutboundClick.product
+   */
+  export type OutboundClick$productArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Product
+     */
+    select?: ProductSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Product
+     */
+    omit?: ProductOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductInclude<ExtArgs> | null
+    where?: ProductWhereInput
+  }
+
+  /**
+   * OutboundClick.service
+   */
+  export type OutboundClick$serviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Service
+     */
+    select?: ServiceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Service
+     */
+    omit?: ServiceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceInclude<ExtArgs> | null
+    where?: ServiceWhereInput
+  }
+
+  /**
+   * OutboundClick without action
+   */
+  export type OutboundClickDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+  }
+
 
   /**
    * Model Category
@@ -20304,6 +21589,7 @@ export namespace Prisma {
     serviceUrl?: boolean
     shop?: boolean | Service$shopArgs<ExtArgs>
     categories?: boolean | Service$categoriesArgs<ExtArgs>
+    outboundClicks?: boolean | Service$outboundClicksArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
@@ -20373,6 +21659,7 @@ export namespace Prisma {
   export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shop?: boolean | Service$shopArgs<ExtArgs>
     categories?: boolean | Service$categoriesArgs<ExtArgs>
+    outboundClicks?: boolean | Service$outboundClicksArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20387,6 +21674,7 @@ export namespace Prisma {
     objects: {
       shop: Prisma.$ShopPayload<ExtArgs> | null
       categories: Prisma.$CategoryPayload<ExtArgs>[]
+      outboundClicks: Prisma.$OutboundClickPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20802,6 +22090,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     shop<T extends Service$shopArgs<ExtArgs> = {}>(args?: Subset<T, Service$shopArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     categories<T extends Service$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Service$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    outboundClicks<T extends Service$outboundClicksArgs<ExtArgs> = {}>(args?: Subset<T, Service$outboundClicksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -21287,6 +22576,30 @@ export namespace Prisma {
   }
 
   /**
+   * Service.outboundClicks
+   */
+  export type Service$outboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    where?: OutboundClickWhereInput
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    cursor?: OutboundClickWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
+  }
+
+  /**
    * Service without action
    */
   export type ServiceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21602,6 +22915,7 @@ export namespace Prisma {
     shop?: boolean | Product$shopArgs<ExtArgs>
     categories?: boolean | Product$categoriesArgs<ExtArgs>
     syncProposals?: boolean | Product$syncProposalsArgs<ExtArgs>
+    outboundClicks?: boolean | Product$outboundClicksArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
 
@@ -21681,6 +22995,7 @@ export namespace Prisma {
     shop?: boolean | Product$shopArgs<ExtArgs>
     categories?: boolean | Product$categoriesArgs<ExtArgs>
     syncProposals?: boolean | Product$syncProposalsArgs<ExtArgs>
+    outboundClicks?: boolean | Product$outboundClicksArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21696,6 +23011,7 @@ export namespace Prisma {
       shop: Prisma.$ShopPayload<ExtArgs> | null
       categories: Prisma.$CategoryPayload<ExtArgs>[]
       syncProposals: Prisma.$ProductSyncProposalPayload<ExtArgs>[]
+      outboundClicks: Prisma.$OutboundClickPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -22120,6 +23436,7 @@ export namespace Prisma {
     shop<T extends Product$shopArgs<ExtArgs> = {}>(args?: Subset<T, Product$shopArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     categories<T extends Product$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Product$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     syncProposals<T extends Product$syncProposalsArgs<ExtArgs> = {}>(args?: Subset<T, Product$syncProposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    outboundClicks<T extends Product$outboundClicksArgs<ExtArgs> = {}>(args?: Subset<T, Product$outboundClicksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -22629,6 +23946,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProductSyncProposalScalarFieldEnum | ProductSyncProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Product.outboundClicks
+   */
+  export type Product$outboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    where?: OutboundClickWhereInput
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    cursor?: OutboundClickWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
   }
 
   /**
@@ -25160,6 +26501,7 @@ export namespace Prisma {
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
+    outboundClicks?: boolean | Shop$outboundClicksArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -25272,6 +26614,7 @@ export namespace Prisma {
     websiteProvision?: boolean | Shop$websiteProvisionArgs<ExtArgs>
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
+    outboundClicks?: boolean | Shop$outboundClicksArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -25293,6 +26636,7 @@ export namespace Prisma {
       websiteProvision: Prisma.$WebsiteProvisionPayload<ExtArgs> | null
       syncRuns: Prisma.$ProductSyncRunPayload<ExtArgs>[]
       privateContact: Prisma.$ShopPrivateContactPayload<ExtArgs> | null
+      outboundClicks: Prisma.$OutboundClickPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -25756,6 +27100,7 @@ export namespace Prisma {
     websiteProvision<T extends Shop$websiteProvisionArgs<ExtArgs> = {}>(args?: Subset<T, Shop$websiteProvisionArgs<ExtArgs>>): Prisma__WebsiteProvisionClient<$Result.GetResult<Prisma.$WebsiteProvisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     syncRuns<T extends Shop$syncRunsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$syncRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     privateContact<T extends Shop$privateContactArgs<ExtArgs> = {}>(args?: Subset<T, Shop$privateContactArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    outboundClicks<T extends Shop$outboundClicksArgs<ExtArgs> = {}>(args?: Subset<T, Shop$outboundClicksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -26384,6 +27729,30 @@ export namespace Prisma {
      */
     include?: ShopPrivateContactInclude<ExtArgs> | null
     where?: ShopPrivateContactWhereInput
+  }
+
+  /**
+   * Shop.outboundClicks
+   */
+  export type Shop$outboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OutboundClick
+     */
+    select?: OutboundClickSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OutboundClick
+     */
+    omit?: OutboundClickOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OutboundClickInclude<ExtArgs> | null
+    where?: OutboundClickWhereInput
+    orderBy?: OutboundClickOrderByWithRelationInput | OutboundClickOrderByWithRelationInput[]
+    cursor?: OutboundClickWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
   }
 
   /**
@@ -76094,6 +77463,19 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const OutboundClickScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    shopId: 'shopId',
+    productId: 'productId',
+    serviceId: 'serviceId',
+    target: 'target',
+    source: 'source'
+  };
+
+  export type OutboundClickScalarFieldEnum = (typeof OutboundClickScalarFieldEnum)[keyof typeof OutboundClickScalarFieldEnum]
+
+
   export const CategoryScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -77125,20 +78507,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'CategoryType'
-   */
-  export type EnumCategoryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryType'>
-    
-
-
-  /**
-   * Reference to a field of type 'CategoryType[]'
-   */
-  export type ListEnumCategoryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -77149,6 +78517,48 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboundTarget'
+   */
+  export type EnumOutboundTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboundTarget'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboundTarget[]'
+   */
+  export type ListEnumOutboundTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboundTarget[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboundSource'
+   */
+  export type EnumOutboundSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboundSource'>
+    
+
+
+  /**
+   * Reference to a field of type 'OutboundSource[]'
+   */
+  export type ListEnumOutboundSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutboundSource[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CategoryType'
+   */
+  export type EnumCategoryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CategoryType[]'
+   */
+  export type ListEnumCategoryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CategoryType[]'>
     
 
 
@@ -77539,6 +78949,77 @@ export namespace Prisma {
    * Deep Input Types
    */
 
+
+  export type OutboundClickWhereInput = {
+    AND?: OutboundClickWhereInput | OutboundClickWhereInput[]
+    OR?: OutboundClickWhereInput[]
+    NOT?: OutboundClickWhereInput | OutboundClickWhereInput[]
+    id?: StringFilter<"OutboundClick"> | string
+    createdAt?: DateTimeFilter<"OutboundClick"> | Date | string
+    shopId?: StringFilter<"OutboundClick"> | string
+    productId?: StringNullableFilter<"OutboundClick"> | string | null
+    serviceId?: StringNullableFilter<"OutboundClick"> | string | null
+    target?: EnumOutboundTargetFilter<"OutboundClick"> | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFilter<"OutboundClick"> | $Enums.OutboundSource
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+    service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
+  }
+
+  export type OutboundClickOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    target?: SortOrder
+    source?: SortOrder
+    shop?: ShopOrderByWithRelationInput
+    product?: ProductOrderByWithRelationInput
+    service?: ServiceOrderByWithRelationInput
+  }
+
+  export type OutboundClickWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OutboundClickWhereInput | OutboundClickWhereInput[]
+    OR?: OutboundClickWhereInput[]
+    NOT?: OutboundClickWhereInput | OutboundClickWhereInput[]
+    createdAt?: DateTimeFilter<"OutboundClick"> | Date | string
+    shopId?: StringFilter<"OutboundClick"> | string
+    productId?: StringNullableFilter<"OutboundClick"> | string | null
+    serviceId?: StringNullableFilter<"OutboundClick"> | string | null
+    target?: EnumOutboundTargetFilter<"OutboundClick"> | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFilter<"OutboundClick"> | $Enums.OutboundSource
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+    product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
+    service?: XOR<ServiceNullableScalarRelationFilter, ServiceWhereInput> | null
+  }, "id">
+
+  export type OutboundClickOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    target?: SortOrder
+    source?: SortOrder
+    _count?: OutboundClickCountOrderByAggregateInput
+    _max?: OutboundClickMaxOrderByAggregateInput
+    _min?: OutboundClickMinOrderByAggregateInput
+  }
+
+  export type OutboundClickScalarWhereWithAggregatesInput = {
+    AND?: OutboundClickScalarWhereWithAggregatesInput | OutboundClickScalarWhereWithAggregatesInput[]
+    OR?: OutboundClickScalarWhereWithAggregatesInput[]
+    NOT?: OutboundClickScalarWhereWithAggregatesInput | OutboundClickScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OutboundClick"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"OutboundClick"> | Date | string
+    shopId?: StringWithAggregatesFilter<"OutboundClick"> | string
+    productId?: StringNullableWithAggregatesFilter<"OutboundClick"> | string | null
+    serviceId?: StringNullableWithAggregatesFilter<"OutboundClick"> | string | null
+    target?: EnumOutboundTargetWithAggregatesFilter<"OutboundClick"> | $Enums.OutboundTarget
+    source?: EnumOutboundSourceWithAggregatesFilter<"OutboundClick"> | $Enums.OutboundSource
+  }
 
   export type CategoryWhereInput = {
     AND?: CategoryWhereInput | CategoryWhereInput[]
@@ -78342,6 +79823,7 @@ export namespace Prisma {
     serviceUrl?: StringNullableFilter<"Service"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
+    outboundClicks?: OutboundClickListRelationFilter
   }
 
   export type ServiceOrderByWithRelationInput = {
@@ -78364,6 +79846,7 @@ export namespace Prisma {
     serviceUrl?: SortOrderInput | SortOrder
     shop?: ShopOrderByWithRelationInput
     categories?: CategoryOrderByRelationAggregateInput
+    outboundClicks?: OutboundClickOrderByRelationAggregateInput
   }
 
   export type ServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -78389,6 +79872,7 @@ export namespace Prisma {
     serviceUrl?: StringNullableFilter<"Service"> | string | null
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
+    outboundClicks?: OutboundClickListRelationFilter
   }, "id">
 
   export type ServiceOrderByWithAggregationInput = {
@@ -78466,6 +79950,7 @@ export namespace Prisma {
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
     syncProposals?: ProductSyncProposalListRelationFilter
+    outboundClicks?: OutboundClickListRelationFilter
   }
 
   export type ProductOrderByWithRelationInput = {
@@ -78492,6 +79977,7 @@ export namespace Prisma {
     shop?: ShopOrderByWithRelationInput
     categories?: CategoryOrderByRelationAggregateInput
     syncProposals?: ProductSyncProposalOrderByRelationAggregateInput
+    outboundClicks?: OutboundClickOrderByRelationAggregateInput
   }
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -78522,6 +80008,7 @@ export namespace Prisma {
     shop?: XOR<ShopNullableScalarRelationFilter, ShopWhereInput> | null
     categories?: CategoryListRelationFilter
     syncProposals?: ProductSyncProposalListRelationFilter
+    outboundClicks?: OutboundClickListRelationFilter
   }, "id" | "shopId_shopProductId">
 
   export type ProductOrderByWithAggregationInput = {
@@ -78789,6 +80276,7 @@ export namespace Prisma {
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
     privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
+    outboundClicks?: OutboundClickListRelationFilter
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -78830,6 +80318,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionOrderByWithRelationInput
     syncRuns?: ProductSyncRunOrderByRelationAggregateInput
     privateContact?: ShopPrivateContactOrderByWithRelationInput
+    outboundClicks?: OutboundClickOrderByRelationAggregateInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -78874,6 +80363,7 @@ export namespace Prisma {
     websiteProvision?: XOR<WebsiteProvisionNullableScalarRelationFilter, WebsiteProvisionWhereInput> | null
     syncRuns?: ProductSyncRunListRelationFilter
     privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
+    outboundClicks?: OutboundClickListRelationFilter
   }, "id" | "slug">
 
   export type ShopOrderByWithAggregationInput = {
@@ -82689,6 +84179,73 @@ export namespace Prisma {
     updatedAt?: DateTimeNullableWithAggregatesFilter<"Verification"> | Date | string | null
   }
 
+  export type OutboundClickCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+    shop: ShopCreateNestedOneWithoutOutboundClicksInput
+    product?: ProductCreateNestedOneWithoutOutboundClicksInput
+    service?: ServiceCreateNestedOneWithoutOutboundClicksInput
+  }
+
+  export type OutboundClickUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    productId?: string | null
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
+  export type OutboundClickUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+    shop?: ShopUpdateOneRequiredWithoutOutboundClicksNestedInput
+    product?: ProductUpdateOneWithoutOutboundClicksNestedInput
+    service?: ServiceUpdateOneWithoutOutboundClicksNestedInput
+  }
+
+  export type OutboundClickUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type OutboundClickCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    productId?: string | null
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
+  export type OutboundClickUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type OutboundClickUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
   export type CategoryCreateInput = {
     id?: string
     name: string
@@ -83507,6 +85064,7 @@ export namespace Prisma {
     serviceUrl?: string | null
     shop?: ShopCreateNestedOneWithoutServicesInput
     categories?: CategoryCreateNestedManyWithoutServicesInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateInput = {
@@ -83528,6 +85086,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: string | null
     categories?: CategoryUncheckedCreateNestedManyWithoutServicesInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUpdateInput = {
@@ -83549,6 +85108,7 @@ export namespace Prisma {
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneWithoutServicesNestedInput
     categories?: CategoryUpdateManyWithoutServicesNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateInput = {
@@ -83570,6 +85130,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     categories?: CategoryUncheckedUpdateManyWithoutServicesNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceCreateManyInput = {
@@ -83654,6 +85215,7 @@ export namespace Prisma {
     shop?: ShopCreateNestedOneWithoutProductsInput
     categories?: CategoryCreateNestedManyWithoutProductsInput
     syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateInput = {
@@ -83679,6 +85241,7 @@ export namespace Prisma {
     manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
     syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductUpdateInput = {
@@ -83704,6 +85267,7 @@ export namespace Prisma {
     shop?: ShopUpdateOneWithoutProductsNestedInput
     categories?: CategoryUpdateManyWithoutProductsNestedInput
     syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateInput = {
@@ -83729,6 +85293,7 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
     syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductCreateManyInput = {
@@ -84040,6 +85605,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -84080,6 +85646,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -84120,6 +85687,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -84160,6 +85728,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -88482,6 +90051,17 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -88495,6 +90075,140 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumOutboundTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundTarget | EnumOutboundTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundTargetFilter<$PrismaModel> | $Enums.OutboundTarget
+  }
+
+  export type EnumOutboundSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundSource | EnumOutboundSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundSourceFilter<$PrismaModel> | $Enums.OutboundSource
+  }
+
+  export type ShopScalarRelationFilter = {
+    is?: ShopWhereInput
+    isNot?: ShopWhereInput
+  }
+
+  export type ProductNullableScalarRelationFilter = {
+    is?: ProductWhereInput | null
+    isNot?: ProductWhereInput | null
+  }
+
+  export type ServiceNullableScalarRelationFilter = {
+    is?: ServiceWhereInput | null
+    isNot?: ServiceWhereInput | null
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type OutboundClickCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    productId?: SortOrder
+    serviceId?: SortOrder
+    target?: SortOrder
+    source?: SortOrder
+  }
+
+  export type OutboundClickMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    productId?: SortOrder
+    serviceId?: SortOrder
+    target?: SortOrder
+    source?: SortOrder
+  }
+
+  export type OutboundClickMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    productId?: SortOrder
+    serviceId?: SortOrder
+    target?: SortOrder
+    source?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumOutboundTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundTarget | EnumOutboundTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundTargetWithAggregatesFilter<$PrismaModel> | $Enums.OutboundTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboundTargetFilter<$PrismaModel>
+    _max?: NestedEnumOutboundTargetFilter<$PrismaModel>
+  }
+
+  export type EnumOutboundSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundSource | EnumOutboundSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundSourceWithAggregatesFilter<$PrismaModel> | $Enums.OutboundSource
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboundSourceFilter<$PrismaModel>
+    _max?: NestedEnumOutboundSourceFilter<$PrismaModel>
   }
 
   export type EnumCategoryTypeFilter<$PrismaModel = never> = {
@@ -88525,11 +90239,6 @@ export namespace Prisma {
     every?: ServiceWhereInput
     some?: ServiceWhereInput
     none?: ServiceWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type CategoryOrderByRelationAggregateInput = {
@@ -88565,42 +90274,6 @@ export namespace Prisma {
     type?: SortOrder
   }
 
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type EnumCategoryTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.CategoryType | EnumCategoryTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
@@ -88609,17 +90282,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCategoryTypeFilter<$PrismaModel>
     _max?: NestedEnumCategoryTypeFilter<$PrismaModel>
-  }
-
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -88636,11 +90298,6 @@ export namespace Prisma {
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type ShopScalarRelationFilter = {
-    is?: ShopWhereInput
-    isNot?: ShopWhereInput
   }
 
   export type EventCountOrderByAggregateInput = {
@@ -88686,20 +90343,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     title?: SortOrder
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -89257,11 +90900,6 @@ export namespace Prisma {
     isNot?: ProductSyncRunWhereInput
   }
 
-  export type ProductNullableScalarRelationFilter = {
-    is?: ProductWhereInput | null
-    isNot?: ProductWhereInput | null
-  }
-
   export type ProductSyncProposalCountOrderByAggregateInput = {
     id?: SortOrder
     runId?: SortOrder
@@ -89357,6 +90995,16 @@ export namespace Prisma {
     hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
     hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
     isEmpty?: boolean
+  }
+
+  export type OutboundClickListRelationFilter = {
+    every?: OutboundClickWhereInput
+    some?: OutboundClickWhereInput
+    none?: OutboundClickWhereInput
+  }
+
+  export type OutboundClickOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type ServiceCountOrderByAggregateInput = {
@@ -92374,6 +94022,72 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type ShopCreateNestedOneWithoutOutboundClicksInput = {
+    create?: XOR<ShopCreateWithoutOutboundClicksInput, ShopUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutOutboundClicksInput
+    connect?: ShopWhereUniqueInput
+  }
+
+  export type ProductCreateNestedOneWithoutOutboundClicksInput = {
+    create?: XOR<ProductCreateWithoutOutboundClicksInput, ProductUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOutboundClicksInput
+    connect?: ProductWhereUniqueInput
+  }
+
+  export type ServiceCreateNestedOneWithoutOutboundClicksInput = {
+    create?: XOR<ServiceCreateWithoutOutboundClicksInput, ServiceUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutOutboundClicksInput
+    connect?: ServiceWhereUniqueInput
+  }
+
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+  export type EnumOutboundTargetFieldUpdateOperationsInput = {
+    set?: $Enums.OutboundTarget
+  }
+
+  export type EnumOutboundSourceFieldUpdateOperationsInput = {
+    set?: $Enums.OutboundSource
+  }
+
+  export type ShopUpdateOneRequiredWithoutOutboundClicksNestedInput = {
+    create?: XOR<ShopCreateWithoutOutboundClicksInput, ShopUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutOutboundClicksInput
+    upsert?: ShopUpsertWithoutOutboundClicksInput
+    connect?: ShopWhereUniqueInput
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutOutboundClicksInput, ShopUpdateWithoutOutboundClicksInput>, ShopUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type ProductUpdateOneWithoutOutboundClicksNestedInput = {
+    create?: XOR<ProductCreateWithoutOutboundClicksInput, ProductUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ProductCreateOrConnectWithoutOutboundClicksInput
+    upsert?: ProductUpsertWithoutOutboundClicksInput
+    disconnect?: ProductWhereInput | boolean
+    delete?: ProductWhereInput | boolean
+    connect?: ProductWhereUniqueInput
+    update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOutboundClicksInput, ProductUpdateWithoutOutboundClicksInput>, ProductUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type ServiceUpdateOneWithoutOutboundClicksNestedInput = {
+    create?: XOR<ServiceCreateWithoutOutboundClicksInput, ServiceUncheckedCreateWithoutOutboundClicksInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutOutboundClicksInput
+    upsert?: ServiceUpsertWithoutOutboundClicksInput
+    disconnect?: ServiceWhereInput | boolean
+    delete?: ServiceWhereInput | boolean
+    connect?: ServiceWhereUniqueInput
+    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutOutboundClicksInput, ServiceUpdateWithoutOutboundClicksInput>, ServiceUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type CategoryCreateNestedOneWithoutChildrenInput = {
     create?: XOR<CategoryCreateWithoutChildrenInput, CategoryUncheckedCreateWithoutChildrenInput>
     connectOrCreate?: CategoryCreateOrConnectWithoutChildrenInput
@@ -92416,10 +94130,6 @@ export namespace Prisma {
     create?: XOR<ServiceCreateWithoutCategoriesInput, ServiceUncheckedCreateWithoutCategoriesInput> | ServiceCreateWithoutCategoriesInput[] | ServiceUncheckedCreateWithoutCategoriesInput[]
     connectOrCreate?: ServiceCreateOrConnectWithoutCategoriesInput | ServiceCreateOrConnectWithoutCategoriesInput[]
     connect?: ServiceWhereUniqueInput | ServiceWhereUniqueInput[]
-  }
-
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
   }
 
   export type EnumCategoryTypeFieldUpdateOperationsInput = {
@@ -92476,10 +94186,6 @@ export namespace Prisma {
     deleteMany?: ServiceScalarWhereInput | ServiceScalarWhereInput[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type CategoryUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<CategoryCreateWithoutParentInput, CategoryUncheckedCreateWithoutParentInput> | CategoryCreateWithoutParentInput[] | CategoryUncheckedCreateWithoutParentInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutParentInput | CategoryCreateOrConnectWithoutParentInput[]
@@ -92524,10 +94230,6 @@ export namespace Prisma {
     create?: XOR<ShopCreateWithoutEventsInput, ShopUncheckedCreateWithoutEventsInput>
     connectOrCreate?: ShopCreateOrConnectWithoutEventsInput
     connect?: ShopWhereUniqueInput
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -93144,10 +94846,24 @@ export namespace Prisma {
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
+  export type OutboundClickCreateNestedManyWithoutServiceInput = {
+    create?: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput> | OutboundClickCreateWithoutServiceInput[] | OutboundClickUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutServiceInput | OutboundClickCreateOrConnectWithoutServiceInput[]
+    createMany?: OutboundClickCreateManyServiceInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+  }
+
   export type CategoryUncheckedCreateNestedManyWithoutServicesInput = {
     create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
     connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+  }
+
+  export type OutboundClickUncheckedCreateNestedManyWithoutServiceInput = {
+    create?: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput> | OutboundClickCreateWithoutServiceInput[] | OutboundClickUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutServiceInput | OutboundClickCreateOrConnectWithoutServiceInput[]
+    createMany?: OutboundClickCreateManyServiceInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -93196,6 +94912,20 @@ export namespace Prisma {
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
   }
 
+  export type OutboundClickUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput> | OutboundClickCreateWithoutServiceInput[] | OutboundClickUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutServiceInput | OutboundClickCreateOrConnectWithoutServiceInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutServiceInput | OutboundClickUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: OutboundClickCreateManyServiceInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutServiceInput | OutboundClickUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutServiceInput | OutboundClickUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
+  }
+
   export type CategoryUncheckedUpdateManyWithoutServicesNestedInput = {
     create?: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput> | CategoryCreateWithoutServicesInput[] | CategoryUncheckedCreateWithoutServicesInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutServicesInput | CategoryCreateOrConnectWithoutServicesInput[]
@@ -93207,6 +94937,20 @@ export namespace Prisma {
     update?: CategoryUpdateWithWhereUniqueWithoutServicesInput | CategoryUpdateWithWhereUniqueWithoutServicesInput[]
     updateMany?: CategoryUpdateManyWithWhereWithoutServicesInput | CategoryUpdateManyWithWhereWithoutServicesInput[]
     deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput> | OutboundClickCreateWithoutServiceInput[] | OutboundClickUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutServiceInput | OutboundClickCreateOrConnectWithoutServiceInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutServiceInput | OutboundClickUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: OutboundClickCreateManyServiceInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutServiceInput | OutboundClickUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutServiceInput | OutboundClickUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
   }
 
   export type ProductCreateattributeTagsInput = {
@@ -93252,6 +94996,13 @@ export namespace Prisma {
     connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
   }
 
+  export type OutboundClickCreateNestedManyWithoutProductInput = {
+    create?: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput> | OutboundClickCreateWithoutProductInput[] | OutboundClickUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutProductInput | OutboundClickCreateOrConnectWithoutProductInput[]
+    createMany?: OutboundClickCreateManyProductInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+  }
+
   export type CategoryUncheckedCreateNestedManyWithoutProductsInput = {
     create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
@@ -93263,6 +95014,13 @@ export namespace Prisma {
     connectOrCreate?: ProductSyncProposalCreateOrConnectWithoutProductInput | ProductSyncProposalCreateOrConnectWithoutProductInput[]
     createMany?: ProductSyncProposalCreateManyProductInputEnvelope
     connect?: ProductSyncProposalWhereUniqueInput | ProductSyncProposalWhereUniqueInput[]
+  }
+
+  export type OutboundClickUncheckedCreateNestedManyWithoutProductInput = {
+    create?: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput> | OutboundClickCreateWithoutProductInput[] | OutboundClickUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutProductInput | OutboundClickCreateOrConnectWithoutProductInput[]
+    createMany?: OutboundClickCreateManyProductInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
   }
 
   export type ProductUpdateattributeTagsInput = {
@@ -93332,6 +95090,20 @@ export namespace Prisma {
     deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
   }
 
+  export type OutboundClickUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput> | OutboundClickCreateWithoutProductInput[] | OutboundClickUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutProductInput | OutboundClickCreateOrConnectWithoutProductInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutProductInput | OutboundClickUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OutboundClickCreateManyProductInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutProductInput | OutboundClickUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutProductInput | OutboundClickUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
+  }
+
   export type CategoryUncheckedUpdateManyWithoutProductsNestedInput = {
     create?: XOR<CategoryCreateWithoutProductsInput, CategoryUncheckedCreateWithoutProductsInput> | CategoryCreateWithoutProductsInput[] | CategoryUncheckedCreateWithoutProductsInput[]
     connectOrCreate?: CategoryCreateOrConnectWithoutProductsInput | CategoryCreateOrConnectWithoutProductsInput[]
@@ -93357,6 +95129,20 @@ export namespace Prisma {
     update?: ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput | ProductSyncProposalUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: ProductSyncProposalUpdateManyWithWhereWithoutProductInput | ProductSyncProposalUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: ProductSyncProposalScalarWhereInput | ProductSyncProposalScalarWhereInput[]
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutProductNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput> | OutboundClickCreateWithoutProductInput[] | OutboundClickUncheckedCreateWithoutProductInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutProductInput | OutboundClickCreateOrConnectWithoutProductInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutProductInput | OutboundClickUpsertWithWhereUniqueWithoutProductInput[]
+    createMany?: OutboundClickCreateManyProductInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutProductInput | OutboundClickUpdateWithWhereUniqueWithoutProductInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutProductInput | OutboundClickUpdateManyWithWhereWithoutProductInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
   }
 
   export type SiteSettingsCreatealternateNamesInput = {
@@ -93448,6 +95234,13 @@ export namespace Prisma {
     connect?: ShopPrivateContactWhereUniqueInput
   }
 
+  export type OutboundClickCreateNestedManyWithoutShopInput = {
+    create?: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput> | OutboundClickCreateWithoutShopInput[] | OutboundClickUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutShopInput | OutboundClickCreateOrConnectWithoutShopInput[]
+    createMany?: OutboundClickCreateManyShopInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+  }
+
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -93499,6 +95292,13 @@ export namespace Prisma {
     create?: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
     connectOrCreate?: ShopPrivateContactCreateOrConnectWithoutShopInput
     connect?: ShopPrivateContactWhereUniqueInput
+  }
+
+  export type OutboundClickUncheckedCreateNestedManyWithoutShopInput = {
+    create?: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput> | OutboundClickCreateWithoutShopInput[] | OutboundClickUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutShopInput | OutboundClickCreateOrConnectWithoutShopInput[]
+    createMany?: OutboundClickCreateManyShopInputEnvelope
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
   }
 
   export type ShopUpdateattributeTagsInput = {
@@ -93632,6 +95432,20 @@ export namespace Prisma {
     update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
   }
 
+  export type OutboundClickUpdateManyWithoutShopNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput> | OutboundClickCreateWithoutShopInput[] | OutboundClickUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutShopInput | OutboundClickCreateOrConnectWithoutShopInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutShopInput | OutboundClickUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: OutboundClickCreateManyShopInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutShopInput | OutboundClickUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutShopInput | OutboundClickUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
+  }
+
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -93730,6 +95544,20 @@ export namespace Prisma {
     delete?: ShopPrivateContactWhereInput | boolean
     connect?: ShopPrivateContactWhereUniqueInput
     update?: XOR<XOR<ShopPrivateContactUpdateToOneWithWhereWithoutShopInput, ShopPrivateContactUpdateWithoutShopInput>, ShopPrivateContactUncheckedUpdateWithoutShopInput>
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutShopNestedInput = {
+    create?: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput> | OutboundClickCreateWithoutShopInput[] | OutboundClickUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: OutboundClickCreateOrConnectWithoutShopInput | OutboundClickCreateOrConnectWithoutShopInput[]
+    upsert?: OutboundClickUpsertWithWhereUniqueWithoutShopInput | OutboundClickUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: OutboundClickCreateManyShopInputEnvelope
+    set?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    disconnect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    delete?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
+    update?: OutboundClickUpdateWithWhereUniqueWithoutShopInput | OutboundClickUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: OutboundClickUpdateManyWithWhereWithoutShopInput | OutboundClickUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
   }
 
   export type ShopCreateNestedOneWithoutAddressInput = {
@@ -97209,6 +99037,17 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -97223,11 +99062,18 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedEnumCategoryTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.CategoryType | EnumCategoryTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumCategoryTypeFilter<$PrismaModel> | $Enums.CategoryType
+  export type NestedEnumOutboundTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundTarget | EnumOutboundTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundTargetFilter<$PrismaModel> | $Enums.OutboundTarget
+  }
+
+  export type NestedEnumOutboundSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundSource | EnumOutboundSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundSourceFilter<$PrismaModel> | $Enums.OutboundSource
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -97258,6 +99104,20 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -97286,6 +99146,33 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumOutboundTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundTarget | EnumOutboundTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundTarget[] | ListEnumOutboundTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundTargetWithAggregatesFilter<$PrismaModel> | $Enums.OutboundTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboundTargetFilter<$PrismaModel>
+    _max?: NestedEnumOutboundTargetFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOutboundSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OutboundSource | EnumOutboundSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OutboundSource[] | ListEnumOutboundSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumOutboundSourceWithAggregatesFilter<$PrismaModel> | $Enums.OutboundSource
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOutboundSourceFilter<$PrismaModel>
+    _max?: NestedEnumOutboundSourceFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCategoryTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CategoryType | EnumCategoryTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCategoryTypeFilter<$PrismaModel> | $Enums.CategoryType
+  }
+
   export type NestedEnumCategoryTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.CategoryType | EnumCategoryTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CategoryType[] | ListEnumCategoryTypeFieldRefInput<$PrismaModel>
@@ -97294,17 +99181,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCategoryTypeFilter<$PrismaModel>
     _max?: NestedEnumCategoryTypeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
@@ -97321,20 +99197,6 @@ export namespace Prisma {
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -97929,6 +99791,398 @@ export namespace Prisma {
     _max?: NestedEnumProvisionStatusFilter<$PrismaModel>
   }
 
+  export type ShopCreateWithoutOutboundClicksInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+  }
+
+  export type ShopUncheckedCreateWithoutOutboundClicksInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    locationType?: $Enums.ShopLocationType
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    products?: ProductUncheckedCreateNestedManyWithoutShopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
+    address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+  }
+
+  export type ShopCreateOrConnectWithoutOutboundClicksInput = {
+    where: ShopWhereUniqueInput
+    create: XOR<ShopCreateWithoutOutboundClicksInput, ShopUncheckedCreateWithoutOutboundClicksInput>
+  }
+
+  export type ProductCreateWithoutOutboundClicksInput = {
+    id?: string
+    shopProductId?: string | null
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    productUrl?: string | null
+    attributeTags?: ProductCreateattributeTagsInput | string[]
+    materialTags?: ProductCreatematerialTagsInput | string[]
+    environmentalTags?: ProductCreateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scrapeMethod?: $Enums.ProductScrapeMethod
+    tags?: ProductCreatetagsInput | string[]
+    isPublic?: boolean
+    isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
+    shop?: ShopCreateNestedOneWithoutProductsInput
+    categories?: CategoryCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductUncheckedCreateWithoutOutboundClicksInput = {
+    id?: string
+    shopProductId?: string | null
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    productUrl?: string | null
+    attributeTags?: ProductCreateattributeTagsInput | string[]
+    materialTags?: ProductCreatematerialTagsInput | string[]
+    environmentalTags?: ProductCreateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scrapeMethod?: $Enums.ProductScrapeMethod
+    shopId?: string | null
+    tags?: ProductCreatetagsInput | string[]
+    isPublic?: boolean
+    isFeatured?: boolean
+    manualFields?: ProductCreatemanualFieldsInput | string[]
+    categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
+    syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
+  }
+
+  export type ProductCreateOrConnectWithoutOutboundClicksInput = {
+    where: ProductWhereUniqueInput
+    create: XOR<ProductCreateWithoutOutboundClicksInput, ProductUncheckedCreateWithoutOutboundClicksInput>
+  }
+
+  export type ServiceCreateWithoutOutboundClicksInput = {
+    id?: string
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    durationInMinutes?: number | null
+    locationType?: string | null
+    tags?: ServiceCreatetagsInput | string[]
+    attributeTags?: ServiceCreateattributeTagsInput | string[]
+    aiGeneratedTags?: ServiceCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    isFeatured?: boolean
+    serviceUrl?: string | null
+    shop?: ShopCreateNestedOneWithoutServicesInput
+    categories?: CategoryCreateNestedManyWithoutServicesInput
+  }
+
+  export type ServiceUncheckedCreateWithoutOutboundClicksInput = {
+    id?: string
+    name: string
+    description: string
+    priceInCents?: number | null
+    currency?: string | null
+    imageUrl?: string | null
+    durationInMinutes?: number | null
+    locationType?: string | null
+    tags?: ServiceCreatetagsInput | string[]
+    attributeTags?: ServiceCreateattributeTagsInput | string[]
+    aiGeneratedTags?: ServiceCreateaiGeneratedTagsInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isPublic?: boolean
+    shopId?: string | null
+    isFeatured?: boolean
+    serviceUrl?: string | null
+    categories?: CategoryUncheckedCreateNestedManyWithoutServicesInput
+  }
+
+  export type ServiceCreateOrConnectWithoutOutboundClicksInput = {
+    where: ServiceWhereUniqueInput
+    create: XOR<ServiceCreateWithoutOutboundClicksInput, ServiceUncheckedCreateWithoutOutboundClicksInput>
+  }
+
+  export type ShopUpsertWithoutOutboundClicksInput = {
+    update: XOR<ShopUpdateWithoutOutboundClicksInput, ShopUncheckedUpdateWithoutOutboundClicksInput>
+    create: XOR<ShopCreateWithoutOutboundClicksInput, ShopUncheckedCreateWithoutOutboundClicksInput>
+    where?: ShopWhereInput
+  }
+
+  export type ShopUpdateToOneWithWhereWithoutOutboundClicksInput = {
+    where?: ShopWhereInput
+    data: XOR<ShopUpdateWithoutOutboundClicksInput, ShopUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type ShopUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+  }
+
+  export type ShopUncheckedUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutShopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+  }
+
+  export type ProductUpsertWithoutOutboundClicksInput = {
+    update: XOR<ProductUpdateWithoutOutboundClicksInput, ProductUncheckedUpdateWithoutOutboundClicksInput>
+    create: XOR<ProductCreateWithoutOutboundClicksInput, ProductUncheckedCreateWithoutOutboundClicksInput>
+    where?: ProductWhereInput
+  }
+
+  export type ProductUpdateToOneWithWhereWithoutOutboundClicksInput = {
+    where?: ProductWhereInput
+    data: XOR<ProductUpdateWithoutOutboundClicksInput, ProductUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type ProductUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attributeTags?: ProductUpdateattributeTagsInput | string[]
+    materialTags?: ProductUpdatematerialTagsInput | string[]
+    environmentalTags?: ProductUpdateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scrapeMethod?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    tags?: ProductUpdatetagsInput | string[]
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
+    shop?: ShopUpdateOneWithoutProductsNestedInput
+    categories?: CategoryUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductUncheckedUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shopProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attributeTags?: ProductUpdateattributeTagsInput | string[]
+    materialTags?: ProductUpdatematerialTagsInput | string[]
+    environmentalTags?: ProductUpdateenvironmentalTagsInput | string[]
+    aiGeneratedTags?: ProductUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scrapeMethod?: EnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod
+    shopId?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: ProductUpdatetagsInput | string[]
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    manualFields?: ProductUpdatemanualFieldsInput | string[]
+    categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
+    syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ServiceUpsertWithoutOutboundClicksInput = {
+    update: XOR<ServiceUpdateWithoutOutboundClicksInput, ServiceUncheckedUpdateWithoutOutboundClicksInput>
+    create: XOR<ServiceCreateWithoutOutboundClicksInput, ServiceUncheckedCreateWithoutOutboundClicksInput>
+    where?: ServiceWhereInput
+  }
+
+  export type ServiceUpdateToOneWithWhereWithoutOutboundClicksInput = {
+    where?: ServiceWhereInput
+    data: XOR<ServiceUpdateWithoutOutboundClicksInput, ServiceUncheckedUpdateWithoutOutboundClicksInput>
+  }
+
+  export type ServiceUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    durationInMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    locationType?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: ServiceUpdatetagsInput | string[]
+    attributeTags?: ServiceUpdateattributeTagsInput | string[]
+    aiGeneratedTags?: ServiceUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    shop?: ShopUpdateOneWithoutServicesNestedInput
+    categories?: CategoryUpdateManyWithoutServicesNestedInput
+  }
+
+  export type ServiceUncheckedUpdateWithoutOutboundClicksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    priceInCents?: NullableIntFieldUpdateOperationsInput | number | null
+    currency?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    durationInMinutes?: NullableIntFieldUpdateOperationsInput | number | null
+    locationType?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: ServiceUpdatetagsInput | string[]
+    attributeTags?: ServiceUpdateattributeTagsInput | string[]
+    aiGeneratedTags?: ServiceUpdateaiGeneratedTagsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    shopId?: NullableStringFieldUpdateOperationsInput | string | null
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    categories?: CategoryUncheckedUpdateManyWithoutServicesNestedInput
+  }
+
   export type CategoryCreateWithoutChildrenInput = {
     id?: string
     name: string
@@ -98002,6 +100256,7 @@ export namespace Prisma {
     manualFields?: ProductCreatemanualFieldsInput | string[]
     shop?: ShopCreateNestedOneWithoutProductsInput
     syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutCategoriesInput = {
@@ -98026,6 +100281,7 @@ export namespace Prisma {
     isFeatured?: boolean
     manualFields?: ProductCreatemanualFieldsInput | string[]
     syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutCategoriesInput = {
@@ -98051,6 +100307,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: string | null
     shop?: ShopCreateNestedOneWithoutServicesInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutCategoriesInput = {
@@ -98071,6 +100328,7 @@ export namespace Prisma {
     shopId?: string | null
     isFeatured?: boolean
     serviceUrl?: string | null
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutCategoriesInput = {
@@ -98251,6 +100509,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -98290,6 +100549,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -98345,6 +100605,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -98384,6 +100645,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -100057,6 +102319,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutInvitesInput = {
@@ -100096,6 +102359,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutInvitesInput = {
@@ -100228,6 +102492,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutInvitesInput = {
@@ -100267,6 +102532,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutSyncRunsInput = {
@@ -100306,6 +102572,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutSyncRunsInput = {
@@ -100345,6 +102612,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutSyncRunsInput = {
@@ -100432,6 +102700,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutSyncRunsInput = {
@@ -100471,6 +102740,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput = {
@@ -100561,6 +102831,7 @@ export namespace Prisma {
     manualFields?: ProductCreatemanualFieldsInput | string[]
     shop?: ShopCreateNestedOneWithoutProductsInput
     categories?: CategoryCreateNestedManyWithoutProductsInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutSyncProposalsInput = {
@@ -100585,6 +102856,7 @@ export namespace Prisma {
     isFeatured?: boolean
     manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutSyncProposalsInput = {
@@ -100666,6 +102938,7 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     shop?: ShopUpdateOneWithoutProductsNestedInput
     categories?: CategoryUpdateManyWithoutProductsNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutSyncProposalsInput = {
@@ -100690,6 +102963,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ShopCreateWithoutServicesInput = {
@@ -100729,6 +103003,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -100768,6 +103043,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -100796,6 +103072,34 @@ export namespace Prisma {
   export type CategoryCreateOrConnectWithoutServicesInput = {
     where: CategoryWhereUniqueInput
     create: XOR<CategoryCreateWithoutServicesInput, CategoryUncheckedCreateWithoutServicesInput>
+  }
+
+  export type OutboundClickCreateWithoutServiceInput = {
+    id?: string
+    createdAt?: Date | string
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+    shop: ShopCreateNestedOneWithoutOutboundClicksInput
+    product?: ProductCreateNestedOneWithoutOutboundClicksInput
+  }
+
+  export type OutboundClickUncheckedCreateWithoutServiceInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    productId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
+  export type OutboundClickCreateOrConnectWithoutServiceInput = {
+    where: OutboundClickWhereUniqueInput
+    create: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput>
+  }
+
+  export type OutboundClickCreateManyServiceInputEnvelope = {
+    data: OutboundClickCreateManyServiceInput | OutboundClickCreateManyServiceInput[]
+    skipDuplicates?: boolean
   }
 
   export type ShopUpsertWithoutServicesInput = {
@@ -100846,6 +103150,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -100885,6 +103190,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -100901,6 +103207,35 @@ export namespace Prisma {
   export type CategoryUpdateManyWithWhereWithoutServicesInput = {
     where: CategoryScalarWhereInput
     data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutServicesInput>
+  }
+
+  export type OutboundClickUpsertWithWhereUniqueWithoutServiceInput = {
+    where: OutboundClickWhereUniqueInput
+    update: XOR<OutboundClickUpdateWithoutServiceInput, OutboundClickUncheckedUpdateWithoutServiceInput>
+    create: XOR<OutboundClickCreateWithoutServiceInput, OutboundClickUncheckedCreateWithoutServiceInput>
+  }
+
+  export type OutboundClickUpdateWithWhereUniqueWithoutServiceInput = {
+    where: OutboundClickWhereUniqueInput
+    data: XOR<OutboundClickUpdateWithoutServiceInput, OutboundClickUncheckedUpdateWithoutServiceInput>
+  }
+
+  export type OutboundClickUpdateManyWithWhereWithoutServiceInput = {
+    where: OutboundClickScalarWhereInput
+    data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyWithoutServiceInput>
+  }
+
+  export type OutboundClickScalarWhereInput = {
+    AND?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
+    OR?: OutboundClickScalarWhereInput[]
+    NOT?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
+    id?: StringFilter<"OutboundClick"> | string
+    createdAt?: DateTimeFilter<"OutboundClick"> | Date | string
+    shopId?: StringFilter<"OutboundClick"> | string
+    productId?: StringNullableFilter<"OutboundClick"> | string | null
+    serviceId?: StringNullableFilter<"OutboundClick"> | string | null
+    target?: EnumOutboundTargetFilter<"OutboundClick"> | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFilter<"OutboundClick"> | $Enums.OutboundSource
   }
 
   export type ShopCreateWithoutProductsInput = {
@@ -100940,6 +103275,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -100979,6 +103315,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -101041,6 +103378,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OutboundClickCreateWithoutProductInput = {
+    id?: string
+    createdAt?: Date | string
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+    shop: ShopCreateNestedOneWithoutOutboundClicksInput
+    service?: ServiceCreateNestedOneWithoutOutboundClicksInput
+  }
+
+  export type OutboundClickUncheckedCreateWithoutProductInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
+  export type OutboundClickCreateOrConnectWithoutProductInput = {
+    where: OutboundClickWhereUniqueInput
+    create: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput>
+  }
+
+  export type OutboundClickCreateManyProductInputEnvelope = {
+    data: OutboundClickCreateManyProductInput | OutboundClickCreateManyProductInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ShopUpsertWithoutProductsInput = {
     update: XOR<ShopUpdateWithoutProductsInput, ShopUncheckedUpdateWithoutProductsInput>
     create: XOR<ShopCreateWithoutProductsInput, ShopUncheckedCreateWithoutProductsInput>
@@ -101089,6 +103454,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -101128,6 +103494,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -101160,6 +103527,22 @@ export namespace Prisma {
   export type ProductSyncProposalUpdateManyWithWhereWithoutProductInput = {
     where: ProductSyncProposalScalarWhereInput
     data: XOR<ProductSyncProposalUpdateManyMutationInput, ProductSyncProposalUncheckedUpdateManyWithoutProductInput>
+  }
+
+  export type OutboundClickUpsertWithWhereUniqueWithoutProductInput = {
+    where: OutboundClickWhereUniqueInput
+    update: XOR<OutboundClickUpdateWithoutProductInput, OutboundClickUncheckedUpdateWithoutProductInput>
+    create: XOR<OutboundClickCreateWithoutProductInput, OutboundClickUncheckedCreateWithoutProductInput>
+  }
+
+  export type OutboundClickUpdateWithWhereUniqueWithoutProductInput = {
+    where: OutboundClickWhereUniqueInput
+    data: XOR<OutboundClickUpdateWithoutProductInput, OutboundClickUncheckedUpdateWithoutProductInput>
+  }
+
+  export type OutboundClickUpdateManyWithWhereWithoutProductInput = {
+    where: OutboundClickScalarWhereInput
+    data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyWithoutProductInput>
   }
 
   export type EventCreateWithoutShopInput = {
@@ -101222,6 +103605,7 @@ export namespace Prisma {
     manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryCreateNestedManyWithoutProductsInput
     syncProposals?: ProductSyncProposalCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutProductInput
   }
 
   export type ProductUncheckedCreateWithoutShopInput = {
@@ -101246,6 +103630,7 @@ export namespace Prisma {
     manualFields?: ProductCreatemanualFieldsInput | string[]
     categories?: CategoryUncheckedCreateNestedManyWithoutProductsInput
     syncProposals?: ProductSyncProposalUncheckedCreateNestedManyWithoutProductInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutProductInput
   }
 
   export type ProductCreateOrConnectWithoutShopInput = {
@@ -101276,6 +103661,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: string | null
     categories?: CategoryCreateNestedManyWithoutServicesInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutShopInput = {
@@ -101296,6 +103682,7 @@ export namespace Prisma {
     isFeatured?: boolean
     serviceUrl?: string | null
     categories?: CategoryUncheckedCreateNestedManyWithoutServicesInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutShopInput = {
@@ -101604,6 +103991,34 @@ export namespace Prisma {
   export type ShopPrivateContactCreateOrConnectWithoutShopInput = {
     where: ShopPrivateContactWhereUniqueInput
     create: XOR<ShopPrivateContactCreateWithoutShopInput, ShopPrivateContactUncheckedCreateWithoutShopInput>
+  }
+
+  export type OutboundClickCreateWithoutShopInput = {
+    id?: string
+    createdAt?: Date | string
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+    product?: ProductCreateNestedOneWithoutOutboundClicksInput
+    service?: ServiceCreateNestedOneWithoutOutboundClicksInput
+  }
+
+  export type OutboundClickUncheckedCreateWithoutShopInput = {
+    id?: string
+    createdAt?: Date | string
+    productId?: string | null
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
+  export type OutboundClickCreateOrConnectWithoutShopInput = {
+    where: OutboundClickWhereUniqueInput
+    create: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput>
+  }
+
+  export type OutboundClickCreateManyShopInputEnvelope = {
+    data: OutboundClickCreateManyShopInput | OutboundClickCreateManyShopInput[]
+    skipDuplicates?: boolean
   }
 
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
@@ -101985,6 +104400,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OutboundClickUpsertWithWhereUniqueWithoutShopInput = {
+    where: OutboundClickWhereUniqueInput
+    update: XOR<OutboundClickUpdateWithoutShopInput, OutboundClickUncheckedUpdateWithoutShopInput>
+    create: XOR<OutboundClickCreateWithoutShopInput, OutboundClickUncheckedCreateWithoutShopInput>
+  }
+
+  export type OutboundClickUpdateWithWhereUniqueWithoutShopInput = {
+    where: OutboundClickWhereUniqueInput
+    data: XOR<OutboundClickUpdateWithoutShopInput, OutboundClickUncheckedUpdateWithoutShopInput>
+  }
+
+  export type OutboundClickUpdateManyWithWhereWithoutShopInput = {
+    where: OutboundClickScalarWhereInput
+    data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyWithoutShopInput>
+  }
+
   export type ShopCreateWithoutAddressInput = {
     id?: string
     ownerName: string
@@ -102022,6 +104453,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -102061,6 +104493,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -102116,6 +104549,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -102155,6 +104589,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutPrivateContactInput = {
@@ -102194,6 +104629,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutPrivateContactInput = {
@@ -102233,6 +104669,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutPrivateContactInput = {
@@ -102288,6 +104725,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutPrivateContactInput = {
@@ -102327,6 +104765,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ConversationCreateWithoutMemberOneInput = {
@@ -109853,6 +112292,7 @@ export namespace Prisma {
     address?: ShopAddressCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -109892,6 +112332,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -110018,6 +112459,7 @@ export namespace Prisma {
     address?: ShopAddressUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -110057,6 +112499,7 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -110832,6 +113275,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -110871,6 +113315,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -111856,6 +114301,7 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     shop?: ShopUpdateOneWithoutProductsNestedInput
     syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutCategoriesInput = {
@@ -111880,6 +114326,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutCategoriesInput = {
@@ -111923,6 +114370,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     shop?: ShopUpdateOneWithoutServicesNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutCategoriesInput = {
@@ -111943,6 +114391,7 @@ export namespace Prisma {
     shopId?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateManyWithoutCategoriesInput = {
@@ -112193,6 +114642,15 @@ export namespace Prisma {
     diff?: JsonNullValueInput | InputJsonValue
   }
 
+  export type OutboundClickCreateManyServiceInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    productId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
   export type CategoryUpdateWithoutServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -112218,6 +114676,33 @@ export namespace Prisma {
     type?: EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   }
 
+  export type OutboundClickUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+    shop?: ShopUpdateOneRequiredWithoutOutboundClicksNestedInput
+    product?: ProductUpdateOneWithoutOutboundClicksNestedInput
+  }
+
+  export type OutboundClickUncheckedUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
   export type ProductSyncProposalCreateManyProductInput = {
     id?: string
     runId: string
@@ -112227,6 +114712,15 @@ export namespace Prisma {
     matchedBy?: string | null
     payload: JsonNullValueInput | InputJsonValue
     diff: JsonNullValueInput | InputJsonValue
+  }
+
+  export type OutboundClickCreateManyProductInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
   }
 
   export type CategoryUpdateWithoutProductsInput = {
@@ -112285,6 +114779,33 @@ export namespace Prisma {
     matchedBy?: NullableStringFieldUpdateOperationsInput | string | null
     payload?: JsonNullValueInput | InputJsonValue
     diff?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type OutboundClickUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+    shop?: ShopUpdateOneRequiredWithoutOutboundClicksNestedInput
+    service?: ServiceUpdateOneWithoutOutboundClicksNestedInput
+  }
+
+  export type OutboundClickUncheckedUpdateWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutProductInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
   }
 
   export type EventCreateManyShopInput = {
@@ -112369,6 +114890,15 @@ export namespace Prisma {
     triggeredManually?: boolean
   }
 
+  export type OutboundClickCreateManyShopInput = {
+    id?: string
+    createdAt?: Date | string
+    productId?: string | null
+    serviceId?: string | null
+    target: $Enums.OutboundTarget
+    source: $Enums.OutboundSource
+  }
+
   export type EventUpdateWithoutShopInput = {
     id?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -112433,6 +114963,7 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUpdateManyWithoutProductsNestedInput
     syncProposals?: ProductSyncProposalUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateWithoutShopInput = {
@@ -112457,6 +114988,7 @@ export namespace Prisma {
     manualFields?: ProductUpdatemanualFieldsInput | string[]
     categories?: CategoryUncheckedUpdateManyWithoutProductsNestedInput
     syncProposals?: ProductSyncProposalUncheckedUpdateManyWithoutProductNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutProductNestedInput
   }
 
   export type ProductUncheckedUpdateManyWithoutShopInput = {
@@ -112499,6 +115031,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     categories?: CategoryUpdateManyWithoutServicesNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutShopInput = {
@@ -112519,6 +115052,7 @@ export namespace Prisma {
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     serviceUrl?: NullableStringFieldUpdateOperationsInput | string | null
     categories?: CategoryUncheckedUpdateManyWithoutServicesNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateManyWithoutShopInput = {
@@ -112621,6 +115155,33 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     insecureTLSCode?: NullableStringFieldUpdateOperationsInput | string | null
     triggeredManually?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type OutboundClickUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+    product?: ProductUpdateOneWithoutOutboundClicksNestedInput
+    service?: ServiceUpdateOneWithoutOutboundClicksNestedInput
+  }
+
+  export type OutboundClickUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type OutboundClickUncheckedUpdateManyWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
+    source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
   }
 
   export type ConversationCreateManyMemberOneInput = {
@@ -114923,6 +117484,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -114962,6 +117524,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {

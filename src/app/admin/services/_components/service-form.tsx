@@ -45,6 +45,10 @@ type Props = {
   shops: RouterOutputs["shop"]["getOptions"];
   categories: RouterOutputs["category"]["getAll"];
   userRole: string;
+  /** Preselects the shop on a new record; ignored when editing. */
+  defaultShopId?: string;
+  /** Sanitized same-origin `/admin/...` path to return to after actions. */
+  returnTo?: string;
 };
 
 export function ServiceForm({
@@ -52,6 +56,8 @@ export function ServiceForm({
   shops,
   categories,
   userRole,
+  defaultShopId,
+  returnTo,
 }: Props) {
   const imageUploader = useUploadFile({
     api: "/api/upload",
@@ -75,7 +81,7 @@ export function ServiceForm({
     tags: initialData?.tags?.map((tag) => ({ id: tag, text: tag })) ?? [],
     attributeTags: initialData?.attributeTags ?? [],
     aiGeneratedTags: initialData?.aiGeneratedTags ?? [],
-    shopId: initialData?.shopId ?? "",
+    shopId: initialData?.shopId ?? defaultShopId ?? "",
     imageUrl: initialData?.imageUrl ?? "",
     durationInMinutes: initialData?.durationInMinutes ?? 0,
     locationType: initialData?.locationType ?? "",
@@ -96,7 +102,7 @@ export function ServiceForm({
       toast.success(message, { id: context?.toastId });
       handleReset(data);
       void apiUtils.service.invalidate();
-      router.push(`/admin/services/${data.id}`);
+      router.push(returnTo ?? `/admin/services/${data.id}`);
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to create service.", {
@@ -129,7 +135,7 @@ export function ServiceForm({
     onSuccess: ({ message }, _input, context) => {
       toast.success(message, { id: context?.toastId });
       void apiUtils.service.invalidate();
-      router.push("/admin/services");
+      router.push(returnTo ?? "/admin/services");
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to delete service.", {
@@ -214,7 +220,7 @@ export function ServiceForm({
           <div className={cn("admin-form-toolbar", isDirty ? "dirty" : "")}>
             <div className="toolbar-info">
               <Button variant="ghost" size="sm" asChild className="shrink-0">
-                <Link href="/admin/services">
+                <Link href={returnTo ?? "/admin/services"}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Link>

@@ -8,6 +8,7 @@ import { getSocialPlatform } from "~/lib/social-links";
 import { Badge } from "~/components/ui/badge";
 import { Separator } from "~/components/ui/separator";
 import { SocialIcon } from "~/components/icons/social-icons";
+import { OutboundLink } from "~/components/outbound-link";
 
 type Props = {
   shop: NonNullable<RouterOutputs["shop"]["get"]>;
@@ -127,15 +128,18 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
             </p>
           </div>
           {shop?.website && (
-            <a
+            <OutboundLink
               href={shop?.website}
-              target="_blank"
-              rel="noopener noreferrer"
+              track={{
+                shopId: shop.id,
+                target: "WEBSITE",
+                source: "SHOP_HERO",
+              }}
               className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium shadow-sm transition-colors"
             >
               Visit Website
               <ExternalLink className="size-4" />
-            </a>
+            </OutboundLink>
           )}
         </div>
 
@@ -287,15 +291,18 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
             )
           )}
           {shop?.website && (
-            <a
+            <OutboundLink
               href={shop.website}
-              target="_blank"
-              rel="noopener noreferrer"
+              track={{
+                shopId: shop.id,
+                target: "WEBSITE",
+                source: "SHOP_HERO",
+              }}
               className="text-muted-foreground hover:text-foreground flex items-center gap-3 text-sm transition-colors"
             >
               <Globe className="size-4 shrink-0" />
               {shop.website.replace(/^https?:\/\//, "")}
-            </a>
+            </OutboundLink>
           )}
         </div>
 

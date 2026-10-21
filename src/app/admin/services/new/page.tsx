@@ -3,8 +3,17 @@ import { api } from "~/trpc/server";
 
 import { ServiceForm } from "../_components/service-form";
 import { TrailHeader } from "../../_components/trail-header";
+import { safeAdminReturnTo } from "../../_lib/safe-return-to";
 
-export default async function NewServicePage() {
+type Props = {
+  searchParams: Promise<{
+    shopId?: string | string[];
+    returnTo?: string | string[];
+  }>;
+};
+
+export default async function NewServicePage({ searchParams }: Props) {
+  const query = await searchParams;
   const [shops, categories, session] = await Promise.all([
     api.shop.getOptions(),
     api.category.getAll(),
@@ -12,6 +21,10 @@ export default async function NewServicePage() {
   ]);
 
   const userRole = session?.user.role ?? "ARTISAN";
+
+  // Only preselect a shop the viewer could pick anyway.
+  const defaultShopId = shops.find((shop) => shop.id === query.shopId)?.id;
+  const returnTo = safeAdminReturnTo(query.returnTo) ?? undefined;
 
   return (
     <>
@@ -27,6 +40,8 @@ export default async function NewServicePage() {
         shops={shops}
         categories={categories}
         userRole={userRole}
+        defaultShopId={defaultShopId}
+        returnTo={returnTo}
       />
     </>
   );

@@ -24,10 +24,19 @@ import {
   SearchResultPreview,
 } from "~/components/seo/search-result-preview";
 
-type Props = {
+type SeoShop = {
+  id: string;
+  slug: string | null;
+  seoImage: string | null;
+} | null;
+
+type FieldsProps = {
   form: UseFormReturn<ShopFormData>;
-  shop: { id: string; slug: string | null; seoImage: string | null } | null;
+  shop: SeoShop;
   disabled?: boolean;
+};
+
+type PreviewProps = FieldsProps & {
   seoImageInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
@@ -36,11 +45,8 @@ function firstNonBlank(...values: (string | null | undefined)[]) {
   return values.map((value) => value?.trim()).find(Boolean) ?? null;
 }
 
-/**
- * Admin-only slug and search/share overrides for a shop. Only rendered for
- * admins; the server also rejects these fields from anyone else.
- */
-export function ShopSeoCard({ form, shop, disabled, seoImageInputRef }: Props) {
+/** Live values derived from the form, shared by the fields and preview cards. */
+function useShopSeoDerived(form: UseFormReturn<ShopFormData>, shop: SeoShop) {
   const name = form.watch("name");
   const description = form.watch("description");
   const bio = form.watch("bio");
@@ -52,6 +58,28 @@ export function ShopSeoCard({ form, shop, disabled, seoImageInputRef }: Props) {
     firstNonBlank(seo?.slug, shop?.slug, slugify(name ?? "")) ?? "your-shop";
   const url = `${SITE_URL}${shopPath({ id: shop?.id ?? "", slug: effectiveSlug })}`;
   const slugChanged = !!shop?.slug && !!seo?.slug && seo.slug !== shop.slug;
+
+  return {
+    name,
+    seo,
+    effectiveSlug,
+    url,
+    slugChanged,
+    previewTitle: firstNonBlank(seo?.seoTitle, name) ?? "Shop name",
+    previewDescription:
+      firstNonBlank(seo?.seoDescription, description, bio) ?? "",
+  };
+}
+
+/**
+ * Admin-only slug and search/share overrides for a shop. Only rendered for
+ * admins; the server also rejects these fields from anyone else.
+ */
+export function ShopSeoFieldsCard({ form, shop, disabled }: FieldsProps) {
+  const { name, seo, effectiveSlug, slugChanged } = useShopSeoDerived(
+    form,
+    shop,
+  );
 
   return (
     <Card>
@@ -66,14 +94,6 @@ export function ShopSeoCard({ form, shop, disabled, seoImageInputRef }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <SearchResultPreview
-          title={firstNonBlank(seo?.seoTitle, name) ?? "Shop name"}
-          url={url}
-          description={
-            firstNonBlank(seo?.seoDescription, description, bio) ?? ""
-          }
-        />
-
         <InputFormField
           form={form}
           name="seo.slug"
@@ -109,6 +129,45 @@ export function ShopSeoCard({ form, shop, disabled, seoImageInputRef }: Props) {
           )}
         />
 
+        <SwitchFormField
+          form={form}
+          name="seo.seoNoIndex"
+          label="Hide from search engines"
+          description="Adds noindex and drops the shop from the sitemap. The page stays visible to visitors."
+          disabled={disabled}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Search result preview and the share image, for the Search & sharing aside. */
+export function ShopSeoPreviewCard({
+  form,
+  shop,
+  disabled,
+  seoImageInputRef,
+}: PreviewProps) {
+  const { url, previewTitle, previewDescription } = useShopSeoDerived(
+    form,
+    shop,
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Preview</CardTitle>
+        <CardDescription>
+          How links to this shop look in search results and when shared.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <SearchResultPreview
+          title={previewTitle}
+          url={url}
+          description={previewDescription}
+        />
+
         <ImageUploadFormField
           form={form}
           name="seoImageFile"
@@ -117,14 +176,6 @@ export function ShopSeoCard({ form, shop, disabled, seoImageInputRef }: Props) {
           disabled={disabled}
           existingPreviewUrl={shop?.seoImage ?? undefined}
           inputRef={seoImageInputRef}
-        />
-
-        <SwitchFormField
-          form={form}
-          name="seo.seoNoIndex"
-          label="Hide from search engines"
-          description="Adds noindex and drops the shop from the sitemap. The page stays visible to visitors."
-          disabled={disabled}
         />
       </CardContent>
     </Card>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthView } from "@daveyplate/better-auth-ui";
 
+import { RecaptchaNotice } from "~/components/inputs/recaptcha-notice";
 import { AuthShell } from "~/app/auth/_components/auth-shell";
 
 export const metadata = {
@@ -23,8 +24,8 @@ export default async function SignInPage({ searchParams }: Props) {
             Welcome Back to Artisanal Futures
           </h1>
           <p className="mb-8 text-lg text-white/85">
-            Sign in to access your account, browse our shops, and stay
-            connected within our artisan community.
+            Sign in to access your account, browse our shops, and stay connected
+            within our artisan community.
           </p>
         </>
       }
@@ -42,6 +43,7 @@ export default async function SignInPage({ searchParams }: Props) {
           <Link href="/legal/privacy" className="text-primary hover:underline">
             Privacy Policy
           </Link>
+          <RecaptchaNotice className="mt-2" />
         </>
       }
     >
