@@ -14,6 +14,20 @@ const hostName = !useSecureCookies
   ? new URL(env.BETTER_AUTH_URL).hostname
   : env.HOSTNAME;
 
+// Cookie domain shared with the sibling app (AF <-> UPCY). Normalised so a
+// stray scheme, leading dot or trailing slash in env can't change it.
+const cookieDomain = hostName
+  .toLowerCase()
+  .replace(/^https?:\/\//, "")
+  .replace(/^\.+/, "")
+  .replace(/\/+$/, "");
+
+// One cookie name per environment, identical in AF and UPCY (both derive it
+// from the same domain). Production cookies live on the parent domain and are
+// also sent to staging subdomains; distinct names stop them shadowing each
+// other (stale same-named cookies caused "signed in but no session" loops).
+const cookiePrefix = `af-${cookieDomain.replace(/[^a-z0-9]+/g, "-")}`;
+
 // Captcha guards sign-up, email sign-in and password-reset requests (the
 // plugin's default endpoints). Tokens are minted invisibly by reCAPTCHA v3:
 // sign-up by the invite forms, sign-in and reset by the auth client's
@@ -107,9 +121,10 @@ export const auth = betterAuth({
   ],
 
   advanced: {
+    cookiePrefix,
     crossSubDomainCookies: {
       enabled: true,
-      domain: hostName,
+      domain: cookieDomain,
     },
   },
 

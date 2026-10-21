@@ -6,8 +6,14 @@ import { AuthShell } from "~/app/auth/_components/auth-shell";
 
 export const dynamicParams = false;
 
+// Views with their own route folder under /auth. Prerendering them here too
+// makes the production build serve this generic page in their place.
+const OWN_ROUTES = new Set(["sign-in", "sign-up", "sign-out"]);
+
 export function generateStaticParams() {
-  return Object.values(authViewPaths).map((path) => ({ path }));
+  return Object.values(authViewPaths)
+    .filter((path) => !OWN_ROUTES.has(path))
+    .map((path) => ({ path }));
 }
 
 export default async function AuthPage({
