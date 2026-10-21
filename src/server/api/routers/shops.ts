@@ -175,7 +175,7 @@ async function assertSlugAvailable(
  * A public shop was added, changed or removed: refresh the cached tag/location
  * landing pages and tell IndexNow engines about the affected URLs.
  */
-function publicShopsChanged(paths: string[]) {
+export function publicShopsChanged(paths: string[]) {
   revalidateTag(SHOPS_LANDING_TAG);
   pingIndexNow(paths);
 }

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -50,11 +51,13 @@ export function SendInviteDialog({
   const [email, setEmail] = useState(defaultEmail ?? "");
   const [role, setRole] = useState<InviteRole>(defaultRole);
   const [shopId, setShopId] = useState<string | undefined>(defaultShopId);
+  const [skipOnboarding, setSkipOnboarding] = useState(!!defaultShopId);
 
   const resetToDefaults = () => {
     setEmail(defaultEmail ?? "");
     setRole(defaultRole);
     setShopId(defaultShopId);
+    setSkipOnboarding(!!defaultShopId);
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -104,6 +107,7 @@ export function SendInviteDialog({
     setRole(v);
     if (v !== "ARTISAN") {
       setShopId(undefined);
+      setSkipOnboarding(false);
     }
   };
 
@@ -116,6 +120,7 @@ export function SendInviteDialog({
       role,
       shopId:
         role === "ARTISAN" && shopId && shopId !== "none" ? shopId : undefined,
+      skipOnboarding: role === "ARTISAN" && skipOnboarding ? true : undefined,
     });
   };
 
@@ -181,7 +186,9 @@ export function SendInviteDialog({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">
-                      No shop — create during onboarding
+                      {skipOnboarding
+                        ? "No shop"
+                        : "No shop — create during onboarding"}
                     </SelectItem>
                     {attachableShops.isLoading && (
                       <SelectItem value="loading" disabled>
@@ -213,6 +220,24 @@ export function SendInviteDialog({
                   The invitee will take ownership of this shop when they finish
                   onboarding.
                 </p>
+              </div>
+            )}
+            {role === "ARTISAN" && (
+              <div className="flex items-start gap-2">
+                <Checkbox
+                  id="invite-skip-onboarding"
+                  checked={skipOnboarding}
+                  onCheckedChange={(checked) =>
+                    setSkipOnboarding(checked === true)
+                  }
+                />
+                <div className="grid gap-1">
+                  <Label htmlFor="invite-skip-onboarding">Skip onboarding</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Invitee only creates an account — no shop questionnaire. Use
+                    when you&apos;ve already set up their shop.
+                  </p>
+                </div>
               </div>
             )}
           </div>

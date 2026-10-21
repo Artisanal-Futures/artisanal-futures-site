@@ -6,6 +6,7 @@ import Link from "next/link";
 import { MoreHorizontalIcon } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -99,7 +100,16 @@ export const inviteColumns: ColumnDef<InviteRow>[] = [
       <AdvancedDataTableColumnHeader column={column} title="Role" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm capitalize">{row.original.role.toLowerCase()}</span>
+      <span className="flex items-center gap-1.5">
+        <span className="text-sm capitalize">
+          {row.original.role.toLowerCase()}
+        </span>
+        {row.original.skipOnboarding && (
+          <Badge variant="secondary" className="text-[10px]">
+            Quick join
+          </Badge>
+        )}
+      </span>
     ),
   },
   {

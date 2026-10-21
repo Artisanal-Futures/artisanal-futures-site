@@ -212,7 +212,8 @@ exports.Prisma.PlatformInviteScalarFieldEnum = {
   usedAt: 'usedAt',
   usedBy: 'usedBy',
   createdBy: 'createdBy',
-  shopId: 'shopId'
+  shopId: 'shopId',
+  skipOnboarding: 'skipOnboarding'
 };
 
 exports.Prisma.ProductSyncRunScalarFieldEnum = {

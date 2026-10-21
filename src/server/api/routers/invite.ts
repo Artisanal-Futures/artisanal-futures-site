@@ -49,6 +49,7 @@ export const inviteRouter = createTRPCRouter({
         email: z.string().email(),
         role: z.enum(["ARTISAN", "GUEST", "ADMIN"]),
         shopId: z.string().optional(),
+        skipOnboarding: z.boolean().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -56,6 +57,12 @@ export const inviteRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Shops can only be attached to Artisan invites",
+        });
+      }
+      if (input.skipOnboarding && input.role !== "ARTISAN") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only Artisan invites can skip onboarding",
         });
       }
       const shop = input.shopId
@@ -87,6 +94,7 @@ export const inviteRouter = createTRPCRouter({
               expiresAt,
               createdBy: ctx.session.user.id,
               shopId: input.shopId,
+              skipOnboarding: input.skipOnboarding ?? false,
             },
           });
           break;
@@ -113,6 +121,7 @@ export const inviteRouter = createTRPCRouter({
         inviteUrl,
         inviteCode: code,
         shopName: shop?.name,
+        skipOnboarding: input.skipOnboarding,
       });
 
       return { ...invite, inviteUrl, emailSent: emailResult.success };

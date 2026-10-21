@@ -8,6 +8,7 @@ interface PlatformInviteEmailProps {
   role: "ARTISAN" | "GUEST" | "ADMIN";
   logoUrl?: string;
   shopName?: string;
+  skipOnboarding?: boolean;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -25,6 +26,7 @@ export function PlatformInviteEmail({
   role,
   logoUrl,
   shopName,
+  skipOnboarding,
 }: PlatformInviteEmailProps) {
   const label = roleLabel(role);
   const previewText = shopName
@@ -46,7 +48,7 @@ export function PlatformInviteEmail({
 
       {shopName ? (
         <Text style={text}>
-          You&apos;ve been invited to join Artisanal Futures as an <strong>Artisan</strong> and take ownership of <strong>{shopName}</strong>. Your shop profile has already been set up — you&apos;ll review and edit its details when you sign up. Use the link or code below to get started.
+          You&apos;ve been invited to join Artisanal Futures as an <strong>Artisan</strong> and take ownership of <strong>{shopName}</strong>. Your shop profile has already been set up — {skipOnboarding ? "you just need to create your account." : "you’ll review and edit its details when you sign up."} Use the link or code below to get started.
         </Text>
       ) : (
         <Text style={text}>

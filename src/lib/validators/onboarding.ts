@@ -100,6 +100,11 @@ export const adminOnboardingSchema = z.object({
   invitationCode: z.string(),
 });
 
+// API input for claimArtisanInvite (quick-join artisans skip the onboarding wizard)
+export const claimArtisanInviteSchema = z.object({
+  invitationCode: z.string(),
+});
+
 // Full form schema for admin signup wizard (code + account details only)
 const adminSignupFormSchemaBase = z.object({
   invitationCode: z.string().min(1, "Invitation code is required"),

@@ -43,6 +43,7 @@ export async function sendPlatformInviteEmail({
   inviteCode,
   logoUrl,
   shopName,
+  skipOnboarding,
 }: {
   to: string;
   role: "ARTISAN" | "GUEST" | "ADMIN";
@@ -50,6 +51,7 @@ export async function sendPlatformInviteEmail({
   inviteCode: string;
   logoUrl?: string;
   shopName?: string;
+  skipOnboarding?: boolean;
 }) {
   const roleLabels: Record<string, string> = {
     ARTISAN: "Artisan",
@@ -71,6 +73,7 @@ export async function sendPlatformInviteEmail({
       role,
       logoUrl,
       shopName,
+      skipOnboarding,
     }),
     tags: [{ name: "category", value: "platform_invite" }],
   });

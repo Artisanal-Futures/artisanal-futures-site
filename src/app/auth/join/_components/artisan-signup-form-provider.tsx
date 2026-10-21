@@ -30,6 +30,10 @@ const STEPS: readonly StepDef[] = [
   { id: 2, name: "Artisan profile" },
 ] as const;
 
+const QUICK_JOIN_STEPS: readonly StepDef[] = [
+  { id: 0, name: "Account" },
+] as const;
+
 const ACCOUNT_FIELDS: (keyof SignupFormData)[] = [
   "name",
   "email",
@@ -53,6 +57,9 @@ type ArtisanSignupContextValue = {
 
   attachedShop: { id: string; name: string } | null;
   applyShopPrefill: (shop: ShopPrefill) => void;
+
+  skipOnboarding: boolean;
+  applyInviteInfo: (info: { email?: string; skipOnboarding?: boolean }) => void;
 
   STEPS: readonly StepDef[];
 };
@@ -124,8 +131,12 @@ export function ArtisanSignupFormProvider({
     name: string;
   } | null>(null);
 
+  const [skipOnboarding, setSkipOnboarding] = useState(false);
+
+  const steps = skipOnboarding ? QUICK_JOIN_STEPS : STEPS;
+
   const [isComplete, setIsComplete] = useState(false);
-  const progress = isComplete ? 100 : ((currentStep + 1) / STEPS.length) * 100;
+  const progress = isComplete ? 100 : ((currentStep + 1) / steps.length) * 100;
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(artisanOnboardingSchema),
@@ -133,12 +144,12 @@ export function ArtisanSignupFormProvider({
   });
 
   const goNext = useCallback(() => {
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep((prev) => Math.min(prev + 1, STEPS.length));
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length));
     } else {
       setIsComplete(true);
     }
-  }, [currentStep]);
+  }, [currentStep, steps.length]);
 
   const goBack = useCallback(() => {
     if (currentStep > 0) {
@@ -170,9 +181,19 @@ export function ArtisanSignupFormProvider({
     [form],
   );
 
+  const applyInviteInfo = useCallback(
+    (info: { email?: string; skipOnboarding?: boolean }) => {
+      setSkipOnboarding(info.skipOnboarding === true);
+      // Prefill only; the field stays editable (sign-up still enforces the
+      // invite's email).
+      if (info.email) form.setValue("email", info.email);
+    },
+    [form],
+  );
+
   const value: ArtisanSignupContextValue = {
     currentStep,
-    steps: STEPS,
+    steps,
     goNext,
     goBack,
     didAutoAdvanceFromInvite,
@@ -187,7 +208,10 @@ export function ArtisanSignupFormProvider({
     attachedShop,
     applyShopPrefill,
 
-    STEPS,
+    skipOnboarding,
+    applyInviteInfo,
+
+    STEPS: steps,
   };
 
   return (

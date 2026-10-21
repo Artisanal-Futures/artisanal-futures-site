@@ -14,6 +14,7 @@ import { AccountDetailsStep } from "./account-details-step";
 import { ArtisanProfileStep } from "./artisan-profile-step";
 import { BusinessInfoStep } from "./business-info-step";
 import { InvitationCodeStep } from "./invitation-code-step";
+import { QuickJoinAccountStep } from "./quick-join-account-step";
 
 const STEPS = [
   { id: "account", label: "Account" },
@@ -21,8 +22,10 @@ const STEPS = [
   { id: "profile", label: "Your Profile" },
 ];
 
+const QUICK_JOIN_STEPS = STEPS.slice(0, 1);
+
 function WizardContent() {
-  const { currentStep, isAnimating, isCodeVerified, progress } =
+  const { currentStep, isAnimating, isCodeVerified, progress, skipOnboarding } =
     useArtisanSignup();
 
   // Code entry view (split layout)
@@ -128,16 +131,20 @@ function WizardContent() {
       {/* Header */}
       <WizardSignupProgress
         currentStep={currentStep}
-        steps={STEPS}
+        steps={skipOnboarding ? QUICK_JOIN_STEPS : STEPS}
         progress={progress}
       />
 
       {/* Content */}
-      <>
-        {currentStep === 0 && <AccountDetailsStep />}
-        {currentStep === 1 && <BusinessInfoStep />}
-        {currentStep === 2 && <ArtisanProfileStep />}
-      </>
+      {skipOnboarding ? (
+        <QuickJoinAccountStep />
+      ) : (
+        <>
+          {currentStep === 0 && <AccountDetailsStep />}
+          {currentStep === 1 && <BusinessInfoStep />}
+          {currentStep === 2 && <ArtisanProfileStep />}
+        </>
+      )}
     </div>
   );
 }
