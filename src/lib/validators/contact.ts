@@ -9,7 +9,7 @@ export const contactSchema = z.object({
   preferredContactMethod: z
     .enum(["email", "phone", "no-preference"])
     .optional(),
-  captchaToken: z.string(),
+  captchaToken: z.string().max(4096),
   website: z.string().optional(),
 });
 

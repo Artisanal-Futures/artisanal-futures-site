@@ -157,8 +157,28 @@ export default function PrivacyPage() {
             shops.
           </li>
           <li>
-            <span className="font-bold">Abuse prevention</span> (hCaptcha): to
-            help protect sign-in and account flows from automated abuse.
+            <span className="font-bold">Abuse prevention</span> (Google
+            reCAPTCHA): to help protect sign-in, sign-up, password-reset and
+            contact forms from automated abuse. reCAPTCHA is subject to
+            Google&apos;s{" "}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Privacy Policy
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://policies.google.com/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Terms of Service
+            </a>
+            .
           </li>
         </ul>
         <p>

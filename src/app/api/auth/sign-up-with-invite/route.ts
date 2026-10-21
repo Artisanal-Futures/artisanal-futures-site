@@ -67,12 +67,16 @@ export async function POST(req: Request) {
       );
     }
 
+    // Forward the caller's IP so better-auth can pass it to Google for scoring.
+    const forwardedFor = req.headers.get("x-forwarded-for");
+
     const signUpRes = await fetch(SIGN_UP_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Origin: env.BETTER_AUTH_URL,
         "x-captcha-response": body.captchaToken ?? "",
+        ...(forwardedFor ? { "x-forwarded-for": forwardedFor } : {}),
       },
       body: JSON.stringify({
         email,

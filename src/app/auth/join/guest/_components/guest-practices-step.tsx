@@ -2,13 +2,12 @@
 
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { HCaptchaHandle } from "~/components/inputs/hcaptcha-form-field";
-import { HCaptchaField } from "~/components/inputs/hcaptcha-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { RecaptchaDisclosure } from "~/components/inputs/recaptcha-disclosure";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import {
   FormControl,
@@ -19,6 +18,7 @@ import {
 } from "~/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import type { GuestSignupFormData } from "~/lib/validators/onboarding";
+import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
 import { api } from "~/trpc/react";
 
 import { WizardFooter } from "../../_components/wizard-footer";
@@ -41,8 +41,7 @@ export function GuestPracticesStep() {
   const { goBack, currentStep } = useGuestSignup();
   const artisanalPractice = form.watch("artisanalPractice");
 
-  const captchaRef = useRef<HCaptchaHandle>(null);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const { execute } = useRecaptchaV3();
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const router = useRouter();
 
@@ -51,9 +50,6 @@ export function GuestPracticesStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      setCaptchaToken("");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
       router.push("/join/welcome");
     },
     onError: (error, _input, context) => {
@@ -84,6 +80,7 @@ export function GuestPracticesStep() {
     const invitationCode = values.invitationCode?.trim().toUpperCase() ?? "";
 
     setIsCreatingAccount(true);
+    const captchaToken = (await execute("signup")) ?? "";
     const signUpRes = await fetch("/api/auth/sign-up-with-invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,9 +99,6 @@ export function GuestPracticesStep() {
         message?: string;
       };
       toast.error(data.message ?? "Something went wrong. Please try again.");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
-      setCaptchaToken("");
       setIsCreatingAccount(false);
       return;
     }
@@ -195,14 +189,7 @@ export function GuestPracticesStep() {
                 placeholder="Enter your artisanal practice"
               />
             )}
-            <HCaptchaField
-              ref={captchaRef}
-              onVerify={setCaptchaToken}
-              onExpire={() => setCaptchaToken("")}
-              onError={() => setCaptchaToken("")}
-              label="Verification"
-              required
-            />
+            <RecaptchaDisclosure />
           </div>
         </div>
       </div>

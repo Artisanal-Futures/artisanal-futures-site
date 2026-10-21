@@ -14,15 +14,15 @@ const hostName = !useSecureCookies
   ? new URL(env.BETTER_AUTH_URL).hostname
   : env.HOSTNAME;
 
-// Captcha is enforced on sign-up only (see the `endpoints` option below).
-// Sign-in and password reset are intentionally captcha-free: this is a closed,
-// invite-only platform, so those flows don't render a captcha widget. The
-// gate is limited to production where both hCaptcha keys are available, since
-// the sign-up captcha token is supplied by the custom invite forms.
+// Captcha guards sign-up, email sign-in and password-reset requests (the
+// plugin's default endpoints). Tokens are minted invisibly by reCAPTCHA v3:
+// sign-up by the invite forms, sign-in and reset by the auth client's
+// `onRequest` hook (see client.ts). The gate is limited to production where
+// both reCAPTCHA keys are available.
 const captchaEnabled =
   process.env.NODE_ENV === "production" &&
-  !!env.HCAPTCHA_SECRET_KEY &&
-  !!env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
+  !!env.RECAPTCHA_SECRET_KEY &&
+  !!env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -95,11 +95,12 @@ export const auth = betterAuth({
     ...(captchaEnabled
       ? [
           captcha({
-            provider: "hcaptcha",
-            secretKey: env.HCAPTCHA_SECRET_KEY,
-            siteKey: env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
-            // Only sign-up is protected; sign-in & password reset are captcha-free.
-            endpoints: ["/sign-up/email"],
+            provider: "google-recaptcha",
+            secretKey: env.RECAPTCHA_SECRET_KEY,
+            minScore: env.RECAPTCHA_MIN_SCORE,
+            // Default endpoints: /sign-up/email, /sign-in/email and
+            // /request-password-reset (HTTP requests only; `auth.api.*` server
+            // calls are not checked).
           }),
         ]
       : []),

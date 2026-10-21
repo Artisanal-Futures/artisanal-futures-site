@@ -1,15 +1,18 @@
 import { TRPCError } from "@trpc/server";
 
 import { env } from "~/env";
-import { verifyHCaptcha } from "~/lib/captcha/verify-hcaptcha";
+import { verifyRecaptcha } from "~/lib/captcha/verify-recaptcha";
 import { sendContactFormSubmission } from "~/lib/email/templates";
 import { contactSchema } from "~/lib/validators/contact";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const contactRouter = createTRPCRouter({
   send: publicProcedure.input(contactSchema).mutation(async ({ input }) => {
-    const isValid = await verifyHCaptcha(input.captchaToken);
-    if (!isValid) {
+    const captcha = await verifyRecaptcha(input.captchaToken, {
+      action: "contact",
+    });
+    if (!captcha.ok) {
+      console.warn(`Contact captcha rejected: ${captcha.reason}`);
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Captcha verification failed",

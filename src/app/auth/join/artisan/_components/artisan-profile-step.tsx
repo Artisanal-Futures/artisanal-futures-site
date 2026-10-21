@@ -7,14 +7,14 @@ import { AlertCircle } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { HCaptchaHandle } from "~/components/inputs/hcaptcha-form-field";
 import type { SignupFormData } from "~/lib/validators/onboarding";
+import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
 import { slugify } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { Alert, AlertDescription } from "~/components/ui/alert";
-import { HCaptchaField } from "~/components/inputs/hcaptcha-form-field";
 import { ImageUploadFormField } from "~/components/inputs/image-upload-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { RecaptchaDisclosure } from "~/components/inputs/recaptcha-disclosure";
 import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 
 import { useArtisanSignup } from "../../_components/artisan-signup-form-provider";
@@ -31,8 +31,7 @@ export function ArtisanProfileStep() {
   const { goBack, currentStep } = useArtisanSignup();
   const logoInputRef = useRef<HTMLInputElement | null>(null);
   const ownerPhotoInputRef = useRef<HTMLInputElement | null>(null);
-  const captchaRef = useRef<HCaptchaHandle>(null);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const { execute } = useRecaptchaV3();
   const router = useRouter();
 
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -49,9 +48,6 @@ export function ArtisanProfileStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      setCaptchaToken("");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
       router.push(data.redirectUrl ?? "/");
     },
     onError: (error, _input, context) => {
@@ -80,6 +76,7 @@ export function ArtisanProfileStep() {
     const invitationCode = values.invitationCode?.trim().toUpperCase() ?? "";
 
     setIsCreatingAccount(true);
+    const captchaToken = (await execute("signup")) ?? "";
     const signUpRes = await fetch("/api/auth/sign-up-with-invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -98,9 +95,6 @@ export function ArtisanProfileStep() {
         message?: string;
       };
       toast.error(data.message ?? "Something went wrong. Please try again.");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
-      setCaptchaToken("");
       setIsCreatingAccount(false);
       return;
     }
@@ -235,14 +229,7 @@ export function ArtisanProfileStep() {
               rows={4}
               textareaClassName="min-h-[100px]"
             />
-            <HCaptchaField
-              ref={captchaRef}
-              onVerify={setCaptchaToken}
-              onExpire={() => setCaptchaToken("")}
-              onError={() => setCaptchaToken("")}
-              label="Verification"
-              required
-            />
+            <RecaptchaDisclosure />
           </div>
         </div>
       </div>

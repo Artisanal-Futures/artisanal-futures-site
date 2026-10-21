@@ -3,6 +3,7 @@ import { AccountView } from "@daveyplate/better-auth-ui";
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server";
 
 import { cn } from "~/lib/utils";
+import { RecaptchaNotice } from "~/components/inputs/recaptcha-notice";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -25,6 +26,9 @@ export default async function AccountPage({ params }: Props) {
   return (
     <div className={cn("py-20")}>
       <AccountView path={path} className="mx-auto max-w-7xl" classNames={{}} />
+      {path === accountViewPaths.SECURITY && (
+        <RecaptchaNotice className="mx-auto mt-6 max-w-7xl" />
+      )}
     </div>
   );
 }

@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { HCaptchaHandle } from "~/components/inputs/hcaptcha-form-field";
-import { HCaptchaField } from "~/components/inputs/hcaptcha-form-field";
 import { InputFormField } from "~/components/inputs/input-form-field";
+import { RecaptchaDisclosure } from "~/components/inputs/recaptcha-disclosure";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import type { AdminSignupFormData } from "~/lib/validators/onboarding";
+import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
 import { api } from "~/trpc/react";
 
 import { WizardFooter } from "../../_components/wizard-footer";
@@ -26,8 +26,7 @@ const ACCOUNT_FIELDS: (keyof AdminSignupFormData)[] = [
 export function AdminAccountDetailsStep() {
   const form = useFormContext<AdminSignupFormData>();
   const { goBack, currentStep } = useAdminSignup();
-  const captchaRef = useRef<HCaptchaHandle>(null);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const { execute } = useRecaptchaV3();
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const router = useRouter();
 
@@ -36,9 +35,6 @@ export function AdminAccountDetailsStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      setCaptchaToken("");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
       router.push(data.redirectUrl);
     },
     onError: (error, _input, context) => {
@@ -69,6 +65,7 @@ export function AdminAccountDetailsStep() {
     const invitationCode = values.invitationCode?.trim().toUpperCase() ?? "";
 
     setIsCreatingAccount(true);
+    const captchaToken = (await execute("signup")) ?? "";
     const signUpRes = await fetch("/api/auth/sign-up-with-invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -87,9 +84,6 @@ export function AdminAccountDetailsStep() {
         message?: string;
       };
       toast.error(data.message ?? "Something went wrong. Please try again.");
-      const handle = captchaRef.current;
-      if (handle) handle.reset();
-      setCaptchaToken("");
       setIsCreatingAccount(false);
       return;
     }
@@ -163,14 +157,7 @@ export function AdminAccountDetailsStep() {
               type="password"
               placeholder="Re-enter your password"
             />
-            <HCaptchaField
-              ref={captchaRef}
-              onVerify={setCaptchaToken}
-              onExpire={() => setCaptchaToken("")}
-              onError={() => setCaptchaToken("")}
-              label="Verification"
-              required
-            />
+            <RecaptchaDisclosure />
           </div>
         </div>
       </div>

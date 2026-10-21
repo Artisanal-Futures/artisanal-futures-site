@@ -1,6 +1,7 @@
 import { AuthView } from "@daveyplate/better-auth-ui";
 import { authViewPaths } from "@daveyplate/better-auth-ui/server";
 
+import { RecaptchaNotice } from "~/components/inputs/recaptcha-notice";
 import { AuthShell } from "~/app/auth/_components/auth-shell";
 
 export const dynamicParams = false;
@@ -17,7 +18,11 @@ export default async function AuthPage({
   const { path } = await params;
 
   return (
-    <AuthShell>
+    <AuthShell
+      footer={
+        path === authViewPaths.FORGOT_PASSWORD ? <RecaptchaNotice /> : undefined
+      }
+    >
       <AuthView path={path} classNames={{ base: "max-w-full" }} />
     </AuthShell>
   );

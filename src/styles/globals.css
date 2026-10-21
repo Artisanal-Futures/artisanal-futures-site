@@ -332,3 +332,9 @@ body:has([data-radix-dialog-open="true"]) [data-radix-popper-content-wrapper] {
     @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
   }
 }
+
+/* The reCAPTCHA v3 badge is hidden; Google's terms allow that only if every
+   form that mints a token renders <RecaptchaDisclosure /> instead. */
+.grecaptcha-badge {
+  visibility: hidden;
+}
