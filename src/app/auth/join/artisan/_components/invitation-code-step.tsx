@@ -22,6 +22,7 @@ export function InvitationCodeStep() {
     setIsAnimating,
     setIsCodeVerified,
     applyShopPrefill,
+    applyInviteInfo,
   } = useArtisanSignup();
   const code = form.watch("invitationCode");
   const [isVerifying, setIsVerifying] = useState(false);
@@ -59,6 +60,8 @@ export function InvitationCodeStep() {
         const data = (await response.json()) as {
           error?: string;
           shop?: ShopPrefill;
+          email?: string;
+          skipOnboarding?: boolean;
         };
 
         if (response.ok) {
@@ -66,6 +69,7 @@ export function InvitationCodeStep() {
           setAutoVerified(true);
           markAutoAdvancedFromInvite();
           if (data.shop) applyShopPrefill(data.shop);
+          applyInviteInfo(data);
           handleCodeVerified();
         } else {
           setError(data.error ?? "Invalid invitation code");
@@ -86,6 +90,7 @@ export function InvitationCodeStep() {
     markAutoAdvancedFromInvite,
     didAutoAdvanceFromInvite,
     applyShopPrefill,
+    applyInviteInfo,
   ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,6 +116,8 @@ export function InvitationCodeStep() {
       const data = (await response.json()) as {
         error?: string;
         shop?: ShopPrefill;
+        email?: string;
+        skipOnboarding?: boolean;
       };
 
       if (!response.ok) {
@@ -119,6 +126,7 @@ export function InvitationCodeStep() {
       }
 
       if (data.shop) applyShopPrefill(data.shop);
+      applyInviteInfo(data);
       handleCodeVerified();
     } catch (err) {
       console.error(err);

@@ -83,6 +83,8 @@ export async function POST(req: NextRequest) {
         if (shop) {
           return NextResponse.json({
             valid: true,
+            skipOnboarding: invite.skipOnboarding,
+            email: invite.email,
             shop: {
               ...shop,
               logoPhoto: shop.logoPhoto ? handleImageUrl(shop.logoPhoto) : null,
@@ -92,6 +94,14 @@ export async function POST(req: NextRequest) {
             },
           });
         }
+      }
+
+      if (invite.role === "ARTISAN") {
+        return NextResponse.json({
+          valid: true,
+          skipOnboarding: invite.skipOnboarding,
+          email: invite.email,
+        });
       }
 
       return NextResponse.json({ valid: true });

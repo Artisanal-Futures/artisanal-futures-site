@@ -2,13 +2,16 @@ import { cookies } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { shopPath } from "~/lib/seo/paths";
 import { parseSocialLinks } from "~/lib/social-links";
 import { isUpcyUrl, UPCY_RETURN_COOKIE } from "~/lib/upcy";
 import {
   adminOnboardingSchema,
   artisanOnboardingSchema,
+  claimArtisanInviteSchema,
   guestOnboardingSchema,
 } from "~/lib/validators/onboarding";
+import { publicShopsChanged } from "~/server/api/routers/shops";
 import {
   adminOnlyProcedure,
   createTRPCRouter,
@@ -170,6 +173,81 @@ export const onboardingRouter = createTRPCRouter({
 
       return {
         data: business,
+        message: "Welcome to the platform!",
+        redirectUrl: (await consumeUpcyReturnTo()) ?? "/admin/welcome",
+      };
+    }),
+
+  /**
+   * Quick-join artisans only create an account. The invite's shop (if any)
+   * changes hands the same way `shops.transferOwnership` does it; no shop or
+   * survey is created.
+   */
+  claimArtisanInvite: protectedProcedure
+    .input(claimArtisanInviteSchema)
+    .mutation(async ({ ctx, input }) => {
+      const code = input.invitationCode.trim().toUpperCase();
+      const invite = await ctx.db.platformInvite.findUnique({
+        where: { code },
+      });
+
+      if (!invite || !isValidArtisanCode(invite)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid invitation code",
+        });
+      }
+      if (!invite.skipOnboarding) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This invitation requires the full onboarding",
+        });
+      }
+
+      assertInviteEmailMatches(invite, ctx.session.user.email);
+
+      const userId = ctx.session.user.id;
+      const userName = ctx.session.user.name?.trim();
+
+      const claimedShop = await ctx.db.$transaction(async (tx) => {
+        const shop = invite.shopId
+          ? await tx.shop.findUnique({
+              where: { id: invite.shopId },
+              select: { id: true, slug: true, isPublic: true, ownerName: true },
+            })
+          : null;
+
+        if (shop) {
+          await tx.shop.update({
+            where: { id: shop.id },
+            data: {
+              ownerId: userId,
+              // Keep an owner name an admin already entered.
+              ...(userName && !shop.ownerName?.trim()
+                ? { ownerName: userName }
+                : {}),
+            },
+          });
+
+          await tx.websiteProvision.updateMany({
+            where: { shopId: shop.id },
+            data: { userId },
+          });
+        }
+
+        await tx.platformInvite.update({
+          where: { id: invite.id },
+          data: { used: true, usedAt: new Date(), usedBy: userId },
+        });
+
+        return shop;
+      });
+
+      if (claimedShop?.isPublic) {
+        publicShopsChanged([shopPath(claimedShop)]);
+      }
+
+      return {
         message: "Welcome to the platform!",
         redirectUrl: (await consumeUpcyReturnTo()) ?? "/admin/welcome",
       };
