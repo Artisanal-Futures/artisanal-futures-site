@@ -1,7 +1,9 @@
+import { cookies } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { parseSocialLinks } from "~/lib/social-links";
+import { isUpcyUrl, UPCY_RETURN_COOKIE } from "~/lib/upcy";
 import {
   adminOnboardingSchema,
   artisanOnboardingSchema,
@@ -12,6 +14,15 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
+
+/** UPCY URL the member started from (set by middleware), consumed once. */
+async function consumeUpcyReturnTo(): Promise<string | undefined> {
+  const store = await cookies();
+  const value = store.get(UPCY_RETURN_COOKIE)?.value;
+  if (value === undefined) return undefined;
+  store.delete(UPCY_RETURN_COOKIE);
+  return isUpcyUrl(value) ? value : undefined;
+}
 
 function isValidArtisanCode(
   invite: { role: string; used: boolean; expiresAt: Date } | null,
@@ -160,7 +171,7 @@ export const onboardingRouter = createTRPCRouter({
       return {
         data: business,
         message: "Welcome to the platform!",
-        redirectUrl: "/admin/welcome",
+        redirectUrl: (await consumeUpcyReturnTo()) ?? "/admin/welcome",
       };
     }),
 
@@ -218,7 +229,7 @@ export const onboardingRouter = createTRPCRouter({
       return {
         data: guest,
         message: "Welcome to the platform!",
-        redirectUrl: "/join/guest/welcome",
+        redirectUrl: (await consumeUpcyReturnTo()) ?? "/join/guest/welcome",
       };
     }),
 
@@ -250,7 +261,8 @@ export const onboardingRouter = createTRPCRouter({
 
       return {
         message: "Welcome to the platform!",
-        redirectUrl: "/auth/join/admin/welcome",
+        redirectUrl:
+          (await consumeUpcyReturnTo()) ?? "/auth/join/admin/welcome",
       };
     }),
 

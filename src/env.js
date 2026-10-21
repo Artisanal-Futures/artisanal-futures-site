@@ -106,6 +106,8 @@ export const env = createEnv({
     NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string(),
 
     NEXT_PUBLIC_HELP_DOCS_URL: z.string(),
+    // Base URL of the UPCY generator app (no trailing slash).
+    NEXT_PUBLIC_UPCY_URL: z.string().url(),
 
     // Canonical origin of this deployment (no trailing slash needed). Optional
     // so a deploy never fails if it isn't set; src/lib/seo/site-url.ts falls
@@ -172,6 +174,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_HEART_VOTE_DISABLED,
 
     NEXT_PUBLIC_HELP_DOCS_URL: process.env.NEXT_PUBLIC_HELP_DOCS_URL,
+    NEXT_PUBLIC_UPCY_URL: process.env.NEXT_PUBLIC_UPCY_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
   /**

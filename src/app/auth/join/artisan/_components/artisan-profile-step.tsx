@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import type { SignupFormData } from "~/lib/validators/onboarding";
 import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
+import { navigateTo } from "~/lib/upcy";
 import { slugify } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { Alert, AlertDescription } from "~/components/ui/alert";
@@ -48,7 +49,7 @@ export function ArtisanProfileStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      router.push(data.redirectUrl ?? "/");
+      navigateTo(data.redirectUrl ?? "/", router);
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to onboard artisan", {

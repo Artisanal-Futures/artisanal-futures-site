@@ -19,6 +19,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import type { GuestSignupFormData } from "~/lib/validators/onboarding";
 import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
+import { navigateTo } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 
 import { WizardFooter } from "../../_components/wizard-footer";
@@ -50,7 +51,7 @@ export function GuestPracticesStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      router.push("/join/welcome");
+      navigateTo(data.redirectUrl ?? "/join/welcome", router);
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to onboard guest", {

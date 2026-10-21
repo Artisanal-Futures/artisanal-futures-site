@@ -11,6 +11,7 @@ import { RecaptchaDisclosure } from "~/components/inputs/recaptcha-disclosure";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import type { AdminSignupFormData } from "~/lib/validators/onboarding";
 import { useRecaptchaV3 } from "~/lib/captcha/use-recaptcha-v3";
+import { navigateTo } from "~/lib/upcy";
 import { api } from "~/trpc/react";
 
 import { WizardFooter } from "../../_components/wizard-footer";
@@ -35,7 +36,7 @@ export function AdminAccountDetailsStep() {
       toast.success(data.message ?? "Welcome to the platform!", {
         id: context?.toastId,
       });
-      router.push(data.redirectUrl);
+      navigateTo(data.redirectUrl, router);
     },
     onError: (error, _input, context) => {
       toast.error(error.message ?? "Failed to onboard admin", {
