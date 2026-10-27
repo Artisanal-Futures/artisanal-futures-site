@@ -11,6 +11,7 @@ const SECTIONS = [
   { segment: "services", label: "Services" },
   { segment: "sync", label: "Sync" },
   { segment: "insights", label: "Insights" },
+  { segment: "integrations", label: "Integrations" },
 ] as const;
 
 type Props = {

@@ -15,6 +15,7 @@ import { pageSeoRouter } from "./routers/page-seo";
 import { productRouter } from "./routers/product";
 import { productSyncRouter } from "./routers/product-sync";
 import { serviceRouter } from "./routers/service";
+import { shopApiTokenRouter } from "./routers/shop-api-token";
 import { shopsRouter } from "./routers/shops";
 import { siteSettingsRouter } from "./routers/site-settings";
 import { surveysRouter } from "./routers/surveys";
@@ -36,6 +37,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   product: productRouter,
   productSync: productSyncRouter,
+  shopApiToken: shopApiTokenRouter,
   service: serviceRouter,
   migration: migrationRouter,
   category: categoryRouter,

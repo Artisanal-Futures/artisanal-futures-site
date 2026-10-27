@@ -1,6 +1,11 @@
 import type { MapShop } from "./types";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 
+// Distance lives in ~/lib/geo so server code can share it; re-exported here so
+// map callers keep importing from one place.
+export { distanceMiles } from "~/lib/geo/distance";
+export type { LatLng } from "~/lib/geo/distance";
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -12,14 +17,6 @@ export type MapStats = {
   products: number;
   services: number;
 };
-
-export type LatLng = { lat: number; lng: number };
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const EARTH_RADIUS_MILES = 3958.8;
 
 // ---------------------------------------------------------------------------
 // Stats
@@ -78,17 +75,6 @@ export function countAttributes(
 // ---------------------------------------------------------------------------
 // Distance
 // ---------------------------------------------------------------------------
-
-/** Great-circle distance in miles (haversine). */
-export function distanceMiles(a: LatLng, b: LatLng): number {
-  const toRad = (degrees: number) => (degrees * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * EARTH_RADIUS_MILES * Math.asin(Math.min(1, Math.sqrt(h)));
-}
 
 /**
  * "<1 mi", "8.2 mi", "23 mi". Approximate pins are offset on purpose, so

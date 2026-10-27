@@ -419,6 +419,7 @@ model Shop {
   syncRuns         ProductSyncRun[]
   privateContact   ShopPrivateContact?
   outboundClicks   OutboundClick[]
+  apiTokens        ShopApiToken[]
 }
 
 model ShopAddress {
@@ -464,6 +465,32 @@ model ShopPrivateContact {
   updatedById String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+/// Read-only API token a shop owner issues to an external integration (e.g.
+/// ProfitMax). Stored HASHED, not encrypted: auth looks the row up with
+/// `where: { tokenHash }`, and encrypted columns can never appear in a
+/// `where`. The raw token (`afk_...`) is shown to the owner exactly once at
+/// creation and is unrecoverable afterwards; `prefix` (its first 12 chars) is
+/// all the UI ever displays. Revoke = set `revokedAt`; rows are never deleted
+/// by the app. `createdById` is a plain User id (no relation), like other
+/// audit-only creator columns.
+model ShopApiToken {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  name        String // owner label, e.g. "ProfitMax"
+  tokenHash   String    @unique // sha256 hex of the raw token
+  prefix      String // first 12 chars of the raw token (incl. "afk_")
+  scopes      String[] // ApiTokenScope values, e.g. "profile:read"
+  createdById String?
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+
+  @@index([shopId])
 }
 
 model Member {
