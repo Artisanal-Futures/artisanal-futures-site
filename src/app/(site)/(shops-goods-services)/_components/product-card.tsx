@@ -2,7 +2,7 @@
 
 import type { RouterOutputs } from "~/trpc/react";
 import { formatPrice } from "~/lib/format-price";
-import { handleImageUrl } from "~/lib/handle-image-url";
+import { handleImageUrl, resolveStorageImageUrl } from "~/lib/handle-image-url";
 import { Badge } from "~/components/ui/badge";
 import { ImageWithFallback } from "~/components/image-with-fallback";
 
@@ -35,10 +35,13 @@ export function ProductCard({
 }: Props) {
   const fallbackSrc =
     fallbackImage?.trim() && fallbackImage !== "null"
-      ? fallbackImage.startsWith("http")
-        ? fallbackImage
-        : handleImageUrl(fallbackImage)
+      ? handleImageUrl(fallbackImage)
       : undefined;
+  // Only services carry these fields; bare storage keys resolve per folder
+  const isService = "serviceUrl" in item || "durationInMinutes" in item;
+  const imageSrc = item.imageUrl
+    ? resolveStorageImageUrl(item.imageUrl, isService ? "services" : "products")
+    : null;
   const price = formatPrice(item.priceInCents, item.currency);
   return (
     <button
@@ -47,10 +50,10 @@ export function ProductCard({
       className="group border-border bg-card hover:border-ring/30 flex cursor-pointer flex-col overflow-hidden rounded-xl border text-left shadow-sm transition-all hover:shadow-md"
     >
       {/* Image */}
-      {item.imageUrl ? (
+      {imageSrc ? (
         <div className="bg-muted relative aspect-square w-full overflow-hidden">
           <ImageWithFallback
-            src={item.imageUrl ?? "/placeholder.svg"}
+            src={imageSrc}
             fallbackSrc={fallbackSrc}
             alt={item.name}
             fill

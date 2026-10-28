@@ -4,9 +4,10 @@ import type { Metadata } from "next";
 
 import { env } from "~/env";
 
+import { truncate } from "./plain-text";
 import { absoluteUrl, SITE_URL } from "./site-url";
 
-export { absoluteUrl, SITE_URL };
+export { absoluteUrl, SITE_URL, truncate };
 
 export const SITE_NAME = "Artisanal Futures";
 export const SITE_ALTERNATE_NAMES = ["ArtisanalFutures", "AF"];
@@ -15,34 +16,6 @@ export const DEFAULT_DESCRIPTION =
 
 /** Path of the default branded share card (src/app/opengraph-image.tsx). */
 const DEFAULT_OG_IMAGE_PATH = "/opengraph-image";
-
-/**
- * Shorten text for a meta description: strips markdown/HTML and collapses
- * whitespace, then cuts on a word boundary with an ellipsis.
- */
-export function truncate(text: string | null | undefined, max = 155) {
-  if (!text) return "";
-
-  const plain = text
-    .replace(/<[^>]*>/g, " ") // HTML tags
-    .replace(/&nbsp;/g, " ") // scraped descriptions carry HTML entities
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;|&apos;/g, "'")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ") // markdown images
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // markdown links -> link text
-    .replace(/[*_~`>#]+/g, "") // markdown emphasis / headings / quotes
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (plain.length <= max) return plain;
-
-  const cut = plain.slice(0, max - 1);
-  const lastSpace = cut.lastIndexOf(" ");
-  // Only back up to a word boundary if that doesn't throw away most of the text.
-  const base = lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut;
-  return `${base.replace(/[\s.,;:!?-]+$/, "")}…`;
-}
 
 const PRODUCTION_HOSTS = ["artisanalfutures.org", "www.artisanalfutures.org"];
 

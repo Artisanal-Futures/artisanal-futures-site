@@ -116,6 +116,18 @@ export type ShopAddress = $Result.DefaultSelection<Prisma.$ShopAddressPayload>
  */
 export type ShopPrivateContact = $Result.DefaultSelection<Prisma.$ShopPrivateContactPayload>
 /**
+ * Model ShopApiToken
+ * Read-only API token a shop owner issues to an external integration (e.g.
+ * ProfitMax). Stored HASHED, not encrypted: auth looks the row up with
+ * `where: { tokenHash }`, and encrypted columns can never appear in a
+ * `where`. The raw token (`afk_...`) is shown to the owner exactly once at
+ * creation and is unrecoverable afterwards; `prefix` (its first 12 chars) is
+ * all the UI ever displays. Revoke = set `revokedAt`; rows are never deleted
+ * by the app. `createdById` is a plain User id (no relation), like other
+ * audit-only creator columns.
+ */
+export type ShopApiToken = $Result.DefaultSelection<Prisma.$ShopApiTokenPayload>
+/**
  * Model Member
  * 
  */
@@ -1021,6 +1033,16 @@ export class PrismaClient<
   get shopPrivateContact(): Prisma.ShopPrivateContactDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.shopApiToken`: Exposes CRUD operations for the **ShopApiToken** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ShopApiTokens
+    * const shopApiTokens = await prisma.shopApiToken.findMany()
+    * ```
+    */
+  get shopApiToken(): Prisma.ShopApiTokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.member`: Exposes CRUD operations for the **Member** model.
     * Example usage:
     * ```ts
@@ -1879,6 +1901,7 @@ export namespace Prisma {
     Shop: 'Shop',
     ShopAddress: 'ShopAddress',
     ShopPrivateContact: 'ShopPrivateContact',
+    ShopApiToken: 'ShopApiToken',
     Member: 'Member',
     Message: 'Message',
     Conversation: 'Conversation',
@@ -1937,7 +1960,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "outboundClick" | "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "siteSettings" | "pageSeo" | "shop" | "shopAddress" | "shopPrivateContact" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
+      modelProps: "outboundClick" | "category" | "event" | "subreddit" | "subscription" | "post" | "forumComment" | "vote" | "commentVote" | "platformInvite" | "productSyncRun" | "productSyncProposal" | "service" | "product" | "siteSettings" | "pageSeo" | "shop" | "shopAddress" | "shopPrivateContact" | "shopApiToken" | "member" | "message" | "conversation" | "profile" | "server" | "channel" | "directMessage" | "depot" | "address" | "schedule" | "driver" | "vehicle" | "break" | "client" | "job" | "route" | "optimizedRoutePath" | "optimizedStop" | "survey" | "guestSurvey" | "artisanSurvey" | "generatedImages" | "generationSurvey" | "variation" | "modification" | "upcycleResult" | "upcycleQuestion" | "notification" | "upcycleRating" | "generationJob" | "trainingDataSet" | "trainingImage" | "trainingJob" | "trainingModel" | "websiteProvision" | "example" | "account" | "session" | "user" | "verification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3344,6 +3367,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ShopPrivateContactCountArgs<ExtArgs>
             result: $Utils.Optional<ShopPrivateContactCountAggregateOutputType> | number
+          }
+        }
+      }
+      ShopApiToken: {
+        payload: Prisma.$ShopApiTokenPayload<ExtArgs>
+        fields: Prisma.ShopApiTokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ShopApiTokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ShopApiTokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          findFirst: {
+            args: Prisma.ShopApiTokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ShopApiTokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          findMany: {
+            args: Prisma.ShopApiTokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>[]
+          }
+          create: {
+            args: Prisma.ShopApiTokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          createMany: {
+            args: Prisma.ShopApiTokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ShopApiTokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>[]
+          }
+          delete: {
+            args: Prisma.ShopApiTokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          update: {
+            args: Prisma.ShopApiTokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.ShopApiTokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ShopApiTokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ShopApiTokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.ShopApiTokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ShopApiTokenPayload>
+          }
+          aggregate: {
+            args: Prisma.ShopApiTokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShopApiToken>
+          }
+          groupBy: {
+            args: Prisma.ShopApiTokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ShopApiTokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ShopApiTokenCountArgs<ExtArgs>
+            result: $Utils.Optional<ShopApiTokenCountAggregateOutputType> | number
           }
         }
       }
@@ -6422,6 +6519,7 @@ export namespace Prisma {
     shop?: ShopOmit
     shopAddress?: ShopAddressOmit
     shopPrivateContact?: ShopPrivateContactOmit
+    shopApiToken?: ShopApiTokenOmit
     member?: MemberOmit
     message?: MessageOmit
     conversation?: ConversationOmit
@@ -6837,6 +6935,7 @@ export namespace Prisma {
     invites: number
     syncRuns: number
     outboundClicks: number
+    apiTokens: number
   }
 
   export type ShopCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6846,6 +6945,7 @@ export namespace Prisma {
     invites?: boolean | ShopCountOutputTypeCountInvitesArgs
     syncRuns?: boolean | ShopCountOutputTypeCountSyncRunsArgs
     outboundClicks?: boolean | ShopCountOutputTypeCountOutboundClicksArgs
+    apiTokens?: boolean | ShopCountOutputTypeCountApiTokensArgs
   }
 
   // Custom InputTypes
@@ -6899,6 +6999,13 @@ export namespace Prisma {
    */
   export type ShopCountOutputTypeCountOutboundClicksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OutboundClickWhereInput
+  }
+
+  /**
+   * ShopCountOutputType without action
+   */
+  export type ShopCountOutputTypeCountApiTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShopApiTokenWhereInput
   }
 
 
@@ -26188,6 +26295,8 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    collabOffers: string | null
+    collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
@@ -26217,6 +26326,8 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    collabOffers: string | null
+    collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
@@ -26249,6 +26360,10 @@ export namespace Prisma {
     slug: number
     previousSlugs: number
     socialLinks: number
+    collabOffers: number
+    collabOfferTags: number
+    collabNeeds: number
+    collabNeedTags: number
     locationType: number
     seoTitle: number
     seoDescription: number
@@ -26280,6 +26395,8 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    collabOffers?: true
+    collabNeeds?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26309,6 +26426,8 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    collabOffers?: true
+    collabNeeds?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26341,6 +26460,10 @@ export namespace Prisma {
     slug?: true
     previousSlugs?: true
     socialLinks?: true
+    collabOffers?: true
+    collabOfferTags?: true
+    collabNeeds?: true
+    collabNeedTags?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26446,6 +26569,10 @@ export namespace Prisma {
     slug: string | null
     previousSlugs: string[]
     socialLinks: string[]
+    collabOffers: string | null
+    collabOfferTags: string[]
+    collabNeeds: string | null
+    collabNeedTags: string[]
     locationType: $Enums.ShopLocationType
     seoTitle: string | null
     seoDescription: string | null
@@ -26495,6 +26622,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26515,6 +26646,7 @@ export namespace Prisma {
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     outboundClicks?: boolean | Shop$outboundClicksArgs<ExtArgs>
+    apiTokens?: boolean | Shop$apiTokensArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["shop"]>
 
@@ -26538,6 +26670,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26571,6 +26707,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26604,6 +26744,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26616,7 +26760,7 @@ export namespace Prisma {
     lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "collabOffers" | "collabOfferTags" | "collabNeeds" | "collabNeedTags" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -26628,6 +26772,7 @@ export namespace Prisma {
     syncRuns?: boolean | Shop$syncRunsArgs<ExtArgs>
     privateContact?: boolean | Shop$privateContactArgs<ExtArgs>
     outboundClicks?: boolean | Shop$outboundClicksArgs<ExtArgs>
+    apiTokens?: boolean | Shop$apiTokensArgs<ExtArgs>
     _count?: boolean | ShopCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ShopIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -26650,6 +26795,7 @@ export namespace Prisma {
       syncRuns: Prisma.$ProductSyncRunPayload<ExtArgs>[]
       privateContact: Prisma.$ShopPrivateContactPayload<ExtArgs> | null
       outboundClicks: Prisma.$OutboundClickPayload<ExtArgs>[]
+      apiTokens: Prisma.$ShopApiTokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -26679,6 +26825,16 @@ export namespace Prisma {
        * shop's schema.org `sameAs`.
        */
       socialLinks: string[]
+      /**
+       * Opt-in, public mutual-aid listing: what the shop can offer other members
+       * and what it's looking for. Tags are `COLLABORATION_TAGS` labels
+       * (src/lib/constants/collaboration-tags.ts); the text is plain, ≤ 500 chars.
+       * Shown on the profile, in /llms-full.txt and the Shop Profile API.
+       */
+      collabOffers: string | null
+      collabOfferTags: string[]
+      collabNeeds: string | null
+      collabNeedTags: string[]
       /**
        * How precisely the shop's location is shown publicly. STOREFRONT pins the
        * street address and shows it on the profile; HOME_BASED keeps the street
@@ -27114,6 +27270,7 @@ export namespace Prisma {
     syncRuns<T extends Shop$syncRunsArgs<ExtArgs> = {}>(args?: Subset<T, Shop$syncRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductSyncRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     privateContact<T extends Shop$privateContactArgs<ExtArgs> = {}>(args?: Subset<T, Shop$privateContactArgs<ExtArgs>>): Prisma__ShopPrivateContactClient<$Result.GetResult<Prisma.$ShopPrivateContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     outboundClicks<T extends Shop$outboundClicksArgs<ExtArgs> = {}>(args?: Subset<T, Shop$outboundClicksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OutboundClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    apiTokens<T extends Shop$apiTokensArgs<ExtArgs> = {}>(args?: Subset<T, Shop$apiTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -27162,6 +27319,10 @@ export namespace Prisma {
     readonly slug: FieldRef<"Shop", 'String'>
     readonly previousSlugs: FieldRef<"Shop", 'String[]'>
     readonly socialLinks: FieldRef<"Shop", 'String[]'>
+    readonly collabOffers: FieldRef<"Shop", 'String'>
+    readonly collabOfferTags: FieldRef<"Shop", 'String[]'>
+    readonly collabNeeds: FieldRef<"Shop", 'String'>
+    readonly collabNeedTags: FieldRef<"Shop", 'String[]'>
     readonly locationType: FieldRef<"Shop", 'ShopLocationType'>
     readonly seoTitle: FieldRef<"Shop", 'String'>
     readonly seoDescription: FieldRef<"Shop", 'String'>
@@ -27766,6 +27927,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OutboundClickScalarFieldEnum | OutboundClickScalarFieldEnum[]
+  }
+
+  /**
+   * Shop.apiTokens
+   */
+  export type Shop$apiTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    where?: ShopApiTokenWhereInput
+    orderBy?: ShopApiTokenOrderByWithRelationInput | ShopApiTokenOrderByWithRelationInput[]
+    cursor?: ShopApiTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShopApiTokenScalarFieldEnum | ShopApiTokenScalarFieldEnum[]
   }
 
   /**
@@ -30135,6 +30320,1125 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ShopPrivateContactInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ShopApiToken
+   */
+
+  export type AggregateShopApiToken = {
+    _count: ShopApiTokenCountAggregateOutputType | null
+    _min: ShopApiTokenMinAggregateOutputType | null
+    _max: ShopApiTokenMaxAggregateOutputType | null
+  }
+
+  export type ShopApiTokenMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    shopId: string | null
+    name: string | null
+    tokenHash: string | null
+    prefix: string | null
+    createdById: string | null
+    lastUsedAt: Date | null
+    revokedAt: Date | null
+  }
+
+  export type ShopApiTokenMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    shopId: string | null
+    name: string | null
+    tokenHash: string | null
+    prefix: string | null
+    createdById: string | null
+    lastUsedAt: Date | null
+    revokedAt: Date | null
+  }
+
+  export type ShopApiTokenCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    shopId: number
+    name: number
+    tokenHash: number
+    prefix: number
+    scopes: number
+    createdById: number
+    lastUsedAt: number
+    revokedAt: number
+    _all: number
+  }
+
+
+  export type ShopApiTokenMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    name?: true
+    tokenHash?: true
+    prefix?: true
+    createdById?: true
+    lastUsedAt?: true
+    revokedAt?: true
+  }
+
+  export type ShopApiTokenMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    name?: true
+    tokenHash?: true
+    prefix?: true
+    createdById?: true
+    lastUsedAt?: true
+    revokedAt?: true
+  }
+
+  export type ShopApiTokenCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    shopId?: true
+    name?: true
+    tokenHash?: true
+    prefix?: true
+    scopes?: true
+    createdById?: true
+    lastUsedAt?: true
+    revokedAt?: true
+    _all?: true
+  }
+
+  export type ShopApiTokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopApiToken to aggregate.
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopApiTokens to fetch.
+     */
+    orderBy?: ShopApiTokenOrderByWithRelationInput | ShopApiTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ShopApiTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopApiTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopApiTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ShopApiTokens
+    **/
+    _count?: true | ShopApiTokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ShopApiTokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ShopApiTokenMaxAggregateInputType
+  }
+
+  export type GetShopApiTokenAggregateType<T extends ShopApiTokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateShopApiToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShopApiToken[P]>
+      : GetScalarType<T[P], AggregateShopApiToken[P]>
+  }
+
+
+
+
+  export type ShopApiTokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShopApiTokenWhereInput
+    orderBy?: ShopApiTokenOrderByWithAggregationInput | ShopApiTokenOrderByWithAggregationInput[]
+    by: ShopApiTokenScalarFieldEnum[] | ShopApiTokenScalarFieldEnum
+    having?: ShopApiTokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ShopApiTokenCountAggregateInputType | true
+    _min?: ShopApiTokenMinAggregateInputType
+    _max?: ShopApiTokenMaxAggregateInputType
+  }
+
+  export type ShopApiTokenGroupByOutputType = {
+    id: string
+    createdAt: Date
+    shopId: string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes: string[]
+    createdById: string | null
+    lastUsedAt: Date | null
+    revokedAt: Date | null
+    _count: ShopApiTokenCountAggregateOutputType | null
+    _min: ShopApiTokenMinAggregateOutputType | null
+    _max: ShopApiTokenMaxAggregateOutputType | null
+  }
+
+  type GetShopApiTokenGroupByPayload<T extends ShopApiTokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ShopApiTokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ShopApiTokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ShopApiTokenGroupByOutputType[P]>
+            : GetScalarType<T[P], ShopApiTokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ShopApiTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    name?: boolean
+    tokenHash?: boolean
+    prefix?: boolean
+    scopes?: boolean
+    createdById?: boolean
+    lastUsedAt?: boolean
+    revokedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopApiToken"]>
+
+  export type ShopApiTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    name?: boolean
+    tokenHash?: boolean
+    prefix?: boolean
+    scopes?: boolean
+    createdById?: boolean
+    lastUsedAt?: boolean
+    revokedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopApiToken"]>
+
+  export type ShopApiTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    name?: boolean
+    tokenHash?: boolean
+    prefix?: boolean
+    scopes?: boolean
+    createdById?: boolean
+    lastUsedAt?: boolean
+    revokedAt?: boolean
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["shopApiToken"]>
+
+  export type ShopApiTokenSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    shopId?: boolean
+    name?: boolean
+    tokenHash?: boolean
+    prefix?: boolean
+    scopes?: boolean
+    createdById?: boolean
+    lastUsedAt?: boolean
+    revokedAt?: boolean
+  }
+
+  export type ShopApiTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "shopId" | "name" | "tokenHash" | "prefix" | "scopes" | "createdById" | "lastUsedAt" | "revokedAt", ExtArgs["result"]["shopApiToken"]>
+  export type ShopApiTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopApiTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+  export type ShopApiTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shop?: boolean | ShopDefaultArgs<ExtArgs>
+  }
+
+  export type $ShopApiTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ShopApiToken"
+    objects: {
+      shop: Prisma.$ShopPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      shopId: string
+      name: string
+      tokenHash: string
+      prefix: string
+      scopes: string[]
+      createdById: string | null
+      lastUsedAt: Date | null
+      revokedAt: Date | null
+    }, ExtArgs["result"]["shopApiToken"]>
+    composites: {}
+  }
+
+  type ShopApiTokenGetPayload<S extends boolean | null | undefined | ShopApiTokenDefaultArgs> = $Result.GetResult<Prisma.$ShopApiTokenPayload, S>
+
+  type ShopApiTokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ShopApiTokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ShopApiTokenCountAggregateInputType | true
+    }
+
+  export interface ShopApiTokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ShopApiToken'], meta: { name: 'ShopApiToken' } }
+    /**
+     * Find zero or one ShopApiToken that matches the filter.
+     * @param {ShopApiTokenFindUniqueArgs} args - Arguments to find a ShopApiToken
+     * @example
+     * // Get one ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ShopApiTokenFindUniqueArgs>(args: SelectSubset<T, ShopApiTokenFindUniqueArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ShopApiToken that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ShopApiTokenFindUniqueOrThrowArgs} args - Arguments to find a ShopApiToken
+     * @example
+     * // Get one ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ShopApiTokenFindUniqueOrThrowArgs>(args: SelectSubset<T, ShopApiTokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopApiToken that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenFindFirstArgs} args - Arguments to find a ShopApiToken
+     * @example
+     * // Get one ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ShopApiTokenFindFirstArgs>(args?: SelectSubset<T, ShopApiTokenFindFirstArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ShopApiToken that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenFindFirstOrThrowArgs} args - Arguments to find a ShopApiToken
+     * @example
+     * // Get one ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ShopApiTokenFindFirstOrThrowArgs>(args?: SelectSubset<T, ShopApiTokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ShopApiTokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ShopApiTokens
+     * const shopApiTokens = await prisma.shopApiToken.findMany()
+     * 
+     * // Get first 10 ShopApiTokens
+     * const shopApiTokens = await prisma.shopApiToken.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shopApiTokenWithIdOnly = await prisma.shopApiToken.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ShopApiTokenFindManyArgs>(args?: SelectSubset<T, ShopApiTokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ShopApiToken.
+     * @param {ShopApiTokenCreateArgs} args - Arguments to create a ShopApiToken.
+     * @example
+     * // Create one ShopApiToken
+     * const ShopApiToken = await prisma.shopApiToken.create({
+     *   data: {
+     *     // ... data to create a ShopApiToken
+     *   }
+     * })
+     * 
+     */
+    create<T extends ShopApiTokenCreateArgs>(args: SelectSubset<T, ShopApiTokenCreateArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ShopApiTokens.
+     * @param {ShopApiTokenCreateManyArgs} args - Arguments to create many ShopApiTokens.
+     * @example
+     * // Create many ShopApiTokens
+     * const shopApiToken = await prisma.shopApiToken.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ShopApiTokenCreateManyArgs>(args?: SelectSubset<T, ShopApiTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ShopApiTokens and returns the data saved in the database.
+     * @param {ShopApiTokenCreateManyAndReturnArgs} args - Arguments to create many ShopApiTokens.
+     * @example
+     * // Create many ShopApiTokens
+     * const shopApiToken = await prisma.shopApiToken.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ShopApiTokens and only return the `id`
+     * const shopApiTokenWithIdOnly = await prisma.shopApiToken.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ShopApiTokenCreateManyAndReturnArgs>(args?: SelectSubset<T, ShopApiTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ShopApiToken.
+     * @param {ShopApiTokenDeleteArgs} args - Arguments to delete one ShopApiToken.
+     * @example
+     * // Delete one ShopApiToken
+     * const ShopApiToken = await prisma.shopApiToken.delete({
+     *   where: {
+     *     // ... filter to delete one ShopApiToken
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ShopApiTokenDeleteArgs>(args: SelectSubset<T, ShopApiTokenDeleteArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ShopApiToken.
+     * @param {ShopApiTokenUpdateArgs} args - Arguments to update one ShopApiToken.
+     * @example
+     * // Update one ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ShopApiTokenUpdateArgs>(args: SelectSubset<T, ShopApiTokenUpdateArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ShopApiTokens.
+     * @param {ShopApiTokenDeleteManyArgs} args - Arguments to filter ShopApiTokens to delete.
+     * @example
+     * // Delete a few ShopApiTokens
+     * const { count } = await prisma.shopApiToken.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ShopApiTokenDeleteManyArgs>(args?: SelectSubset<T, ShopApiTokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopApiTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ShopApiTokens
+     * const shopApiToken = await prisma.shopApiToken.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ShopApiTokenUpdateManyArgs>(args: SelectSubset<T, ShopApiTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ShopApiTokens and returns the data updated in the database.
+     * @param {ShopApiTokenUpdateManyAndReturnArgs} args - Arguments to update many ShopApiTokens.
+     * @example
+     * // Update many ShopApiTokens
+     * const shopApiToken = await prisma.shopApiToken.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ShopApiTokens and only return the `id`
+     * const shopApiTokenWithIdOnly = await prisma.shopApiToken.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ShopApiTokenUpdateManyAndReturnArgs>(args: SelectSubset<T, ShopApiTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ShopApiToken.
+     * @param {ShopApiTokenUpsertArgs} args - Arguments to update or create a ShopApiToken.
+     * @example
+     * // Update or create a ShopApiToken
+     * const shopApiToken = await prisma.shopApiToken.upsert({
+     *   create: {
+     *     // ... data to create a ShopApiToken
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ShopApiToken we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ShopApiTokenUpsertArgs>(args: SelectSubset<T, ShopApiTokenUpsertArgs<ExtArgs>>): Prisma__ShopApiTokenClient<$Result.GetResult<Prisma.$ShopApiTokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ShopApiTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenCountArgs} args - Arguments to filter ShopApiTokens to count.
+     * @example
+     * // Count the number of ShopApiTokens
+     * const count = await prisma.shopApiToken.count({
+     *   where: {
+     *     // ... the filter for the ShopApiTokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends ShopApiTokenCountArgs>(
+      args?: Subset<T, ShopApiTokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ShopApiTokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ShopApiToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ShopApiTokenAggregateArgs>(args: Subset<T, ShopApiTokenAggregateArgs>): Prisma.PrismaPromise<GetShopApiTokenAggregateType<T>>
+
+    /**
+     * Group by ShopApiToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ShopApiTokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ShopApiTokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ShopApiTokenGroupByArgs['orderBy'] }
+        : { orderBy?: ShopApiTokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ShopApiTokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShopApiTokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ShopApiToken model
+   */
+  readonly fields: ShopApiTokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ShopApiToken.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ShopApiTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shop<T extends ShopDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShopDefaultArgs<ExtArgs>>): Prisma__ShopClient<$Result.GetResult<Prisma.$ShopPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ShopApiToken model
+   */
+  interface ShopApiTokenFieldRefs {
+    readonly id: FieldRef<"ShopApiToken", 'String'>
+    readonly createdAt: FieldRef<"ShopApiToken", 'DateTime'>
+    readonly shopId: FieldRef<"ShopApiToken", 'String'>
+    readonly name: FieldRef<"ShopApiToken", 'String'>
+    readonly tokenHash: FieldRef<"ShopApiToken", 'String'>
+    readonly prefix: FieldRef<"ShopApiToken", 'String'>
+    readonly scopes: FieldRef<"ShopApiToken", 'String[]'>
+    readonly createdById: FieldRef<"ShopApiToken", 'String'>
+    readonly lastUsedAt: FieldRef<"ShopApiToken", 'DateTime'>
+    readonly revokedAt: FieldRef<"ShopApiToken", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ShopApiToken findUnique
+   */
+  export type ShopApiTokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopApiToken to fetch.
+     */
+    where: ShopApiTokenWhereUniqueInput
+  }
+
+  /**
+   * ShopApiToken findUniqueOrThrow
+   */
+  export type ShopApiTokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopApiToken to fetch.
+     */
+    where: ShopApiTokenWhereUniqueInput
+  }
+
+  /**
+   * ShopApiToken findFirst
+   */
+  export type ShopApiTokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopApiToken to fetch.
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopApiTokens to fetch.
+     */
+    orderBy?: ShopApiTokenOrderByWithRelationInput | ShopApiTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopApiTokens.
+     */
+    cursor?: ShopApiTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopApiTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopApiTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopApiTokens.
+     */
+    distinct?: ShopApiTokenScalarFieldEnum | ShopApiTokenScalarFieldEnum[]
+  }
+
+  /**
+   * ShopApiToken findFirstOrThrow
+   */
+  export type ShopApiTokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopApiToken to fetch.
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopApiTokens to fetch.
+     */
+    orderBy?: ShopApiTokenOrderByWithRelationInput | ShopApiTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ShopApiTokens.
+     */
+    cursor?: ShopApiTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopApiTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopApiTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ShopApiTokens.
+     */
+    distinct?: ShopApiTokenScalarFieldEnum | ShopApiTokenScalarFieldEnum[]
+  }
+
+  /**
+   * ShopApiToken findMany
+   */
+  export type ShopApiTokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which ShopApiTokens to fetch.
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ShopApiTokens to fetch.
+     */
+    orderBy?: ShopApiTokenOrderByWithRelationInput | ShopApiTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ShopApiTokens.
+     */
+    cursor?: ShopApiTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ShopApiTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ShopApiTokens.
+     */
+    skip?: number
+    distinct?: ShopApiTokenScalarFieldEnum | ShopApiTokenScalarFieldEnum[]
+  }
+
+  /**
+   * ShopApiToken create
+   */
+  export type ShopApiTokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ShopApiToken.
+     */
+    data: XOR<ShopApiTokenCreateInput, ShopApiTokenUncheckedCreateInput>
+  }
+
+  /**
+   * ShopApiToken createMany
+   */
+  export type ShopApiTokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ShopApiTokens.
+     */
+    data: ShopApiTokenCreateManyInput | ShopApiTokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ShopApiToken createManyAndReturn
+   */
+  export type ShopApiTokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many ShopApiTokens.
+     */
+    data: ShopApiTokenCreateManyInput | ShopApiTokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopApiToken update
+   */
+  export type ShopApiTokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ShopApiToken.
+     */
+    data: XOR<ShopApiTokenUpdateInput, ShopApiTokenUncheckedUpdateInput>
+    /**
+     * Choose, which ShopApiToken to update.
+     */
+    where: ShopApiTokenWhereUniqueInput
+  }
+
+  /**
+   * ShopApiToken updateMany
+   */
+  export type ShopApiTokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ShopApiTokens.
+     */
+    data: XOR<ShopApiTokenUpdateManyMutationInput, ShopApiTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopApiTokens to update
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * Limit how many ShopApiTokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopApiToken updateManyAndReturn
+   */
+  export type ShopApiTokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * The data used to update ShopApiTokens.
+     */
+    data: XOR<ShopApiTokenUpdateManyMutationInput, ShopApiTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which ShopApiTokens to update
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * Limit how many ShopApiTokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ShopApiToken upsert
+   */
+  export type ShopApiTokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ShopApiToken to update in case it exists.
+     */
+    where: ShopApiTokenWhereUniqueInput
+    /**
+     * In case the ShopApiToken found by the `where` argument doesn't exist, create a new ShopApiToken with this data.
+     */
+    create: XOR<ShopApiTokenCreateInput, ShopApiTokenUncheckedCreateInput>
+    /**
+     * In case the ShopApiToken was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ShopApiTokenUpdateInput, ShopApiTokenUncheckedUpdateInput>
+  }
+
+  /**
+   * ShopApiToken delete
+   */
+  export type ShopApiTokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
+    /**
+     * Filter which ShopApiToken to delete.
+     */
+    where: ShopApiTokenWhereUniqueInput
+  }
+
+  /**
+   * ShopApiToken deleteMany
+   */
+  export type ShopApiTokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ShopApiTokens to delete
+     */
+    where?: ShopApiTokenWhereInput
+    /**
+     * Limit how many ShopApiTokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ShopApiToken without action
+   */
+  export type ShopApiTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ShopApiToken
+     */
+    select?: ShopApiTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ShopApiToken
+     */
+    omit?: ShopApiTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShopApiTokenInclude<ExtArgs> | null
   }
 
 
@@ -77738,6 +79042,10 @@ export namespace Prisma {
     slug: 'slug',
     previousSlugs: 'previousSlugs',
     socialLinks: 'socialLinks',
+    collabOffers: 'collabOffers',
+    collabOfferTags: 'collabOfferTags',
+    collabNeeds: 'collabNeeds',
+    collabNeedTags: 'collabNeedTags',
     locationType: 'locationType',
     seoTitle: 'seoTitle',
     seoDescription: 'seoDescription',
@@ -77786,6 +79094,22 @@ export namespace Prisma {
   };
 
   export type ShopPrivateContactScalarFieldEnum = (typeof ShopPrivateContactScalarFieldEnum)[keyof typeof ShopPrivateContactScalarFieldEnum]
+
+
+  export const ShopApiTokenScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    shopId: 'shopId',
+    name: 'name',
+    tokenHash: 'tokenHash',
+    prefix: 'prefix',
+    scopes: 'scopes',
+    createdById: 'createdById',
+    lastUsedAt: 'lastUsedAt',
+    revokedAt: 'revokedAt'
+  };
+
+  export type ShopApiTokenScalarFieldEnum = (typeof ShopApiTokenScalarFieldEnum)[keyof typeof ShopApiTokenScalarFieldEnum]
 
 
   export const MemberScalarFieldEnum: {
@@ -80276,6 +81600,10 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -80296,6 +81624,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunListRelationFilter
     privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
     outboundClicks?: OutboundClickListRelationFilter
+    apiTokens?: ShopApiTokenListRelationFilter
   }
 
   export type ShopOrderByWithRelationInput = {
@@ -80318,6 +81647,10 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrderInput | SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrderInput | SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
@@ -80338,6 +81671,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunOrderByRelationAggregateInput
     privateContact?: ShopPrivateContactOrderByWithRelationInput
     outboundClicks?: OutboundClickOrderByRelationAggregateInput
+    apiTokens?: ShopApiTokenOrderByRelationAggregateInput
   }
 
   export type ShopWhereUniqueInput = Prisma.AtLeast<{
@@ -80363,6 +81697,10 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Shop"> | boolean
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -80383,6 +81721,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunListRelationFilter
     privateContact?: XOR<ShopPrivateContactNullableScalarRelationFilter, ShopPrivateContactWhereInput> | null
     outboundClicks?: OutboundClickListRelationFilter
+    apiTokens?: ShopApiTokenListRelationFilter
   }, "id" | "slug">
 
   export type ShopOrderByWithAggregationInput = {
@@ -80405,6 +81744,10 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrderInput | SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrderInput | SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
@@ -80443,6 +81786,10 @@ export namespace Prisma {
     slug?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeWithAggregatesFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     seoDescription?: StringNullableWithAggregatesFilter<"Shop"> | string | null
@@ -80630,6 +81977,86 @@ export namespace Prisma {
     updatedById?: StringNullableWithAggregatesFilter<"ShopPrivateContact"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ShopPrivateContact"> | Date | string
+  }
+
+  export type ShopApiTokenWhereInput = {
+    AND?: ShopApiTokenWhereInput | ShopApiTokenWhereInput[]
+    OR?: ShopApiTokenWhereInput[]
+    NOT?: ShopApiTokenWhereInput | ShopApiTokenWhereInput[]
+    id?: StringFilter<"ShopApiToken"> | string
+    createdAt?: DateTimeFilter<"ShopApiToken"> | Date | string
+    shopId?: StringFilter<"ShopApiToken"> | string
+    name?: StringFilter<"ShopApiToken"> | string
+    tokenHash?: StringFilter<"ShopApiToken"> | string
+    prefix?: StringFilter<"ShopApiToken"> | string
+    scopes?: StringNullableListFilter<"ShopApiToken">
+    createdById?: StringNullableFilter<"ShopApiToken"> | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }
+
+  export type ShopApiTokenOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    tokenHash?: SortOrder
+    prefix?: SortOrder
+    scopes?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    shop?: ShopOrderByWithRelationInput
+  }
+
+  export type ShopApiTokenWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tokenHash?: string
+    AND?: ShopApiTokenWhereInput | ShopApiTokenWhereInput[]
+    OR?: ShopApiTokenWhereInput[]
+    NOT?: ShopApiTokenWhereInput | ShopApiTokenWhereInput[]
+    createdAt?: DateTimeFilter<"ShopApiToken"> | Date | string
+    shopId?: StringFilter<"ShopApiToken"> | string
+    name?: StringFilter<"ShopApiToken"> | string
+    prefix?: StringFilter<"ShopApiToken"> | string
+    scopes?: StringNullableListFilter<"ShopApiToken">
+    createdById?: StringNullableFilter<"ShopApiToken"> | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+    shop?: XOR<ShopScalarRelationFilter, ShopWhereInput>
+  }, "id" | "tokenHash">
+
+  export type ShopApiTokenOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    tokenHash?: SortOrder
+    prefix?: SortOrder
+    scopes?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    _count?: ShopApiTokenCountOrderByAggregateInput
+    _max?: ShopApiTokenMaxOrderByAggregateInput
+    _min?: ShopApiTokenMinOrderByAggregateInput
+  }
+
+  export type ShopApiTokenScalarWhereWithAggregatesInput = {
+    AND?: ShopApiTokenScalarWhereWithAggregatesInput | ShopApiTokenScalarWhereWithAggregatesInput[]
+    OR?: ShopApiTokenScalarWhereWithAggregatesInput[]
+    NOT?: ShopApiTokenScalarWhereWithAggregatesInput | ShopApiTokenScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ShopApiToken"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ShopApiToken"> | Date | string
+    shopId?: StringWithAggregatesFilter<"ShopApiToken"> | string
+    name?: StringWithAggregatesFilter<"ShopApiToken"> | string
+    tokenHash?: StringWithAggregatesFilter<"ShopApiToken"> | string
+    prefix?: StringWithAggregatesFilter<"ShopApiToken"> | string
+    scopes?: StringNullableListFilter<"ShopApiToken">
+    createdById?: StringNullableWithAggregatesFilter<"ShopApiToken"> | string | null
+    lastUsedAt?: DateTimeNullableWithAggregatesFilter<"ShopApiToken"> | Date | string | null
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"ShopApiToken"> | Date | string | null
   }
 
   export type MemberWhereInput = {
@@ -85612,6 +87039,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -85632,6 +87063,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateInput = {
@@ -85654,6 +87086,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -85673,6 +87109,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopUpdateInput = {
@@ -85694,6 +87131,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -85714,6 +87155,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateInput = {
@@ -85736,6 +87178,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -85755,6 +87201,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateManyInput = {
@@ -85777,6 +87224,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -85808,6 +87259,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -85840,6 +87295,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -86051,6 +87510,96 @@ export namespace Prisma {
     updatedById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ShopApiTokenCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+    shop: ShopCreateNestedOneWithoutApiTokensInput
+  }
+
+  export type ShopApiTokenUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+  }
+
+  export type ShopApiTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    shop?: ShopUpdateOneRequiredWithoutApiTokensNestedInput
+  }
+
+  export type ShopApiTokenUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopApiTokenCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    shopId: string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+  }
+
+  export type ShopApiTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopApiTokenUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shopId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type MemberCreateInput = {
@@ -91316,6 +92865,12 @@ export namespace Prisma {
     isNot?: ShopPrivateContactWhereInput | null
   }
 
+  export type ShopApiTokenListRelationFilter = {
+    every?: ShopApiTokenWhereInput
+    some?: ShopApiTokenWhereInput
+    none?: ShopApiTokenWhereInput
+  }
+
   export type EventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -91325,6 +92880,10 @@ export namespace Prisma {
   }
 
   export type ProductSyncRunOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ShopApiTokenOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -91348,6 +92907,10 @@ export namespace Prisma {
     slug?: SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -91377,6 +92940,8 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    collabOffers?: SortOrder
+    collabNeeds?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -91406,6 +92971,8 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    collabOffers?: SortOrder
+    collabNeeds?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -91560,6 +93127,43 @@ export namespace Prisma {
     updatedById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ShopApiTokenCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    tokenHash?: SortOrder
+    prefix?: SortOrder
+    scopes?: SortOrder
+    createdById?: SortOrder
+    lastUsedAt?: SortOrder
+    revokedAt?: SortOrder
+  }
+
+  export type ShopApiTokenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    tokenHash?: SortOrder
+    prefix?: SortOrder
+    createdById?: SortOrder
+    lastUsedAt?: SortOrder
+    revokedAt?: SortOrder
+  }
+
+  export type ShopApiTokenMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    shopId?: SortOrder
+    name?: SortOrder
+    tokenHash?: SortOrder
+    prefix?: SortOrder
+    createdById?: SortOrder
+    lastUsedAt?: SortOrder
+    revokedAt?: SortOrder
   }
 
   export type EnumMemberRoleFilter<$PrismaModel = never> = {
@@ -95204,6 +96808,14 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type ShopCreatecollabOfferTagsInput = {
+    set: string[]
+  }
+
+  export type ShopCreatecollabNeedTagsInput = {
+    set: string[]
+  }
+
   export type EventCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -95270,6 +96882,13 @@ export namespace Prisma {
     connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
   }
 
+  export type ShopApiTokenCreateNestedManyWithoutShopInput = {
+    create?: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput> | ShopApiTokenCreateWithoutShopInput[] | ShopApiTokenUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ShopApiTokenCreateOrConnectWithoutShopInput | ShopApiTokenCreateOrConnectWithoutShopInput[]
+    createMany?: ShopApiTokenCreateManyShopInputEnvelope
+    connect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+  }
+
   export type EventUncheckedCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -95330,6 +96949,13 @@ export namespace Prisma {
     connect?: OutboundClickWhereUniqueInput | OutboundClickWhereUniqueInput[]
   }
 
+  export type ShopApiTokenUncheckedCreateNestedManyWithoutShopInput = {
+    create?: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput> | ShopApiTokenCreateWithoutShopInput[] | ShopApiTokenUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ShopApiTokenCreateOrConnectWithoutShopInput | ShopApiTokenCreateOrConnectWithoutShopInput[]
+    createMany?: ShopApiTokenCreateManyShopInputEnvelope
+    connect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+  }
+
   export type ShopUpdateattributeTagsInput = {
     set?: string[]
     push?: string | string[]
@@ -95341,6 +96967,16 @@ export namespace Prisma {
   }
 
   export type ShopUpdatesocialLinksInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatecollabOfferTagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatecollabNeedTagsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -95475,6 +97111,20 @@ export namespace Prisma {
     deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
   }
 
+  export type ShopApiTokenUpdateManyWithoutShopNestedInput = {
+    create?: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput> | ShopApiTokenCreateWithoutShopInput[] | ShopApiTokenUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ShopApiTokenCreateOrConnectWithoutShopInput | ShopApiTokenCreateOrConnectWithoutShopInput[]
+    upsert?: ShopApiTokenUpsertWithWhereUniqueWithoutShopInput | ShopApiTokenUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: ShopApiTokenCreateManyShopInputEnvelope
+    set?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    disconnect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    delete?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    connect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    update?: ShopApiTokenUpdateWithWhereUniqueWithoutShopInput | ShopApiTokenUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: ShopApiTokenUpdateManyWithWhereWithoutShopInput | ShopApiTokenUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: ShopApiTokenScalarWhereInput | ShopApiTokenScalarWhereInput[]
+  }
+
   export type EventUncheckedUpdateManyWithoutShopNestedInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -95589,6 +97239,20 @@ export namespace Prisma {
     deleteMany?: OutboundClickScalarWhereInput | OutboundClickScalarWhereInput[]
   }
 
+  export type ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput = {
+    create?: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput> | ShopApiTokenCreateWithoutShopInput[] | ShopApiTokenUncheckedCreateWithoutShopInput[]
+    connectOrCreate?: ShopApiTokenCreateOrConnectWithoutShopInput | ShopApiTokenCreateOrConnectWithoutShopInput[]
+    upsert?: ShopApiTokenUpsertWithWhereUniqueWithoutShopInput | ShopApiTokenUpsertWithWhereUniqueWithoutShopInput[]
+    createMany?: ShopApiTokenCreateManyShopInputEnvelope
+    set?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    disconnect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    delete?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    connect?: ShopApiTokenWhereUniqueInput | ShopApiTokenWhereUniqueInput[]
+    update?: ShopApiTokenUpdateWithWhereUniqueWithoutShopInput | ShopApiTokenUpdateWithWhereUniqueWithoutShopInput[]
+    updateMany?: ShopApiTokenUpdateManyWithWhereWithoutShopInput | ShopApiTokenUpdateManyWithWhereWithoutShopInput[]
+    deleteMany?: ShopApiTokenScalarWhereInput | ShopApiTokenScalarWhereInput[]
+  }
+
   export type ShopCreateNestedOneWithoutAddressInput = {
     create?: XOR<ShopCreateWithoutAddressInput, ShopUncheckedCreateWithoutAddressInput>
     connectOrCreate?: ShopCreateOrConnectWithoutAddressInput
@@ -95625,6 +97289,29 @@ export namespace Prisma {
     upsert?: ShopUpsertWithoutPrivateContactInput
     connect?: ShopWhereUniqueInput
     update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutPrivateContactInput, ShopUpdateWithoutPrivateContactInput>, ShopUncheckedUpdateWithoutPrivateContactInput>
+  }
+
+  export type ShopApiTokenCreatescopesInput = {
+    set: string[]
+  }
+
+  export type ShopCreateNestedOneWithoutApiTokensInput = {
+    create?: XOR<ShopCreateWithoutApiTokensInput, ShopUncheckedCreateWithoutApiTokensInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutApiTokensInput
+    connect?: ShopWhereUniqueInput
+  }
+
+  export type ShopApiTokenUpdatescopesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdateOneRequiredWithoutApiTokensNestedInput = {
+    create?: XOR<ShopCreateWithoutApiTokensInput, ShopUncheckedCreateWithoutApiTokensInput>
+    connectOrCreate?: ShopCreateOrConnectWithoutApiTokensInput
+    upsert?: ShopUpsertWithoutApiTokensInput
+    connect?: ShopWhereUniqueInput
+    update?: XOR<XOR<ShopUpdateToOneWithWhereWithoutApiTokensInput, ShopUpdateWithoutApiTokensInput>, ShopUncheckedUpdateWithoutApiTokensInput>
   }
 
   export type ConversationCreateNestedManyWithoutMemberOneInput = {
@@ -99839,6 +101526,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -99858,6 +101549,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOutboundClicksInput = {
@@ -99880,6 +101572,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -99898,6 +101594,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOutboundClicksInput = {
@@ -100037,6 +101734,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100056,6 +101757,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOutboundClicksInput = {
@@ -100078,6 +101780,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100096,6 +101802,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ProductUpsertWithoutOutboundClicksInput = {
@@ -100520,6 +102227,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -100539,6 +102250,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutEventsInput = {
@@ -100561,6 +102273,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -100579,6 +102295,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutEventsInput = {
@@ -100616,6 +102333,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100635,6 +102356,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutEventsInput = {
@@ -100657,6 +102379,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100675,6 +102401,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type PostCreateWithoutSubredditInput = {
@@ -102330,6 +104057,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102349,6 +104080,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutInvitesInput = {
@@ -102371,6 +104103,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102389,6 +104125,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutInvitesInput = {
@@ -102503,6 +104240,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102522,6 +104263,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutInvitesInput = {
@@ -102544,6 +104286,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102562,6 +104308,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutSyncRunsInput = {
@@ -102583,6 +104330,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102602,6 +104353,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutSyncRunsInput = {
@@ -102624,6 +104376,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102642,6 +104398,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutSyncRunsInput = {
@@ -102711,6 +104468,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102730,6 +104491,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutSyncRunsInput = {
@@ -102752,6 +104514,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102770,6 +104536,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ProductSyncProposalUpsertWithWhereUniqueWithoutRunInput = {
@@ -103014,6 +104781,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -103033,6 +104804,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutServicesInput = {
@@ -103055,6 +104827,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -103073,6 +104849,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutServicesInput = {
@@ -103161,6 +104938,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -103180,6 +104961,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutServicesInput = {
@@ -103202,6 +104984,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -103220,6 +105006,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutServicesInput = {
@@ -103286,6 +105073,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -103305,6 +105096,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutProductsInput = {
@@ -103327,6 +105119,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -103345,6 +105141,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutProductsInput = {
@@ -103465,6 +105262,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -103484,6 +105285,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutProductsInput = {
@@ -103506,6 +105308,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -103524,6 +105330,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type CategoryUpsertWithWhereUniqueWithoutProductsInput = {
@@ -104052,6 +105859,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ShopApiTokenCreateWithoutShopInput = {
+    id?: string
+    createdAt?: Date | string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+  }
+
+  export type ShopApiTokenUncheckedCreateWithoutShopInput = {
+    id?: string
+    createdAt?: Date | string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+  }
+
+  export type ShopApiTokenCreateOrConnectWithoutShopInput = {
+    where: ShopApiTokenWhereUniqueInput
+    create: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput>
+  }
+
+  export type ShopApiTokenCreateManyShopInputEnvelope = {
+    data: ShopApiTokenCreateManyShopInput | ShopApiTokenCreateManyShopInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EventUpsertWithWhereUniqueWithoutShopInput = {
     where: EventWhereUniqueInput
     update: XOR<EventUpdateWithoutShopInput, EventUncheckedUpdateWithoutShopInput>
@@ -104448,6 +106289,38 @@ export namespace Prisma {
     data: XOR<OutboundClickUpdateManyMutationInput, OutboundClickUncheckedUpdateManyWithoutShopInput>
   }
 
+  export type ShopApiTokenUpsertWithWhereUniqueWithoutShopInput = {
+    where: ShopApiTokenWhereUniqueInput
+    update: XOR<ShopApiTokenUpdateWithoutShopInput, ShopApiTokenUncheckedUpdateWithoutShopInput>
+    create: XOR<ShopApiTokenCreateWithoutShopInput, ShopApiTokenUncheckedCreateWithoutShopInput>
+  }
+
+  export type ShopApiTokenUpdateWithWhereUniqueWithoutShopInput = {
+    where: ShopApiTokenWhereUniqueInput
+    data: XOR<ShopApiTokenUpdateWithoutShopInput, ShopApiTokenUncheckedUpdateWithoutShopInput>
+  }
+
+  export type ShopApiTokenUpdateManyWithWhereWithoutShopInput = {
+    where: ShopApiTokenScalarWhereInput
+    data: XOR<ShopApiTokenUpdateManyMutationInput, ShopApiTokenUncheckedUpdateManyWithoutShopInput>
+  }
+
+  export type ShopApiTokenScalarWhereInput = {
+    AND?: ShopApiTokenScalarWhereInput | ShopApiTokenScalarWhereInput[]
+    OR?: ShopApiTokenScalarWhereInput[]
+    NOT?: ShopApiTokenScalarWhereInput | ShopApiTokenScalarWhereInput[]
+    id?: StringFilter<"ShopApiToken"> | string
+    createdAt?: DateTimeFilter<"ShopApiToken"> | Date | string
+    shopId?: StringFilter<"ShopApiToken"> | string
+    name?: StringFilter<"ShopApiToken"> | string
+    tokenHash?: StringFilter<"ShopApiToken"> | string
+    prefix?: StringFilter<"ShopApiToken"> | string
+    scopes?: StringNullableListFilter<"ShopApiToken">
+    createdById?: StringNullableFilter<"ShopApiToken"> | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+    revokedAt?: DateTimeNullableFilter<"ShopApiToken"> | Date | string | null
+  }
+
   export type ShopCreateWithoutAddressInput = {
     id?: string
     ownerName: string
@@ -104467,6 +106340,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104486,6 +106363,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutAddressInput = {
@@ -104508,6 +106386,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104526,6 +106408,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutAddressInput = {
@@ -104563,6 +106446,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104582,6 +106469,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutAddressInput = {
@@ -104604,6 +106492,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104622,6 +106514,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopCreateWithoutPrivateContactInput = {
@@ -104643,6 +106536,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104662,6 +106559,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutPrivateContactInput = {
@@ -104684,6 +106582,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104702,6 +106604,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutPrivateContactInput = {
@@ -104739,6 +106642,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104758,6 +106665,7 @@ export namespace Prisma {
     websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutPrivateContactInput = {
@@ -104780,6 +106688,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104797,6 +106709,203 @@ export namespace Prisma {
     address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
     websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
+  }
+
+  export type ShopCreateWithoutApiTokensInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
+    locationType?: $Enums.ShopLocationType
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventCreateNestedManyWithoutShopInput
+    products?: ProductCreateNestedManyWithoutShopInput
+    services?: ServiceCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteCreateNestedManyWithoutShopInput
+    owner: UserCreateNestedOneWithoutShopsInput
+    address?: ShopAddressCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopUncheckedCreateWithoutApiTokensInput = {
+    id?: string
+    ownerName: string
+    bio?: string | null
+    description?: string | null
+    ownerPhoto?: string | null
+    logoPhoto?: string | null
+    coverPhoto?: string | null
+    phone?: string | null
+    email?: string | null
+    website?: string | null
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    attributeTags?: ShopCreateattributeTagsInput | string[]
+    name: string
+    isPublic?: boolean
+    slug?: string | null
+    previousSlugs?: ShopCreatepreviousSlugsInput | string[]
+    socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
+    locationType?: $Enums.ShopLocationType
+    seoTitle?: string | null
+    seoDescription?: string | null
+    seoImage?: string | null
+    seoNoIndex?: boolean
+    syncPlatform?: $Enums.ProductScrapeMethod | null
+    syncEnabled?: boolean
+    syncUrl?: string | null
+    allowInsecureOrigin?: boolean
+    lastSyncedAt?: Date | string | null
+    events?: EventUncheckedCreateNestedManyWithoutShopInput
+    products?: ProductUncheckedCreateNestedManyWithoutShopInput
+    services?: ServiceUncheckedCreateNestedManyWithoutShopInput
+    invites?: PlatformInviteUncheckedCreateNestedManyWithoutShopInput
+    address?: ShopAddressUncheckedCreateNestedOneWithoutShopInput
+    websiteProvision?: WebsiteProvisionUncheckedCreateNestedOneWithoutShopInput
+    syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
+    privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
+    outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+  }
+
+  export type ShopCreateOrConnectWithoutApiTokensInput = {
+    where: ShopWhereUniqueInput
+    create: XOR<ShopCreateWithoutApiTokensInput, ShopUncheckedCreateWithoutApiTokensInput>
+  }
+
+  export type ShopUpsertWithoutApiTokensInput = {
+    update: XOR<ShopUpdateWithoutApiTokensInput, ShopUncheckedUpdateWithoutApiTokensInput>
+    create: XOR<ShopCreateWithoutApiTokensInput, ShopUncheckedCreateWithoutApiTokensInput>
+    where?: ShopWhereInput
+  }
+
+  export type ShopUpdateToOneWithWhereWithoutApiTokensInput = {
+    where?: ShopWhereInput
+    data: XOR<ShopUpdateWithoutApiTokensInput, ShopUncheckedUpdateWithoutApiTokensInput>
+  }
+
+  export type ShopUpdateWithoutApiTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUpdateManyWithoutShopNestedInput
+    products?: ProductUpdateManyWithoutShopNestedInput
+    services?: ServiceUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUpdateManyWithoutShopNestedInput
+    owner?: UserUpdateOneRequiredWithoutShopsNestedInput
+    address?: ShopAddressUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
+    outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+  }
+
+  export type ShopUncheckedUpdateWithoutApiTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ownerName?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    logoPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    coverPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attributeTags?: ShopUpdateattributeTagsInput | string[]
+    name?: StringFieldUpdateOperationsInput | string
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    slug?: NullableStringFieldUpdateOperationsInput | string | null
+    previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
+    socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
+    locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
+    seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    seoImage?: NullableStringFieldUpdateOperationsInput | string | null
+    seoNoIndex?: BoolFieldUpdateOperationsInput | boolean
+    syncPlatform?: NullableEnumProductScrapeMethodFieldUpdateOperationsInput | $Enums.ProductScrapeMethod | null
+    syncEnabled?: BoolFieldUpdateOperationsInput | boolean
+    syncUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    allowInsecureOrigin?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    events?: EventUncheckedUpdateManyWithoutShopNestedInput
+    products?: ProductUncheckedUpdateManyWithoutShopNestedInput
+    services?: ServiceUncheckedUpdateManyWithoutShopNestedInput
+    invites?: PlatformInviteUncheckedUpdateManyWithoutShopNestedInput
+    address?: ShopAddressUncheckedUpdateOneWithoutShopNestedInput
+    websiteProvision?: WebsiteProvisionUncheckedUpdateOneWithoutShopNestedInput
+    syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
+    privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
   }
 
@@ -112306,6 +114415,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -112325,6 +114438,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutWebsiteProvisionInput = {
@@ -112347,6 +114461,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -112365,6 +114483,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutWebsiteProvisionInput = {
@@ -112473,6 +114592,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -112492,6 +114615,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutWebsiteProvisionInput = {
@@ -112514,6 +114638,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -112532,6 +114660,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type UserUpsertWithoutWebsiteProvisionInput = {
@@ -113291,6 +115420,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -113310,6 +115443,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenCreateNestedManyWithoutShopInput
   }
 
   export type ShopUncheckedCreateWithoutOwnerInput = {
@@ -113331,6 +115465,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -113350,6 +115488,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedCreateNestedManyWithoutShopInput
     privateContact?: ShopPrivateContactUncheckedCreateNestedOneWithoutShopInput
     outboundClicks?: OutboundClickUncheckedCreateNestedManyWithoutShopInput
+    apiTokens?: ShopApiTokenUncheckedCreateNestedManyWithoutShopInput
   }
 
   export type ShopCreateOrConnectWithoutOwnerInput = {
@@ -114061,6 +116200,10 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -114934,6 +117077,18 @@ export namespace Prisma {
     source: $Enums.OutboundSource
   }
 
+  export type ShopApiTokenCreateManyShopInput = {
+    id?: string
+    createdAt?: Date | string
+    name: string
+    tokenHash: string
+    prefix: string
+    scopes?: ShopApiTokenCreatescopesInput | string[]
+    createdById?: string | null
+    lastUsedAt?: Date | string | null
+    revokedAt?: Date | string | null
+  }
+
   export type EventUpdateWithoutShopInput = {
     id?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -115220,6 +117375,42 @@ export namespace Prisma {
     serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     target?: EnumOutboundTargetFieldUpdateOperationsInput | $Enums.OutboundTarget
     source?: EnumOutboundSourceFieldUpdateOperationsInput | $Enums.OutboundSource
+  }
+
+  export type ShopApiTokenUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopApiTokenUncheckedUpdateWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ShopApiTokenUncheckedUpdateManyWithoutShopInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    prefix?: StringFieldUpdateOperationsInput | string
+    scopes?: ShopApiTokenUpdatescopesInput | string[]
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ConversationCreateManyMemberOneInput = {
@@ -117029,6 +119220,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -117508,6 +119703,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -117527,6 +119726,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateWithoutOwnerInput = {
@@ -117548,6 +119748,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -117567,6 +119771,7 @@ export namespace Prisma {
     syncRuns?: ProductSyncRunUncheckedUpdateManyWithoutShopNestedInput
     privateContact?: ShopPrivateContactUncheckedUpdateOneWithoutShopNestedInput
     outboundClicks?: OutboundClickUncheckedUpdateManyWithoutShopNestedInput
+    apiTokens?: ShopApiTokenUncheckedUpdateManyWithoutShopNestedInput
   }
 
   export type ShopUncheckedUpdateManyWithoutOwnerInput = {
@@ -117588,6 +119793,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null

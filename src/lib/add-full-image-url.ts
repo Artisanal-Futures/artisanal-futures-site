@@ -1,3 +1,5 @@
+import { resolveStorageImageUrl } from "~/lib/handle-image-url";
+
 type ProductWithImage = {
   imageUrl?: string | null;
   [key: string]: unknown;
@@ -6,21 +8,21 @@ type ProductWithImage = {
 export const addFullProductImageUrl = <T extends ProductWithImage>(
   product: T,
 ): T => {
-  if (!product) return product;
-  const storageBaseUrl = "https://storage.artisanalfutures.org/products";
-  if (product.imageUrl && !product.imageUrl.startsWith("http")) {
-    return { ...product, imageUrl: `${storageBaseUrl}/${product.imageUrl}` };
-  }
-  return product;
+  if (!product?.imageUrl) return product;
+  return {
+    ...product,
+    imageUrl: resolveStorageImageUrl(product.imageUrl, "products"),
+  };
 };
 
-export const addFullServiceImageUrl = <T extends { imageUrl?: string | null }>(
-  service: T | null,
-): T | null => {
-  if (!service) return null;
-  const storageBaseUrl = "https://storage.artisanalfutures.org/services";
-  if (service.imageUrl && !service.imageUrl.startsWith("http")) {
-    return { ...service, imageUrl: `${storageBaseUrl}/${service.imageUrl}` };
-  }
-  return service;
+export const addFullServiceImageUrl = <
+  T extends { imageUrl?: string | null } | null,
+>(
+  service: T,
+): T => {
+  if (!service?.imageUrl) return service;
+  return {
+    ...service,
+    imageUrl: resolveStorageImageUrl(service.imageUrl, "services"),
+  };
 };

@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  COLLABORATION_TAGS,
+  COLLABORATION_TEXT_MAX,
+} from "~/lib/constants/collaboration-tags";
+
 import { shopSeoSchema, urlListSchema } from "./seo";
 
 /**
@@ -32,6 +37,24 @@ export const shopLocationTypeSchema = z.enum([
   "AREA",
 ]);
 
+/** Collaboration note: trimmed, blank → null. Omitted = leave unchanged. */
+const collabTextSchema = z
+  .string()
+  .trim()
+  .max(
+    COLLABORATION_TEXT_MAX,
+    `Keep it under ${COLLABORATION_TEXT_MAX} characters`,
+  )
+  .nullish()
+  .transform((value) => (value === "" ? null : value));
+
+/** Collaboration tags: known labels only, de-duplicated. */
+const collabTagsSchema = z
+  .array(z.enum(COLLABORATION_TAGS))
+  .max(COLLABORATION_TAGS.length)
+  .transform((tags) => [...new Set(tags)])
+  .optional();
+
 export const shopSchema = z.object({
   name: z.string().min(1, "Shop name is required"),
   ownerName: z.string().min(1, "Owner name is required"),
@@ -56,6 +79,12 @@ export const shopSchema = z.object({
 
   /** Profile links (Instagram, Etsy, ...). Artisan-editable. */
   socialLinks: urlListSchema.optional(),
+
+  /** Opt-in, public mutual-aid listing ("We can offer" / "We're looking for"). */
+  collabOffers: collabTextSchema,
+  collabOfferTags: collabTagsSchema,
+  collabNeeds: collabTextSchema,
+  collabNeedTags: collabTagsSchema,
 
   ownerPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoPhotoUrl: z.string().url().optional().nullable().or(z.literal("")),

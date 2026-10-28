@@ -335,6 +335,10 @@ exports.Prisma.ShopScalarFieldEnum = {
   slug: 'slug',
   previousSlugs: 'previousSlugs',
   socialLinks: 'socialLinks',
+  collabOffers: 'collabOffers',
+  collabOfferTags: 'collabOfferTags',
+  collabNeeds: 'collabNeeds',
+  collabNeedTags: 'collabNeedTags',
   locationType: 'locationType',
   seoTitle: 'seoTitle',
   seoDescription: 'seoDescription',
@@ -374,6 +378,19 @@ exports.Prisma.ShopPrivateContactScalarFieldEnum = {
   updatedById: 'updatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShopApiTokenScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  shopId: 'shopId',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  prefix: 'prefix',
+  scopes: 'scopes',
+  createdById: 'createdById',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt'
 };
 
 exports.Prisma.MemberScalarFieldEnum = {
@@ -1172,6 +1189,7 @@ exports.Prisma.ModelName = {
   Shop: 'Shop',
   ShopAddress: 'ShopAddress',
   ShopPrivateContact: 'ShopPrivateContact',
+  ShopApiToken: 'ShopApiToken',
   Member: 'Member',
   Message: 'Message',
   Conversation: 'Conversation',

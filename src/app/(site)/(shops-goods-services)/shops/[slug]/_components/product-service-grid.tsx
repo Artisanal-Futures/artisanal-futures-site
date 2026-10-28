@@ -20,9 +20,14 @@ import { ProductCard } from "../../../_components/product-card";
 import { ProductDetailDialog } from "../../../_components/product-detail-dialog";
 import { ShopCatalogControls } from "./shop-catalog-controls";
 
-type Shop = NonNullable<RouterOutputs["shop"]["get"]>;
-type Product = Shop["products"][number];
-type Service = Shop["services"][number];
+type ShopData = NonNullable<RouterOutputs["shop"]["get"]>;
+type Product = ShopData["products"][number];
+type Service = ShopData["services"][number];
+/** The few shop fields the cards need; it's a client component, so keep it lean. */
+type Shop = Pick<
+  ShopData,
+  "id" | "name" | "logoPhoto" | "website" | "attributeTags"
+>;
 
 const GRID_CLASSES =
   "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";

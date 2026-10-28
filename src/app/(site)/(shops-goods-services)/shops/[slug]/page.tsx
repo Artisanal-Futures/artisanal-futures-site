@@ -8,6 +8,7 @@ import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { shopPath } from "~/lib/seo/paths";
 import { breadcrumbSchema, shopSchema } from "~/lib/seo/schema";
 import { SITE_NAME, truncate } from "~/lib/seo/site";
+import { getShopLandingLinks } from "~/server/seo/landing-pages";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,12 +17,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { getShopLandingLinks } from "~/server/seo/landing-pages";
 import { JsonLd } from "~/components/seo/json-ld";
 
 import { ArtisanHero } from "./_components/artisan-hero";
 import { ProductServiceGrid } from "./_components/product-service-grid";
-import { getShop } from "./get-shop";
+import { getShop, getShopSeo } from "./get-shop";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -57,6 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   redirectToCanonical(slug, shop);
+  const seo = await getShopSeo(shop.id);
 
   const location = [shop.address?.city, shop.address?.state]
     .filter(Boolean)
@@ -82,26 +83,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Admin overrides (/admin/shops/{id} > Search & sharing) win; otherwise the
   // first non-blank of description, bio, then the generated sentence.
   const description = truncate(
-    [shop.seoDescription, shop.description, shop.bio].find((text) =>
+    [seo?.seoDescription, shop.description, shop.bio].find((text) =>
       text?.trim(),
     ) ?? generated,
   );
 
   // Prefer the admin share image, then the shop's own imagery; otherwise the
   // generated card from /og/shops/[shopId].
-  const photo = [shop.seoImage, shop.coverPhoto, shop.logoPhoto].find((image) =>
+  const photo = [seo?.seoImage, shop.coverPhoto, shop.logoPhoto].find((image) =>
     image?.trim(),
   );
   const images = [photo ? handleImageUrl(photo) : `/og/shops/${shop.id}`];
 
   return buildPageMetadata({
-    title: shop.seoTitle?.trim() ? shop.seoTitle.trim() : title,
+    title: seo?.seoTitle?.trim() ? seo.seoTitle.trim() : title,
     description,
     // Always the canonical slug URL, whatever the request came in on.
     path: shopPath(shop),
     images,
     // Owners/admins can preview a hidden shop; it must stay out of the index.
-    noIndex: !shop.isPublic || shop.seoNoIndex,
+    noIndex: !shop.isPublic || !!seo?.seoNoIndex,
   });
 }
 
@@ -114,6 +115,7 @@ export default async function ShopProfilePage({ params }: Props) {
   }
 
   redirectToCanonical(slug, shop);
+  const seo = await getShopSeo(shop.id);
 
   // A hidden shop is only returned to its owner or an admin (enforced in
   // shop.get); everyone else already got null above. Let the owner/admin preview
@@ -136,7 +138,7 @@ export default async function ShopProfilePage({ params }: Props) {
     <>
       {/* A hidden shop is only previewable by its owner/admin, and a noindexed
           one is kept out of search, so neither advertises structured data. */}
-      {!isHidden && !shop.seoNoIndex && (
+      {!isHidden && !seo?.seoNoIndex && (
         <JsonLd
           data={[
             shopSchema(shop),
@@ -217,7 +219,13 @@ export default async function ShopProfilePage({ params }: Props) {
           <ProductServiceGrid
             products={shop.products}
             services={shop.services}
-            shop={shop}
+            shop={{
+              id: shop.id,
+              name: shop.name,
+              logoPhoto: shop.logoPhoto,
+              website: shop.website,
+              attributeTags: shop.attributeTags,
+            }}
           />
         </div>
       </section>

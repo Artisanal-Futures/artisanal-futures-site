@@ -1,11 +1,15 @@
-import type { PrismaClient, Role } from "generated/prisma";
-import { TRPCError } from "@trpc/server";
+import type { Prisma, PrismaClient, Role } from "generated/prisma";
 import { revalidateTag } from "next/cache";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import type { ShopSeoValues } from "~/lib/validators/seo";
 import type { ShopLocationTypeValue } from "~/lib/validators/shop";
 import type { MapShopLocation } from "~/server/geocoding/approximate-location";
+import {
+  addFullProductImageUrl,
+  addFullServiceImageUrl,
+} from "~/lib/add-full-image-url";
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { shopPath } from "~/lib/seo/paths";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
@@ -27,27 +31,10 @@ import { toPublicAddress } from "~/server/lib/public-address";
 import { pingIndexNow } from "~/server/seo/indexnow";
 import { SHOPS_LANDING_TAG } from "~/server/seo/landing-pages";
 import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
-
-/**
- * Public address select. Deliberately lists only the original columns so the
- * raw geocoding columns (latitude, longitude, geocodeQuery, geocodedAt) never
- * leak through public endpoints. The map uses `getMapLocations`, which
- * returns jittered coordinates for anything but a geocoded storefront.
- *
- * The street columns are still selected here; every public endpoint must pass
- * the result through `toPublicAddress` before returning it.
- */
-const publicAddressSelect = {
-  id: true,
-  address: true,
-  additional: true,
-  city: true,
-  state: true,
-  zip: true,
-  country: true,
-  street: true,
-  shopId: true,
-} as const;
+import {
+  publicAddressSelect,
+  shopPublicSelect,
+} from "~/server/shops/public-shop";
 
 /**
  * Street columns to save. An AREA shop only ever stores a locality, so its
@@ -133,6 +120,54 @@ export type DirectoryRow = {
 };
 
 type ShopDb = Pick<PrismaClient, "shop">;
+
+/** Columns `resolveShop` always needs, whatever the caller selects. */
+const resolveShopSelect = {
+  id: true,
+  slug: true,
+  ownerId: true,
+  previousSlugs: true,
+} as const;
+
+type ResolvedShop<S extends Prisma.ShopSelect> = Prisma.ShopGetPayload<{
+  select: S & typeof resolveShopSelect;
+}>;
+
+/**
+ * A shop by slug or id, with `select` plus the lookup and ownership columns.
+ * Public storefront URLs carry the slug (or, for old links, a previous slug or
+ * the id); admin pages pass the id. Resolved in that order: current slug,
+ * previous slug, id.
+ */
+async function resolveShop<S extends Prisma.ShopSelect>(
+  db: ShopDb,
+  slugOrId: string,
+  select: S,
+): Promise<ResolvedShop<S> | null> {
+  // One query for all three lookups; the priority is applied below.
+  const matches = (await db.shop.findMany({
+    where: {
+      OR: [
+        { slug: slugOrId },
+        { previousSlugs: { has: slugOrId } },
+        { id: slugOrId },
+      ],
+    },
+    select: { ...select, ...resolveShopSelect },
+    take: 3,
+  })) as unknown as (ResolvedShop<S> & {
+    id: string;
+    slug: string | null;
+    previousSlugs: string[];
+  })[];
+
+  return (
+    matches.find((match) => match.slug === slugOrId) ??
+    matches.find((match) => match.previousSlugs.includes(slugOrId)) ??
+    matches.find((match) => match.id === slugOrId) ??
+    null
+  );
+}
 
 /**
  * Validates an admin-requested slug for `shopId` (null for a new shop). It must
@@ -356,7 +391,13 @@ export const shopsRouter = createTRPCRouter({
         }),
         ctx.db.user.findUnique({
           where: { id: input.userId },
-          select: { id: true, name: true, email: true, role: true, image: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            image: true,
+          },
         }),
       ]);
 
@@ -877,31 +918,15 @@ export const shopsRouter = createTRPCRouter({
   ),
 
   /**
-   * A shop by slug or id. Public storefront URLs carry the slug (or, for old
-   * links, a previous slug or the id); admin pages pass the id. Resolved in
-   * that order: current slug, previous slug, id. The page compares the param
-   * with `shop.slug` to decide whether to redirect to the canonical URL.
+   * A public storefront by slug, previous slug or id (see `resolveShop`). The
+   * page compares the param with `shop.slug` to decide whether to redirect to
+   * the canonical URL. Returns only `shopPublicSelect` columns; the admin form
+   * loads through `getForAdmin`.
    */
   get: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input: slugOrId }) => {
-      // One query for all three lookups; the priority is applied below.
-      const matches = await ctx.db.shop.findMany({
-        where: {
-          OR: [
-            { slug: slugOrId },
-            { previousSlugs: { has: slugOrId } },
-            { id: slugOrId },
-          ],
-        },
-        include: { address: { select: publicAddressSelect } },
-        take: 3,
-      });
-
-      const shop =
-        matches.find((match) => match.slug === slugOrId) ??
-        matches.find((match) => match.previousSlugs.includes(slugOrId)) ??
-        matches.find((match) => match.id === slugOrId);
+      const shop = await resolveShop(ctx.db, slugOrId, shopPublicSelect);
 
       if (!shop) return null;
       const shopId = shop.id;
@@ -976,14 +1001,48 @@ export const shopsRouter = createTRPCRouter({
           services.filter((service) => !service.isPublic).length
         : 0;
 
-      // The owner/admin edit form loads through here too, so they keep the
-      // full (private) address; the profile only renders the street for a
-      // storefront either way.
-      const address = isOwnerOrAdmin
-        ? shop.address
-        : toPublicAddress(shop.address, shop.locationType);
+      // Owners and admins get the full address from `getForAdmin`; here it is
+      // always the public view, since this is what the storefront renders.
+      // `ownerId` and `previousSlugs` were only needed to resolve the shop.
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { ownerId, previousSlugs, address, ...publicFields } = shop;
 
-      return { ...shop, address, products, services, hiddenItemCount };
+      return {
+        ...publicFields,
+        address: toPublicAddress(address, shop.locationType),
+        // Some rows store a bare storage key rather than a URL; resolve it here
+        // like the product/service routers do, or next/image throws on render.
+        products: products.map(addFullProductImageUrl),
+        services: services.map(addFullServiceImageUrl),
+        hiddenItemCount,
+      };
+    }),
+
+  /**
+   * A shop for the admin hub and edit form, by id or slug: the public columns
+   * plus the raw (street-level) address, the owner and the SEO overrides.
+   * Null unless the caller is an admin or the shop's owner.
+   */
+  getForAdmin: adminArtisanProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: idOrSlug }) => {
+      const shop = await resolveShop(ctx.db, idOrSlug, {
+        ...shopPublicSelect,
+        seoTitle: true,
+        seoDescription: true,
+        seoImage: true,
+        seoNoIndex: true,
+      });
+      if (!shop) return null;
+
+      const isOwnerOrAdmin =
+        ctx.session.user.role === "ADMIN" ||
+        shop.ownerId === ctx.session.user.id;
+      if (!isOwnerOrAdmin) return null;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { previousSlugs, ...adminFields } = shop;
+      return adminFields;
     }),
 
   create: adminArtisanProcedure
@@ -1019,6 +1078,10 @@ export const shopsRouter = createTRPCRouter({
             coverPhoto: input.coverPhotoUrl,
             socialLinks: input.socialLinks ?? [],
             attributeTags: input.attributeTags ?? [],
+            collabOffers: input.collabOffers ?? null,
+            collabOfferTags: input.collabOfferTags ?? [],
+            collabNeeds: input.collabNeeds ?? null,
+            collabNeedTags: input.collabNeedTags ?? [],
             isPublic: input.isPublic,
             locationType: input.locationType,
             address: {
@@ -1131,6 +1194,11 @@ export const shopsRouter = createTRPCRouter({
               email: input?.email ?? "",
               website: input?.website ?? "",
               attributeTags: input?.attributeTags ?? [],
+              // Omitted (undefined) leaves the stored listing as-is.
+              collabOffers: input.collabOffers,
+              collabOfferTags: input.collabOfferTags,
+              collabNeeds: input.collabNeeds,
+              collabNeedTags: input.collabNeedTags,
               isPublic: input?.isPublic,
               locationType: input.locationType,
             },

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { COLLABORATION_TEXT_MAX } from "~/lib/constants/collaboration-tags";
 import { shopPath } from "~/lib/seo/paths";
 import { absoluteUrl, truncate } from "~/lib/seo/site";
 import { STATIC_PAGES } from "~/lib/seo/static-pages";
@@ -57,6 +58,10 @@ function loadShops() {
       website: true,
       socialLinks: true,
       attributeTags: true,
+      collabOffers: true,
+      collabOfferTags: true,
+      collabNeeds: true,
+      collabNeedTags: true,
       address: { select: { city: true, state: true } },
     },
   });
@@ -67,6 +72,14 @@ function locationOf(shop: LlmsShop) {
     .map((part) => part?.trim())
     .filter(Boolean)
     .join(", ");
+}
+
+/** "Local delivery, Referrals — We deliver on the east side...", or "". */
+function collaborationLine(tags: string[], text: string | null) {
+  // One line: truncate() collapses the note's newlines.
+  return [tags.join(", "), truncate(text, COLLABORATION_TEXT_MAX)]
+    .filter(Boolean)
+    .join(" — ");
 }
 
 function summaryOf(shop: LlmsShop) {
@@ -293,6 +306,10 @@ export async function buildLlmsFullTxt() {
       lines.push(`- Tags: ${shop.attributeTags.join(", ")}`);
     }
     if (categories.length > 0) lines.push(`- Makes: ${categories.join(", ")}`);
+    const offers = collaborationLine(shop.collabOfferTags, shop.collabOffers);
+    if (offers) lines.push(`- Can offer: ${offers}`);
+    const needs = collaborationLine(shop.collabNeedTags, shop.collabNeeds);
+    if (needs) lines.push(`- Looking for: ${needs}`);
     lines.push("");
 
     // truncate() strips markdown/HTML and collapses whitespace; at this length

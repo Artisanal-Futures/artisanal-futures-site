@@ -1,7 +1,10 @@
 import { CategoryType } from "generated/prisma";
 import { z } from "zod";
 
-import { addFullProductImageUrl } from "~/lib/add-full-image-url";
+import {
+  addFullProductImageUrl,
+  addFullServiceImageUrl,
+} from "~/lib/add-full-image-url";
 import { categorySchema } from "~/lib/validators/category";
 import { fromVisibleShop } from "~/server/api/shared/visibility";
 import {
@@ -159,9 +162,7 @@ export const categoryRouter = createTRPCRouter({
 
         const formattedCategories = categories.map((category) => ({
           ...category,
-          items: category.services.map((service) =>
-            addFullProductImageUrl(service),
-          ),
+          items: category.services.map(addFullServiceImageUrl),
         }));
         return formattedCategories;
       }

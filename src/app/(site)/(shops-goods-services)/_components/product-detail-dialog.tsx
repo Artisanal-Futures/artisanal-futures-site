@@ -7,7 +7,7 @@ import { CircleCheck, Clock, ExternalLink, MapPin, Store } from "lucide-react";
 import type { OutboundSource } from "~/lib/analytics/track-outbound";
 import type { RouterOutputs } from "~/trpc/react";
 import { formatPrice } from "~/lib/format-price";
-import { handleImageUrl } from "~/lib/handle-image-url";
+import { handleImageUrl, resolveStorageImageUrl } from "~/lib/handle-image-url";
 import { cn } from "~/lib/utils";
 import {
   Dialog,
@@ -131,14 +131,16 @@ export function ProductDetailDialog({
   const hasPrinciples = shopPrinciples && shopPrinciples.length > 0;
   const fallbackSrc =
     fallbackImage?.trim() && fallbackImage !== "null"
-      ? fallbackImage.startsWith("http")
-        ? fallbackImage
-        : handleImageUrl(fallbackImage)
+      ? handleImageUrl(fallbackImage)
       : undefined;
   const price = formatPrice(item.priceInCents, item.currency);
 
   // Only services carry these fields (and narrow selects may omit them)
   const isService = "serviceUrl" in item || "durationInMinutes" in item;
+  // Bare storage keys resolve per folder; next/image rejects them as-is
+  const imageSrc = item.imageUrl
+    ? resolveStorageImageUrl(item.imageUrl, isService ? "services" : "products")
+    : null;
   const itemUrl =
     ("productUrl" in item ? item.productUrl : null) ??
     ("serviceUrl" in item ? item.serviceUrl : null) ??
@@ -164,14 +166,14 @@ export function ProductDetailDialog({
       <DialogContentHighContrast className="max-h-[90vh] max-w-md gap-0 overflow-x-hidden overflow-y-auto p-0 sm:max-w-3xl sm:overflow-hidden">
         <div className="grid sm:max-h-[min(85vh,34rem)] sm:grid-cols-2">
           {/* Image */}
-          {item?.imageUrl ? (
+          {imageSrc ? (
             <div className="bg-muted relative overflow-hidden sm:flex sm:h-full sm:items-center sm:justify-center">
               {/* Ambient backdrop: a small, blurred, scaled-up copy of the
                   photo fills the letterbox above/below the square image so the
                   empty space reads as a glow. scale-125 pushes blur-2xl's
                   transparent edge halo outside the overflow-hidden frame. */}
               <ImageWithFallback
-                src={item.imageUrl}
+                src={imageSrc}
                 fallbackSrc={fallbackSrc}
                 alt=""
                 aria-hidden="true"
@@ -181,7 +183,7 @@ export function ProductDetailDialog({
               />
               <div className="relative aspect-square w-full">
                 <ImageWithFallback
-                  src={item.imageUrl ?? "/placeholder.svg"}
+                  src={imageSrc}
                   fallbackSrc={fallbackSrc}
                   alt={item?.name ?? ""}
                   fill
