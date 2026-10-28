@@ -7,9 +7,10 @@ import type {
   ShopProfileSourceProduct,
   ShopProfileSourceService,
 } from "./build";
+import type { NetworkShopInput } from "./network";
 
 import { buildShopProfile } from "./build";
-import { MAX_ITEMS, SHOP_PROFILE_SCHEMA } from "./types";
+import { COLLAB_TEXT_MAX_CHARS, MAX_ITEMS, SHOP_PROFILE_SCHEMA } from "./types";
 
 const BASE = "https://af.example.org";
 const NOW = new Date("2026-10-27T12:00:00.000Z");
@@ -57,6 +58,31 @@ function service(
   };
 }
 
+function networkShop(
+  overrides: Partial<NetworkShopInput> = {},
+): NetworkShopInput {
+  return {
+    id: "other-db-id",
+    slug: "other",
+    name: "Other",
+    city: "Detroit",
+    state: "MI",
+    geo: { lat: 42.4, lng: -83.1 },
+    locationType: "HOME_BASED",
+    bio: null,
+    description: null,
+    attributeTags: ["Black Owned"],
+    categories: [],
+    services: [],
+    productCount: 0,
+    collabOffers: null,
+    collabOfferTags: [],
+    collabNeeds: null,
+    collabNeedTags: [],
+    ...overrides,
+  };
+}
+
 function source(overrides: Partial<ShopProfileSource> = {}): ShopProfileSource {
   return {
     shop: {
@@ -70,6 +96,10 @@ function source(overrides: Partial<ShopProfileSource> = {}): ShopProfileSource {
       socialLinks: ["instagram.com/clayco", "not a link"],
       logoPhoto: "logo.png",
       attributeTags: ["Black Owned", "black owned", " "],
+      collabOffers: null,
+      collabOfferTags: [],
+      collabNeeds: null,
+      collabNeedTags: [],
       locationType: "HOME_BASED",
       syncPlatform: null,
       syncEnabled: false,
@@ -92,7 +122,6 @@ function source(overrides: Partial<ShopProfileSource> = {}): ShopProfileSource {
     productTotal: 1,
     services: [service()],
     serviceTotal: 1,
-    categories: ["Ceramics", "Workshops"],
     networkShops: [],
     events: [],
     ...overrides,
@@ -121,6 +150,40 @@ describe("buildShopProfile", () => {
     assert.deepEqual(profile.shop.attributeTags, ["Black Owned"]);
     assert.deepEqual(profile.shop.locality, {
       city: "Detroit",
+      state: "MI",
+      country: "US",
+    });
+  });
+
+  it("omits locality when only a country is set", () => {
+    const base = source();
+    const profile = build({
+      ...base,
+      shop: {
+        ...base.shop,
+        address: { ...base.shop.address!, city: "", state: "  " },
+      },
+    });
+    assert.equal(profile.shop.locality, null);
+  });
+
+  it("omits locality when there is no address", () => {
+    const base = source();
+    const profile = build({ ...base, shop: { ...base.shop, address: null } });
+    assert.equal(profile.shop.locality, null);
+  });
+
+  it("keeps a state-only locality with a null city", () => {
+    const base = source();
+    const profile = build({
+      ...base,
+      shop: {
+        ...base.shop,
+        address: { ...base.shop.address!, city: "" },
+      },
+    });
+    assert.deepEqual(profile.shop.locality, {
+      city: null,
       state: "MI",
       country: "US",
     });
@@ -169,18 +232,7 @@ describe("buildShopProfile", () => {
           syncEnabled: true,
           syncUrl: "https://feed.example.com/secret/products.json?key=abc",
         },
-        networkShops: [
-          {
-            id: "other-db-id",
-            slug: "other",
-            name: "Other",
-            city: "Detroit",
-            state: "MI",
-            geo: { lat: 42.4, lng: -83.1 },
-            attributeTags: ["Black Owned"],
-            categories: [],
-          },
-        ],
+        networkShops: [networkShop()],
       }),
     );
     for (const secret of [
@@ -295,26 +347,61 @@ describe("buildShopProfile", () => {
     assert.equal(build(source()).truncated, false);
   });
 
-  it("wires the network from the real coordinates", () => {
+  it("emits the subject's collaboration listing, capped and de-duplicated", () => {
+    const base = source();
+    const long = `${"van ".repeat(200)}end`;
+    const profile = build({
+      ...base,
+      shop: {
+        ...base.shop,
+        collabOffers: long,
+        collabOfferTags: ["Local delivery", "local delivery", " "],
+        collabNeeds: "  ",
+        collabNeedTags: ["Storage space"],
+      },
+    });
+    const { collaboration } = profile.shop;
+    assert.ok(collaboration.offers);
+    assert.ok(collaboration.offers.length <= COLLAB_TEXT_MAX_CHARS);
+    assert.ok(collaboration.offers.length > 300);
+    assert.deepEqual(collaboration.offerTags, ["Local delivery"]);
+    assert.equal(collaboration.needs, null);
+    assert.deepEqual(collaboration.needTags, ["Storage space"]);
+
+    assert.deepEqual(build(source()).shop.collaboration, {
+      offers: null,
+      offerTags: [],
+      needs: null,
+      needTags: [],
+    });
+  });
+
+  it("wires the directory from the real coordinates", () => {
     const profile = build(
       source({
         networkShops: [
-          {
+          networkShop({
             id: "n1",
             slug: "near",
             name: "Near",
-            city: "Detroit",
-            state: "MI",
             geo: { lat: 42.3314 + 2 / 69.05, lng: -83.0458 },
-            attributeTags: ["Black Owned"],
-            categories: ["Food"],
-          },
+          }),
+          // The subject itself is never listed.
+          networkShop({ id: "shop-1", slug: "clay-co", name: "Clay Co" }),
         ],
       }),
     );
-    assert.equal(profile.network.nearby[0]?.distanceMiles, 2);
-    assert.equal(profile.network.sharedValues.length, 1);
-    assert.equal(profile.network.complementary.length, 1);
-    assert.equal(profile.counts.nearby, 1);
+    assert.deepEqual(
+      profile.network.directory.map((s) => [s.name, s.distanceMiles]),
+      [["Near", 2]],
+    );
+    assert.equal(profile.network.directoryTruncated, false);
+    assert.equal(profile.counts.directory, 1);
+    assert.equal(profile.counts.upcomingEvents, 0);
+    assert.deepEqual(Object.keys(profile.network).sort(), [
+      "directory",
+      "directoryTruncated",
+      "upcomingEvents",
+    ]);
   });
 });

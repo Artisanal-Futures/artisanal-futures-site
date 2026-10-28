@@ -10,6 +10,8 @@ import { Separator } from "~/components/ui/separator";
 import { SocialIcon } from "~/components/icons/social-icons";
 import { OutboundLink } from "~/components/outbound-link";
 
+import { OpenToCollaborate } from "./open-to-collaborate";
+
 type Props = {
   shop: NonNullable<RouterOutputs["shop"]["get"]>;
   /** City (else state) landing page for this shop, if one qualifies. */
@@ -71,9 +73,9 @@ function getFacts(shop: Props["shop"], locationPath?: string | null) {
 export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
   const facts = getFacts(shop, locationPath);
 
-  // Only a storefront shows its street. Owners/admins get the full address
-  // back from shop.get, so this must not rely on it being blank for
-  // home-based and area-only shops.
+  // Only a storefront shows its street. shop.get already blanks it for
+  // home-based and area-only shops; check the type here as well so the hero
+  // never depends on that alone.
   const showStreetAddress =
     shop.locationType === "STOREFRONT" && !!shop.address?.address;
   const locality = [shop.address?.city, shop.address?.state]
@@ -215,6 +217,9 @@ export function ArtisanHero({ shop, locationPath, tagPaths = {} }: Props) {
             })}
           </div>
         )}
+
+        {/* Mutual-aid listing (opt-in) */}
+        <OpenToCollaborate shop={shop} />
 
         <Separator />
 

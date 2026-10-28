@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { env } from "~/env";
 import { auth } from "~/server/better-auth";
+import { toSafeErrorShape } from "~/server/api/errors";
 import { db } from "~/server/db";
 
 /**
@@ -47,11 +48,12 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  */
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
+  errorFormatter({ shape, error, path }) {
+    const safeShape = toSafeErrorShape(shape, error, path);
     return {
-      ...shape,
+      ...safeShape,
       data: {
-        ...shape.data,
+        ...safeShape.data,
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },

@@ -13,7 +13,7 @@ import { api } from "~/trpc/server";
  */
 export const getAdminShop = cache(async (idOrSlug: string) => {
   const [shop, session] = await Promise.all([
-    api.shop.get(idOrSlug),
+    api.shop.getForAdmin(idOrSlug),
     getSession(),
   ]);
   if (!shop) notFound();
@@ -21,7 +21,8 @@ export const getAdminShop = cache(async (idOrSlug: string) => {
   const userRole = session?.user.role ?? "ARTISAN";
   const isAdmin = userRole === "ADMIN";
 
-  // `shop.get` is public, so it returns other artisans' public shops too.
+  // `getForAdmin` already returns null for a shop the user doesn't own; keep
+  // this as a second guard so access never rests on one check.
   if (!isAdmin && shop.ownerId !== session?.user.id) notFound();
 
   return { shop, session, userRole, isAdmin };

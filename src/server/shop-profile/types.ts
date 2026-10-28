@@ -12,8 +12,8 @@
  *   - sync configuration (`syncUrl`, `allowInsecureOrigin`, `syncEnabled`);
  *     only the platform and the feed's origin are exposed.
  *   - the street address of any shop that isn't a STOREFRONT (and ZIP+4).
- *   - coordinates of other shops — the network groups carry a rounded
- *     distance only. The subject's own `geo` is the same public pin the
+ *   - coordinates of other shops — directory and event entries carry a
+ *     rounded distance only. The subject's own `geo` is the same public pin the
  *     Artisan Map shows (exact for a street-geocoded storefront, otherwise
  *     offset).
  *
@@ -29,14 +29,20 @@ export const MAX_ITEMS = 500;
 export const ABOUT_MAX_CHARS = 2000;
 export const DESCRIPTION_MAX_CHARS = 600;
 
-/** Entries per network group. */
-export const MAX_NETWORK_ITEMS = 10;
+/** Upcoming events listed in the network block. */
+export const MAX_NETWORK_EVENTS = 10;
 
-/** "Nearby" / "complementary" radius. */
-export const NEARBY_RADIUS_MILES = 50;
+/** Directory entries past this many are dropped and `directoryTruncated` set. */
+export const DIRECTORY_MAX = 300;
 
-/** AF categories listed per network shop. */
-export const MAX_NETWORK_CATEGORIES = 5;
+/** Per directory entry. */
+export const DIRECTORY_ABOUT_MAX_CHARS = 300;
+export const DIRECTORY_MAX_CATEGORIES = 5;
+export const DIRECTORY_MAX_SERVICES = 8;
+
+/** Collaboration text caps: the subject shop's own, and directory entries'. */
+export const COLLAB_TEXT_MAX_CHARS = 500;
+export const DIRECTORY_COLLAB_TEXT_MAX_CHARS = 300;
 
 /** Same vocabulary as Prisma's `ProductScrapeMethod`. */
 export type ShopProfileCatalogSource =
@@ -85,19 +91,38 @@ export type ShopProfileService = {
   tags: string[];
 };
 
-export type NetworkShop = {
+/**
+ * A shop's opt-in, public mutual-aid listing ("We can offer" / "We're looking
+ * for"). Tags are AF's `COLLABORATION_TAGS` labels; text is plain.
+ */
+export type ShopCollaboration = {
+  /** ≤ 500 chars for the subject shop, ≤ 300 in directory entries. */
+  offers: string | null;
+  offerTags: string[];
+  needs: string | null;
+  needTags: string[];
+};
+
+/** Another AF member shop. Name + public URL only: no ids, no coordinates. */
+export type DirectoryShop = {
   name: string;
   /** Absolute AF profile URL. */
   url: string;
   /** "City, ST", either part alone, or null. */
   locality: string | null;
-  /** Rounded to 0.1 mi; null when either side has no coordinates. */
+  locationType: ShopProfileLocationType;
+  /** From the subject, rounded to 0.1 mi; null when either side has no coordinates. */
   distanceMiles: number | null;
-  attributeTags: string[];
-  /** Their most-used AF categories (public products + services). */
+  /** Plain-text bio (else description), ≤ 300 chars. */
+  about: string | null;
+  /** Their most-used AF categories (public products + services), ≤ 5. */
   categories: string[];
-  /** Human-readable "why this shop", e.g. "4.2 mi away". */
-  reason: string;
+  attributeTags: string[];
+  /** Names of their public services, ≤ 8. */
+  services: string[];
+  /** Public products. */
+  productCount: number;
+  collaboration: ShopCollaboration;
 };
 
 export type NetworkEvent = {
@@ -114,10 +139,16 @@ export type NetworkEvent = {
   hostShop: string | null;
 };
 
+/**
+ * The whole AF member directory (every other public, indexable shop) rather
+ * than pre-ranked picks: the consumer recommends only when a question calls
+ * for it. Shops with a collaboration listing come first, then by distance
+ * (unknown last), then name.
+ */
 export type ShopProfileNetwork = {
-  nearby: NetworkShop[];
-  sharedValues: NetworkShop[];
-  complementary: NetworkShop[];
+  directory: DirectoryShop[];
+  /** The directory was capped at `DIRECTORY_MAX` (see `counts.directory`). */
+  directoryTruncated: boolean;
   upcomingEvents: NetworkEvent[];
 };
 
@@ -174,15 +205,15 @@ export type ShopProfileV1 = {
       precision: "exact" | "approximate";
     } | null;
     attributeTags: string[];
+    collaboration: ShopCollaboration;
   };
   services: ShopProfileService[];
   network: ShopProfileNetwork;
   counts: {
     products: number;
     services: number;
-    nearby: number;
-    sharedValues: number;
-    complementary: number;
+    /** Directory shops before the `DIRECTORY_MAX` cap. */
+    directory: number;
     upcomingEvents: number;
   };
 } & ShopProfileCatalog;

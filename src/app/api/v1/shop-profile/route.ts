@@ -5,10 +5,10 @@ import { buildShopProfile } from "~/server/shop-profile/build";
 import { loadShopProfileSource } from "~/server/shop-profile/load";
 
 /**
- * `GET /api/v1/shop-profile` — one shop's public profile + catalog, plus AF
- * network recommendations (`artisanalfutures.shop-profile/v1`), for apps the
- * artisan connected with an API token (ProfitMax). Server-to-server only: no
- * CORS headers.
+ * `GET /api/v1/shop-profile` — one shop's public profile + catalog, plus the
+ * AF member directory and upcoming events (`artisanalfutures.shop-profile/v1`),
+ * for apps the artisan connected with an API token (ProfitMax).
+ * Server-to-server only: no CORS headers.
  *
  * Auth: `Authorization: Bearer <token>`; the token alone identifies the shop.
  * Every identity failure is the same bare 401 (never a 404, never a hint);

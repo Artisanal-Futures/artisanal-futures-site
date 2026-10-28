@@ -1,15 +1,21 @@
 /**
- * Pure ranking for the Shop Profile API's `network` block: which other AF
- * shops and events to recommend to the subject shop. No database, no env —
- * the loader hands candidates in, so this can be unit-tested.
+ * Pure builder for the Shop Profile API's `network` block: the AF member
+ * directory (every other public, indexable shop) and upcoming events. No
+ * database, no env — the loader hands candidates in, so this can be
+ * unit-tested.
  *
  * Distances are computed from the shops' REAL coordinates (home-based and area
  * shops are geocoded to a ZIP/city centroid, never a street), but no other
- * shop's coordinates are ever emitted — only the distance, rounded to 0.1 mi.
- *
- * A shop may appear in more than one group.
+ * shop's coordinates or ids are ever emitted — only the distance, rounded to
+ * 0.1 mi.
  */
-import type { NetworkEvent, NetworkShop, ShopProfileNetwork } from "./types";
+import type { ShopCollaborationSource } from "./text";
+import type {
+  DirectoryShop,
+  NetworkEvent,
+  ShopProfileLocationType,
+  ShopProfileNetwork,
+} from "./types";
 import type { LatLng } from "~/lib/geo/distance";
 import { distanceMiles } from "~/lib/geo/distance";
 import { shopPath } from "~/lib/seo/paths";
@@ -19,9 +25,18 @@ import {
 } from "~/server/geocoding/approximate-location";
 
 import {
-  MAX_NETWORK_CATEGORIES,
-  MAX_NETWORK_ITEMS,
-  NEARBY_RADIUS_MILES,
+  hasCollaboration,
+  plainOrNull,
+  toCollaboration,
+  uniqueStrings,
+} from "./text";
+import {
+  DIRECTORY_ABOUT_MAX_CHARS,
+  DIRECTORY_COLLAB_TEXT_MAX_CHARS,
+  DIRECTORY_MAX,
+  DIRECTORY_MAX_CATEGORIES,
+  DIRECTORY_MAX_SERVICES,
+  MAX_NETWORK_EVENTS,
 } from "./types";
 
 // ─── Input shapes (what the loader provides) ─────────────────────────────────
@@ -30,13 +45,9 @@ export type NetworkSubjectInput = {
   id: string;
   /** Real (un-offset) coordinates. */
   geo: LatLng | null;
-  state: string | null;
-  attributeTags: string[];
-  /** Every AF category on the subject's public products + services. */
-  categories: string[];
 };
 
-export type NetworkShopInput = {
+export type NetworkShopInput = ShopCollaborationSource & {
   id: string;
   slug: string | null;
   name: string;
@@ -44,9 +55,16 @@ export type NetworkShopInput = {
   state: string | null;
   /** Real (un-offset) coordinates. Used for distance only, never emitted. */
   geo: LatLng | null;
+  locationType: ShopProfileLocationType;
+  bio: string | null;
+  description: string | null;
   attributeTags: string[];
   /** AF categories of their public products + services, most-used first. */
   categories: string[];
+  /** Names of their public services, featured first. */
+  services: string[];
+  /** Public products. */
+  productCount: number;
 };
 
 export type NetworkEventInput = {
@@ -63,8 +81,6 @@ export type NetworkEventInput = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const key = (value: string) => value.trim().toLowerCase();
-
 const round1 = (miles: number) => Math.round(miles * 10) / 10;
 
 /** Category names ordered by how often they occur, then alphabetically. */
@@ -79,28 +95,6 @@ export function rankCategories(names: string[]): string[] {
     .map(([name]) => name);
 }
 
-function formatMiles(miles: number): string {
-  return miles < 0.1 ? "under 0.1 mi" : `${round1(miles)} mi`;
-}
-
-/** "a", "a and b", "a, b and c". */
-function listJoin(items: string[]): string {
-  if (items.length <= 1) return items.join("");
-  return `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
-}
-
-function uniqueTags(tags: string[]): string[] {
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const tag of tags) {
-    const t = blankToNull(tag);
-    if (!t || seen.has(key(t))) continue;
-    seen.add(key(t));
-    out.push(t);
-  }
-  return out;
-}
-
 /** Ascending, nulls last. */
 function compareDistance(a: number | null, b: number | null): number {
   if (a === null && b === null) return 0;
@@ -109,105 +103,61 @@ function compareDistance(a: number | null, b: number | null): number {
   return a - b;
 }
 
-type Scored = {
-  shop: NetworkShopInput;
-  distance: number | null;
-};
+// ─── Directory ───────────────────────────────────────────────────────────────
 
-function toNetworkShop(
-  { shop, distance }: Scored,
-  reason: string,
+function toDirectoryShop(
+  shop: NetworkShopInput,
+  distance: number | null,
   baseUrl: string,
-): NetworkShop {
+): DirectoryShop {
   return {
     name: shop.name.trim(),
     url: `${baseUrl}${shopPath(shop)}`,
     locality: formatLocality(shop.city, shop.state),
+    locationType: shop.locationType,
     distanceMiles: distance === null ? null : round1(distance),
-    attributeTags: uniqueTags(shop.attributeTags),
-    categories: shop.categories.slice(0, MAX_NETWORK_CATEGORIES),
-    reason,
+    about:
+      plainOrNull(shop.bio, DIRECTORY_ABOUT_MAX_CHARS) ??
+      plainOrNull(shop.description, DIRECTORY_ABOUT_MAX_CHARS),
+    categories: shop.categories.slice(0, DIRECTORY_MAX_CATEGORIES),
+    attributeTags: uniqueStrings(shop.attributeTags),
+    services: uniqueStrings(shop.services).slice(0, DIRECTORY_MAX_SERVICES),
+    productCount: shop.productCount,
+    collaboration: toCollaboration(shop, DIRECTORY_COLLAB_TEXT_MAX_CHARS),
   };
 }
 
-const byDistanceThenName = (a: Scored, b: Scored) =>
-  compareDistance(a.distance, b.distance) ||
-  a.shop.name.localeCompare(b.shop.name);
-
-// ─── Groups ──────────────────────────────────────────────────────────────────
-
-function nearby(scored: Scored[], baseUrl: string): NetworkShop[] {
-  return scored
-    .filter(
-      (s): s is Scored & { distance: number } =>
-        s.distance !== null && s.distance <= NEARBY_RADIUS_MILES,
-    )
-    .sort(byDistanceThenName)
-    .slice(0, MAX_NETWORK_ITEMS)
-    .map((s) => toNetworkShop(s, `${formatMiles(s.distance)} away`, baseUrl));
-}
-
-function sharedValues(
+/**
+ * Every candidate but the subject: shops with a collaboration listing first,
+ * then by distance (unknown last), then name. Capped at `DIRECTORY_MAX`.
+ */
+function directory(
   subject: NetworkSubjectInput,
-  scored: Scored[],
+  shops: NetworkShopInput[],
   baseUrl: string,
-): NetworkShop[] {
-  const subjectTags = uniqueTags(subject.attributeTags);
-  if (subjectTags.length === 0) return [];
-
-  return scored
-    .map((s) => {
-      const theirs = new Set(s.shop.attributeTags.map(key));
-      // Subject's spelling + order, so the reason reads consistently.
-      return { ...s, shared: subjectTags.filter((t) => theirs.has(key(t))) };
+) {
+  const all = shops
+    .filter((shop) => shop.id !== subject.id)
+    .map((shop) => {
+      const distance =
+        subject.geo && shop.geo ? distanceMiles(subject.geo, shop.geo) : null;
+      const entry = toDirectoryShop(shop, distance, baseUrl);
+      return { entry, distance, open: hasCollaboration(entry.collaboration) };
     })
-    .filter((s) => s.shared.length > 0)
     .sort(
-      (a, b) => b.shared.length - a.shared.length || byDistanceThenName(a, b),
-    )
-    .slice(0, MAX_NETWORK_ITEMS)
-    .map((s) => toNetworkShop(s, `Shares ${listJoin(s.shared)}`, baseUrl));
+      (a, b) =>
+        Number(b.open) - Number(a.open) ||
+        compareDistance(a.distance, b.distance) ||
+        a.entry.name.localeCompare(b.entry.name),
+    );
+
+  return {
+    entries: all.slice(0, DIRECTORY_MAX).map(({ entry }) => entry),
+    total: all.length,
+  };
 }
 
-function complementary(
-  subject: NetworkSubjectInput,
-  scored: Scored[],
-  baseUrl: string,
-): NetworkShop[] {
-  const subjectState = subject.state ? key(subject.state) : null;
-  // Without coordinates, "local" falls back to the same state.
-  const isLocal = subject.geo
-    ? (s: Scored) => s.distance !== null && s.distance <= NEARBY_RADIUS_MILES
-    : subjectState
-      ? (s: Scored) => !!s.shop.state && key(s.shop.state) === subjectState
-      : null;
-  if (!isLocal) return [];
-
-  const mine = new Set(subject.categories.map(key));
-
-  return scored
-    .filter(
-      (s) =>
-        isLocal(s) &&
-        s.shop.categories.length > 0 &&
-        s.shop.categories.every((c) => !mine.has(key(c))),
-    )
-    .sort(byDistanceThenName)
-    .slice(0, MAX_NETWORK_ITEMS)
-    .map((s) => {
-      const makes = listJoin(
-        s.shop.categories.slice(0, 2).map((c) => c.toLowerCase()),
-      );
-      const who = subject.geo
-        ? `Nearby ${makes} maker`
-        : `${makes.charAt(0).toUpperCase()}${makes.slice(1)} maker also in ${subject.state?.trim()}`;
-      return toNetworkShop(
-        s,
-        `${who} — no overlap with your categories`,
-        baseUrl,
-      );
-    });
-}
+// ─── Events ──────────────────────────────────────────────────────────────────
 
 function upcomingEvents(
   subject: NetworkSubjectInput,
@@ -235,7 +185,7 @@ function upcomingEvents(
           (subject.geo ? compareDistance(a.distance, b.distance) : 0) ||
           a.event.startDate.getTime() - b.event.startDate.getTime(),
       )
-      .slice(0, MAX_NETWORK_ITEMS)
+      .slice(0, MAX_NETWORK_EVENTS)
       .map(({ event, distance }): NetworkEvent => {
         const cta = blankToNull(event.callToActionLink);
         return {
@@ -262,19 +212,14 @@ export function buildNetwork(
   shops: NetworkShopInput[],
   events: NetworkEventInput[],
   opts: { baseUrl: string; now: Date },
-): ShopProfileNetwork {
-  const scored: Scored[] = shops
-    .filter((shop) => shop.id !== subject.id)
-    .map((shop) => ({
-      shop,
-      distance:
-        subject.geo && shop.geo ? distanceMiles(subject.geo, shop.geo) : null,
-    }));
-
+): { network: ShopProfileNetwork; directoryTotal: number } {
+  const { entries, total } = directory(subject, shops, opts.baseUrl);
   return {
-    nearby: nearby(scored, opts.baseUrl),
-    sharedValues: sharedValues(subject, scored, opts.baseUrl),
-    complementary: complementary(subject, scored, opts.baseUrl),
-    upcomingEvents: upcomingEvents(subject, events, opts.baseUrl, opts.now),
+    network: {
+      directory: entries,
+      directoryTruncated: total > entries.length,
+      upcomingEvents: upcomingEvents(subject, events, opts.baseUrl, opts.now),
+    },
+    directoryTotal: total,
   };
 }

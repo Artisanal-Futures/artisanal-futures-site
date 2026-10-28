@@ -26295,6 +26295,8 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    collabOffers: string | null
+    collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
@@ -26324,6 +26326,8 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    collabOffers: string | null
+    collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
     seoTitle: string | null
     seoDescription: string | null
@@ -26356,6 +26360,10 @@ export namespace Prisma {
     slug: number
     previousSlugs: number
     socialLinks: number
+    collabOffers: number
+    collabOfferTags: number
+    collabNeeds: number
+    collabNeedTags: number
     locationType: number
     seoTitle: number
     seoDescription: number
@@ -26387,6 +26395,8 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    collabOffers?: true
+    collabNeeds?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26416,6 +26426,8 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    collabOffers?: true
+    collabNeeds?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26448,6 +26460,10 @@ export namespace Prisma {
     slug?: true
     previousSlugs?: true
     socialLinks?: true
+    collabOffers?: true
+    collabOfferTags?: true
+    collabNeeds?: true
+    collabNeedTags?: true
     locationType?: true
     seoTitle?: true
     seoDescription?: true
@@ -26553,6 +26569,10 @@ export namespace Prisma {
     slug: string | null
     previousSlugs: string[]
     socialLinks: string[]
+    collabOffers: string | null
+    collabOfferTags: string[]
+    collabNeeds: string | null
+    collabNeedTags: string[]
     locationType: $Enums.ShopLocationType
     seoTitle: string | null
     seoDescription: string | null
@@ -26602,6 +26622,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26646,6 +26670,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26679,6 +26707,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26712,6 +26744,10 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    collabOffers?: boolean
+    collabOfferTags?: boolean
+    collabNeeds?: boolean
+    collabNeedTags?: boolean
     locationType?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
@@ -26724,7 +26760,7 @@ export namespace Prisma {
     lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "collabOffers" | "collabOfferTags" | "collabNeeds" | "collabNeedTags" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -26789,6 +26825,16 @@ export namespace Prisma {
        * shop's schema.org `sameAs`.
        */
       socialLinks: string[]
+      /**
+       * Opt-in, public mutual-aid listing: what the shop can offer other members
+       * and what it's looking for. Tags are `COLLABORATION_TAGS` labels
+       * (src/lib/constants/collaboration-tags.ts); the text is plain, ≤ 500 chars.
+       * Shown on the profile, in /llms-full.txt and the Shop Profile API.
+       */
+      collabOffers: string | null
+      collabOfferTags: string[]
+      collabNeeds: string | null
+      collabNeedTags: string[]
       /**
        * How precisely the shop's location is shown publicly. STOREFRONT pins the
        * street address and shows it on the profile; HOME_BASED keeps the street
@@ -27273,6 +27319,10 @@ export namespace Prisma {
     readonly slug: FieldRef<"Shop", 'String'>
     readonly previousSlugs: FieldRef<"Shop", 'String[]'>
     readonly socialLinks: FieldRef<"Shop", 'String[]'>
+    readonly collabOffers: FieldRef<"Shop", 'String'>
+    readonly collabOfferTags: FieldRef<"Shop", 'String[]'>
+    readonly collabNeeds: FieldRef<"Shop", 'String'>
+    readonly collabNeedTags: FieldRef<"Shop", 'String[]'>
     readonly locationType: FieldRef<"Shop", 'ShopLocationType'>
     readonly seoTitle: FieldRef<"Shop", 'String'>
     readonly seoDescription: FieldRef<"Shop", 'String'>
@@ -78992,6 +79042,10 @@ export namespace Prisma {
     slug: 'slug',
     previousSlugs: 'previousSlugs',
     socialLinks: 'socialLinks',
+    collabOffers: 'collabOffers',
+    collabOfferTags: 'collabOfferTags',
+    collabNeeds: 'collabNeeds',
+    collabNeedTags: 'collabNeedTags',
     locationType: 'locationType',
     seoTitle: 'seoTitle',
     seoDescription: 'seoDescription',
@@ -81546,6 +81600,10 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -81589,6 +81647,10 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrderInput | SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrderInput | SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
@@ -81635,6 +81697,10 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Shop"> | boolean
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -81678,6 +81744,10 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrderInput | SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrderInput | SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
@@ -81716,6 +81786,10 @@ export namespace Prisma {
     slug?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableWithAggregatesFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeWithAggregatesFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     seoDescription?: StringNullableWithAggregatesFilter<"Shop"> | string | null
@@ -86965,6 +87039,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -87008,6 +87086,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -87049,6 +87131,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87092,6 +87178,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87134,6 +87224,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -87165,6 +87259,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87197,6 +87295,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -92805,6 +92907,10 @@ export namespace Prisma {
     slug?: SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    collabOffers?: SortOrder
+    collabOfferTags?: SortOrder
+    collabNeeds?: SortOrder
+    collabNeedTags?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -92834,6 +92940,8 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    collabOffers?: SortOrder
+    collabNeeds?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -92863,6 +92971,8 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    collabOffers?: SortOrder
+    collabNeeds?: SortOrder
     locationType?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
@@ -96698,6 +96808,14 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type ShopCreatecollabOfferTagsInput = {
+    set: string[]
+  }
+
+  export type ShopCreatecollabNeedTagsInput = {
+    set: string[]
+  }
+
   export type EventCreateNestedManyWithoutShopInput = {
     create?: XOR<EventCreateWithoutShopInput, EventUncheckedCreateWithoutShopInput> | EventCreateWithoutShopInput[] | EventUncheckedCreateWithoutShopInput[]
     connectOrCreate?: EventCreateOrConnectWithoutShopInput | EventCreateOrConnectWithoutShopInput[]
@@ -96849,6 +96967,16 @@ export namespace Prisma {
   }
 
   export type ShopUpdatesocialLinksInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatecollabOfferTagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type ShopUpdatecollabNeedTagsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -101398,6 +101526,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -101440,6 +101572,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -101598,6 +101734,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -101640,6 +101780,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102083,6 +102227,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102125,6 +102273,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -102181,6 +102333,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102223,6 +102379,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -103897,6 +104057,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -103939,6 +104103,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104072,6 +104240,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104114,6 +104286,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104154,6 +104330,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104196,6 +104376,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104284,6 +104468,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104326,6 +104514,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104589,6 +104781,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104631,6 +104827,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104738,6 +104938,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104780,6 +104984,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104865,6 +105073,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -104907,6 +105119,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -105046,6 +105262,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -105088,6 +105308,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106116,6 +106340,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106158,6 +106386,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106214,6 +106446,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106256,6 +106492,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106296,6 +106536,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106338,6 +106582,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106394,6 +106642,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106436,6 +106688,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106476,6 +106732,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106518,6 +106778,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -106574,6 +106838,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106616,6 +106884,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114143,6 +114415,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -114185,6 +114461,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -114312,6 +114592,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114354,6 +114638,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -115132,6 +115420,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -115173,6 +115465,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -115904,6 +116200,10 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    collabOffers?: StringNullableFilter<"Shop"> | string | null
+    collabOfferTags?: StringNullableListFilter<"Shop">
+    collabNeeds?: StringNullableFilter<"Shop"> | string | null
+    collabNeedTags?: StringNullableListFilter<"Shop">
     locationType?: EnumShopLocationTypeFilter<"Shop"> | $Enums.ShopLocationType
     seoTitle?: StringNullableFilter<"Shop"> | string | null
     seoDescription?: StringNullableFilter<"Shop"> | string | null
@@ -118920,6 +119220,10 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    collabOffers?: string | null
+    collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
+    collabNeeds?: string | null
+    collabNeedTags?: ShopCreatecollabNeedTagsInput | string[]
     locationType?: $Enums.ShopLocationType
     seoTitle?: string | null
     seoDescription?: string | null
@@ -119399,6 +119703,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -119440,6 +119748,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
@@ -119481,6 +119793,10 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
+    collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
+    collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
+    collabNeedTags?: ShopUpdatecollabNeedTagsInput | string[]
     locationType?: EnumShopLocationTypeFieldUpdateOperationsInput | $Enums.ShopLocationType
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null

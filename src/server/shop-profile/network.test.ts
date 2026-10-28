@@ -9,7 +9,11 @@ import type {
 } from "./network";
 
 import { buildNetwork, rankCategories } from "./network";
-import { MAX_NETWORK_ITEMS } from "./types";
+import {
+  DIRECTORY_COLLAB_TEXT_MAX_CHARS,
+  DIRECTORY_MAX,
+  DIRECTORY_MAX_SERVICES,
+} from "./types";
 
 const BASE = "https://af.example.org";
 const NOW = new Date("2026-10-27T12:00:00.000Z");
@@ -24,14 +28,7 @@ const milesNorth = (miles: number) => ({
 function subject(
   overrides: Partial<NetworkSubjectInput> = {},
 ): NetworkSubjectInput {
-  return {
-    id: "me",
-    geo: DETROIT,
-    state: "MI",
-    attributeTags: ["Black Owned", "Worker Owned"],
-    categories: ["Jewelry"],
-    ...overrides,
-  };
+  return { id: "me", geo: DETROIT, ...overrides };
 }
 
 function shop(overrides: Partial<NetworkShopInput> = {}): NetworkShopInput {
@@ -42,8 +39,17 @@ function shop(overrides: Partial<NetworkShopInput> = {}): NetworkShopInput {
     city: "Detroit",
     state: "MI",
     geo: null,
+    locationType: "HOME_BASED",
+    bio: null,
+    description: null,
     attributeTags: [],
     categories: [],
+    services: [],
+    productCount: 0,
+    collabOffers: null,
+    collabOfferTags: [],
+    collabNeeds: null,
+    collabNeedTags: [],
     ...overrides,
   };
 }
@@ -83,197 +89,217 @@ describe("rankCategories", () => {
 });
 
 describe("buildNetwork", () => {
-  it("never includes the subject shop", () => {
-    const me = shop({
-      id: "me",
-      geo: DETROIT,
-      attributeTags: ["Black Owned"],
-      categories: ["Ceramics"],
-    });
-    const result = run(subject(), [me]);
-    assert.equal(result.nearby.length, 0);
-    assert.equal(result.sharedValues.length, 0);
-    assert.equal(result.complementary.length, 0);
-  });
-
-  it("emits a rounded distance and an AF URL, never coordinates or ids", () => {
-    const result = run(subject(), [
-      shop({ id: "secret-id", slug: null, geo: milesNorth(4.23) }),
-    ]);
-    const [entry] = result.nearby;
-    assert.ok(entry);
-    assert.equal(entry.distanceMiles, 4.2);
-    assert.equal(entry.reason, "4.2 mi away");
-    // Shops without a slug fall back to the id path (the public URL).
-    assert.equal(entry.url, `${BASE}/shops/secret-id`);
-    assert.deepEqual(Object.keys(entry).sort(), [
-      "attributeTags",
-      "categories",
-      "distanceMiles",
-      "locality",
-      "name",
-      "reason",
-      "url",
-    ]);
-    assert.equal(entry.locality, "Detroit, MI");
-  });
-
-  describe("nearby", () => {
-    it("sorts by distance and drops shops past 50 mi or without geo", () => {
-      const result = run(subject(), [
-        shop({ id: "far", name: "Far", geo: milesNorth(51) }),
-        shop({ id: "b", name: "Twenty", geo: milesNorth(20) }),
-        shop({ id: "a", name: "Two", geo: milesNorth(2) }),
-        shop({ id: "nogeo", name: "No geo", geo: null }),
+  describe("directory", () => {
+    it("never includes the subject shop", () => {
+      const { network, directoryTotal } = run(subject(), [
+        shop({ id: "me", name: "Me", geo: DETROIT }),
+        shop({ id: "a", name: "A" }),
       ]);
       assert.deepEqual(
-        result.nearby.map((s) => s.name),
-        ["Two", "Twenty"],
+        network.directory.map((s) => s.name),
+        ["A"],
       );
+      assert.equal(directoryTotal, 1);
     });
 
-    it("caps the group", () => {
-      const many = Array.from({ length: 15 }, (_, i) =>
-        shop({ id: `s${i}`, name: `S${i}`, geo: milesNorth(i + 1) }),
-      );
-      assert.equal(run(subject(), many).nearby.length, MAX_NETWORK_ITEMS);
-    });
-
-    it("is empty when the subject has no coordinates", () => {
-      const result = run(subject({ geo: null }), [
-        shop({ geo: milesNorth(1) }),
+    it("emits a rounded distance and an AF URL, never coordinates or ids", () => {
+      const geo = milesNorth(4.23);
+      const { network } = run(subject(), [
+        shop({ id: "secret-id", slug: null, geo, locationType: "STOREFRONT" }),
       ]);
-      assert.deepEqual(result.nearby, []);
-      assert.equal(result.sharedValues.length, 0);
+      const [entry] = network.directory;
+      assert.ok(entry);
+      assert.equal(entry.distanceMiles, 4.2);
+      // Shops without a slug fall back to the id path (the public URL).
+      assert.equal(entry.url, `${BASE}/shops/secret-id`);
+      assert.equal(entry.locality, "Detroit, MI");
+      assert.equal(entry.locationType, "STOREFRONT");
+      assert.deepEqual(Object.keys(entry).sort(), [
+        "about",
+        "attributeTags",
+        "categories",
+        "collaboration",
+        "distanceMiles",
+        "locality",
+        "locationType",
+        "name",
+        "productCount",
+        "services",
+        "url",
+      ]);
+      const json = JSON.stringify(network.directory);
+      assert.ok(!json.includes(String(geo.lat).slice(0, 7)));
+      assert.ok(!json.includes(String(geo.lng)));
+      assert.ok(!json.includes('"secret-id"'));
+      assert.ok(!json.includes('"id"'));
     });
-  });
 
-  describe("sharedValues", () => {
-    it("ranks by overlap, then distance (nulls last), and lists the tags", () => {
-      const result = run(subject(), [
+    it("lists shops with a collaboration listing first, then by distance (nulls last), then name", () => {
+      const { network } = run(subject(), [
+        shop({ id: "b-nogeo", name: "Bravo", geo: null }),
+        shop({ id: "a-nogeo", name: "alpha", geo: null }),
+        shop({ id: "far", name: "Far", geo: milesNorth(20) }),
+        shop({ id: "near", name: "Near", geo: milesNorth(2) }),
         shop({
-          id: "one-near",
-          name: "One near",
-          geo: milesNorth(1),
-          attributeTags: ["black owned"],
+          id: "open-far",
+          name: "Open far",
+          geo: milesNorth(30),
+          collabNeedTags: ["Local delivery"],
         }),
         shop({
-          id: "two-nogeo",
-          name: "Two no geo",
+          id: "open-nogeo",
+          name: "Open no geo",
           geo: null,
-          attributeTags: ["Worker Owned", "Black Owned"],
+          collabOffers: "Room in the van on Tuesdays",
         }),
         shop({
-          id: "one-far",
-          name: "One far",
-          geo: milesNorth(300),
-          attributeTags: ["Worker Owned"],
+          id: "open-near",
+          name: "Open near",
+          geo: milesNorth(5),
+          collabOfferTags: ["Storage space"],
         }),
+        // Blank text and blank tags don't count as a listing.
         shop({
-          id: "one-nogeo",
-          name: "One no geo",
-          geo: null,
-          attributeTags: ["Worker Owned"],
-        }),
-        shop({ id: "none", attributeTags: ["Woman Owned"] }),
-      ]);
-      assert.deepEqual(
-        result.sharedValues.map((s) => s.name),
-        ["Two no geo", "One near", "One far", "One no geo"],
-      );
-      assert.equal(
-        result.sharedValues[0]?.reason,
-        "Shares Black Owned and Worker Owned",
-      );
-      assert.equal(result.sharedValues[0]?.distanceMiles, null);
-    });
-
-    it("works without subject coordinates", () => {
-      const result = run(subject({ geo: null }), [
-        shop({ attributeTags: ["Black Owned"] }),
-      ]);
-      assert.equal(result.sharedValues.length, 1);
-      assert.equal(result.sharedValues[0]?.distanceMiles, null);
-    });
-  });
-
-  describe("complementary", () => {
-    it("keeps only nearby shops whose categories don't overlap", () => {
-      const result = run(subject({ categories: ["Jewelry", "Textiles"] }), [
-        shop({
-          id: "overlap",
-          name: "Overlap",
+          id: "blank",
+          name: "Blank listing",
           geo: milesNorth(1),
-          categories: ["Ceramics", "textiles"],
-        }),
-        shop({
-          id: "disjoint-far",
-          name: "Disjoint far",
-          geo: milesNorth(10),
-          categories: ["Food"],
-        }),
-        shop({
-          id: "disjoint-near",
-          name: "Disjoint near",
-          geo: milesNorth(3),
-          categories: ["Ceramics", "Woodwork", "Art"],
-        }),
-        shop({
-          id: "empty",
-          name: "No categories",
-          geo: milesNorth(1),
-          categories: [],
-        }),
-        shop({
-          id: "too-far",
-          name: "Too far",
-          geo: milesNorth(80),
-          categories: ["Food"],
+          collabOffers: "   ",
+          collabNeedTags: [" "],
         }),
       ]);
       assert.deepEqual(
-        result.complementary.map((s) => s.name),
-        ["Disjoint near", "Disjoint far"],
+        network.directory.map((s) => s.name),
+        [
+          "Open near",
+          "Open far",
+          "Open no geo",
+          "Blank listing",
+          "Near",
+          "Far",
+          "alpha",
+          "Bravo",
+        ],
       );
-      assert.equal(
-        result.complementary[0]?.reason,
-        "Nearby ceramics and woodwork maker — no overlap with your categories",
-      );
-      for (const entry of result.complementary) {
-        assert.ok(
-          entry.categories.every(
-            (c) => !["jewelry", "textiles"].includes(c.toLowerCase()),
-          ),
-        );
-      }
     });
 
-    it("falls back to the same state when the subject has no coordinates", () => {
-      const result = run(subject({ geo: null, state: "MI" }), [
-        shop({ id: "mi", name: "In MI", state: "mi", categories: ["Food"] }),
-        shop({ id: "oh", name: "In OH", state: "OH", categories: ["Food"] }),
+    it("has null distances without subject coordinates and sorts by name", () => {
+      const { network } = run(subject({ geo: null }), [
+        shop({ id: "z", name: "Zed", geo: milesNorth(1) }),
+        shop({ id: "a", name: "Ada", geo: milesNorth(9) }),
       ]);
       assert.deepEqual(
-        result.complementary.map((s) => s.name),
-        ["In MI"],
-      );
-      assert.equal(
-        result.complementary[0]?.reason,
-        "Food maker also in MI — no overlap with your categories",
+        network.directory.map((s) => [s.name, s.distanceMiles]),
+        [
+          ["Ada", null],
+          ["Zed", null],
+        ],
       );
     });
 
-    it("is empty with neither coordinates nor a state", () => {
-      const result = run(subject({ geo: null, state: null }), [
-        shop({ categories: ["Food"] }),
+    it("caps at DIRECTORY_MAX and flags the truncation", () => {
+      const many = Array.from({ length: DIRECTORY_MAX + 5 }, (_, i) =>
+        shop({ id: `s${i}`, name: `S${String(i).padStart(3, "0")}` }),
+      );
+      const { network, directoryTotal } = run(subject(), [
+        shop({ id: "me" }),
+        ...many,
       ]);
-      assert.deepEqual(result.complementary, []);
+      assert.equal(network.directory.length, DIRECTORY_MAX);
+      assert.equal(network.directoryTruncated, true);
+      assert.equal(directoryTotal, DIRECTORY_MAX + 5);
+
+      const small = run(subject(), many.slice(0, 3));
+      assert.equal(small.network.directoryTruncated, false);
+      assert.equal(small.directoryTotal, 3);
+    });
+
+    it("builds a plain-text about from the bio, else the description", () => {
+      const long = `${"word ".repeat(100)}end`;
+      const { network } = run(subject({ geo: null }), [
+        shop({
+          id: "a",
+          name: "A",
+          bio: "<p>Potter &amp; <strong>teacher</strong></p>",
+          description: "Ignored",
+        }),
+        shop({ id: "b", name: "B", bio: "  ", description: "**Bold** shop" }),
+        shop({
+          id: "c",
+          name: "C",
+          bio: "No description available",
+          description: "No description available",
+        }),
+        shop({ id: "d", name: "D", description: long }),
+      ]);
+      const about = network.directory.map((s) => s.about);
+      assert.equal(about[0], "Potter & teacher");
+      assert.equal(about[1], "Bold shop");
+      assert.equal(about[2], null);
+      assert.ok(about[3]);
+      assert.ok(about[3].length <= 300);
+      assert.ok(about[3].endsWith("…"));
+    });
+
+    it("caps categories and services, and passes counts and tags through", () => {
+      const { network } = run(subject(), [
+        shop({
+          categories: ["A", "B", "C", "D", "E", "F"],
+          services: [
+            "Class",
+            " class ",
+            ...Array.from({ length: 10 }, (_, i) => `Service ${i}`),
+          ],
+          attributeTags: ["Black Owned", "black owned", " "],
+          productCount: 12,
+        }),
+      ]);
+      const [entry] = network.directory;
+      assert.ok(entry);
+      assert.deepEqual(entry.categories, ["A", "B", "C", "D", "E"]);
+      assert.equal(entry.services.length, DIRECTORY_MAX_SERVICES);
+      assert.deepEqual(entry.services.slice(0, 2), ["Class", "Service 0"]);
+      assert.deepEqual(entry.attributeTags, ["Black Owned"]);
+      assert.equal(entry.productCount, 12);
+    });
+
+    it("passes the collaboration listing through, capping its text", () => {
+      const long = `${"van ".repeat(120)}end`;
+      const { network } = run(subject(), [
+        shop({
+          collabOffers: long,
+          collabOfferTags: ["Local delivery", "Local delivery", "Referrals"],
+          collabNeeds: "  A <em>shared</em> kitchen  ",
+          collabNeedTags: ["Kitchen or production space"],
+        }),
+        shop({ id: "none", name: "None" }),
+      ]);
+      const [open, none] = network.directory;
+      assert.ok(open && none);
+      assert.ok(open.collaboration.offers);
+      assert.ok(
+        open.collaboration.offers.length <= DIRECTORY_COLLAB_TEXT_MAX_CHARS,
+      );
+      assert.ok(open.collaboration.offers.endsWith("…"));
+      assert.deepEqual(open.collaboration.offerTags, [
+        "Local delivery",
+        "Referrals",
+      ]);
+      assert.equal(open.collaboration.needs, "A shared kitchen");
+      assert.deepEqual(open.collaboration.needTags, [
+        "Kitchen or production space",
+      ]);
+      assert.deepEqual(none.collaboration, {
+        offers: null,
+        offerTags: [],
+        needs: null,
+        needTags: [],
+      });
     });
   });
 
   describe("upcomingEvents", () => {
     it("drops past and own events, sorts by distance when the subject has geo", () => {
-      const result = run(
+      const { network: result } = run(
         subject(),
         [],
         [
@@ -306,7 +332,7 @@ describe("buildNetwork", () => {
     });
 
     it("sorts by date without subject geo and links to the CTA or the host", () => {
-      const result = run(
+      const { network: result } = run(
         subject({ geo: null }),
         [],
         [

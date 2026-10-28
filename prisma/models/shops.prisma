@@ -24,6 +24,15 @@ model Shop {
   /// shop's schema.org `sameAs`.
   socialLinks      String[]
 
+  /// Opt-in, public mutual-aid listing: what the shop can offer other members
+  /// and what it's looking for. Tags are `COLLABORATION_TAGS` labels
+  /// (src/lib/constants/collaboration-tags.ts); the text is plain, ≤ 500 chars.
+  /// Shown on the profile, in /llms-full.txt and the Shop Profile API.
+  collabOffers     String?
+  collabOfferTags  String[]
+  collabNeeds      String?
+  collabNeedTags   String[]
+
   /// How precisely the shop's location is shown publicly. STOREFRONT pins the
   /// street address and shows it on the profile; HOME_BASED keeps the street
   /// private and pins the general area; AREA only ever stores a locality.

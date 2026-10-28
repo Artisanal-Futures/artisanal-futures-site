@@ -1,6 +1,6 @@
 "use client";
 
-import type { FieldErrors, Resolver } from "react-hook-form";
+import type { FieldErrors, Resolver, UseFormReturn } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useUploadFile } from "@better-upload/client";
@@ -12,6 +12,11 @@ import { toast } from "sonner";
 
 import type { ShopFormData } from "~/lib/validators/shop";
 import type { RouterOutputs } from "~/trpc/react";
+import {
+  COLLABORATION_TAGS,
+  COLLABORATION_TEXT_MAX,
+  isCollaborationTag,
+} from "~/lib/constants/collaboration-tags";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { slugify } from "~/lib/utils";
@@ -53,12 +58,19 @@ import { useShopHubSlots } from "./shop-hub-shell";
 import { ShopLocationCard } from "./shop-location-card";
 import { ShopSeoFieldsCard, ShopSeoPreviewCard } from "./shop-seo-card";
 
-const TAB_ORDER = ["profile", "contact", "seo", "admin"] as const;
+const TAB_ORDER = [
+  "profile",
+  "contact",
+  "collaboration",
+  "seo",
+  "admin",
+] as const;
 type TabKey = (typeof TAB_ORDER)[number];
 
 const TAB_LABELS: Record<TabKey, string> = {
   profile: "Profile",
   contact: "Contact & location",
+  collaboration: "Collaboration",
   seo: "Search & sharing",
   admin: "Admin",
 };
@@ -93,6 +105,10 @@ const FIELD_TAB: Record<string, TabKey> = {
   state: "contact",
   zip: "contact",
   country: "contact",
+  collabOffers: "collaboration",
+  collabOfferTags: "collaboration",
+  collabNeeds: "collaboration",
+  collabNeedTags: "collaboration",
   seo: "seo",
   seoImageFile: "seo",
   ownerId: "admin",
@@ -101,8 +117,51 @@ const FIELD_TAB: Record<string, TabKey> = {
 const getErrorTabs = (errors: FieldErrors<ShopFormData>) =>
   new Set(Object.keys(errors).map((field) => FIELD_TAB[field] ?? "profile"));
 
+/** Checkbox group over `COLLABORATION_TAGS`, like Shop Attributes. */
+function CollaborationTagPicker({
+  form,
+  name,
+  labelledBy,
+}: {
+  form: UseFormReturn<ShopFormData>;
+  name: "collabOfferTags" | "collabNeedTags";
+  labelledBy: string;
+}) {
+  const selected = form.watch(name) ?? [];
+  return (
+    <div
+      role="group"
+      aria-labelledby={labelledBy}
+      className="flex flex-wrap gap-4"
+    >
+      {COLLABORATION_TAGS.map((tag) => {
+        const id = `${name}-${slugify(tag)}`;
+        return (
+          <div key={tag} className="flex items-center space-x-2">
+            <Checkbox
+              id={id}
+              checked={selected.includes(tag)}
+              onCheckedChange={(checked) => {
+                const current = form.getValues(name) ?? [];
+                form.setValue(
+                  name,
+                  checked
+                    ? [...current, tag]
+                    : current.filter((value) => value !== tag),
+                  { shouldDirty: true },
+                );
+              }}
+            />
+            <Label htmlFor={id}>{tag}</Label>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 type Props = {
-  initialData: RouterOutputs["shop"]["get"];
+  initialData: RouterOutputs["shop"]["getForAdmin"];
   userRole: string;
   /** Create mode only: ownership of an existing shop changes via transfer. */
   potentialShopOwners?: RouterOutputs["shop"]["getShopOwners"];
@@ -139,7 +198,11 @@ export function ShopForm({
   const isAdmin = userRole === "ADMIN";
 
   const visibleTabs = TAB_ORDER.filter(
-    (tab) => isAdmin || tab === "profile" || tab === "contact",
+    (tab) =>
+      isAdmin ||
+      tab === "profile" ||
+      tab === "contact" ||
+      tab === "collaboration",
   );
   const rawTab = searchParams.get("tab");
   const requestedTab = rawTab ? (LEGACY_TAB[rawTab] ?? rawTab) : null;
@@ -178,6 +241,15 @@ export function ShopForm({
     locationType: initialData?.locationType ?? "HOME_BASED",
     attributeTags: initialData?.attributeTags ?? [],
     socialLinks: initialData?.socialLinks ?? [],
+    collabOffers: initialData?.collabOffers ?? "",
+    // Drop retired labels so they can't fail validation and block the save.
+    collabOfferTags: (initialData?.collabOfferTags ?? []).filter(
+      isCollaborationTag,
+    ),
+    collabNeeds: initialData?.collabNeeds ?? "",
+    collabNeedTags: (initialData?.collabNeedTags ?? []).filter(
+      isCollaborationTag,
+    ),
     ownerId: initialData?.ownerId ?? "",
     isPublic: initialData?.isPublic ?? true,
 
@@ -343,6 +415,9 @@ export function ShopForm({
           onSuccess: ({ data: saved }) =>
             handleReset({
               ...payload,
+              // Validated collaboration notes are null when blank.
+              collabOffers: payload.collabOffers ?? "",
+              collabNeeds: payload.collabNeeds ?? "",
               ...(seo
                 ? {
                     // Validated values use null for blanks; inputs want "".
@@ -725,6 +800,81 @@ export function ShopForm({
                       />
                     </CardContent>
                   </Card>
+                }
+              />
+            </TabsContent>
+
+            <TabsContent
+              value="collaboration"
+              forceMount
+              className="data-[state=inactive]:hidden"
+            >
+              <AdminFormColumns
+                main={
+                  <>
+                    <p className="text-muted-foreground text-sm">
+                      Optional and public. Helps other Artisanal Futures members
+                      — and tools like ProfitMax — find ways to work together:
+                      shared delivery, space, supplies, referrals.
+                    </p>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle id="collab-offers-label">
+                          We can offer
+                        </CardTitle>
+                        <CardDescription>
+                          What your shop could share with other members.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <CollaborationTagPicker
+                          form={form}
+                          name="collabOfferTags"
+                          labelledBy="collab-offers-label"
+                        />
+                        <TextareaFormField
+                          form={form}
+                          name="collabOffers"
+                          label="Details"
+                          className="w-full"
+                          placeholder="e.g. We deliver on the east side Tue/Thu and have room in the van"
+                          maxLength={COLLABORATION_TEXT_MAX}
+                          messageLength={form.watch("collabOffers")?.length}
+                          disabled={isPending}
+                        />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle id="collab-needs-label">
+                          We&apos;re looking for
+                        </CardTitle>
+                        <CardDescription>
+                          What would help your shop, that another member might
+                          have.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <CollaborationTagPicker
+                          form={form}
+                          name="collabNeedTags"
+                          labelledBy="collab-needs-label"
+                        />
+                        <TextareaFormField
+                          form={form}
+                          name="collabNeeds"
+                          label="Details"
+                          className="w-full"
+                          placeholder="e.g. A shared kitchen two days a week"
+                          maxLength={COLLABORATION_TEXT_MAX}
+                          messageLength={form.watch("collabNeeds")?.length}
+                          disabled={isPending}
+                        />
+                      </CardContent>
+                    </Card>
+                  </>
                 }
               />
             </TabsContent>

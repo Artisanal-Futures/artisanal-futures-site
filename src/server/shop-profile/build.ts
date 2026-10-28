@@ -11,6 +11,7 @@
  * origin); they must never reach the result as-is (see build.test.ts).
  */
 import type { NetworkEventInput, NetworkShopInput } from "./network";
+import type { ShopCollaborationSource } from "./text";
 import type {
   ShopProfileCatalog,
   ShopProfileCatalogSource,
@@ -26,7 +27,6 @@ import {
 } from "~/lib/add-full-image-url";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { shopPath } from "~/lib/seo/paths";
-import { truncate } from "~/lib/seo/plain-text";
 import { parseSocialLinks } from "~/lib/social-links";
 import {
   blankToNull,
@@ -36,8 +36,10 @@ import {
 import { toPublicAddress } from "~/server/lib/public-address";
 
 import { buildNetwork } from "./network";
+import { plainOrNull, toCollaboration, uniqueStrings } from "./text";
 import {
   ABOUT_MAX_CHARS,
+  COLLAB_TEXT_MAX_CHARS,
   DESCRIPTION_MAX_CHARS,
   MAX_ITEMS,
   SHOP_PROFILE_SCHEMA,
@@ -79,7 +81,7 @@ export type ShopProfileSourceService = {
 };
 
 export type ShopProfileSource = {
-  shop: {
+  shop: ShopCollaborationSource & {
     id: string;
     slug: string | null;
     name: string;
@@ -117,23 +119,13 @@ export type ShopProfileSource = {
   productTotal: number | null;
   services: ShopProfileSourceService[];
   serviceTotal: number | null;
-  /** Every AF category on the shop's public products + services. */
-  categories: string[];
-  /** Other public, indexable shops (the network candidates). */
+  /** Other public, indexable shops (the directory candidates). */
   networkShops: NetworkShopInput[];
   /** Upcoming events on public shops. */
   events: NetworkEventInput[];
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-/** Placeholder `convert-to-product` writes for an empty imported description. */
-const IMPORT_PLACEHOLDER = "No description available";
-
-function plainOrNull(raw: string | null | undefined, max: number) {
-  const text = truncate(raw, max);
-  return text && text !== IMPORT_PLACEHOLDER ? text : null;
-}
 
 /** Absolute http(s) URL, or a site-relative path resolved against AF. */
 function absoluteUrl(url: string | null | undefined, baseUrl: string) {
@@ -175,19 +167,6 @@ function originOf(url: string | null): string | null {
   } catch {
     return null;
   }
-}
-
-/** Trimmed, de-duplicated (case-insensitively), blanks dropped. */
-function uniqueStrings(...lists: string[][]): string[] {
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const value of lists.flat()) {
-    const t = blankToNull(value);
-    if (!t || seen.has(t.toLowerCase())) continue;
-    seen.add(t.toLowerCase());
-    out.push(t);
-  }
-  return out;
 }
 
 const positiveCents = (value: number | null) =>
@@ -259,10 +238,12 @@ function buildShop(
     socialLinks: parseSocialLinks(s.socialLinks.join("\n")),
     logoUrl: shopImageUrl(s.logoPhoto, baseUrl),
     locationType: s.locationType,
-    locality: city || state || country ? { city, state, country } : null,
+    // A bare country (the shop form defaults it to "US") isn't a locality.
+    locality: city || state ? { city, state, country } : null,
     streetAddress,
     geo,
     attributeTags: uniqueStrings(s.attributeTags),
+    collaboration: toCollaboration(s, COLLAB_TEXT_MAX_CHARS),
   };
 }
 
@@ -377,7 +358,7 @@ export function buildShopProfile(
     .map((sv) => buildService(sv, baseUrl));
 
   const { latitude, longitude } = source.shop.address ?? {};
-  const network = buildNetwork(
+  const { network, directoryTotal } = buildNetwork(
     {
       id: source.shop.id,
       // Real coordinates: distances are computed, never the subject's pin.
@@ -388,9 +369,6 @@ export function buildShopProfile(
         Number.isFinite(longitude)
           ? { lat: latitude, lng: longitude }
           : null,
-      state: blankToNull(source.shop.address?.state),
-      attributeTags: source.shop.attributeTags,
-      categories: source.categories,
     },
     source.networkShops,
     source.events,
@@ -408,9 +386,7 @@ export function buildShopProfile(
     counts: {
       products: productTotal,
       services: serviceTotal,
-      nearby: network.nearby.length,
-      sharedValues: network.sharedValues.length,
-      complementary: network.complementary.length,
+      directory: directoryTotal,
       upcomingEvents: network.upcomingEvents.length,
     },
   };

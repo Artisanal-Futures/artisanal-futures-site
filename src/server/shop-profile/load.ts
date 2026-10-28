@@ -5,7 +5,7 @@ import type { NetworkShopInput } from "./network";
 import { db } from "~/server/db";
 
 import { rankCategories } from "./network";
-import { MAX_ITEMS } from "./types";
+import { DIRECTORY_MAX_SERVICES, MAX_ITEMS } from "./types";
 
 /** Upcoming events considered for the network block before ranking. */
 const MAX_EVENT_CANDIDATES = 200;
@@ -27,9 +27,10 @@ const geoOf = (
  * forms; it never emits them as-is.
  *
  * Four queries, run together: the subject shop with its catalog; the other
- * public + indexable shops (the same rule as the sitemap and llms.txt); every
- * category's public items' shop ids (to rank each shop's categories); and
- * upcoming events on public shops (as `event.getUpcomingEvents`).
+ * public + indexable shops (the same rule as the sitemap and llms.txt) with
+ * their public service names and product counts; every category's public
+ * items' shop ids (to rank each shop's categories); and upcoming events on
+ * public shops (as `event.getUpcomingEvents`).
  *
  * Returns null when the shop no longer exists or is hidden.
  */
@@ -51,6 +52,10 @@ export async function loadShopProfileSource(
         socialLinks: true,
         logoPhoto: true,
         attributeTags: true,
+        collabOffers: true,
+        collabOfferTags: true,
+        collabNeeds: true,
+        collabNeedTags: true,
         locationType: true,
         syncPlatform: true,
         syncEnabled: true,
@@ -125,10 +130,24 @@ export async function loadShopProfileSource(
         id: true,
         slug: true,
         name: true,
+        bio: true,
+        description: true,
+        locationType: true,
         attributeTags: true,
+        collabOffers: true,
+        collabOfferTags: true,
+        collabNeeds: true,
+        collabNeedTags: true,
         address: {
           select: { city: true, state: true, latitude: true, longitude: true },
         },
+        services: {
+          where: { isPublic: true },
+          orderBy: [{ isFeatured: "desc" }, { name: "asc" }],
+          take: DIRECTORY_MAX_SERVICES,
+          select: { name: true },
+        },
+        _count: { select: { products: { where: { isPublic: true } } } },
       },
     }),
     db.category.findMany({
@@ -196,8 +215,17 @@ export async function loadShopProfileSource(
     city: s.address?.city ?? null,
     state: s.address?.state ?? null,
     geo: geoOf(s.address),
+    locationType: s.locationType,
+    bio: s.bio,
+    description: s.description,
     attributeTags: s.attributeTags,
+    collabOffers: s.collabOffers,
+    collabOfferTags: s.collabOfferTags,
+    collabNeeds: s.collabNeeds,
+    collabNeedTags: s.collabNeedTags,
     categories: rankCategories(categoryNamesByShop.get(s.id) ?? []),
+    services: s.services.map((sv) => sv.name),
+    productCount: s._count.products,
   }));
 
   return {
@@ -212,6 +240,10 @@ export async function loadShopProfileSource(
       socialLinks: shop.socialLinks,
       logoPhoto: shop.logoPhoto,
       attributeTags: shop.attributeTags,
+      collabOffers: shop.collabOffers,
+      collabOfferTags: shop.collabOfferTags,
+      collabNeeds: shop.collabNeeds,
+      collabNeedTags: shop.collabNeedTags,
       locationType: shop.locationType,
       syncPlatform: shop.syncPlatform,
       syncEnabled: shop.syncEnabled,
@@ -229,7 +261,6 @@ export async function loadShopProfileSource(
       categories: sv.categories.map((c) => c.name),
     })),
     serviceTotal: shop._count.services,
-    categories: rankCategories(categoryNamesByShop.get(shop.id) ?? []),
     networkShops,
     events: eventRows.map((e) => ({
       title: e.title,
