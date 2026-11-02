@@ -17,6 +17,7 @@ import type {
   MapLayerMouseEvent,
   MapRef,
   PopupProps,
+  ViewStateChangeEvent,
 } from "react-map-gl/maplibre";
 import {
   useCallback,
@@ -38,17 +39,23 @@ import MapGL, {
 } from "react-map-gl/maplibre";
 import { toast } from "sonner";
 
+import type { BoundaryLayerId, LngLatBoundsTuple } from "../_lib/boundaries";
 import type { MapShop } from "../_lib/types";
-import type { MapBrandColors } from "./map-style";
+import type { MapViewport } from "../_lib/url-state";
+import type { MapTheme } from "./map-style";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 
+import { DETROIT_BOUNDS, isOffDetroit } from "../_lib/boundaries";
 import { groupCoLocatedShops } from "../_lib/co-located";
+import { BoundaryOverlay, useBoundaryData } from "./boundary-overlay";
+import { MapLayersControl } from "./map-layers-control";
 import { MapLegend } from "./map-legend";
 import {
   MAP_BRAND_COLORS,
   MAP_FONT_BOLD,
+  sectorColorExpr,
   useArtisanMapStyle,
   useMapTheme,
 } from "./map-style";
@@ -83,6 +90,7 @@ const CLUSTER_LAYER_ID = "artisan-clusters";
 const CLUSTER_COUNT_LAYER_ID = "artisan-cluster-count";
 const PIN_SHADOW_LAYER_ID = "artisan-pin-shadow";
 const PIN_LAYER_ID = "artisan-pins";
+const SELECTED_RING_LAYER_ID = "artisan-selected-ring";
 const SELECTED_SHADOW_LAYER_ID = "artisan-selected-shadow";
 const SELECTED_PIN_LAYER_ID = "artisan-selected-pin";
 const PIN_BADGE_LAYER_ID = "artisan-pin-badge";
@@ -98,6 +106,13 @@ const INTERACTIVE_LAYER_IDS = [
 const PIN_LAYERS = new Set([PIN_LAYER_ID, SELECTED_PIN_LAYER_ID]);
 
 const SELECTED_PIN_SCALE = 1.3;
+
+/** Outline widths (px) around a pin: resting, hovered, selected. */
+const PIN_HALO_WIDTH = 1.5;
+const PIN_HOVER_HALO_WIDTH = 2.5;
+const SELECTED_HALO_WIDTH = 2.5;
+/** Ground ring under the selected pin's tip, so selection never relies on colour. */
+const SELECTED_RING_RADIUS = 11;
 
 /**
  * Count badge for pins shared by several shops. It sits on the pin head's
@@ -160,6 +175,21 @@ export type ArtisanMapProps = {
   showPopup?: boolean;
   /** Called when "Near me" resolves the viewer's position (used for distances in the list). */
   onUserLocationChange?: (loc: { lat: number; lng: number } | null) => void;
+  /**
+   * Camera to open on (e.g. from a shared URL). Read once on mount; when set,
+   * the first fit-to-shops and the first fly-to-selection are skipped.
+   */
+  initialViewport?: MapViewport | null;
+  /**
+   * Called after the camera settles, whether the user or a filter moved it.
+   * Not called for the automatic first fit, so an untouched map has no camera
+   * to share.
+   */
+  onViewportChange?: (viewport: MapViewport) => void;
+  /** Detroit boundary overlay drawn under the pins, or null for none. */
+  boundaryLayer?: BoundaryLayerId | null;
+  /** Shows the Layers control when provided. */
+  onBoundaryLayerChange?: (layer: BoundaryLayerId | null) => void;
   className?: string;
 };
 
@@ -171,6 +201,8 @@ type ShopFeatureProps = {
   shopId: string;
   name: string;
   precision: MapShop["precision"];
+  /** Fills the pin; a shared pin uses its first shop's sector. */
+  sector: MapShop["sector"];
   /** Shops sharing this pin (1 unless co-located storefronts). */
   count: number;
 };
@@ -222,6 +254,7 @@ function toFeatureCollection(
         shopId: first.id,
         name: first.name,
         precision: first.precision,
+        sector: first.sector,
         count,
       },
     })),
@@ -269,7 +302,10 @@ function PinImageRegistrar() {
 // Layer definitions
 // ---------------------------------------------------------------------------
 
-function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
+function buildLayers(theme: MapTheme, selectedGroupId: string | null) {
+  const colors = MAP_BRAND_COLORS[theme];
+  const sectorColor = sectorColorExpr(theme);
+
   const notSelected: FilterSpecification = [
     "all",
     ["!", ["has", "point_count"]],
@@ -286,13 +322,12 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
     "icon-ignore-placement": true,
   };
 
-  const pinColor: ExpressionSpecification = [
-    "case",
+  // Hover (and a selected pin, before the selected source takes it over)
+  // only thickens the outline to ink; the sector fill never changes.
+  const isHighlighted: ExpressionSpecification = [
+    "any",
     ["boolean", ["feature-state", "selected"], false],
-    colors.pinSelected,
     ["boolean", ["feature-state", "hover"], false],
-    colors.pinHover,
-    colors.pin,
   ];
 
   const shadowPaint = {
@@ -324,7 +359,7 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
         AREA_RING_MIN_ZOOM + 8,
         AREA_RING_RADIUS_Z10 * 2 ** 8,
       ],
-      "circle-color": colors.pin,
+      "circle-color": sectorColor,
       "circle-opacity": [
         "interpolate",
         ["linear"],
@@ -335,7 +370,7 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
         0.08,
       ],
       "circle-stroke-width": 1,
-      "circle-stroke-color": colors.pin,
+      "circle-stroke-color": sectorColor,
       "circle-stroke-opacity": [
         "interpolate",
         ["linear"],
@@ -399,14 +434,28 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
     filter: notSelected,
     layout: pinLayout,
     paint: {
-      "icon-color": pinColor,
-      "icon-halo-color": colors.pinStroke,
+      "icon-color": sectorColor,
+      "icon-halo-color": ["case", isHighlighted, colors.ink, colors.pinStroke],
       "icon-halo-width": [
         "case",
-        ["boolean", ["feature-state", "hover"], false],
-        2.25,
-        1.5,
+        isHighlighted,
+        PIN_HOVER_HALO_WIDTH,
+        PIN_HALO_WIDTH,
       ],
+    },
+  };
+
+  // Ink ring on the ground around the selected pin's tip.
+  const selectedRing: LayerProps = {
+    id: SELECTED_RING_LAYER_ID,
+    type: "circle",
+    paint: {
+      "circle-radius": SELECTED_RING_RADIUS,
+      "circle-color": colors.ink,
+      "circle-opacity": 0.12,
+      "circle-stroke-width": 2,
+      "circle-stroke-color": colors.ink,
+      "circle-pitch-alignment": "map",
     },
   };
 
@@ -421,9 +470,9 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
     type: "symbol",
     layout: { ...pinLayout, "icon-size": SELECTED_PIN_SCALE },
     paint: {
-      "icon-color": colors.pinSelected,
-      "icon-halo-color": colors.pinStroke,
-      "icon-halo-width": 2,
+      "icon-color": sectorColor,
+      "icon-halo-color": colors.ink,
+      "icon-halo-width": SELECTED_HALO_WIDTH,
     },
   };
 
@@ -491,6 +540,7 @@ function buildLayers(colors: MapBrandColors, selectedGroupId: string | null) {
     pins,
     pinBadge,
     pinBadgeCount,
+    selectedRing,
     selectedShadow,
     selectedPin,
     selectedBadge,
@@ -511,6 +561,10 @@ export default function ArtisanMap({
   renderPopup,
   showPopup = true,
   onUserLocationChange,
+  initialViewport,
+  onViewportChange,
+  boundaryLayer = null,
+  onBoundaryLayerChange,
   className,
 }: ArtisanMapProps) {
   const mapStyle = useArtisanMapStyle();
@@ -533,13 +587,24 @@ export default function ArtisanMap({
   const onSelectRef = useRef(onSelectShop);
   const onHoverRef = useRef(onHoverShop);
   const onUserLocationRef = useRef(onUserLocationChange);
+  const onViewportRef = useRef(onViewportChange);
+  const onBoundaryLayerRef = useRef(onBoundaryLayerChange);
   const selectedIdRef = useRef(selectedShopId);
   useEffect(() => {
     onSelectRef.current = onSelectShop;
     onHoverRef.current = onHoverShop;
     onUserLocationRef.current = onUserLocationChange;
+    onViewportRef.current = onViewportChange;
+    onBoundaryLayerRef.current = onBoundaryLayerChange;
     selectedIdRef.current = selectedShopId;
   });
+
+  // Only the mount-time value matters (it's the camera the map opens on).
+  const [openingViewport] = useState(() => initialViewport ?? null);
+  /** Set while the automatic first fit runs, so it isn't reported. */
+  const silentMoveRef = useRef(false);
+  /** A shared camera wins over flying to the shared selection, once. */
+  const skipFirstFlyRef = useRef(openingViewport !== null);
 
   const located = useMemo(() => shops.filter(isLocated), [shops]);
   const shopById = useMemo(() => {
@@ -600,8 +665,8 @@ export default function ArtisanMap({
   );
 
   const layers = useMemo(
-    () => buildLayers(colors, selectedGroupId),
-    [colors, selectedGroupId],
+    () => buildLayers(theme, selectedGroupId),
+    [theme, selectedGroupId],
   );
 
   const duration = useCallback(
@@ -668,44 +733,57 @@ export default function ArtisanMap({
     if (fittedKeyRef.current === idsKey) return;
     const isFirstFit = fittedKeyRef.current === null;
     fittedKeyRef.current = idsKey;
+    // A shared camera (from the URL) replaces the first fit.
+    if (isFirstFit && openingViewport) return;
 
-    const animate = isFirstFit ? 0 : duration(800);
-    if (located.length === 0) {
-      map.jumpTo({
-        center: [US_CENTER.longitude, US_CENTER.latitude],
-        zoom: US_ZOOM,
-      });
-      return;
+    const fit = () => {
+      const animate = isFirstFit ? 0 : duration(800);
+      if (located.length === 0) {
+        map.jumpTo({
+          center: [US_CENTER.longitude, US_CENTER.latitude],
+          zoom: US_ZOOM,
+        });
+        return;
+      }
+      // One pin (possibly several co-located shops): zero-area bounds would
+      // make fitBounds compute a NaN camera, so centre on it instead.
+      if (groups.pins.length === 1) {
+        const only = groups.pins[0]!.first;
+        map.flyTo({
+          center: [only.location.lng, only.location.lat],
+          zoom: FIT_MAX_ZOOM,
+          duration: animate,
+        });
+        return;
+      }
+      let minLng = Infinity;
+      let minLat = Infinity;
+      let maxLng = -Infinity;
+      let maxLat = -Infinity;
+      for (const s of located) {
+        minLng = Math.min(minLng, s.location.lng);
+        minLat = Math.min(minLat, s.location.lat);
+        maxLng = Math.max(maxLng, s.location.lng);
+        maxLat = Math.max(maxLat, s.location.lat);
+      }
+      map.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat],
+        ],
+        { padding: FIT_PADDING, maxZoom: FIT_MAX_ZOOM, duration: animate },
+      );
+    };
+
+    // The first fit is instant, so its moveend fires synchronously inside
+    // `fit()` and is muted: an untouched map keeps a camera-free URL.
+    silentMoveRef.current = isFirstFit;
+    try {
+      fit();
+    } finally {
+      silentMoveRef.current = false;
     }
-    // One pin (possibly several co-located shops): zero-area bounds would
-    // make fitBounds compute a NaN camera, so centre on it instead.
-    if (groups.pins.length === 1) {
-      const only = groups.pins[0]!.first;
-      map.flyTo({
-        center: [only.location.lng, only.location.lat],
-        zoom: FIT_MAX_ZOOM,
-        duration: animate,
-      });
-      return;
-    }
-    let minLng = Infinity;
-    let minLat = Infinity;
-    let maxLng = -Infinity;
-    let maxLat = -Infinity;
-    for (const s of located) {
-      minLng = Math.min(minLng, s.location.lng);
-      minLat = Math.min(minLat, s.location.lat);
-      maxLng = Math.max(maxLng, s.location.lng);
-      maxLat = Math.max(maxLat, s.location.lat);
-    }
-    map.fitBounds(
-      [
-        [minLng, minLat],
-        [maxLng, maxLat],
-      ],
-      { padding: FIT_PADDING, maxZoom: FIT_MAX_ZOOM, duration: animate },
-    );
-  }, [idsKey, located, groups, mapReady, duration]);
+  }, [idsKey, located, groups, mapReady, duration, openingViewport]);
 
   // --- Camera: fly to the selected shop ------------------------------------
 
@@ -713,6 +791,10 @@ export default function ArtisanMap({
   const lastFlownRef = useRef<string | null>(null);
   useEffect(() => {
     if (!mapReady) return;
+    // Only the first run after load can skip: a shared URL with both a
+    // camera and `shop` keeps that camera instead of flying to the shop.
+    const skipFly = skipFirstFlyRef.current;
+    skipFirstFlyRef.current = false;
     if (!selectedPinShop) {
       lastFlownRef.current = null;
       return;
@@ -720,6 +802,7 @@ export default function ArtisanMap({
     // Keyed on the group so cycling co-located shops doesn't re-fly.
     if (lastFlownRef.current === selectedPinShop.id) return;
     lastFlownRef.current = selectedPinShop.id;
+    if (skipFly) return;
     const map = mapRef.current;
     if (!map) return;
     const height = map.getContainer().clientHeight;
@@ -821,6 +904,14 @@ export default function ArtisanMap({
     [duration],
   );
 
+  // --- Viewport reporting --------------------------------------------------
+
+  const handleMoveEnd = useCallback((e: ViewStateChangeEvent) => {
+    if (silentMoveRef.current) return;
+    const { longitude, latitude, zoom } = e.viewState;
+    onViewportRef.current?.({ longitude, latitude, zoom });
+  }, []);
+
   // --- Near me --------------------------------------------------------------
 
   const handleNearMe = useCallback(() => {
@@ -855,6 +946,31 @@ export default function ArtisanMap({
     );
   }, [duration]);
 
+  // --- Boundary overlay -----------------------------------------------------
+
+  const boundary = useBoundaryData(boundaryLayer);
+
+  const handleBoundaryLayerChange = useCallback(
+    (next: BoundaryLayerId | null) => {
+      onBoundaryLayerRef.current?.(next);
+      const map = mapRef.current;
+      if (!next || !map) return;
+      // The overlays only cover Detroit: bring it into view if it isn't.
+      const view = map.getBounds();
+      const viewBounds: LngLatBoundsTuple = [
+        [view.getWest(), view.getSouth()],
+        [view.getEast(), view.getNorth()],
+      ];
+      if (isOffDetroit(viewBounds, map.getZoom())) {
+        map.fitBounds(DETROIT_BOUNDS, {
+          padding: FIT_PADDING,
+          duration: duration(800),
+        });
+      }
+    },
+    [duration],
+  );
+
   // --- Render ---------------------------------------------------------------
 
   if (!mapStyle) {
@@ -876,7 +992,7 @@ export default function ArtisanMap({
     >
       <MapGL
         ref={mapRef}
-        initialViewState={{ ...US_CENTER, zoom: US_ZOOM }}
+        initialViewState={openingViewport ?? { ...US_CENTER, zoom: US_ZOOM }}
         mapStyle={mapStyle}
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
@@ -888,6 +1004,7 @@ export default function ArtisanMap({
         interactiveLayerIds={INTERACTIVE_LAYER_IDS}
         cursor={cursor}
         onLoad={() => setMapReady(true)}
+        onMoveEnd={handleMoveEnd}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -920,11 +1037,22 @@ export default function ArtisanMap({
           data={selectedGeojson}
           promoteId="groupId"
         >
+          <Layer {...layers.selectedRing} />
           <Layer {...layers.selectedShadow} />
           <Layer {...layers.selectedPin} />
           <Layer {...layers.selectedBadge} />
           <Layer {...layers.selectedBadgeCount} />
         </Source>
+
+        {/* After the shop sources, so the ring layer exists to sit under. */}
+        {boundaryLayer && boundary.data && (
+          <BoundaryOverlay
+            layer={boundaryLayer}
+            data={boundary.data}
+            theme={theme}
+            beforeId={AREA_RING_LAYER_ID}
+          />
+        )}
 
         {userLocation && (
           <Marker
@@ -978,6 +1106,15 @@ export default function ArtisanMap({
           <LocateFixed className="size-4" aria-hidden />
         )}
       </Button>
+
+      {onBoundaryLayerChange && (
+        <MapLayersControl
+          value={boundaryLayer}
+          onChange={handleBoundaryLayerChange}
+          status={boundary.status}
+          className="absolute top-[121px] right-[10px] z-10"
+        />
+      )}
     </div>
   );
 }

@@ -42,6 +42,7 @@ export const shopPublicSelect = {
   website: true,
   socialLinks: true,
   attributeTags: true,
+  sector: true,
   createdAt: true,
   isPublic: true,
   locationType: true,

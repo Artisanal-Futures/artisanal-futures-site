@@ -19,12 +19,18 @@ const DESKTOP_QUERY = "(min-width: 768px)";
 // Swatches
 // ---------------------------------------------------------------------------
 
-/** The map pin, drawn with the same 30x40 geometry as `pin-image.ts`. */
+/**
+ * The map pin, drawn with the same 30x40 geometry as `pin-image.ts`. Always
+ * the neutral `legendPin` fill: the legend explains shapes, and the sector
+ * chips explain colours.
+ */
 function PinGlyph({
   colors,
+  outline = colors.pinStroke,
   className,
 }: {
   colors: MapBrandColors;
+  outline?: string;
   className?: string;
 }) {
   return (
@@ -35,9 +41,9 @@ function PinGlyph({
     >
       <path
         d="M15 37 L5.66 18.79 A10.5 10.5 0 1 1 24.34 18.79 Z"
-        fill={colors.pin}
-        stroke={colors.pinStroke}
-        strokeWidth={1.5}
+        fill={colors.legendPin}
+        stroke={outline}
+        strokeWidth={outline === colors.pinStroke ? 1.5 : 2.5}
         strokeLinejoin="round"
       />
       <circle cx={15} cy={14} r={4} fill={colors.pinStroke} />
@@ -173,8 +179,8 @@ export function MapLegend({
               <span
                 className="absolute inset-0 rounded-full border"
                 style={{
-                  backgroundColor: `color-mix(in oklab, ${colors.pin} 12%, transparent)`,
-                  borderColor: `color-mix(in oklab, ${colors.pin} 40%, transparent)`,
+                  backgroundColor: `color-mix(in oklab, ${colors.legendPin} 12%, transparent)`,
+                  borderColor: `color-mix(in oklab, ${colors.legendPin} 40%, transparent)`,
                 }}
               />
               <PinGlyph colors={colors} className="relative" />
@@ -182,6 +188,28 @@ export function MapLegend({
           }
         >
           Approximate area (home-based)
+        </LegendRow>
+
+        <LegendRow
+          swatch={
+            <>
+              {/* Mirrors the selected layers: ground ring + ink outline. */}
+              <span
+                className="absolute bottom-[3px] left-1/2 h-2.5 w-4 -translate-x-1/2 translate-y-1/2 rounded-[50%] border-2"
+                style={{
+                  borderColor: colors.ink,
+                  backgroundColor: `color-mix(in oklab, ${colors.ink} 12%, transparent)`,
+                }}
+              />
+              <PinGlyph
+                colors={colors}
+                outline={colors.ink}
+                className="relative"
+              />
+            </>
+          }
+        >
+          Selected artisan
         </LegendRow>
 
         <LegendRow

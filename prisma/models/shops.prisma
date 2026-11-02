@@ -24,6 +24,11 @@ model Shop {
   /// shop's schema.org `sameAs`.
   socialLinks      String[]
 
+  /// What the shop mainly does, as a `SHOP_SECTORS` id
+  /// (src/lib/constants/shop-sectors.ts). Colors its Artisan Map pin and
+  /// drives the sector filter. Null (or an unknown id) is shown as "Other".
+  sector           String?
+
   /// Opt-in, public mutual-aid listing: what the shop can offer other members
   /// and what it's looking for. Tags are `COLLABORATION_TAGS` labels
   /// (src/lib/constants/collaboration-tags.ts); the text is plain, ≤ 500 chars.

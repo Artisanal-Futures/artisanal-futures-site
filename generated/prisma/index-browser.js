@@ -335,6 +335,7 @@ exports.Prisma.ShopScalarFieldEnum = {
   slug: 'slug',
   previousSlugs: 'previousSlugs',
   socialLinks: 'socialLinks',
+  sector: 'sector',
   collabOffers: 'collabOffers',
   collabOfferTags: 'collabOfferTags',
   collabNeeds: 'collabNeeds',

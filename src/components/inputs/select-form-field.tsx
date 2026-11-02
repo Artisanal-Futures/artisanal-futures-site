@@ -59,7 +59,8 @@ export const SelectFormField = <CurrentForm extends FieldValues>({
                 onValueChange?.(e);
                 field.onChange(e);
               }}
-              value={field.value}
+              // Radix shows the placeholder only for "", not null.
+              value={field.value ?? ""}
             >
               <FormControl>
                 <SelectTrigger disabled={disabled} className="w-full">

@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Handshake,
   Link2,
   Mail,
   MapPin,
@@ -22,6 +23,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { OutboundLink } from "~/components/outbound-link";
 
+import { SectorBadge } from "./sector-chips";
 import { ShopAvatar } from "./shop-avatar";
 
 /** Prefix bare domains with https://; drop anything that isn't http(s). */
@@ -38,6 +40,43 @@ function blankToNull(value: string | null): string | null {
   const trimmed = value?.trim();
   if (!trimmed) return null;
   return trimmed;
+}
+
+/** Tags shown per side of a collaboration listing before "+N". */
+const COLLAB_TAG_LIMIT = 3;
+
+/** "Can offer" / "Looking for" tags, capped, with the rest as "+N". */
+function CollabTags({ label, tags }: { label: string; tags: string[] }) {
+  if (tags.length === 0) return null;
+  const shown = tags.slice(0, COLLAB_TAG_LIMIT);
+  const more = tags.length - shown.length;
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-muted-foreground text-xs">{label}</p>
+      <ul className="flex flex-wrap gap-1" aria-label={label}>
+        {shown.map((tag) => (
+          <li key={tag}>
+            <Badge
+              variant="outline"
+              className="rounded-full px-2 py-0 text-[11px] font-normal"
+            >
+              {tag}
+            </Badge>
+          </li>
+        ))}
+        {more > 0 && (
+          <li>
+            <Badge
+              variant="outline"
+              className="text-muted-foreground rounded-full px-2 py-0 text-[11px] font-normal"
+            >
+              +{more} more
+            </Badge>
+          </li>
+        )}
+      </ul>
+    </div>
+  );
 }
 
 function phoneHref(raw: string): string | null {
@@ -130,6 +169,8 @@ export function ShopMapCard({
         )}
       </header>
 
+      <SectorBadge sector={shop.sector} />
+
       {shop.precision === "exact" && shop.streetAddress ? (
         // Storefronts are public places, pinned at their street address.
         <p className="text-muted-foreground flex items-start gap-1.5 text-sm">
@@ -166,6 +207,32 @@ export function ShopMapCard({
             </li>
           ))}
         </ul>
+      )}
+
+      {shop.collab && (
+        <section
+          aria-label="Open to collaborate"
+          className="flex flex-col gap-2 rounded-lg border border-dashed p-2.5"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <Badge variant="secondary" className="gap-1">
+              <Handshake aria-hidden />
+              Open to collaborate
+            </Badge>
+            <Link
+              href={`${shopPath(shop)}#collaborate`}
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 shrink-0 rounded-sm text-xs underline-offset-2 outline-none hover:underline focus-visible:ring-[3px]"
+            >
+              Details
+              <span className="sr-only">
+                {" "}
+                about collaborating with {shop.name}
+              </span>
+            </Link>
+          </div>
+          <CollabTags label="Can offer" tags={shop.collab.offerTags} />
+          <CollabTags label="Looking for" tags={shop.collab.needTags} />
+        </section>
       )}
 
       {(email ?? phone) && (

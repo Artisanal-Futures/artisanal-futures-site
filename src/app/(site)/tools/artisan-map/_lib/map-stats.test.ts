@@ -2,37 +2,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { MapShop } from "./types";
+import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
+
 import {
   computeMapStats,
   countAttributes,
   distanceMiles,
   formatDistance,
 } from "./map-stats";
-import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
+import { mapShop } from "./test-shop";
 
-function shop(overrides: Partial<MapShop> = {}): MapShop {
-  return {
-    id: "shop",
-    slug: null,
-    name: "Shop",
-    ownerName: "Owner",
-    logoPhoto: null,
-    ownerPhoto: null,
-    website: null,
-    email: null,
-    phone: null,
-    attributeTags: [],
-    locality: null,
-    location: null,
-    precision: "approximate",
-    streetAddress: null,
-    productCount: 0,
-    serviceCount: 0,
-    isNew: false,
-    ...overrides,
-  };
-}
+const shop = mapShop;
 
 describe("computeMapStats", () => {
   it("returns zeros for an empty list", () => {
