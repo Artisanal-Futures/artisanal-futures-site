@@ -4,6 +4,7 @@ import {
   COLLABORATION_TAGS,
   COLLABORATION_TEXT_MAX,
 } from "~/lib/constants/collaboration-tags";
+import { SHOP_SECTOR_IDS } from "~/lib/constants/shop-sectors";
 
 import { shopSeoSchema, urlListSchema } from "./seo";
 
@@ -55,6 +56,12 @@ const collabTagsSchema = z
   .transform((tags) => [...new Set(tags)])
   .optional();
 
+/** Shop sector id; blank (an unpicked select) → null, shown as "Other". */
+const sectorSchema = z.preprocess(
+  (value) => (value === "" ? null : value),
+  z.enum(SHOP_SECTOR_IDS).nullish(),
+);
+
 export const shopSchema = z.object({
   name: z.string().min(1, "Shop name is required"),
   ownerName: z.string().min(1, "Owner name is required"),
@@ -75,6 +82,8 @@ export const shopSchema = z.object({
   country: z.string().optional().nullable(),
   locationType: shopLocationTypeSchema.default("HOME_BASED"),
   attributeTags: z.array(z.string()),
+  /** Colors the Artisan Map pin. Omitted = leave unchanged. */
+  sector: sectorSchema,
   ownerId: z.string().optional().nullable(),
 
   /** Profile links (Instagram, Etsy, ...). Artisan-editable. */

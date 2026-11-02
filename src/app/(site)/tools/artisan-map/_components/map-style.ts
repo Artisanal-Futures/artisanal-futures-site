@@ -6,6 +6,12 @@ import type {
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 
+import {
+  DEFAULT_SHOP_SECTOR,
+  getShopSector,
+  SHOP_SECTORS,
+} from "~/lib/constants/shop-sectors";
+
 /**
  * Themed basemap for the Artisan Map.
  *
@@ -29,16 +35,24 @@ export type MapTheme = "light" | "dark";
 // Brand colours for pins / clusters (layered on top of the basemap)
 // ---------------------------------------------------------------------------
 
+/**
+ * Pins are filled with their shop's sector colour (`sectorColorExpr`); these
+ * are the theme colours around them. Hover and selection are shown with an
+ * `ink` outline (plus scale and a ground ring), never a fill change, so they
+ * read the same on every sector colour.
+ */
 export type MapBrandColors = {
-  /** Default pin fill (sage green). */
-  pin: string;
-  /** Pin fill while hovered (from the list or the map). */
-  pinHover: string;
-  /** Pin fill for the selected shop (terracotta). */
-  pinSelected: string;
+  /** Hover / selected pin outline and the selected ground ring. */
+  ink: string;
+  /** Neutral pin fill for the legend, which explains shapes, not colours. */
+  legendPin: string;
   /** Pin outline + centre dot. */
   pinStroke: string;
-  /** Cluster bubble fill. */
+  /** Brand accent (sage), e.g. unselected breakdown bars. */
+  accent: string;
+  /** Active accent (terracotta), e.g. selected breakdown bars. */
+  accentActive: string;
+  /** Cluster bubble fill. Neutral: a cluster mixes sectors. */
   cluster: string;
   /** Cluster bubble ring. */
   clusterStroke: string;
@@ -50,36 +64,42 @@ export type MapBrandColors = {
 
 export const MAP_BRAND_COLORS: Record<MapTheme, MapBrandColors> = {
   light: {
-    pin: "#3f7a52",
-    pinHover: "#2f6040",
-    pinSelected: "#c2643c",
+    ink: "#1f1d1a",
+    legendPin: "#6b625a",
     pinStroke: "#fffaf0",
-    cluster: "#3f7a52",
+    accent: "#3f7a52",
+    accentActive: "#c2643c",
+    cluster: "#3b352e",
     clusterStroke: "#f6f1e7",
     clusterText: "#fffaf0",
     userLocation: "#2f6f9f",
   },
   dark: {
-    pin: "#6fae80",
-    pinHover: "#8cc79b",
-    pinSelected: "#e08a5f",
+    ink: "#fffaf0",
+    legendPin: "#a39887",
     pinStroke: "#1f1d1a",
-    cluster: "#4f8f63",
+    accent: "#6fae80",
+    accentActive: "#e08a5f",
+    cluster: "#e6ddcf",
     clusterStroke: "#1f1d1a",
-    clusterText: "#f6f1e7",
+    clusterText: "#1f1d1a",
     userLocation: "#7fb6dd",
   },
 };
 
-/** Light-mode defaults, for consumers that only need a single value. */
-export const PIN_COLOR = MAP_BRAND_COLORS.light.pin;
-export const PIN_HOVER = MAP_BRAND_COLORS.light.pinHover;
-export const PIN_SELECTED = MAP_BRAND_COLORS.light.pinSelected;
-export const CLUSTER_COLOR = MAP_BRAND_COLORS.light.cluster;
-export const CLUSTER_TEXT_COLOR = MAP_BRAND_COLORS.light.clusterText;
-export const PIN_COLOR_DARK = MAP_BRAND_COLORS.dark.pin;
-export const PIN_SELECTED_DARK = MAP_BRAND_COLORS.dark.pinSelected;
-export const CLUSTER_COLOR_DARK = MAP_BRAND_COLORS.dark.cluster;
+/** A pin's fill: its `sector` property's colour for this theme. */
+export function sectorColorExpr(theme: MapTheme): ExpressionSpecification {
+  const [first, ...rest] = SHOP_SECTORS;
+  return [
+    "match",
+    ["get", "sector"],
+    first.id,
+    first.color[theme],
+    ...rest.flatMap((sector) => [sector.id, sector.color[theme]]),
+    // Unset and unknown ids render as "other".
+    getShopSector(DEFAULT_SHOP_SECTOR).color[theme],
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // Basemap palettes
@@ -175,6 +195,18 @@ const BASEMAP_PALETTES: Record<MapTheme, BasemapPalette> = {
     halo: "rgba(31, 29, 26, 0.9)",
   },
 };
+
+/**
+ * The basemap's secondary label colours, so overlays (e.g. boundary names)
+ * read as part of the map rather than on top of it.
+ */
+export function basemapLabelColors(theme: MapTheme): {
+  text: string;
+  halo: string;
+} {
+  const palette = BASEMAP_PALETTES[theme];
+  return { text: palette.textMuted, halo: palette.halo };
+}
 
 // ---------------------------------------------------------------------------
 // Recolouring

@@ -9,6 +9,20 @@
  * geocoded from its street is sent unshifted (`roundLocation`).
  */
 
+import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
+import type { ShopSectorId } from "~/lib/constants/shop-sectors";
+
+/**
+ * A shop's public mutual-aid listing, as the map shows it: only known
+ * `COLLABORATION_TAGS`, and plain, capped text.
+ */
+export type MapShopCollaboration = {
+  offerTags: CollaborationTag[];
+  needTags: CollaborationTag[];
+  offers: string | null;
+  needs: string | null;
+};
+
 export type MapShopLocation = {
   id: string;
   slug: string | null;
@@ -20,6 +34,8 @@ export type MapShopLocation = {
   email: string | null;
   phone: string | null;
   attributeTags: string[];
+  /** `Shop.sector`, normalized: unset or unknown is "other". */
+  sector: ShopSectorId;
   locality: string | null;
   location: { lat: number; lng: number } | null;
   /**
@@ -35,6 +51,8 @@ export type MapShopLocation = {
   serviceCount: number;
   /** Joined within the last 30 days. */
   isNew: boolean;
+  /** Open-to-collaborate listing; null when the shop hasn't filled one in. */
+  collab: MapShopCollaboration | null;
 };
 
 /** Trim a string; empty/whitespace-only/nullish becomes null. */

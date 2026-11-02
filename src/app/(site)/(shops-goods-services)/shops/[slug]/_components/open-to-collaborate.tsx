@@ -28,7 +28,11 @@ export function OpenToCollaborate({ shop }: Props) {
   if (rows.length === 0) return null;
 
   return (
-    <div className="border-border bg-card rounded-xl border p-5">
+    // `#collaborate` is linked from the Artisan Map's shop card.
+    <div
+      id="collaborate"
+      className="border-border bg-card scroll-mt-20 rounded-xl border p-5"
+    >
       <h2 className="text-muted-foreground mb-3 text-xs font-semibold tracking-widest uppercase">
         Open to collaborate
       </h2>

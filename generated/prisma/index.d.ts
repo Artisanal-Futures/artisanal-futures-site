@@ -26295,6 +26295,7 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    sector: string | null
     collabOffers: string | null
     collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
@@ -26326,6 +26327,7 @@ export namespace Prisma {
     name: string | null
     isPublic: boolean | null
     slug: string | null
+    sector: string | null
     collabOffers: string | null
     collabNeeds: string | null
     locationType: $Enums.ShopLocationType | null
@@ -26360,6 +26362,7 @@ export namespace Prisma {
     slug: number
     previousSlugs: number
     socialLinks: number
+    sector: number
     collabOffers: number
     collabOfferTags: number
     collabNeeds: number
@@ -26395,6 +26398,7 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    sector?: true
     collabOffers?: true
     collabNeeds?: true
     locationType?: true
@@ -26426,6 +26430,7 @@ export namespace Prisma {
     name?: true
     isPublic?: true
     slug?: true
+    sector?: true
     collabOffers?: true
     collabNeeds?: true
     locationType?: true
@@ -26460,6 +26465,7 @@ export namespace Prisma {
     slug?: true
     previousSlugs?: true
     socialLinks?: true
+    sector?: true
     collabOffers?: true
     collabOfferTags?: true
     collabNeeds?: true
@@ -26569,6 +26575,7 @@ export namespace Prisma {
     slug: string | null
     previousSlugs: string[]
     socialLinks: string[]
+    sector: string | null
     collabOffers: string | null
     collabOfferTags: string[]
     collabNeeds: string | null
@@ -26622,6 +26629,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    sector?: boolean
     collabOffers?: boolean
     collabOfferTags?: boolean
     collabNeeds?: boolean
@@ -26670,6 +26678,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    sector?: boolean
     collabOffers?: boolean
     collabOfferTags?: boolean
     collabNeeds?: boolean
@@ -26707,6 +26716,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    sector?: boolean
     collabOffers?: boolean
     collabOfferTags?: boolean
     collabNeeds?: boolean
@@ -26744,6 +26754,7 @@ export namespace Prisma {
     slug?: boolean
     previousSlugs?: boolean
     socialLinks?: boolean
+    sector?: boolean
     collabOffers?: boolean
     collabOfferTags?: boolean
     collabNeeds?: boolean
@@ -26760,7 +26771,7 @@ export namespace Prisma {
     lastSyncedAt?: boolean
   }
 
-  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "collabOffers" | "collabOfferTags" | "collabNeeds" | "collabNeedTags" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
+  export type ShopOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerName" | "bio" | "description" | "ownerPhoto" | "logoPhoto" | "coverPhoto" | "phone" | "email" | "website" | "ownerId" | "createdAt" | "updatedAt" | "attributeTags" | "name" | "isPublic" | "slug" | "previousSlugs" | "socialLinks" | "sector" | "collabOffers" | "collabOfferTags" | "collabNeeds" | "collabNeedTags" | "locationType" | "seoTitle" | "seoDescription" | "seoImage" | "seoNoIndex" | "syncPlatform" | "syncEnabled" | "syncUrl" | "allowInsecureOrigin" | "lastSyncedAt", ExtArgs["result"]["shop"]>
   export type ShopInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Shop$eventsArgs<ExtArgs>
     products?: boolean | Shop$productsArgs<ExtArgs>
@@ -26825,6 +26836,12 @@ export namespace Prisma {
        * shop's schema.org `sameAs`.
        */
       socialLinks: string[]
+      /**
+       * What the shop mainly does, as a `SHOP_SECTORS` id
+       * (src/lib/constants/shop-sectors.ts). Colors its Artisan Map pin and
+       * drives the sector filter. Null (or an unknown id) is shown as "Other".
+       */
+      sector: string | null
       /**
        * Opt-in, public mutual-aid listing: what the shop can offer other members
        * and what it's looking for. Tags are `COLLABORATION_TAGS` labels
@@ -27319,6 +27336,7 @@ export namespace Prisma {
     readonly slug: FieldRef<"Shop", 'String'>
     readonly previousSlugs: FieldRef<"Shop", 'String[]'>
     readonly socialLinks: FieldRef<"Shop", 'String[]'>
+    readonly sector: FieldRef<"Shop", 'String'>
     readonly collabOffers: FieldRef<"Shop", 'String'>
     readonly collabOfferTags: FieldRef<"Shop", 'String[]'>
     readonly collabNeeds: FieldRef<"Shop", 'String'>
@@ -79042,6 +79060,7 @@ export namespace Prisma {
     slug: 'slug',
     previousSlugs: 'previousSlugs',
     socialLinks: 'socialLinks',
+    sector: 'sector',
     collabOffers: 'collabOffers',
     collabOfferTags: 'collabOfferTags',
     collabNeeds: 'collabNeeds',
@@ -81600,6 +81619,7 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    sector?: StringNullableFilter<"Shop"> | string | null
     collabOffers?: StringNullableFilter<"Shop"> | string | null
     collabOfferTags?: StringNullableListFilter<"Shop">
     collabNeeds?: StringNullableFilter<"Shop"> | string | null
@@ -81647,6 +81667,7 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    sector?: SortOrderInput | SortOrder
     collabOffers?: SortOrderInput | SortOrder
     collabOfferTags?: SortOrder
     collabNeeds?: SortOrderInput | SortOrder
@@ -81697,6 +81718,7 @@ export namespace Prisma {
     isPublic?: BoolFilter<"Shop"> | boolean
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    sector?: StringNullableFilter<"Shop"> | string | null
     collabOffers?: StringNullableFilter<"Shop"> | string | null
     collabOfferTags?: StringNullableListFilter<"Shop">
     collabNeeds?: StringNullableFilter<"Shop"> | string | null
@@ -81744,6 +81766,7 @@ export namespace Prisma {
     slug?: SortOrderInput | SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    sector?: SortOrderInput | SortOrder
     collabOffers?: SortOrderInput | SortOrder
     collabOfferTags?: SortOrder
     collabNeeds?: SortOrderInput | SortOrder
@@ -81786,6 +81809,7 @@ export namespace Prisma {
     slug?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    sector?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     collabOffers?: StringNullableWithAggregatesFilter<"Shop"> | string | null
     collabOfferTags?: StringNullableListFilter<"Shop">
     collabNeeds?: StringNullableWithAggregatesFilter<"Shop"> | string | null
@@ -87039,6 +87063,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -87086,6 +87111,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -87131,6 +87157,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87178,6 +87205,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87224,6 +87252,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -87259,6 +87288,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87295,6 +87325,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -92907,6 +92938,7 @@ export namespace Prisma {
     slug?: SortOrder
     previousSlugs?: SortOrder
     socialLinks?: SortOrder
+    sector?: SortOrder
     collabOffers?: SortOrder
     collabOfferTags?: SortOrder
     collabNeeds?: SortOrder
@@ -92940,6 +92972,7 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    sector?: SortOrder
     collabOffers?: SortOrder
     collabNeeds?: SortOrder
     locationType?: SortOrder
@@ -92971,6 +93004,7 @@ export namespace Prisma {
     name?: SortOrder
     isPublic?: SortOrder
     slug?: SortOrder
+    sector?: SortOrder
     collabOffers?: SortOrder
     collabNeeds?: SortOrder
     locationType?: SortOrder
@@ -101526,6 +101560,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -101572,6 +101607,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -101734,6 +101770,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -101780,6 +101817,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102227,6 +102265,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -102273,6 +102312,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -102333,6 +102373,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -102379,6 +102420,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104057,6 +104099,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104103,6 +104146,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104240,6 +104284,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104286,6 +104331,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104330,6 +104376,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104376,6 +104423,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104468,6 +104516,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104514,6 +104563,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104781,6 +104831,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104827,6 +104878,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -104938,6 +104990,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -104984,6 +105037,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -105073,6 +105127,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -105119,6 +105174,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -105262,6 +105318,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -105308,6 +105365,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106340,6 +106398,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106386,6 +106445,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106446,6 +106506,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106492,6 +106553,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106536,6 +106598,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106582,6 +106645,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106642,6 +106706,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106688,6 +106753,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106732,6 +106798,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106778,6 +106845,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -106838,6 +106906,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106884,6 +106953,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114415,6 +114485,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -114461,6 +114532,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -114592,6 +114664,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -114638,6 +114711,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -115420,6 +115494,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -115465,6 +115540,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -116200,6 +116276,7 @@ export namespace Prisma {
     slug?: StringNullableFilter<"Shop"> | string | null
     previousSlugs?: StringNullableListFilter<"Shop">
     socialLinks?: StringNullableListFilter<"Shop">
+    sector?: StringNullableFilter<"Shop"> | string | null
     collabOffers?: StringNullableFilter<"Shop"> | string | null
     collabOfferTags?: StringNullableListFilter<"Shop">
     collabNeeds?: StringNullableFilter<"Shop"> | string | null
@@ -119220,6 +119297,7 @@ export namespace Prisma {
     slug?: string | null
     previousSlugs?: ShopCreatepreviousSlugsInput | string[]
     socialLinks?: ShopCreatesocialLinksInput | string[]
+    sector?: string | null
     collabOffers?: string | null
     collabOfferTags?: ShopCreatecollabOfferTagsInput | string[]
     collabNeeds?: string | null
@@ -119703,6 +119781,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -119748,6 +119827,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null
@@ -119793,6 +119873,7 @@ export namespace Prisma {
     slug?: NullableStringFieldUpdateOperationsInput | string | null
     previousSlugs?: ShopUpdatepreviousSlugsInput | string[]
     socialLinks?: ShopUpdatesocialLinksInput | string[]
+    sector?: NullableStringFieldUpdateOperationsInput | string | null
     collabOffers?: NullableStringFieldUpdateOperationsInput | string | null
     collabOfferTags?: ShopUpdatecollabOfferTagsInput | string[]
     collabNeeds?: NullableStringFieldUpdateOperationsInput | string | null

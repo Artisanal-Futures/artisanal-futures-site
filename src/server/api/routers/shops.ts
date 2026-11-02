@@ -5,12 +5,18 @@ import { z } from "zod";
 
 import type { ShopSeoValues } from "~/lib/validators/seo";
 import type { ShopLocationTypeValue } from "~/lib/validators/shop";
-import type { MapShopLocation } from "~/server/geocoding/approximate-location";
+import type {
+  MapShopCollaboration,
+  MapShopLocation,
+} from "~/server/geocoding/approximate-location";
+import type { ShopCollaborationSource } from "~/server/shop-profile/text";
 import {
   addFullProductImageUrl,
   addFullServiceImageUrl,
 } from "~/lib/add-full-image-url";
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
+import { isCollaborationTag } from "~/lib/constants/collaboration-tags";
+import { toShopSector } from "~/lib/constants/shop-sectors";
 import { shopPath } from "~/lib/seo/paths";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import { shopPrivateContactSchema } from "~/lib/validators/shop-private-contact";
@@ -31,10 +37,29 @@ import { toPublicAddress } from "~/server/lib/public-address";
 import { pingIndexNow } from "~/server/seo/indexnow";
 import { SHOPS_LANDING_TAG } from "~/server/seo/landing-pages";
 import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
+import { hasCollaboration, toCollaboration } from "~/server/shop-profile/text";
+import { DIRECTORY_COLLAB_TEXT_MAX_CHARS } from "~/server/shop-profile/types";
 import {
   publicAddressSelect,
   shopPublicSelect,
 } from "~/server/shops/public-shop";
+
+/**
+ * The map's view of a shop's collaboration listing: known tags only, text
+ * capped like directory entries. Null when nothing is filled in.
+ */
+function toMapCollaboration(
+  source: ShopCollaborationSource,
+): MapShopCollaboration | null {
+  const collab = toCollaboration(source, DIRECTORY_COLLAB_TEXT_MAX_CHARS);
+  const mapCollab: MapShopCollaboration = {
+    offerTags: collab.offerTags.filter(isCollaborationTag),
+    needTags: collab.needTags.filter(isCollaborationTag),
+    offers: collab.offers,
+    needs: collab.needs,
+  };
+  return hasCollaboration(mapCollab) ? mapCollab : null;
+}
 
 /**
  * Street columns to save. An AREA shop only ever stores a locality, so its
@@ -666,8 +691,14 @@ export const shopsRouter = createTRPCRouter({
           email: true,
           phone: true,
           attributeTags: true,
+          sector: true,
           locationType: true,
           createdAt: true,
+          // Already public via `shopPublicSelect`; nothing new is exposed.
+          collabOffers: true,
+          collabOfferTags: true,
+          collabNeeds: true,
+          collabNeedTags: true,
           // Public listings only, for the map's catalog counts.
           _count: {
             select: {
@@ -730,6 +761,7 @@ export const shopsRouter = createTRPCRouter({
           attributeTags: shop.attributeTags.filter(
             (tag) => blankToNull(tag) !== null,
           ),
+          sector: toShopSector(shop.sector),
           locality: formatLocality(shop.address?.city, shop.address?.state),
           location,
           precision: isExact ? "exact" : "approximate",
@@ -738,6 +770,7 @@ export const shopsRouter = createTRPCRouter({
           productCount: shop._count.products,
           serviceCount: shop._count.services,
           isNew: shop.createdAt.getTime() >= newSince,
+          collab: toMapCollaboration(shop),
         };
       });
     },
@@ -1078,6 +1111,7 @@ export const shopsRouter = createTRPCRouter({
             coverPhoto: input.coverPhotoUrl,
             socialLinks: input.socialLinks ?? [],
             attributeTags: input.attributeTags ?? [],
+            sector: input.sector ?? null,
             collabOffers: input.collabOffers ?? null,
             collabOfferTags: input.collabOfferTags ?? [],
             collabNeeds: input.collabNeeds ?? null,
@@ -1194,7 +1228,8 @@ export const shopsRouter = createTRPCRouter({
               email: input?.email ?? "",
               website: input?.website ?? "",
               attributeTags: input?.attributeTags ?? [],
-              // Omitted (undefined) leaves the stored listing as-is.
+              // Omitted (undefined) leaves the stored sector / listing as-is.
+              sector: input.sector,
               collabOffers: input.collabOffers,
               collabOfferTags: input.collabOfferTags,
               collabNeeds: input.collabNeeds,

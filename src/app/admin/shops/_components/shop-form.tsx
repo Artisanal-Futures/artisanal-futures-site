@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import type { FieldErrors, Resolver, UseFormReturn } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -17,6 +18,7 @@ import {
   COLLABORATION_TEXT_MAX,
   isCollaborationTag,
 } from "~/lib/constants/collaboration-tags";
+import { isShopSector, SHOP_SECTORS } from "~/lib/constants/shop-sectors";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { slugify } from "~/lib/utils";
@@ -94,6 +96,7 @@ const FIELD_TAB: Record<string, TabKey> = {
   coverPhotoFile: "profile",
   coverPhotoUrl: "profile",
   attributeTags: "profile",
+  sector: "profile",
   isPublic: "profile",
   website: "contact",
   email: "contact",
@@ -240,6 +243,8 @@ export function ShopForm({
     country: initialData?.address?.country ?? "US",
     locationType: initialData?.locationType ?? "HOME_BASED",
     attributeTags: initialData?.attributeTags ?? [],
+    // Unset, or a retired id, starts blank (shown as "Other" on the map).
+    sector: isShopSector(initialData?.sector) ? initialData.sector : null,
     socialLinks: initialData?.socialLinks ?? [],
     collabOffers: initialData?.collabOffers ?? "",
     // Drop retired labels so they can't fail validation and block the save.
@@ -634,6 +639,43 @@ export function ShopForm({
                           label="Share a bit about yourself here!"
                           className="w-full"
                           placeholder="Jane Doe is the proud owner of..."
+                        />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Shop Sector</CardTitle>
+                        <CardDescription>
+                          What your shop mainly does. It sets your pin color and
+                          filter on the Artisan Map.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <SelectFormField
+                          form={form}
+                          name="sector"
+                          label="Sector"
+                          placeholder="Choose a sector"
+                          description="Optional. Shops without one show as Other."
+                          values={SHOP_SECTORS.map((sector) => ({
+                            value: sector.id,
+                            label: (
+                              <span className="flex items-center gap-2">
+                                <span
+                                  aria-hidden
+                                  className="size-2.5 shrink-0 rounded-full bg-(--dot-light) dark:bg-(--dot-dark)"
+                                  style={
+                                    {
+                                      "--dot-light": sector.color.light,
+                                      "--dot-dark": sector.color.dark,
+                                    } as CSSProperties
+                                  }
+                                />
+                                {sector.label}
+                              </span>
+                            ),
+                          }))}
                         />
                       </CardContent>
                     </Card>

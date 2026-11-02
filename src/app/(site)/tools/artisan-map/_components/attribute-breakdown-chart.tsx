@@ -21,13 +21,51 @@ const chartConfig = {
   count: { label: "Artisans" },
 } satisfies ChartConfig;
 
-type Row = { name: string; count: number; selected: boolean };
-
-type AttributeBreakdownChartProps = {
-  counts: Map<string, number>;
-  selected: string[];
-  onToggle: (attribute: string, checked: boolean) => void;
+/** One bar. `color` overrides the accent fill (e.g. a sector's pin colour). */
+export type BreakdownRow = {
+  id: string;
+  name: string;
+  count: number;
+  selected: boolean;
+  color?: string;
 };
+
+type BreakdownChartProps = {
+  rows: BreakdownRow[];
+  /** Called with a row's `id` when its bar, label or button is picked. */
+  onPick: (id: string) => void;
+  /** Names the keyboard list, e.g. "Filter by sector". */
+  label: string;
+  /** Shown when no row has a count. */
+  emptyLabel: string;
+};
+
+/**
+ * Rows for every key with a count, plus selected keys at 0 (so they can be
+ * un-picked), most common first.
+ */
+export function toBreakdownRows<K extends string>(
+  counts: Map<K, number>,
+  selected: readonly K[],
+  describe: (id: K) => { name: string; color?: string } = (id) => ({
+    name: id,
+  }),
+): BreakdownRow[] {
+  const ids = new Set<K>();
+  for (const [id, count] of counts) {
+    if (count > 0) ids.add(id);
+  }
+  for (const id of selected) ids.add(id);
+
+  return [...ids]
+    .map((id) => ({
+      id,
+      ...describe(id),
+      count: counts.get(id) ?? 0,
+      selected: selected.includes(id),
+    }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+}
 
 function truncate(name: string) {
   return name.length > MAX_LABEL_CHARS
@@ -39,24 +77,25 @@ type TickProps = {
   x?: number;
   y?: number;
   payload?: { value: string };
-  selectedSet: Set<string>;
-  onPick: (name: string) => void;
+  rowsByName: Map<string, BreakdownRow>;
+  onPick: (id: string) => void;
 };
 
-function AttributeTick({
+function BreakdownTick({
   x = 0,
   y = 0,
   payload,
-  selectedSet,
+  rowsByName,
   onPick,
 }: TickProps) {
   if (!payload) return null;
   const name = payload.value;
-  const isSelected = selectedSet.has(name);
+  const row = rowsByName.get(name);
+  const isSelected = row?.selected ?? false;
   return (
     <g
       transform={`translate(${x},${y})`}
-      onClick={() => onPick(name)}
+      onClick={() => row && onPick(row.id)}
       style={{ cursor: "pointer" }}
     >
       <title>{name}</title>
@@ -78,43 +117,34 @@ function AttributeTick({
   );
 }
 
-export function AttributeBreakdownChart({
-  counts,
-  selected,
-  onToggle,
-}: AttributeBreakdownChartProps) {
+export function BreakdownChart({
+  rows,
+  onPick,
+  label,
+  emptyLabel,
+}: BreakdownChartProps) {
   const theme = useMapTheme();
   const colors = MAP_BRAND_COLORS[theme];
 
-  const rows = useMemo<Row[]>(() => {
-    const selectedSet = new Set(selected);
-    const names = new Set<string>();
-    for (const [name, count] of counts) {
-      if (count > 0) names.add(name);
-    }
-    // Keep selected attributes visible (even at 0) so they can be un-toggled.
-    for (const name of selected) names.add(name);
-
-    return [...names]
-      .map((name) => ({
-        name,
-        count: counts.get(name) ?? 0,
-        selected: selectedSet.has(name),
-      }))
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-  }, [counts, selected]);
-
-  const selectedSet = useMemo(() => new Set(selected), [selected]);
+  const rowsByName = useMemo(
+    () => new Map(rows.map((row) => [row.name, row])),
+    [rows],
+  );
+  const anySelected = rows.some((row) => row.selected);
 
   if (rows.length === 0 || rows.every((r) => r.count === 0 && !r.selected)) {
     return (
       <p className="text-muted-foreground py-4 text-center text-sm">
-        No attributes in this view
+        {emptyLabel}
       </p>
     );
   }
 
-  const handlePick = (name: string) => onToggle(name, !selectedSet.has(name));
+  /** Accent bars go terracotta when picked; coloured bars dim when not. */
+  const fillFor = (row: BreakdownRow) =>
+    row.color ?? (row.selected ? colors.accentActive : colors.accent);
+  const opacityFor = (row: BreakdownRow) =>
+    row.color && anySelected && !row.selected ? 0.35 : 1;
 
   const longest = Math.min(
     MAX_LABEL_CHARS,
@@ -144,9 +174,7 @@ export function AttributeBreakdownChart({
               tickLine={false}
               axisLine={false}
               interval={0}
-              tick={
-                <AttributeTick selectedSet={selectedSet} onPick={handlePick} />
-              }
+              tick={<BreakdownTick rowsByName={rowsByName} onPick={onPick} />}
             />
             <ChartTooltip
               cursor={{ fillOpacity: 0.5 }}
@@ -154,7 +182,7 @@ export function AttributeBreakdownChart({
                 <ChartTooltipContent
                   hideIndicator
                   labelFormatter={(_, payload) =>
-                    (payload[0]?.payload as Row | undefined)?.name
+                    (payload[0]?.payload as BreakdownRow | undefined)?.name
                   }
                 />
               }
@@ -163,12 +191,13 @@ export function AttributeBreakdownChart({
               dataKey="count"
               radius={4}
               maxBarSize={14}
-              onClick={(row: Row) => handlePick(row.name)}
+              onClick={(row: BreakdownRow) => onPick(row.id)}
             >
               {rows.map((row) => (
                 <Cell
-                  key={row.name}
-                  fill={row.selected ? colors.pinSelected : colors.pin}
+                  key={row.id}
+                  fill={fillFor(row)}
+                  fillOpacity={opacityFor(row)}
                   style={{ cursor: "pointer" }}
                 />
               ))}
@@ -186,15 +215,15 @@ export function AttributeBreakdownChart({
 
       {/* Keyboard / screen-reader path; revealed visually while focused. */}
       <ul
-        aria-label="Filter by artisan attribute"
+        aria-label={label}
         className="sr-only focus-within:not-sr-only focus-within:mt-2 focus-within:flex focus-within:flex-wrap focus-within:gap-1"
       >
         {rows.map((row) => (
-          <li key={row.name}>
+          <li key={row.id}>
             <button
               type="button"
               aria-pressed={row.selected}
-              onClick={() => handlePick(row.name)}
+              onClick={() => onPick(row.id)}
               className="border-input bg-background focus-visible:ring-ring/50 rounded-md border px-2 py-1 text-xs focus-visible:ring-2 focus-visible:outline-hidden aria-pressed:font-semibold"
             >
               {row.name} ({row.count.toLocaleString()})

@@ -1,3 +1,16 @@
+import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
+import type { ShopSectorId } from "~/lib/constants/shop-sectors";
+
+/** A shop's public "Open to collaborate" listing. */
+export type MapShopCollab = {
+  /** Kinds of help the shop can offer. */
+  offerTags: CollaborationTag[];
+  /** Kinds of help the shop is looking for. */
+  needTags: CollaborationTag[];
+  offers: string | null;
+  needs: string | null;
+};
+
 export type MapShop = {
   id: string;
   /** Public profile slug; null until one is generated. */
@@ -10,6 +23,8 @@ export type MapShop = {
   email: string | null;
   phone: string | null;
   attributeTags: string[];
+  /** Colors the pin; "other" when the shop hasn't picked one. */
+  sector: ShopSectorId;
   /** "City, ST", one part, or null. Never a street address. */
   locality: string | null;
   /**
@@ -27,4 +42,6 @@ export type MapShop = {
   serviceCount: number;
   /** Joined within the last 30 days. */
   isNew: boolean;
+  /** Open-to-collaborate listing; null when the shop hasn't filled one in. */
+  collab: MapShopCollab | null;
 };

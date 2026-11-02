@@ -1,12 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Handshake,
   MapPin,
   MapPinOff,
   Navigation,
-  Package,
   SearchIcon,
   SlidersHorizontal,
   Store,
@@ -15,11 +15,13 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 
 import type { MapShop } from "../_lib/types";
+import type { CollabFilterProps } from "./collab-filter";
+import type { ShopSectorId } from "~/lib/constants/shop-sectors";
+import { getShopSector } from "~/lib/constants/shop-sectors";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
 import {
   Empty,
   EmptyContent,
@@ -34,7 +36,6 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "~/components/ui/input-group";
-import { Label } from "~/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -43,6 +44,9 @@ import {
 import { Toggle } from "~/components/ui/toggle";
 
 import { formatDistance } from "../_lib/map-stats";
+import { CollabFilter, collabFilterChips } from "./collab-filter";
+import { ActiveFilterChips, FilterChecklist } from "./filter-checklist";
+import { SectorChips, SectorDot } from "./sector-chips";
 import { ShopAvatar } from "./shop-avatar";
 import { ShopMapCard } from "./shop-map-card";
 
@@ -130,43 +134,13 @@ export function AttributeChecklist({
   onToggle,
   counts,
 }: AttributeProps) {
-  const uid = useId();
   return (
-    <div className="flex flex-col gap-1">
-      {STORE_ATTRIBUTES.map((attribute, i) => {
-        const id = `${uid}-${i}`;
-        const isSelected = selected.includes(attribute);
-        const count = counts?.get(attribute);
-        return (
-          <div
-            key={attribute}
-            className="hover:bg-accent flex items-center gap-2.5 rounded-md px-2 py-2"
-          >
-            <Checkbox
-              id={id}
-              checked={isSelected}
-              onCheckedChange={(checked) =>
-                onToggle(attribute, checked === true)
-              }
-            />
-            <Label
-              htmlFor={id}
-              className={cn(
-                "flex-1 cursor-pointer text-sm",
-                count === 0 && !isSelected && "opacity-60",
-              )}
-            >
-              {attribute}
-            </Label>
-            {count !== undefined && (
-              <span className="text-muted-foreground ml-auto text-xs tabular-nums">
-                {count}
-              </span>
-            )}
-          </div>
-        );
-      })}
-    </div>
+    <FilterChecklist
+      options={STORE_ATTRIBUTES}
+      selected={selected}
+      onToggle={onToggle}
+      counts={counts}
+    />
   );
 }
 
@@ -207,35 +181,12 @@ function AttributeFilter({ selected, onToggle, counts }: AttributeProps) {
   );
 }
 
-export function ActiveAttributeChips({ selected, onToggle }: AttributeProps) {
-  if (selected.length === 0) return null;
-  return (
-    <ul className="flex flex-wrap gap-1.5" aria-label="Active filters">
-      {selected.map((attribute) => (
-        <li key={attribute}>
-          <Badge variant="secondary" className="gap-0.5 pr-0.5">
-            {attribute}
-            <button
-              type="button"
-              aria-label={`Remove filter: ${attribute}`}
-              onClick={() => onToggle(attribute, false)}
-              className="hover:bg-foreground/10 focus-visible:ring-ring/50 inline-flex size-4 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
-            >
-              <X className="size-3" aria-hidden />
-            </button>
-          </Badge>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Sidebar
 // ---------------------------------------------------------------------------
 
-export type MapSidebarProps = {
-  /** Shops after search/attribute filtering. */
+export type MapSidebarProps = CollabFilterProps & {
+  /** Shops after search/sector/attribute filtering. */
   shops: MapShop[];
   totalCount: number;
   query: string;
@@ -247,6 +198,13 @@ export type MapSidebarProps = {
   onInPersonChange: (on: boolean) => void;
   /** Per-attribute facet counts (ignoring the attribute filter itself). */
   attributeCounts?: Map<string, number>;
+  /** Selected sectors; `[]` means all. */
+  sectors: ShopSectorId[];
+  onSectorsChange: (next: ShopSectorId[]) => void;
+  /** Per-sector facet counts (ignoring the sector filter itself). */
+  sectorCounts: Map<ShopSectorId, number>;
+  /** Per-sector counts over every shop, to hide empty sectors. */
+  sectorTotals: Map<ShopSectorId, number>;
   /** Miles from the user, keyed by shop id; null until "Near me" is used. */
   distances?: Map<string, number> | null;
   hasFilters: boolean;
@@ -274,6 +232,19 @@ export function MapSidebar({
   inPerson,
   onInPersonChange,
   attributeCounts,
+  sectors,
+  onSectorsChange,
+  sectorCounts,
+  sectorTotals,
+  collab,
+  onCollabChange,
+  collabCount,
+  offers,
+  onToggleOffer,
+  offerCounts,
+  needs,
+  onToggleNeed,
+  needCounts,
   distances,
   hasFilters,
   onClearFilters,
@@ -357,6 +328,16 @@ export function MapSidebar({
               {shop.isNew && (
                 <Badge className="shrink-0 px-1.5 py-0 text-[10px]">New</Badge>
               )}
+              {shop.collab && (
+                <Badge
+                  variant="outline"
+                  title="Open to collaborate"
+                  className="text-muted-foreground shrink-0 px-1 py-0"
+                >
+                  <Handshake className="size-3" aria-hidden />
+                  <span className="sr-only">Open to collaborate</span>
+                </Badge>
+              )}
             </span>
             {showOwner && (
               <span className="text-muted-foreground truncate text-xs">
@@ -376,12 +357,14 @@ export function MapSidebar({
                 {shop.locality ?? "Location not listed"}
               </span>
             </span>
-            {meta.length > 0 && (
-              <span className="text-muted-foreground flex items-center gap-1 text-xs">
-                <Package className="size-3 shrink-0" aria-hidden />
-                <span className="truncate">{meta.join(" · ")}</span>
+            <span className="text-muted-foreground flex items-center gap-1 text-xs">
+              <span className="grid size-3 shrink-0 place-items-center">
+                <SectorDot sector={shop.sector} />
               </span>
-            )}
+              <span className="truncate">
+                {[getShopSector(shop.sector).short, ...meta].join(" · ")}
+              </span>
+            </span>
             {shop.attributeTags.length > 0 && (
               <span className="mt-0.5 flex flex-wrap gap-1">
                 {shop.attributeTags.slice(0, 2).map((tag) => (
@@ -439,11 +422,28 @@ export function MapSidebar({
         {!hideControls && (
           <>
             <SearchBox value={query} onChange={onQueryChange} />
+            <SectorChips
+              selected={sectors}
+              onChange={onSectorsChange}
+              counts={sectorCounts}
+              totals={sectorTotals}
+            />
             <div className="flex flex-wrap items-center gap-2">
               <AttributeFilter
                 selected={attributes}
                 onToggle={onToggleAttribute}
                 counts={attributeCounts}
+              />
+              <CollabFilter
+                collab={collab}
+                onCollabChange={onCollabChange}
+                collabCount={collabCount}
+                offers={offers}
+                onToggleOffer={onToggleOffer}
+                offerCounts={offerCounts}
+                needs={needs}
+                onToggleNeed={onToggleNeed}
+                needCounts={needCounts}
               />
               <Toggle
                 variant="outline"
@@ -458,9 +458,22 @@ export function MapSidebar({
                 Storefronts
               </Toggle>
             </div>
-            <ActiveAttributeChips
-              selected={attributes}
-              onToggle={onToggleAttribute}
+            <ActiveFilterChips
+              chips={[
+                ...attributes.map((attribute) => ({
+                  key: `attribute:${attribute}`,
+                  label: attribute,
+                  onRemove: () => onToggleAttribute(attribute, false),
+                })),
+                ...collabFilterChips({
+                  collab,
+                  onCollabChange,
+                  offers,
+                  onToggleOffer,
+                  needs,
+                  onToggleNeed,
+                }),
+              ]}
             />
           </>
         )}
@@ -502,7 +515,7 @@ export function MapSidebar({
               <EmptyDescription>
                 {totalCount === 0
                   ? "Check back soon as more artisans join the network."
-                  : "Try a different search or remove an attribute filter."}
+                  : "Try a different search, or show more sectors or attributes."}
               </EmptyDescription>
             </EmptyHeader>
             {totalCount > 0 && (
