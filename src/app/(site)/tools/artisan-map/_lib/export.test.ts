@@ -12,7 +12,7 @@ import {
   toExportRow,
   toGeoJson,
 } from "./export";
-import { mapShop } from "./test-shop";
+import { mapShop, TEST_SECTORS } from "./test-shop";
 
 const ORIGIN = "https://example.org";
 
@@ -28,7 +28,7 @@ const privateShop = mapShop({
   phone: "+1 313 555 0199",
   website: "https://kente.example",
   attributeTags: ["Black Owned", "Woman Owned"],
-  sector: "apparel",
+  sector: "clothing-adornment",
   locality: "Detroit, MI",
   location: { lat: 42.3314, lng: -83.0458 },
   precision: "approximate",
@@ -55,13 +55,17 @@ const PRIVATE_VALUES = [
 
 describe("toExportRow", () => {
   it("keeps exactly the allow-listed fields, in order", () => {
-    assert.deepEqual(Object.keys(toExportRow(privateShop, ORIGIN)), [
-      ...EXPORT_FIELDS,
-    ]);
+    assert.deepEqual(
+      Object.keys(toExportRow(privateShop, ORIGIN, TEST_SECTORS)),
+      [...EXPORT_FIELDS],
+    );
   });
 
   it("never includes email, phone, owner or photos", () => {
-    const row = toExportRow(privateShop, ORIGIN) as Record<string, unknown>;
+    const row = toExportRow(privateShop, ORIGIN, TEST_SECTORS) as Record<
+      string,
+      unknown
+    >;
     for (const key of [
       "email",
       "phone",
@@ -76,11 +80,11 @@ describe("toExportRow", () => {
   });
 
   it("maps the public fields", () => {
-    assert.deepEqual(toExportRow(privateShop, ORIGIN), {
+    assert.deepEqual(toExportRow(privateShop, ORIGIN, TEST_SECTORS), {
       id: "s1",
       name: "Kente Collective",
-      sector: "apparel",
-      sectorLabel: "Apparel & Textiles",
+      sector: "clothing-adornment",
+      sectorLabel: "Clothing & Adornment",
       locality: "Detroit, MI",
       lat: 42.3314,
       lng: -83.0458,
@@ -97,21 +101,33 @@ describe("toExportRow", () => {
     });
   });
 
+  it("labels a shop without a known sector as Other", () => {
+    const row = toExportRow(mapShop({ sector: "other" }), ORIGIN, TEST_SECTORS);
+    assert.equal(row.sector, "other");
+    assert.equal(row.sectorLabel, "Other");
+  });
+
   it("only exports a street address for an exact storefront pin", () => {
     const storefront = mapShop({
       precision: "exact",
       streetAddress: "1 Main St",
     });
-    assert.equal(toExportRow(storefront, ORIGIN).streetAddress, "1 Main St");
     assert.equal(
-      toExportRow({ ...storefront, precision: "approximate" }, ORIGIN)
-        .streetAddress,
+      toExportRow(storefront, ORIGIN, TEST_SECTORS).streetAddress,
+      "1 Main St",
+    );
+    assert.equal(
+      toExportRow(
+        { ...storefront, precision: "approximate" },
+        ORIGIN,
+        TEST_SECTORS,
+      ).streetAddress,
       null,
     );
   });
 
   it("falls back to the id for the profile URL and blanks a missing location", () => {
-    const row = toExportRow(mapShop({ id: "abc" }), ORIGIN);
+    const row = toExportRow(mapShop({ id: "abc" }), ORIGIN, TEST_SECTORS);
     assert.equal(row.profileUrl, "https://example.org/shops/abc");
     assert.equal(row.lat, null);
     assert.equal(row.lng, null);
@@ -122,9 +138,12 @@ describe("toExportRow", () => {
 
 describe("toCsv", () => {
   it("writes the allow-listed header and one row per shop", () => {
-    const parsed = Papa.parse<string[]>(toCsv([privateShop], ORIGIN), {
-      skipEmptyLines: true,
-    });
+    const parsed = Papa.parse<string[]>(
+      toCsv([privateShop], ORIGIN, TEST_SECTORS),
+      {
+        skipEmptyLines: true,
+      },
+    );
     assert.deepEqual(parsed.data[0], [...EXPORT_FIELDS]);
     assert.equal(parsed.data.length, 2);
     const row = Object.fromEntries(
@@ -136,7 +155,7 @@ describe("toCsv", () => {
   });
 
   it("contains none of the private values anywhere", () => {
-    const csv = toCsv([privateShop], ORIGIN);
+    const csv = toCsv([privateShop], ORIGIN, TEST_SECTORS);
     for (const value of PRIVATE_VALUES) {
       assert.equal(csv.includes(value), false, value);
     }
@@ -155,6 +174,7 @@ describe("toCsv", () => {
         mapShop({ id: "h", attributeTags: ["=evil", "fine"] }),
       ],
       ORIGIN,
+      TEST_SECTORS,
     );
     const rows = Papa.parse<string[]>(csv, { skipEmptyLines: true }).data;
     const nameAt = EXPORT_FIELDS.indexOf("name");
@@ -170,6 +190,7 @@ describe("toCsv", () => {
     const csv = toCsv(
       [mapShop({ location: { lat: -33.9, lng: -83.05 } })],
       ORIGIN,
+      TEST_SECTORS,
     );
     const rows = Papa.parse<string[]>(csv, { skipEmptyLines: true }).data;
     assert.equal(rows[1]![EXPORT_FIELDS.indexOf("lat")], "-33.9");
@@ -179,7 +200,7 @@ describe("toCsv", () => {
 
 describe("toGeoJson", () => {
   it("puts the pin position in the geometry, [lng, lat]", () => {
-    const fc = toGeoJson([privateShop], ORIGIN);
+    const fc = toGeoJson([privateShop], ORIGIN, TEST_SECTORS);
     assert.equal(fc.type, "FeatureCollection");
     const feature = fc.features[0]!;
     assert.deepEqual(feature.geometry, {
@@ -194,12 +215,12 @@ describe("toGeoJson", () => {
   });
 
   it("keeps unlocated shops with a null geometry", () => {
-    const fc = toGeoJson([mapShop({ id: "x" })], ORIGIN);
+    const fc = toGeoJson([mapShop({ id: "x" })], ORIGIN, TEST_SECTORS);
     assert.equal(fc.features[0]!.geometry, null);
   });
 
   it("contains none of the private values anywhere", () => {
-    const json = JSON.stringify(toGeoJson([privateShop], ORIGIN));
+    const json = JSON.stringify(toGeoJson([privateShop], ORIGIN, TEST_SECTORS));
     for (const value of PRIVATE_VALUES) {
       assert.equal(json.includes(value), false, value);
     }

@@ -5,8 +5,7 @@ import { BarChart3, Info, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
 import type { MapStats } from "../_lib/map-stats";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
-import { getShopSector, isShopSector } from "~/lib/constants/shop-sectors";
+import { findSector } from "~/lib/constants/shop-sectors";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
@@ -17,14 +16,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 import { BreakdownChart, toBreakdownRows } from "./attribute-breakdown-chart";
+import { useMapSectors } from "./map-sectors-context";
 import { useMapTheme } from "./map-style";
 
 type MapStatsBarProps = {
   stats: MapStats;
-  sectorCounts: Map<ShopSectorId, number>;
-  selectedSectors: ShopSectorId[];
+  sectorCounts: Map<string, number>;
+  selectedSectors: string[];
   /** Picking a sector bar behaves like clicking its chip. */
-  onPickSector: (sector: ShopSectorId) => void;
+  onPickSector: (sector: string) => void;
   attributeCounts: Map<string, number>;
   selectedAttributes: string[];
   onToggleAttribute: (attribute: string, checked: boolean) => void;
@@ -65,6 +65,7 @@ export function MapStatsBar({
   className,
 }: MapStatsBarProps) {
   const theme = useMapTheme();
+  const sectors = useMapSectors();
 
   const shareView = async () => {
     try {
@@ -77,11 +78,11 @@ export function MapStatsBar({
 
   const sectorRows = useMemo(
     () =>
-      toBreakdownRows(sectorCounts, selectedSectors, (id) => {
-        const sector = getShopSector(id);
-        return { name: sector.label, color: sector.color[theme] };
+      toBreakdownRows(sectorCounts, selectedSectors, (slug) => {
+        const sector = findSector(sectors, slug);
+        return { name: sector.name, color: sector.color[theme] };
       }),
-    [sectorCounts, selectedSectors, theme],
+    [sectorCounts, selectedSectors, sectors, theme],
   );
   const attributeRows = useMemo(
     () => toBreakdownRows(attributeCounts, selectedAttributes),
@@ -187,9 +188,7 @@ export function MapStatsBar({
             >
               <BreakdownChart
                 rows={sectorRows}
-                onPick={(id) => {
-                  if (isShopSector(id)) onPickSector(id);
-                }}
+                onPick={onPickSector}
                 label="Filter by sector"
                 emptyLabel="No sectors in this view"
               />

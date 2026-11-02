@@ -6,7 +6,7 @@ import type { MapFilters } from "./filter";
 import type { MapShopCollab } from "./types";
 
 import { filterMapShops, hasActiveFilters, matchShops } from "./filter";
-import { mapShop } from "./test-shop";
+import { mapShop, TEST_SLUGS } from "./test-shop";
 
 const NO_FILTERS: MapFilters = {
   query: "",
@@ -22,20 +22,20 @@ const shops = [
   mapShop({
     id: "a",
     name: "Bread Co",
-    sector: "food-farming",
+    sector: "food-land",
     precision: "exact",
     attributeTags: ["Black Owned"],
   }),
   mapShop({
     id: "b",
     name: "apron works",
-    sector: "apparel",
+    sector: "clothing-adornment",
     attributeTags: ["Woman Owned"],
   }),
   mapShop({
     id: "c",
     name: "Clay Studio",
-    sector: "art-design",
+    sector: "art-culture",
     precision: "exact",
     attributeTags: ["Black Owned", "Woman Owned"],
     locality: "Detroit, MI",
@@ -60,13 +60,16 @@ describe("matchShops", () => {
     const filters: MapFilters = {
       ...NO_FILTERS,
       inPerson: true,
-      sectors: ["food-farming", "apparel"],
+      sectors: ["food-land", "clothing-adornment"],
     };
     assert.deepEqual(ids(matchShops(shops, filters)), ["a"]);
   });
 
   it("can ignore one filter", () => {
-    const filters: MapFilters = { ...NO_FILTERS, sectors: ["apparel"] };
+    const filters: MapFilters = {
+      ...NO_FILTERS,
+      sectors: ["clothing-adornment"],
+    };
     assert.deepEqual(ids(matchShops(shops, filters, "sectors")), [
       "a",
       "b",
@@ -77,7 +80,7 @@ describe("matchShops", () => {
 
 describe("filterMapShops", () => {
   it("sorts results by name, case-insensitively", () => {
-    assert.deepEqual(ids(filterMapShops(shops, NO_FILTERS).shops), [
+    assert.deepEqual(ids(filterMapShops(shops, NO_FILTERS, TEST_SLUGS).shops), [
       "b",
       "a",
       "c",
@@ -85,26 +88,28 @@ describe("filterMapShops", () => {
   });
 
   it("counts sectors ignoring the sector filter", () => {
-    const result = filterMapShops(shops, {
-      ...NO_FILTERS,
-      sectors: ["apparel"],
-    });
+    const result = filterMapShops(
+      shops,
+      { ...NO_FILTERS, sectors: ["clothing-adornment"] },
+      TEST_SLUGS,
+    );
     assert.deepEqual(ids(result.shops), ["b"]);
-    assert.equal(result.sectorCounts.get("food-farming"), 1);
-    assert.equal(result.sectorCounts.get("art-design"), 1);
+    assert.equal(result.sectorCounts.get("food-land"), 1);
+    assert.equal(result.sectorCounts.get("art-culture"), 1);
     // The sector filter still narrows the attribute counts.
     assert.equal(result.attributeCounts.get("Black Owned"), 0);
     assert.equal(result.attributeCounts.get("Woman Owned"), 1);
   });
 
   it("counts attributes ignoring the attribute filter", () => {
-    const result = filterMapShops(shops, {
-      ...NO_FILTERS,
-      attributes: ["Black Owned"],
-    });
+    const result = filterMapShops(
+      shops,
+      { ...NO_FILTERS, attributes: ["Black Owned"] },
+      TEST_SLUGS,
+    );
     assert.deepEqual(ids(result.shops), ["a", "c"]);
     assert.equal(result.attributeCounts.get("Woman Owned"), 2);
-    assert.equal(result.sectorCounts.get("apparel"), 0);
+    assert.equal(result.sectorCounts.get("clothing-adornment"), 0);
   });
 });
 
@@ -118,22 +123,22 @@ describe("collaboration filters", () => {
     mapShop({
       id: "d",
       name: "Delivery Co",
-      sector: "services",
+      sector: "other",
       collab: collab(["Local delivery"], ["Storage space"]),
     }),
     mapShop({
       id: "e",
       name: "Event Space",
-      sector: "art-design",
+      sector: "art-culture",
       collab: collab(["Retail or event space", "Local delivery"], []),
     }),
     mapShop({
       id: "f",
       name: "Farm Stand",
-      sector: "food-farming",
+      sector: "food-land",
       collab: collab([], ["Local delivery", "Storage space"]),
     }),
-    mapShop({ id: "g", name: "Glass Works", sector: "art-design" }),
+    mapShop({ id: "g", name: "Glass Works", sector: "art-culture" }),
   ];
 
   it("collab=1 keeps only shops with a listing", () => {
@@ -171,7 +176,7 @@ describe("collaboration filters", () => {
         matchShops(collabShops, {
           ...NO_FILTERS,
           collab: true,
-          sectors: ["art-design"],
+          sectors: ["art-culture"],
         }),
       ),
       ["e"],
@@ -179,11 +184,15 @@ describe("collaboration filters", () => {
   });
 
   it("counts each facet ignoring its own selection", () => {
-    const result = filterMapShops(collabShops, {
-      ...NO_FILTERS,
-      offers: ["Local delivery"],
-      needs: ["Storage space"],
-    });
+    const result = filterMapShops(
+      collabShops,
+      {
+        ...NO_FILTERS,
+        offers: ["Local delivery"],
+        needs: ["Storage space"],
+      },
+      TEST_SLUGS,
+    );
     assert.deepEqual(ids(result.shops), ["d"]);
     // Offer counts ignore `offers` but respect `needs` (d and f).
     assert.equal(result.offerCounts.get("Local delivery"), 1);
@@ -195,11 +204,11 @@ describe("collaboration filters", () => {
   });
 
   it("counts open-to-collaborate shops ignoring the switch", () => {
-    const result = filterMapShops(collabShops, {
-      ...NO_FILTERS,
-      collab: true,
-      sectors: ["art-design"],
-    });
+    const result = filterMapShops(
+      collabShops,
+      { ...NO_FILTERS, collab: true, sectors: ["art-culture"] },
+      TEST_SLUGS,
+    );
     assert.equal(result.collabCount, 1);
     assert.equal(result.needCounts.get("Storage space"), 0);
     assert.equal(result.offerCounts.get("Local delivery"), 1);

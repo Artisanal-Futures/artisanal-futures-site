@@ -26,6 +26,12 @@ describe("shopPublicSelect", () => {
     }
   });
 
+  it("exposes the sector through the relation, not its columns", () => {
+    assert.deepEqual(shopPublicSelect.shopSector, {
+      select: { name: true, slug: true },
+    });
+  });
+
   it("selects no geocoding column from the address", () => {
     const keys = Object.keys(shopPublicSelect.address.select);
     for (const key of keys) {

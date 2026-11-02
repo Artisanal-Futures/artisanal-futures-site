@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 
+import { toDisplaySectors } from "~/lib/constants/shop-sectors";
 import { buildPageMetadata } from "~/lib/seo/page-metadata";
 import { api } from "~/trpc/server";
 import { Skeleton } from "~/components/ui/skeleton";
 
 import { ArtisanMapExplorer } from "./_components/artisan-map-explorer";
+import { MapSectorsProvider } from "./_components/map-sectors-context";
 
 export async function generateMetadata() {
   return buildPageMetadata({
@@ -15,7 +17,10 @@ export async function generateMetadata() {
 }
 
 export default async function ArtisanMapPage() {
-  const shops = await api.shop.getMapLocations();
+  const [shops, sectors] = await Promise.all([
+    api.shop.getMapLocations(),
+    api.shopSector.getAll(),
+  ]);
 
   return (
     // Navbar is h-16 plus a 1px border; the footer follows below this block.
@@ -30,7 +35,9 @@ export default async function ArtisanMapPage() {
         </p>
       </header>
       <Suspense fallback={<Skeleton className="min-h-0 flex-1 rounded-none" />}>
-        <ArtisanMapExplorer shops={shops} />
+        <MapSectorsProvider sectors={toDisplaySectors(sectors)}>
+          <ArtisanMapExplorer shops={shops} />
+        </MapSectorsProvider>
       </Suspense>
     </div>
   );

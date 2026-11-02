@@ -4,7 +4,7 @@ import {
   COLLABORATION_TAGS,
   COLLABORATION_TEXT_MAX,
 } from "~/lib/constants/collaboration-tags";
-import { SHOP_SECTOR_IDS } from "~/lib/constants/shop-sectors";
+import { NO_SECTOR_VALUE } from "~/lib/constants/shop-sectors";
 
 import { shopSeoSchema, urlListSchema } from "./seo";
 
@@ -56,10 +56,13 @@ const collabTagsSchema = z
   .transform((tags) => [...new Set(tags)])
   .optional();
 
-/** Shop sector id; blank (an unpicked select) → null, shown as "Other". */
-const sectorSchema = z.preprocess(
-  (value) => (value === "" ? null : value),
-  z.enum(SHOP_SECTOR_IDS).nullish(),
+/**
+ * `ShopSector` id; blank or the "No sector" select item → null, shown as
+ * "Other". The shop router checks that the id exists.
+ */
+const sectorIdSchema = z.preprocess(
+  (value) => (value === "" || value === NO_SECTOR_VALUE ? null : value),
+  z.string().nullish(),
 );
 
 export const shopSchema = z.object({
@@ -83,7 +86,7 @@ export const shopSchema = z.object({
   locationType: shopLocationTypeSchema.default("HOME_BASED"),
   attributeTags: z.array(z.string()),
   /** Colors the Artisan Map pin. Omitted = leave unchanged. */
-  sector: sectorSchema,
+  sectorId: sectorIdSchema,
   ownerId: z.string().optional().nullable(),
 
   /** Profile links (Instagram, Etsy, ...). Artisan-editable. */

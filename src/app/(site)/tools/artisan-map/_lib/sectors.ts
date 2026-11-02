@@ -1,15 +1,19 @@
 import type { MapShop } from "./types";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
-import { isShopSector, SHOP_SECTOR_IDS } from "~/lib/constants/shop-sectors";
+
+/**
+ * Sector selection, counts and URL handling for the Artisan Map. Pure: every
+ * function takes `slugs`, all the sector slugs in display order (database
+ * sectors by `sortOrder`, then "other").
+ */
 
 // ---------------------------------------------------------------------------
 // Selection
 // ---------------------------------------------------------------------------
 
-/** Sorts ids into `SHOP_SECTOR_IDS` order so URLs stay stable. */
-function canonical(ids: Iterable<ShopSectorId>): ShopSectorId[] {
+/** Keeps the known slugs, in `slugs` order, so URLs stay stable. */
+function canonical(ids: Iterable<string>, slugs: readonly string[]): string[] {
   const set = new Set(ids);
-  return SHOP_SECTOR_IDS.filter((id) => set.has(id));
+  return slugs.filter((slug) => set.has(slug));
 }
 
 /**
@@ -21,37 +25,34 @@ function canonical(ids: Iterable<ShopSectorId>): ShopSectorId[] {
  *   chips on screen), goes back to all.
  */
 export function nextSectors(
-  current: readonly ShopSectorId[],
-  clicked: ShopSectorId,
-  universe: readonly ShopSectorId[] = SHOP_SECTOR_IDS,
-): ShopSectorId[] {
+  current: readonly string[],
+  clicked: string,
+  slugs: readonly string[],
+  universe: readonly string[] = slugs,
+): string[] {
   if (current.length === 0) return [clicked];
 
   const next = current.includes(clicked)
-    ? current.filter((id) => id !== clicked)
+    ? current.filter((slug) => slug !== clicked)
     : [...current, clicked];
 
   if (next.length === 0) return [];
-  if (universe.length > 0 && universe.every((id) => next.includes(id))) {
+  if (universe.length > 0 && universe.every((slug) => next.includes(slug))) {
     return [];
   }
-  return canonical(next);
+  return canonical(next, slugs);
 }
 
 // ---------------------------------------------------------------------------
 // Counting
 // ---------------------------------------------------------------------------
 
-/**
- * Shop count per sector. Every sector is present, in `SHOP_SECTORS` order and
- * zeros included.
- */
+/** Shop count per sector. Every sector is present, in order and zeros included. */
 export function countSectors(
   shops: Pick<MapShop, "sector">[],
-): Map<ShopSectorId, number> {
-  const counts = new Map<ShopSectorId, number>(
-    SHOP_SECTOR_IDS.map((id) => [id, 0]),
-  );
+  slugs: readonly string[],
+): Map<string, number> {
+  const counts = new Map<string, number>(slugs.map((slug) => [slug, 0]));
   for (const shop of shops) {
     const current = counts.get(shop.sector);
     if (current !== undefined) counts.set(shop.sector, current + 1);
@@ -64,12 +65,13 @@ export function countSectors(
  * select a chip nobody can see to turn off). Also the `universe` for
  * `nextSectors`.
  */
-export function visibleSectorIds(
-  totals: Map<ShopSectorId, number>,
-  selected: readonly ShopSectorId[],
-): ShopSectorId[] {
-  return SHOP_SECTOR_IDS.filter(
-    (id) => (totals.get(id) ?? 0) > 0 || selected.includes(id),
+export function visibleSectorSlugs(
+  totals: Map<string, number>,
+  selected: readonly string[],
+  slugs: readonly string[],
+): string[] {
+  return slugs.filter(
+    (slug) => (totals.get(slug) ?? 0) > 0 || selected.includes(slug),
   );
 }
 
@@ -78,22 +80,26 @@ export function visibleSectorIds(
 // ---------------------------------------------------------------------------
 
 /**
- * Reads `?sectors=food-farming,art-design`. Unknown ids and duplicates are
- * dropped, and a list naming every sector collapses to `[]` (all).
+ * Reads `?sectors=food-land,art-culture`. Slugs not in `slugs` and duplicates
+ * are dropped, and a list naming every sector collapses to `[]` (all).
  */
-export function parseSectors(param: string | null | undefined): ShopSectorId[] {
+export function parseSectors(
+  param: string | null | undefined,
+  slugs: readonly string[],
+): string[] {
   if (!param) return [];
   const ids = canonical(
-    param
-      .split(",")
-      .map((part) => part.trim())
-      .filter(isShopSector),
+    param.split(",").map((part) => part.trim()),
+    slugs,
   );
-  return ids.length === SHOP_SECTOR_IDS.length ? [] : ids;
+  return ids.length === slugs.length ? [] : ids;
 }
 
 /** The `sectors` param value, or null (remove it) for all sectors. */
-export function serializeSectors(ids: readonly ShopSectorId[]): string | null {
-  const list = canonical(ids);
+export function serializeSectors(
+  ids: readonly string[],
+  slugs: readonly string[],
+): string | null {
+  const list = canonical(ids, slugs);
   return list.length > 0 ? list.join(",") : null;
 }

@@ -24,10 +24,12 @@ model Shop {
   /// shop's schema.org `sameAs`.
   socialLinks      String[]
 
-  /// What the shop mainly does, as a `SHOP_SECTORS` id
-  /// (src/lib/constants/shop-sectors.ts). Colors its Artisan Map pin and
-  /// drives the sector filter. Null (or an unknown id) is shown as "Other".
+  /// Deprecated: the old hard-coded sector slug. Read only by the seed script
+  /// (scripts/seed-shop-sectors.ts); remove after migration.
   sector           String?
+  /// What the shop mainly does (see ShopSector). Null is shown as "Other".
+  sectorId         String?
+  shopSector       ShopSector?       @relation(fields: [sectorId], references: [id], onDelete: SetNull)
 
   /// Opt-in, public mutual-aid listing: what the shop can offer other members
   /// and what it's looking for. Tags are `COLLABORATION_TAGS` labels
@@ -73,6 +75,8 @@ model Shop {
   privateContact   ShopPrivateContact?
   outboundClicks   OutboundClick[]
   apiTokens        ShopApiToken[]
+
+  @@index([sectorId])
 }
 
 model ShopAddress {

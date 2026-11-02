@@ -1,6 +1,7 @@
 /**
  * Suggest a sector for every shop without one, from its public products' and
- * services' top-level categories (see prisma/category-data.ts).
+ * services' top-level categories (see prisma/category-data.ts). Run
+ * `pnpm seed-shop-sectors --apply` first: sectors are looked up in the database.
  *
  * Usage:
  *
@@ -10,44 +11,44 @@
  * Safe to re-run: shops that already have a sector are left alone, and shops
  * with nothing to go on are skipped (they show as "Other"). Each listing
  * votes for its categories' sectors; attribute tags break ties and decide for
- * shops without categorized listings.
+ * shops without categorized listings. Sectors an admin has since deleted get
+ * no votes.
  */
 
-import type { ShopSectorId } from "../src/lib/constants/shop-sectors";
-
 import { PrismaClient } from "../generated/prisma";
-import { SHOP_SECTOR_IDS } from "../src/lib/constants/shop-sectors";
 
-/** Top-level category name → sector. Gift Cards say nothing, so skip them. */
-const CATEGORY_SECTORS: Record<string, ShopSectorId> = {
-  Clothing: "apparel",
-  Jewelry: "jewelry",
-  "Bags & Accessories": "jewelry",
-  "Bath & Beauty": "beauty-wellness",
-  "Home & Kitchen": "home-goods",
-  "Craft Supplies": "home-goods",
-  "Custom & Made-to-Order": "home-goods",
-  "Creative & Design": "art-design",
-  "Workshops & Classes": "education",
-  "Consulting & Expertise": "services",
-  "Nature & Wellness": "beauty-wellness",
+/**
+ * Top-level category name → sector slug. Gift Cards say nothing, and neither
+ * does Consulting & Expertise, since no sector covers general services.
+ */
+const CATEGORY_SECTORS: Record<string, string> = {
+  Clothing: "clothing-adornment",
+  Jewelry: "clothing-adornment",
+  "Bags & Accessories": "clothing-adornment",
+  "Bath & Beauty": "health-care",
+  "Home & Kitchen": "home-building",
+  "Craft Supplies": "home-building",
+  "Custom & Made-to-Order": "home-building",
+  "Creative & Design": "art-culture",
+  "Workshops & Classes": "community-learning",
+  "Nature & Wellness": "health-care",
 };
 
 /** Subcategories that belong somewhere other than their parent's sector. */
-const SUBCATEGORY_SECTORS: Record<string, ShopSectorId> = {
-  Tailoring: "apparel",
-  "Gardening & Cultivation": "food-farming",
+const SUBCATEGORY_SECTORS: Record<string, string> = {
+  Tailoring: "clothing-adornment",
+  "Gardening & Cultivation": "food-land",
 };
 
-/** Attribute tag → sector, for tie-breaks and shops with no categories. */
-const ATTRIBUTE_SECTORS: Record<string, ShopSectorId> = {
-  "Food Sovereignty": "food-farming",
-  "Community Education": "education",
+/** Attribute tag → sector slug, for tie-breaks and shops with no categories. */
+const ATTRIBUTE_SECTORS: Record<string, string> = {
+  "Food Sovereignty": "food-land",
+  "Community Education": "community-learning",
 };
 
 type CategoryRef = { name: string; parent: { name: string } | null };
 
-function sectorForCategory(category: CategoryRef): ShopSectorId | null {
+function sectorForCategory(category: CategoryRef): string | null {
   return (
     SUBCATEGORY_SECTORS[category.name] ??
     CATEGORY_SECTORS[category.parent?.name ?? category.name] ??
@@ -56,13 +57,16 @@ function sectorForCategory(category: CategoryRef): ShopSectorId | null {
 }
 
 /** One vote per listing per sector, so a many-category listing isn't louder. */
-function tally(listings: { categories: CategoryRef[] }[]) {
-  const votes = new Map<ShopSectorId, number>();
+function tally(
+  listings: { categories: CategoryRef[] }[],
+  known: Map<string, string>,
+) {
+  const votes = new Map<string, number>();
   for (const listing of listings) {
     const sectors = new Set(
       listing.categories
         .map(sectorForCategory)
-        .filter((s): s is ShopSectorId => s !== null),
+        .filter((s): s is string => s !== null && known.has(s)),
     );
     for (const sector of sectors) {
       votes.set(sector, (votes.get(sector) ?? 0) + 1);
@@ -71,14 +75,16 @@ function tally(listings: { categories: CategoryRef[] }[]) {
   return votes;
 }
 
+/** `known` maps slug → id, in display order, which settles remaining ties. */
 function pickSector(
-  votes: Map<ShopSectorId, number>,
+  votes: Map<string, number>,
   attributeTags: string[],
-): ShopSectorId | null {
+  known: Map<string, string>,
+): string | null {
   const hinted = new Set(
     attributeTags
       .map((tag) => ATTRIBUTE_SECTORS[tag])
-      .filter((s): s is ShopSectorId => s !== undefined),
+      .filter((s): s is string => s !== undefined && known.has(s)),
   );
 
   const top = Math.max(0, ...votes.values());
@@ -87,10 +93,10 @@ function pickSector(
     return hinted.size === 1 ? [...hinted][0]! : null;
   }
 
-  const leaders = SHOP_SECTOR_IDS.filter((id) => votes.get(id) === top);
+  const leaders = [...known.keys()].filter((slug) => votes.get(slug) === top);
   if (leaders.length === 1) return leaders[0]!;
   // Tie: prefer a leader the attributes point at, else the first in order.
-  return leaders.find((id) => hinted.has(id)) ?? leaders[0]!;
+  return leaders.find((slug) => hinted.has(slug)) ?? leaders[0]!;
 }
 
 async function main() {
@@ -102,8 +108,18 @@ async function main() {
   } as const;
 
   try {
+    const sectors = await db.shopSector.findMany({
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { id: true, slug: true },
+    });
+    if (sectors.length === 0) {
+      console.log("No sectors yet. Run pnpm seed-shop-sectors --apply first.");
+      return;
+    }
+    const known = new Map(sectors.map((s) => [s.slug, s.id]));
+
     const shops = await db.shop.findMany({
-      where: { sector: null },
+      where: { sectorId: null },
       select: {
         id: true,
         name: true,
@@ -120,9 +136,9 @@ async function main() {
 
     let updated = 0;
     for (const shop of shops) {
-      const votes = tally([...shop.products, ...shop.services]);
-      const sector = pickSector(votes, shop.attributeTags);
-      const detail = [...votes].map(([id, n]) => `${id}:${n}`).join(", ");
+      const votes = tally([...shop.products, ...shop.services], known);
+      const sector = pickSector(votes, shop.attributeTags, known);
+      const detail = [...votes].map(([slug, n]) => `${slug}:${n}`).join(", ");
 
       if (!sector) {
         console.log(`  ${shop.name}: no suggestion (stays "Other")`);
@@ -131,7 +147,10 @@ async function main() {
       console.log(`  ${shop.name} -> ${sector}${detail ? ` (${detail})` : ""}`);
 
       if (apply) {
-        await db.shop.update({ where: { id: shop.id }, data: { sector } });
+        await db.shop.update({
+          where: { id: shop.id },
+          data: { sectorId: known.get(sector) },
+        });
         updated += 1;
       }
     }

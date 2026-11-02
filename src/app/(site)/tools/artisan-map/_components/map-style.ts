@@ -6,11 +6,8 @@ import type {
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 
-import {
-  DEFAULT_SHOP_SECTOR,
-  getShopSector,
-  SHOP_SECTORS,
-} from "~/lib/constants/shop-sectors";
+import type { DisplaySector } from "~/lib/constants/shop-sectors";
+import { OTHER_SECTOR, OTHER_SECTOR_SLUG } from "~/lib/constants/shop-sectors";
 
 /**
  * Themed basemap for the Artisan Map.
@@ -87,17 +84,27 @@ export const MAP_BRAND_COLORS: Record<MapTheme, MapBrandColors> = {
   },
 };
 
-/** A pin's fill: its `sector` property's colour for this theme. */
-export function sectorColorExpr(theme: MapTheme): ExpressionSpecification {
-  const [first, ...rest] = SHOP_SECTORS;
+/**
+ * A pin's fill: its `sector` property's colour for this theme. Unset and
+ * unknown slugs render as "Other". With no sectors that is the whole answer,
+ * since a `match` without a label is an invalid MapLibre expression.
+ */
+export function sectorColorExpr(
+  theme: MapTheme,
+  sectors: readonly DisplaySector[],
+): ExpressionSpecification | string {
+  const fallback = OTHER_SECTOR.color[theme];
+  const [first, ...rest] = sectors.filter(
+    (sector) => sector.slug !== OTHER_SECTOR_SLUG,
+  );
+  if (!first) return fallback;
   return [
     "match",
     ["get", "sector"],
-    first.id,
+    first.slug,
     first.color[theme],
-    ...rest.flatMap((sector) => [sector.id, sector.color[theme]]),
-    // Unset and unknown ids render as "other".
-    getShopSector(DEFAULT_SHOP_SECTOR).color[theme],
+    ...rest.flatMap((sector) => [sector.slug, sector.color[theme]]),
+    fallback,
   ];
 }
 

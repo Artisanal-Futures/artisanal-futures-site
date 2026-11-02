@@ -1,10 +1,10 @@
 "use client";
 
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
-import { getShopSector, SHOP_SECTORS } from "~/lib/constants/shop-sectors";
+import { findSector } from "~/lib/constants/shop-sectors";
 import { cn } from "~/lib/utils";
 
-import { nextSectors, visibleSectorIds } from "../_lib/sectors";
+import { nextSectors, visibleSectorSlugs } from "../_lib/sectors";
+import { useMapSectors } from "./map-sectors-context";
 import { useMapTheme } from "./map-style";
 
 // ---------------------------------------------------------------------------
@@ -17,12 +17,13 @@ export function SectorDot({
   muted = false,
   className,
 }: {
-  sector: ShopSectorId;
+  sector: string;
   /** Greyed out, for a chip that's switched off. */
   muted?: boolean;
   className?: string;
 }) {
   const theme = useMapTheme();
+  const sectors = useMapSectors();
   return (
     <span
       aria-hidden
@@ -31,7 +32,7 @@ export function SectorDot({
         muted && "opacity-40 grayscale",
         className,
       )}
-      style={{ backgroundColor: getShopSector(sector).color[theme] }}
+      style={{ backgroundColor: findSector(sectors, sector).color[theme] }}
     />
   );
 }
@@ -41,11 +42,11 @@ export function SectorBadge({
   sector,
   className,
 }: {
-  sector: ShopSectorId;
+  sector: string;
   className?: string;
 }) {
   const theme = useMapTheme();
-  const { label, color } = getShopSector(sector);
+  const { name, color } = findSector(useMapSectors(), sector);
   return (
     <span
       className={cn(
@@ -58,7 +59,7 @@ export function SectorBadge({
       }}
     >
       <SectorDot sector={sector} />
-      {label}
+      {name}
     </span>
   );
 }
@@ -69,12 +70,12 @@ export function SectorBadge({
 
 type SectorChipsProps = {
   /** Selected sectors; `[]` means all. */
-  selected: ShopSectorId[];
-  onChange: (next: ShopSectorId[]) => void;
+  selected: string[];
+  onChange: (next: string[]) => void;
   /** Matches per sector under the other active filters. */
-  counts: Map<ShopSectorId, number>;
+  counts: Map<string, number>;
   /** Shops per sector before any filter; sectors at 0 are hidden. */
-  totals: Map<ShopSectorId, number>;
+  totals: Map<string, number>;
   /** "wrap" for the sidebar; "scroll" is one swipeable row (mobile). */
   layout?: "wrap" | "scroll";
   className?: string;
@@ -96,15 +97,17 @@ export function SectorChips({
   className,
 }: SectorChipsProps) {
   const theme = useMapTheme();
+  const sectors = useMapSectors();
   const isAll = selected.length === 0;
 
   // Sectors nobody is in yet would only be noise, unless the URL picked one.
-  const visibleIds = visibleSectorIds(totals, selected);
-  const visible = SHOP_SECTORS.filter((sector) =>
-    visibleIds.includes(sector.id),
+  const slugs = sectors.map((sector) => sector.slug);
+  const visibleSlugs = visibleSectorSlugs(totals, selected, slugs);
+  const visible = sectors.filter((sector) =>
+    visibleSlugs.includes(sector.slug),
   );
   const allCount = visible.reduce(
-    (sum, sector) => sum + (counts.get(sector.id) ?? 0),
+    (sum, sector) => sum + (counts.get(sector.slug) ?? 0),
     0,
   );
 
@@ -139,19 +142,19 @@ export function SectorChips({
       </button>
 
       {visible.map((sector) => {
-        const isOn = selected.includes(sector.id);
+        const isOn = selected.includes(sector.slug);
         const isOff = !isAll && !isOn;
         const color = sector.color[theme];
-        const count = counts.get(sector.id) ?? 0;
+        const count = counts.get(sector.slug) ?? 0;
         return (
           <button
-            key={sector.id}
+            key={sector.slug}
             type="button"
             aria-pressed={isOn}
-            aria-label={`${sector.label}, ${count} ${count === 1 ? "artisan" : "artisans"}`}
-            title={sector.label}
+            aria-label={`${sector.name}, ${count} ${count === 1 ? "artisan" : "artisans"}`}
+            title={sector.name}
             onClick={() =>
-              onChange(nextSectors(selected, sector.id, visibleIds))
+              onChange(nextSectors(selected, sector.slug, slugs, visibleSlugs))
             }
             className={cn(
               chipClass,
@@ -170,8 +173,8 @@ export function SectorChips({
                 : undefined
             }
           >
-            <SectorDot sector={sector.id} muted={isOff} />
-            {sector.short}
+            <SectorDot sector={sector.slug} muted={isOff} />
+            {sector.shortName}
             <span
               className={cn(
                 "text-muted-foreground tabular-nums",

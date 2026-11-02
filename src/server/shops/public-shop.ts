@@ -42,7 +42,7 @@ export const shopPublicSelect = {
   website: true,
   socialLinks: true,
   attributeTags: true,
-  sector: true,
+  shopSector: { select: { name: true, slug: true } },
   createdAt: true,
   isPublic: true,
   locationType: true,
@@ -67,4 +67,6 @@ export const PRIVATE_SHOP_FIELDS = [
   "syncUrl",
   "allowInsecureOrigin",
   "lastSyncedAt",
+  "sector",
+  "sectorId",
 ] as const satisfies readonly (keyof Prisma.ShopSelect)[];

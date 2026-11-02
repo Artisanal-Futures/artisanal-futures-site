@@ -9,6 +9,7 @@ export default async function NewShopPage() {
   const session = await getSession();
 
   const userRole = session?.user.role ?? "ARTISAN";
+  const sectors = await api.shopSector.getAll();
 
   // Admin-only: artisans would receive FORBIDDEN from this procedure.
   const potentialShopOwners =
@@ -27,6 +28,7 @@ export default async function NewShopPage() {
         <ShopForm
           initialData={null}
           userRole={userRole}
+          sectors={sectors}
           potentialShopOwners={potentialShopOwners}
         />
       </ShopHubShell>

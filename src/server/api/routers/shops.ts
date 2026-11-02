@@ -16,7 +16,7 @@ import {
 } from "~/lib/add-full-image-url";
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { isCollaborationTag } from "~/lib/constants/collaboration-tags";
-import { toShopSector } from "~/lib/constants/shop-sectors";
+import { OTHER_SECTOR_SLUG } from "~/lib/constants/shop-sectors";
 import { shopPath } from "~/lib/seo/paths";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import { shopPrivateContactSchema } from "~/lib/validators/shop-private-contact";
@@ -271,6 +271,24 @@ function assertCanEditSeo(role: string, seo: ShopSeoValues | undefined) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Only admins can change a shop's URL or search settings",
+    });
+  }
+}
+
+/** A stale or forged `sectorId` gets a clear error, not a foreign-key failure. */
+async function assertSectorExists(
+  db: Pick<PrismaClient, "shopSector">,
+  sectorId: string | null | undefined,
+) {
+  if (!sectorId) return;
+  const sector = await db.shopSector.findUnique({
+    where: { id: sectorId },
+    select: { id: true },
+  });
+  if (!sector) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "That sector no longer exists. Choose another one.",
     });
   }
 }
@@ -691,7 +709,7 @@ export const shopsRouter = createTRPCRouter({
           email: true,
           phone: true,
           attributeTags: true,
-          sector: true,
+          shopSector: { select: { slug: true } },
           locationType: true,
           createdAt: true,
           // Already public via `shopPublicSelect`; nothing new is exposed.
@@ -761,7 +779,7 @@ export const shopsRouter = createTRPCRouter({
           attributeTags: shop.attributeTags.filter(
             (tag) => blankToNull(tag) !== null,
           ),
-          sector: toShopSector(shop.sector),
+          sector: shop.shopSector?.slug ?? OTHER_SECTOR_SLUG,
           locality: formatLocality(shop.address?.city, shop.address?.state),
           location,
           precision: isExact ? "exact" : "approximate",
@@ -1065,6 +1083,7 @@ export const shopsRouter = createTRPCRouter({
         seoDescription: true,
         seoImage: true,
         seoNoIndex: true,
+        sectorId: true,
       });
       if (!shop) return null;
 
@@ -1082,6 +1101,7 @@ export const shopsRouter = createTRPCRouter({
     .input(shopSchema)
     .mutation(async ({ ctx, input }) => {
       assertCanEditSeo(ctx.session.user.role, input.seo);
+      await assertSectorExists(ctx.db, input.sectorId);
 
       // An admin may pick the slug up front; otherwise derive it from the name.
       const requestedSlug = blankToNull(input.seo?.slug);
@@ -1111,7 +1131,7 @@ export const shopsRouter = createTRPCRouter({
             coverPhoto: input.coverPhotoUrl,
             socialLinks: input.socialLinks ?? [],
             attributeTags: input.attributeTags ?? [],
-            sector: input.sector ?? null,
+            sectorId: input.sectorId ?? null,
             collabOffers: input.collabOffers ?? null,
             collabOfferTags: input.collabOfferTags ?? [],
             collabNeeds: input.collabNeeds ?? null,
@@ -1163,6 +1183,7 @@ export const shopsRouter = createTRPCRouter({
       }
 
       assertCanEditSeo(ctx.session.user.role, input.seo);
+      await assertSectorExists(ctx.db, input.sectorId);
 
       const updateShopData = await ctx.db
         .$transaction(async (tx) => {
@@ -1229,7 +1250,7 @@ export const shopsRouter = createTRPCRouter({
               website: input?.website ?? "",
               attributeTags: input?.attributeTags ?? [],
               // Omitted (undefined) leaves the stored sector / listing as-is.
-              sector: input.sector,
+              sectorId: input.sectorId,
               collabOffers: input.collabOffers,
               collabOfferTags: input.collabOfferTags,
               collabNeeds: input.collabNeeds,

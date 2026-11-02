@@ -1,97 +1,91 @@
 /**
- * What a shop mainly does (`Shop.sector`). Unlike `attributeTags` (multi-valued
- * identity tags), a shop has at most one sector, and it colors the shop's pin
- * on the Artisan Map.
+ * Code side of shop sectors. The sectors themselves live in the database
+ * (`ShopSector`, managed at /admin/sectors); this file holds what stays in
+ * code: the color palette admins pick from and the synthetic "Other" that
+ * shops without a sector are shown under.
  *
- * The `id` slug is what's stored, so labels can be renamed freely; changing
- * or removing an id orphans existing rows (they fall back to "other").
- * Colors are tuned per map theme and always paired with the text label, so
- * no sector is ever told apart by color alone.
+ * Colors are tuned per map theme and always paired with a text label, so no
+ * sector is ever told apart by color alone.
  */
-export const SHOP_SECTORS = [
-  {
-    id: "apparel",
-    label: "Apparel & Textiles",
-    short: "Apparel",
-    color: { light: "#a5438d", dark: "#e88ed1" },
-  },
-  {
-    id: "jewelry",
-    label: "Jewelry & Accessories",
-    short: "Jewelry",
-    color: { light: "#9c6600", dark: "#e9bd35" },
-  },
-  {
-    id: "beauty-wellness",
-    label: "Beauty & Wellness",
-    short: "Beauty",
-    color: { light: "#bd4056", dark: "#d37d94" },
-  },
-  {
-    id: "home-goods",
-    label: "Home & Handmade Goods",
-    short: "Home",
-    color: { light: "#be673d", dark: "#ee985a" },
-  },
-  {
-    id: "art-design",
-    label: "Art & Design",
-    short: "Art",
-    color: { light: "#147cc0", dark: "#44b5f7" },
-  },
-  {
-    id: "food-farming",
-    label: "Food & Farming",
-    short: "Food",
-    color: { light: "#32734c", dark: "#5bca9a" },
-  },
-  {
-    id: "education",
-    label: "Education & Workshops",
-    short: "Education",
-    color: { light: "#078277", dark: "#05a999" },
-  },
-  {
-    id: "services",
-    label: "Services & Consulting",
-    short: "Services",
-    color: { light: "#7d36ac", dark: "#8682d9" },
-  },
-  {
-    id: "other",
-    label: "Other",
-    short: "Other",
-    color: { light: "#56606b", dark: "#a7adb5" },
-  },
+
+export type SectorColor = { light: string; dark: string };
+
+/** The validated light/dark pairs a sector's `colorKey` can name. */
+export const SECTOR_PALETTE = [
+  { key: "plum", name: "Plum", light: "#a5438d", dark: "#e88ed1" },
+  { key: "gold", name: "Gold", light: "#9c6600", dark: "#e9bd35" },
+  { key: "rose", name: "Rose", light: "#bd4056", dark: "#d37d94" },
+  { key: "terracotta", name: "Terracotta", light: "#be673d", dark: "#ee985a" },
+  { key: "blue", name: "Blue", light: "#147cc0", dark: "#44b5f7" },
+  { key: "green", name: "Green", light: "#32734c", dark: "#5bca9a" },
+  { key: "teal", name: "Teal", light: "#078277", dark: "#05a999" },
+  { key: "violet", name: "Violet", light: "#7d36ac", dark: "#8682d9" },
 ] as const;
 
-export type ShopSector = (typeof SHOP_SECTORS)[number];
-export type ShopSectorId = ShopSector["id"];
+export type SectorColorKey = (typeof SECTOR_PALETTE)[number]["key"];
 
-/** Every sector id, in display order (a tuple, for `z.enum`). */
-export const SHOP_SECTOR_IDS = SHOP_SECTORS.map((s) => s.id) as [
-  ShopSectorId,
-  ...ShopSectorId[],
+/** Every palette key (a tuple, for `z.enum`). */
+export const SECTOR_COLOR_KEYS = SECTOR_PALETTE.map((color) => color.key) as [
+  SectorColorKey,
+  ...SectorColorKey[],
 ];
 
-/** Sector a shop without one (or with a retired id) is shown under. */
-export const DEFAULT_SHOP_SECTOR: ShopSectorId = "other";
+const NEUTRAL_SECTOR_COLOR: SectorColor = { light: "#56606b", dark: "#a7adb5" };
 
-const SECTOR_BY_ID = new Map<string, ShopSector>(
-  SHOP_SECTORS.map((s) => [s.id, s]),
-);
+/** A palette key's color pair; an unknown key is the neutral color. */
+export function sectorColor(colorKey: string | null | undefined): SectorColor {
+  const entry = SECTOR_PALETTE.find((color) => color.key === colorKey);
+  return entry
+    ? { light: entry.light, dark: entry.dark }
+    : NEUTRAL_SECTOR_COLOR;
+}
 
-export const isShopSector = (value: unknown): value is ShopSectorId =>
-  typeof value === "string" && SECTOR_BY_ID.has(value);
+/** Reserved: can't be created, because it means "no sector" on the map. */
+export const OTHER_SECTOR_SLUG = "other";
 
-/** A stored `Shop.sector` as a known id: null or unknown becomes "other". */
-export const toShopSector = (value: string | null | undefined): ShopSectorId =>
-  isShopSector(value) ? value : DEFAULT_SHOP_SECTOR;
+/** Select value for "no sector", since Radix Select can't take an empty one. */
+export const NO_SECTOR_VALUE = "none";
 
-/** The sector entry for an id (unknown → "other"). */
-export const getShopSector = (value: string | null | undefined): ShopSector =>
-  SECTOR_BY_ID.get(toShopSector(value))!;
+/** A sector as the public map shows it. `MapShop.sector` holds its slug. */
+export type DisplaySector = {
+  slug: string;
+  name: string;
+  shortName: string;
+  color: SectorColor;
+};
 
-/** Display label for a stored sector (unknown or unset → "Other"). */
-export const sectorLabel = (value: string | null | undefined): string =>
-  getShopSector(value).label;
+/** What a shop with `sectorId = null` is shown under. Not a database row. */
+export const OTHER_SECTOR: DisplaySector = {
+  slug: OTHER_SECTOR_SLUG,
+  name: "Other",
+  shortName: "Other",
+  color: NEUTRAL_SECTOR_COLOR,
+};
+
+/** Database sectors, in order, for display; "Other" always comes last. */
+export function toDisplaySectors(
+  rows: readonly {
+    slug: string;
+    name: string;
+    shortName: string | null;
+    colorKey: string;
+  }[],
+): DisplaySector[] {
+  return [
+    ...rows.map((row) => ({
+      slug: row.slug,
+      name: row.name,
+      shortName: row.shortName ?? row.name,
+      color: sectorColor(row.colorKey),
+    })),
+    OTHER_SECTOR,
+  ];
+}
+
+/** The sector with this slug; an unknown slug is "Other". */
+export function findSector(
+  sectors: readonly DisplaySector[],
+  slug: string,
+): DisplaySector {
+  return sectors.find((sector) => sector.slug === slug) ?? OTHER_SECTOR;
+}

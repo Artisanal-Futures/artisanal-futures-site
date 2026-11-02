@@ -1,0 +1,20 @@
+/// What a shop mainly does: one per shop, managed by admins at /admin/sectors.
+/// It colors the shop's Artisan Map pin and drives the sector filter. A shop
+/// with `sectorId = null` is shown as the synthetic "Other", which is not a
+/// row here (OTHER_SECTOR in src/lib/constants/shop-sectors.ts).
+model ShopSector {
+  id          String   @id @default(cuid())
+  /// Generated from the name on create and never changed, so shared map links
+  /// (`?sectors=slug,slug`) survive a rename.
+  slug        String   @unique
+  name        String   @unique
+  shortName   String?
+  description String?
+  /// A `SECTOR_PALETTE` key (src/lib/constants/shop-sectors.ts). An unknown
+  /// key renders in the neutral "Other" color.
+  colorKey    String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  shops       Shop[]
+}
