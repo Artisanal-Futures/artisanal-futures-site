@@ -359,6 +359,27 @@ model PageSeo {
   updatedAt   DateTime @updatedAt
 }
 
+/// What a shop mainly does: one per shop, managed by admins at /admin/sectors.
+/// It colors the shop's Artisan Map pin and drives the sector filter. A shop
+/// with `sectorId = null` is shown as the synthetic "Other", which is not a
+/// row here (OTHER_SECTOR in src/lib/constants/shop-sectors.ts).
+model ShopSector {
+  id          String   @id @default(cuid())
+  /// Generated from the name on create and never changed, so shared map links
+  /// (`?sectors=slug,slug`) survive a rename.
+  slug        String   @unique
+  name        String   @unique
+  shortName   String?
+  description String?
+  /// A `SECTOR_PALETTE` key (src/lib/constants/shop-sectors.ts). An unknown
+  /// key renders in the neutral "Other" color.
+  colorKey    String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  shops       Shop[]
+}
+
 model Shop {
   id            String   @id @default(cuid())
   ownerName     String
@@ -385,10 +406,12 @@ model Shop {
   /// shop's schema.org `sameAs`.
   socialLinks   String[]
 
-  /// What the shop mainly does, as a `SHOP_SECTORS` id
-  /// (src/lib/constants/shop-sectors.ts). Colors its Artisan Map pin and
-  /// drives the sector filter. Null (or an unknown id) is shown as "Other".
-  sector String?
+  /// Deprecated: the old hard-coded sector slug. Read only by the seed script
+  /// (scripts/seed-shop-sectors.ts); remove after migration.
+  sector     String?
+  /// What the shop mainly does (see ShopSector). Null is shown as "Other".
+  sectorId   String?
+  shopSector ShopSector? @relation(fields: [sectorId], references: [id], onDelete: SetNull)
 
   /// Opt-in, public mutual-aid listing: what the shop can offer other members
   /// and what it's looking for. Tags are `COLLABORATION_TAGS` labels
@@ -434,6 +457,8 @@ model Shop {
   privateContact   ShopPrivateContact?
   outboundClicks   OutboundClick[]
   apiTokens        ShopApiToken[]
+
+  @@index([sectorId])
 }
 
 model ShopAddress {

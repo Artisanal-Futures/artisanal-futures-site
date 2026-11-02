@@ -1,5 +1,4 @@
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
 
 /** A shop's public "Open to collaborate" listing. */
 export type MapShopCollab = {
@@ -23,8 +22,8 @@ export type MapShop = {
   email: string | null;
   phone: string | null;
   attributeTags: string[];
-  /** Colors the pin; "other" when the shop hasn't picked one. */
-  sector: ShopSectorId;
+  /** Sector slug, which colors the pin; "other" when the shop has none. */
+  sector: string;
   /** "City, ST", one part, or null. Never a street address. */
   locality: string | null;
   /**

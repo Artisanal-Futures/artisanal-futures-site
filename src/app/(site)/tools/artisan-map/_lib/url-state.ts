@@ -1,6 +1,5 @@
 import type { BoundaryLayerId } from "./boundaries";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
 
 import { parseBoundaryLayer } from "./boundaries";
 import { parseCollabTags } from "./collab";
@@ -42,7 +41,7 @@ export type MapUrlState = {
   /** "Only storefronts you can visit" (`visit=1`). */
   inPerson: boolean;
   /** Selected sectors; `[]` means all. */
-  sectors: ShopSectorId[];
+  sectors: string[];
   /** "Open to collaborate" only (`collab=1`). */
   collab: boolean;
   /** Can offer any of these (`offers=slug,…`). */
@@ -154,13 +153,16 @@ export function viewportUpdates({
   };
 }
 
-export function parseMapUrlState(sp: SearchParamsLike): MapUrlState {
+export function parseMapUrlState(
+  sp: SearchParamsLike,
+  sectorSlugs: readonly string[],
+): MapUrlState {
   const shop = sp.get("shop");
   return {
     query: sp.get("q") ?? "",
     attributes: parseList(sp.get("attributes")),
     inPerson: sp.get("visit") === "1",
-    sectors: parseSectors(sp.get("sectors")),
+    sectors: parseSectors(sp.get("sectors"), sectorSlugs),
     collab: sp.get("collab") === "1",
     offers: parseCollabTags(sp.get("offers")),
     needs: parseCollabTags(sp.get("needs")),

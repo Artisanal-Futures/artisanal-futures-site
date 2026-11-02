@@ -16,8 +16,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import type { MapShop } from "../_lib/types";
 import type { CollabFilterProps } from "./collab-filter";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
-import { getShopSector } from "~/lib/constants/shop-sectors";
+import { findSector } from "~/lib/constants/shop-sectors";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
@@ -46,6 +45,7 @@ import { Toggle } from "~/components/ui/toggle";
 import { formatDistance } from "../_lib/map-stats";
 import { CollabFilter, collabFilterChips } from "./collab-filter";
 import { ActiveFilterChips, FilterChecklist } from "./filter-checklist";
+import { useMapSectors } from "./map-sectors-context";
 import { SectorChips, SectorDot } from "./sector-chips";
 import { ShopAvatar } from "./shop-avatar";
 import { ShopMapCard } from "./shop-map-card";
@@ -199,12 +199,12 @@ export type MapSidebarProps = CollabFilterProps & {
   /** Per-attribute facet counts (ignoring the attribute filter itself). */
   attributeCounts?: Map<string, number>;
   /** Selected sectors; `[]` means all. */
-  sectors: ShopSectorId[];
-  onSectorsChange: (next: ShopSectorId[]) => void;
+  sectors: string[];
+  onSectorsChange: (next: string[]) => void;
   /** Per-sector facet counts (ignoring the sector filter itself). */
-  sectorCounts: Map<ShopSectorId, number>;
+  sectorCounts: Map<string, number>;
   /** Per-sector counts over every shop, to hide empty sectors. */
-  sectorTotals: Map<ShopSectorId, number>;
+  sectorTotals: Map<string, number>;
   /** Miles from the user, keyed by shop id; null until "Near me" is used. */
   distances?: Map<string, number> | null;
   hasFilters: boolean;
@@ -257,6 +257,7 @@ export function MapSidebar({
   toggleSelected = false,
   className,
 }: MapSidebarProps) {
+  const allSectors = useMapSectors();
   const located = shops.filter((s) => s.location !== null);
   // Nearest-first once the user has shared their location.
   if (distances) {
@@ -362,7 +363,9 @@ export function MapSidebar({
                 <SectorDot sector={shop.sector} />
               </span>
               <span className="truncate">
-                {[getShopSector(shop.sector).short, ...meta].join(" · ")}
+                {[findSector(allSectors, shop.sector).shortName, ...meta].join(
+                  " · ",
+                )}
               </span>
             </span>
             {shop.attributeTags.length > 0 && (

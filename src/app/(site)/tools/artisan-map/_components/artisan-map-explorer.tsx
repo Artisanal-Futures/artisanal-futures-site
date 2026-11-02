@@ -17,7 +17,6 @@ import type { MapShop } from "../_lib/types";
 import type { MapUrlUpdates, MapViewport } from "../_lib/url-state";
 import type { ShopMapCardPager } from "./shop-map-card";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -46,7 +45,7 @@ import {
   nextSectors,
   parseSectors,
   serializeSectors,
-  visibleSectorIds,
+  visibleSectorSlugs,
 } from "../_lib/sectors";
 import {
   applyUrlUpdates,
@@ -58,6 +57,7 @@ import {
 import { ArtisanMapLazy } from "./artisan-map-lazy";
 import { activeCollabCount, CollabFilterPanel } from "./collab-filter";
 import { MapAbout } from "./map-about";
+import { useMapSectors } from "./map-sectors-context";
 import { AttributeChecklist, MapSidebar, SearchBox } from "./map-sidebar";
 import { MapStatsBar } from "./map-stats-bar";
 import { SectorChips } from "./sector-chips";
@@ -96,14 +96,23 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
   const searchParams = useSearchParams();
   const isDesktop = useIsDesktop();
 
-  const urlState = parseMapUrlState(searchParams);
+  const allSectors = useMapSectors();
+  const sectorSlugs = useMemo(
+    () => allSectors.map((sector) => sector.slug),
+    [allSectors],
+  );
+
+  const urlState = parseMapUrlState(searchParams, sectorSlugs);
   const { query, inPerson, collab, layer } = urlState;
   // List params are re-parsed from their raw strings so their identity (and
   // the filtering below) only changes with them, not with `?shop=`.
   const attributeParam = searchParams.get("attributes");
   const sectorParam = searchParams.get("sectors");
   const attributes = useMemo(() => parseList(attributeParam), [attributeParam]);
-  const sectors = useMemo(() => parseSectors(sectorParam), [sectorParam]);
+  const sectors = useMemo(
+    () => parseSectors(sectorParam, sectorSlugs),
+    [sectorParam, sectorSlugs],
+  );
   const offerParam = searchParams.get("offers");
   const needParam = searchParams.get("needs");
   const offers = useMemo(() => parseCollabTags(offerParam), [offerParam]);
@@ -164,9 +173,15 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     collabCount,
     offerCounts,
     needCounts,
-  } = useMemo(() => filterMapShops(shops, filters), [shops, filters]);
+  } = useMemo(
+    () => filterMapShops(shops, filters, sectorSlugs),
+    [shops, filters, sectorSlugs],
+  );
   // Unfiltered, so a sector's chip doesn't vanish when a search excludes it.
-  const sectorTotals = useMemo(() => countSectors(shops), [shops]);
+  const sectorTotals = useMemo(
+    () => countSectors(shops, sectorSlugs),
+    [shops, sectorSlugs],
+  );
   const stats = useMemo(() => computeMapStats(filtered), [filtered]);
 
   // Miles from the user to each located shop, once "Near me" has succeeded.
@@ -268,17 +283,18 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
   );
 
   const setSectors = useCallback(
-    (next: ShopSectorId[]) => updateUrl({ sectors: serializeSectors(next) }),
-    [updateUrl],
+    (next: string[]) =>
+      updateUrl({ sectors: serializeSectors(next, sectorSlugs) }),
+    [sectorSlugs, updateUrl],
   );
 
   /** A breakdown bar acts like that sector's chip. */
   const pickSector = useCallback(
-    (sector: ShopSectorId) => {
-      const visible = visibleSectorIds(sectorTotals, sectors);
-      setSectors(nextSectors(sectors, sector, visible));
+    (sector: string) => {
+      const visible = visibleSectorSlugs(sectorTotals, sectors, sectorSlugs);
+      setSectors(nextSectors(sectors, sector, sectorSlugs, visible));
     },
-    [sectorTotals, sectors, setSectors],
+    [sectorSlugs, sectorTotals, sectors, setSectors],
   );
 
   const setLayer = useCallback(

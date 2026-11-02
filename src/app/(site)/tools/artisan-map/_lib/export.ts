@@ -1,8 +1,8 @@
 import Papa from "papaparse";
 
 import type { MapShop } from "./types";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
-import { sectorLabel } from "~/lib/constants/shop-sectors";
+import type { DisplaySector } from "~/lib/constants/shop-sectors";
+import { findSector } from "~/lib/constants/shop-sectors";
 import { shopPath } from "~/lib/seo/paths";
 
 /**
@@ -59,7 +59,7 @@ export function buildCitation({
 export type MapExportRow = {
   id: string;
   name: string;
-  sector: ShopSectorId;
+  sector: string;
   sectorLabel: string;
   locality: string | null;
   /** Pin position: exact for storefronts, otherwise the offset location. */
@@ -111,15 +111,20 @@ const CSV_FORMULA_PREFIX = /^[=+\-@\t\r]/;
 
 /**
  * A shop as an export row, from allow-listed fields only. `origin` is the
- * site origin (no trailing slash) used for `profileUrl`.
+ * site origin (no trailing slash) used for `profileUrl`; `sectors` gives the
+ * sector labels.
  */
-export function toExportRow(shop: MapShop, origin: string): MapExportRow {
+export function toExportRow(
+  shop: MapShop,
+  origin: string,
+  sectors: readonly DisplaySector[],
+): MapExportRow {
   const location = shop.location;
   return {
     id: shop.id,
     name: shop.name,
     sector: shop.sector,
-    sectorLabel: sectorLabel(shop.sector),
+    sectorLabel: findSector(sectors, shop.sector).name,
     locality: shop.locality,
     lat: location?.lat ?? null,
     lng: location?.lng ?? null,
@@ -148,9 +153,13 @@ function toCsvCell(value: MapExportRow[keyof MapExportRow]): CsvCell {
 }
 
 /** CSV with a header row, guarded against formula injection. */
-export function toCsv(shops: MapShop[], origin: string): string {
+export function toCsv(
+  shops: MapShop[],
+  origin: string,
+  sectors: readonly DisplaySector[],
+): string {
   const data = shops.map((shop) => {
-    const row = toExportRow(shop, origin);
+    const row = toExportRow(shop, origin, sectors);
     return EXPORT_FIELDS.map((field) => toCsvCell(row[field]));
   });
   return Papa.unparse(
@@ -171,6 +180,7 @@ export type MapExportFeature = GeoJSON.Feature<
 export function toGeoJson(
   shops: MapShop[],
   origin: string,
+  sectors: readonly DisplaySector[],
 ): GeoJSON.FeatureCollection<
   GeoJSON.Point | null,
   Omit<MapExportRow, "lat" | "lng">
@@ -178,7 +188,7 @@ export function toGeoJson(
   return {
     type: "FeatureCollection",
     features: shops.map((shop): MapExportFeature => {
-      const { lat, lng, ...properties } = toExportRow(shop, origin);
+      const { lat, lng, ...properties } = toExportRow(shop, origin, sectors);
       return {
         type: "Feature",
         id: properties.id,

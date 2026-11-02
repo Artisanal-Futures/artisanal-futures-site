@@ -10,7 +10,6 @@
  */
 
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
 
 /**
  * A shop's public mutual-aid listing, as the map shows it: only known
@@ -34,8 +33,8 @@ export type MapShopLocation = {
   email: string | null;
   phone: string | null;
   attributeTags: string[];
-  /** `Shop.sector`, normalized: unset or unknown is "other". */
-  sector: ShopSectorId;
+  /** The shop's `ShopSector` slug, or "other" when it has none. */
+  sector: string;
   locality: string | null;
   location: { lat: number; lng: number } | null;
   /**

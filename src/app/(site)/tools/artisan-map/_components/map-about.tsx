@@ -34,6 +34,7 @@ import {
   toCsv,
   toGeoJson,
 } from "../_lib/export";
+import { useMapSectors } from "./map-sectors-context";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -110,6 +111,7 @@ function MapAboutContent({
   hasFilters,
 }: MapAboutContentProps) {
   const id = useId();
+  const sectors = useMapSectors();
   const [scope, setScope] = useState<ExportScope>("all");
   // Without filters both scopes are the same set, so "current" is disabled.
   const effectiveScope: ExportScope = hasFilters ? scope : "all";
@@ -125,13 +127,13 @@ function MapAboutContent({
     if (format === "csv") {
       downloadFile(
         filename,
-        toCsv(exportShops, SITE_URL),
+        toCsv(exportShops, SITE_URL, sectors),
         "text/csv;charset=utf-8",
       );
     } else {
       downloadFile(
         filename,
-        JSON.stringify(toGeoJson(exportShops, SITE_URL), null, 2),
+        JSON.stringify(toGeoJson(exportShops, SITE_URL, sectors), null, 2),
         "application/geo+json",
       );
     }

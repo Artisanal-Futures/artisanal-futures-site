@@ -315,6 +315,18 @@ exports.Prisma.PageSeoScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ShopSectorScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  shortName: 'shortName',
+  description: 'description',
+  colorKey: 'colorKey',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ShopScalarFieldEnum = {
   id: 'id',
   ownerName: 'ownerName',
@@ -336,6 +348,7 @@ exports.Prisma.ShopScalarFieldEnum = {
   previousSlugs: 'previousSlugs',
   socialLinks: 'socialLinks',
   sector: 'sector',
+  sectorId: 'sectorId',
   collabOffers: 'collabOffers',
   collabOfferTags: 'collabOfferTags',
   collabNeeds: 'collabNeeds',
@@ -1187,6 +1200,7 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   SiteSettings: 'SiteSettings',
   PageSeo: 'PageSeo',
+  ShopSector: 'ShopSector',
   Shop: 'Shop',
   ShopAddress: 'ShopAddress',
   ShopPrivateContact: 'ShopPrivateContact',

@@ -1,7 +1,6 @@
 import type { MapShop } from "./types";
 import type { MapUrlState } from "./url-state";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
-import type { ShopSectorId } from "~/lib/constants/shop-sectors";
 
 import { countCollabTags } from "./collab";
 import { countAttributes } from "./map-stats";
@@ -38,7 +37,7 @@ export type MapFilterResult = {
   /** Per-attribute counts under every filter but `attributes`. */
   attributeCounts: Map<string, number>;
   /** Per-sector counts under every filter but `sectors`. */
-  sectorCounts: Map<ShopSectorId, number>;
+  sectorCounts: Map<string, number>;
   /** Shops open to collaborate under every filter but `collab`. */
   collabCount: number;
   /** Per-tag "Can offer" counts under every filter but `offers`. */
@@ -125,11 +124,15 @@ const byName = (a: MapShop, b: MapShop) =>
 export function filterMapShops(
   shops: MapShop[],
   filters: MapFilters,
+  sectorSlugs: readonly string[],
 ): MapFilterResult {
   return {
     shops: [...matchShops(shops, filters)].sort(byName),
     attributeCounts: countAttributes(matchShops(shops, filters, "attributes")),
-    sectorCounts: countSectors(matchShops(shops, filters, "sectors")),
+    sectorCounts: countSectors(
+      matchShops(shops, filters, "sectors"),
+      sectorSlugs,
+    ),
     collabCount: matchShops(shops, filters, "collab").filter(
       (shop) => shop.collab !== null,
     ).length,

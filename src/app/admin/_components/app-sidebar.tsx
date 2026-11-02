@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   IconAddressBook,
   IconCalendar,
+  IconCategory,
   IconCode,
   IconDashboard,
   IconDatabase,
@@ -124,6 +125,11 @@ const getNavData = (session: Session | null, pendingSyncCount = 0) => {
             title: "Categories",
             url: "/admin/categories",
             icon: IconFolder,
+          },
+          {
+            title: "Sectors",
+            url: "/admin/sectors",
+            icon: IconCategory,
           },
           {
             title: "SEO",

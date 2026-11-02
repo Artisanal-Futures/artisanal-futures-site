@@ -43,6 +43,7 @@ import type { BoundaryLayerId, LngLatBoundsTuple } from "../_lib/boundaries";
 import type { MapShop } from "../_lib/types";
 import type { MapViewport } from "../_lib/url-state";
 import type { MapTheme } from "./map-style";
+import type { DisplaySector } from "~/lib/constants/shop-sectors";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -52,6 +53,7 @@ import { groupCoLocatedShops } from "../_lib/co-located";
 import { BoundaryOverlay, useBoundaryData } from "./boundary-overlay";
 import { MapLayersControl } from "./map-layers-control";
 import { MapLegend } from "./map-legend";
+import { useMapSectors } from "./map-sectors-context";
 import {
   MAP_BRAND_COLORS,
   MAP_FONT_BOLD,
@@ -302,9 +304,13 @@ function PinImageRegistrar() {
 // Layer definitions
 // ---------------------------------------------------------------------------
 
-function buildLayers(theme: MapTheme, selectedGroupId: string | null) {
+function buildLayers(
+  theme: MapTheme,
+  selectedGroupId: string | null,
+  sectors: readonly DisplaySector[],
+) {
   const colors = MAP_BRAND_COLORS[theme];
-  const sectorColor = sectorColorExpr(theme);
+  const sectorColor = sectorColorExpr(theme, sectors);
 
   const notSelected: FilterSpecification = [
     "all",
@@ -570,6 +576,7 @@ export default function ArtisanMap({
   const mapStyle = useArtisanMapStyle();
   const theme = useMapTheme();
   const colors = MAP_BRAND_COLORS[theme];
+  const sectors = useMapSectors();
   const reducedMotion = usePrefersReducedMotion();
 
   const mapRef = useRef<MapRef>(null);
@@ -665,8 +672,8 @@ export default function ArtisanMap({
   );
 
   const layers = useMemo(
-    () => buildLayers(theme, selectedGroupId),
-    [theme, selectedGroupId],
+    () => buildLayers(theme, selectedGroupId, sectors),
+    [theme, selectedGroupId, sectors],
   );
 
   const duration = useCallback(

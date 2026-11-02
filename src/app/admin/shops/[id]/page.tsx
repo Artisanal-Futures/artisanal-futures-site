@@ -12,6 +12,7 @@ type Props = {
 export default async function EditShopPage({ params }: Props) {
   const { id } = await params;
   const { shop, userRole, isAdmin } = await getAdminShop(id);
+  const sectors = await api.shopSector.getAll();
 
   // Admin-only procedure: artisans would receive FORBIDDEN from it.
   const privateContact = isAdmin
@@ -22,6 +23,7 @@ export default async function EditShopPage({ params }: Props) {
     <ShopForm
       initialData={shop}
       userRole={userRole}
+      sectors={sectors}
       adminSlot={
         isAdmin
           ? {

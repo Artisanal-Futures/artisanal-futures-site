@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { TEST_SLUGS } from "./test-shop";
 import {
   applyUrlUpdates,
   clearFilterUpdates,
@@ -13,7 +14,7 @@ import {
 
 describe("parseMapUrlState", () => {
   it("defaults everything when the query string is empty", () => {
-    assert.deepEqual(parseMapUrlState(new URLSearchParams()), {
+    assert.deepEqual(parseMapUrlState(new URLSearchParams(), TEST_SLUGS), {
       query: "",
       attributes: [],
       inPerson: false,
@@ -30,16 +31,17 @@ describe("parseMapUrlState", () => {
   it("reads every param", () => {
     const state = parseMapUrlState(
       new URLSearchParams(
-        "q=pottery&attributes=Black+Owned,Woman+Owned&visit=1&sectors=food-farming,bogus" +
+        "q=pottery&attributes=Black+Owned,Woman+Owned&visit=1&sectors=food-land,bogus" +
           "&collab=1&offers=storage-space,local-delivery,nope&needs=referrals" +
           "&shop=abc&lng=-83.05&lat=42.35&zoom=12&layer=neighborhoods",
       ),
+      TEST_SLUGS,
     );
     assert.deepEqual(state, {
       query: "pottery",
       attributes: ["Black Owned", "Woman Owned"],
       inPerson: true,
-      sectors: ["food-farming"],
+      sectors: ["food-land"],
       collab: true,
       offers: ["Local delivery", "Storage space"],
       needs: ["Referrals"],
@@ -51,14 +53,15 @@ describe("parseMapUrlState", () => {
 
   it("only treats visit=1 as on", () => {
     assert.equal(
-      parseMapUrlState(new URLSearchParams("visit=true")).inPerson,
+      parseMapUrlState(new URLSearchParams("visit=true"), TEST_SLUGS).inPerson,
       false,
     );
   });
 });
 
 describe("layer", () => {
-  const layer = (qs: string) => parseMapUrlState(new URLSearchParams(qs)).layer;
+  const layer = (qs: string) =>
+    parseMapUrlState(new URLSearchParams(qs), TEST_SLUGS).layer;
 
   it("reads each known overlay", () => {
     assert.equal(layer("layer=council"), "council");
@@ -158,9 +161,9 @@ describe("applyUrlUpdates", () => {
       applyUrlUpdates("q=old&shop=abc&visit=1", {
         q: "new",
         visit: null,
-        sectors: "apparel",
+        sectors: "food-land",
       }),
-      "q=new&shop=abc&sectors=apparel",
+      "q=new&shop=abc&sectors=food-land",
     );
   });
 
@@ -173,7 +176,7 @@ describe("clearFilterUpdates", () => {
   it("removes every filter but keeps the selection, camera, layer and unknown params", () => {
     assert.equal(
       applyUrlUpdates(
-        "q=x&attributes=a&visit=1&sectors=apparel&collab=1&offers=referrals" +
+        "q=x&attributes=a&visit=1&sectors=food-land&collab=1&offers=referrals" +
           "&needs=storage-space&shop=abc&lng=-83.05&lat=42.35&zoom=12" +
           "&layer=zip&other=1",
         clearFilterUpdates(),

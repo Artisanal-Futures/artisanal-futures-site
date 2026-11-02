@@ -1,6 +1,5 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import type { FieldErrors, Resolver, UseFormReturn } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +17,11 @@ import {
   COLLABORATION_TEXT_MAX,
   isCollaborationTag,
 } from "~/lib/constants/collaboration-tags";
-import { isShopSector, SHOP_SECTORS } from "~/lib/constants/shop-sectors";
+import {
+  NO_SECTOR_VALUE,
+  OTHER_SECTOR,
+  sectorColor,
+} from "~/lib/constants/shop-sectors";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { handleImageUrl } from "~/lib/handle-image-url";
 import { slugify } from "~/lib/utils";
@@ -56,6 +59,7 @@ import { TextareaFormField } from "~/components/inputs/textarea-form-field";
 import { UrlListFormField } from "~/components/inputs/url-list-form-field";
 
 import { AdminFormColumns } from "../../_components/admin-form-columns";
+import { SectorSwatch } from "../../_components/sector-swatch";
 import { useShopHubSlots } from "./shop-hub-shell";
 import { ShopLocationCard } from "./shop-location-card";
 import { ShopSeoFieldsCard, ShopSeoPreviewCard } from "./shop-seo-card";
@@ -96,7 +100,7 @@ const FIELD_TAB: Record<string, TabKey> = {
   coverPhotoFile: "profile",
   coverPhotoUrl: "profile",
   attributeTags: "profile",
-  sector: "profile",
+  sectorId: "profile",
   isPublic: "profile",
   website: "contact",
   email: "contact",
@@ -166,6 +170,8 @@ function CollaborationTagPicker({
 type Props = {
   initialData: RouterOutputs["shop"]["getForAdmin"];
   userRole: string;
+  /** Every sector, in display order, for the sector picker. */
+  sectors: RouterOutputs["shopSector"]["getAll"];
   /** Create mode only: ownership of an existing shop changes via transfer. */
   potentialShopOwners?: RouterOutputs["shop"]["getShopOwners"];
   /** Edit mode, admins: cards for the Admin tab (they have their own forms). */
@@ -175,6 +181,7 @@ type Props = {
 export function ShopForm({
   initialData,
   userRole,
+  sectors,
   potentialShopOwners = [],
   adminSlot,
 }: Props) {
@@ -243,8 +250,7 @@ export function ShopForm({
     country: initialData?.address?.country ?? "US",
     locationType: initialData?.locationType ?? "HOME_BASED",
     attributeTags: initialData?.attributeTags ?? [],
-    // Unset, or a retired id, starts blank (shown as "Other" on the map).
-    sector: isShopSector(initialData?.sector) ? initialData.sector : null,
+    sectorId: initialData?.sectorId ?? NO_SECTOR_VALUE,
     socialLinks: initialData?.socialLinks ?? [],
     collabOffers: initialData?.collabOffers ?? "",
     // Drop retired labels so they can't fail validation and block the save.
@@ -654,28 +660,36 @@ export function ShopForm({
                       <CardContent>
                         <SelectFormField
                           form={form}
-                          name="sector"
+                          name="sectorId"
                           label="Sector"
-                          placeholder="Choose a sector"
-                          description="Optional. Shops without one show as Other."
-                          values={SHOP_SECTORS.map((sector) => ({
-                            value: sector.id,
-                            label: (
-                              <span className="flex items-center gap-2">
-                                <span
-                                  aria-hidden
-                                  className="size-2.5 shrink-0 rounded-full bg-(--dot-light) dark:bg-(--dot-dark)"
-                                  style={
-                                    {
-                                      "--dot-light": sector.color.light,
-                                      "--dot-dark": sector.color.dark,
-                                    } as CSSProperties
-                                  }
-                                />
-                                {sector.label}
-                              </span>
-                            ),
-                          }))}
+                          description={
+                            sectors.find(
+                              (sector) => sector.id === form.watch("sectorId"),
+                            )?.description ??
+                            "Optional. Shops without one show as Other."
+                          }
+                          values={[
+                            {
+                              value: NO_SECTOR_VALUE,
+                              label: (
+                                <span className="flex items-center gap-2">
+                                  <SectorSwatch color={OTHER_SECTOR.color} />
+                                  No sector (shown as Other)
+                                </span>
+                              ),
+                            },
+                            ...sectors.map((sector) => ({
+                              value: sector.id,
+                              label: (
+                                <span className="flex items-center gap-2">
+                                  <SectorSwatch
+                                    color={sectorColor(sector.colorKey)}
+                                  />
+                                  {sector.name}
+                                </span>
+                              ),
+                            })),
+                          ]}
                         />
                       </CardContent>
                     </Card>
