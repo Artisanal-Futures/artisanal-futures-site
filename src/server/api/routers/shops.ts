@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import type { MapSearchResponse } from "~/lib/search/map-listing-types";
 import type { ShopSeoValues } from "~/lib/validators/seo";
 import type { ShopLocationTypeValue } from "~/lib/validators/shop";
 import type {
@@ -17,6 +18,8 @@ import {
 import { checkUserShopPermissions } from "~/lib/check-user-permissions";
 import { isCollaborationTag } from "~/lib/constants/collaboration-tags";
 import { OTHER_SECTOR_SLUG } from "~/lib/constants/shop-sectors";
+import { MAX_QUERY_LENGTH, tokenize } from "~/lib/search/catalog-search";
+import { MAX_CATEGORY_LENGTH } from "~/lib/search/map-listing-types";
 import { shopPath } from "~/lib/seo/paths";
 import { shopSchema, shopUpdateSchema } from "~/lib/validators/shop";
 import { shopPrivateContactSchema } from "~/lib/validators/shop-private-contact";
@@ -39,6 +42,10 @@ import { SHOPS_LANDING_TAG } from "~/server/seo/landing-pages";
 import { generateUniqueShopSlug, RESERVED_SLUGS } from "~/server/seo/shop-slug";
 import { hasCollaboration, toCollaboration } from "~/server/shop-profile/text";
 import { DIRECTORY_COLLAB_TEXT_MAX_CHARS } from "~/server/shop-profile/types";
+import {
+  mapListingWhere,
+  searchMapListings,
+} from "~/server/shops/map-listing-search";
 import {
   publicAddressSelect,
   shopPublicSelect,
@@ -73,6 +80,60 @@ function streetFieldsFor(
     ? { address: null, street: null, additional: null }
     : { address: address ?? "" };
 }
+
+/** Listing columns a storefront or the map's detail dialog may show. */
+const publicProductSelect = {
+  id: true,
+  name: true,
+  description: true,
+  imageUrl: true,
+  priceInCents: true,
+  currency: true,
+  isFeatured: true,
+  createdAt: true,
+  tags: true,
+  attributeTags: true,
+  materialTags: true,
+  productUrl: true,
+  isPublic: true,
+  categories: { select: { name: true } },
+} as const satisfies Prisma.ProductSelect;
+
+const publicServiceSelect = {
+  id: true,
+  name: true,
+  description: true,
+  imageUrl: true,
+  priceInCents: true,
+  currency: true,
+  isFeatured: true,
+  createdAt: true,
+  tags: true,
+  attributeTags: true,
+  serviceUrl: true,
+  durationInMinutes: true,
+  locationType: true,
+  isPublic: true,
+  categories: { select: { name: true } },
+} as const satisfies Prisma.ServiceSelect;
+
+/**
+ * Per-model limit on map search candidates. Separate from
+ * `SEARCH_CANDIDATE_CAP` because the map searches the whole catalog at once.
+ */
+const MAP_SEARCH_CANDIDATE_CAP = 2000;
+
+/** Only what map search matches on; `Product` adds its two extra tag columns. */
+const mapSearchSelect = {
+  id: true,
+  name: true,
+  description: true,
+  shopId: true,
+  tags: true,
+  attributeTags: true,
+  aiGeneratedTags: true,
+  categories: { select: { name: true } },
+} as const;
 
 /** A shop counts as "new" on the map for this long after it joins. */
 const NEW_SHOP_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
@@ -724,6 +785,14 @@ export const shopsRouter = createTRPCRouter({
               services: { where: { isPublic: true } },
             },
           },
+          products: {
+            where: { isPublic: true },
+            select: { categories: { select: { name: true } } },
+          },
+          services: {
+            where: { isPublic: true },
+            select: { categories: { select: { name: true } } },
+          },
           // Locality + coordinates, plus the street lines, which are only
           // returned for a storefront pinned at street precision (below).
           // Never zip/geocodeQuery.
@@ -787,12 +856,163 @@ export const shopsRouter = createTRPCRouter({
             isExact && shop.address ? formatStreetLine(shop.address) : null,
           productCount: shop._count.products,
           serviceCount: shop._count.services,
+          categories: [
+            ...new Set(
+              [...shop.products, ...shop.services].flatMap((item) =>
+                item.categories.map((category) => category.name),
+              ),
+            ),
+          ].sort(),
           isNew: shop.createdAt.getTime() >= newSince,
           collab: toMapCollaboration(shop),
         };
       });
     },
   ),
+
+  /**
+   * What the map's search box finds in products, services and shop profiles,
+   * per shop. A category with no query browses that category instead. Carries
+   * no profile text or location data.
+   */
+  searchMapListings: publicProcedure
+    .input(
+      z.object({
+        q: z
+          .string()
+          .transform((value) => value.trim().slice(0, MAX_QUERY_LENGTH))
+          .optional(),
+        category: z.string().trim().max(MAX_CATEGORY_LENGTH).optional(),
+      }),
+    )
+    .query(async ({ ctx, input }): Promise<MapSearchResponse> => {
+      const query = input.q ?? "";
+      const empty = { query, matches: [], isFuzzy: false, truncated: false };
+
+      // `tokenize` is empty for "a b", and there is nothing to match on.
+      if (query && tokenize(query).length === 0) return empty;
+
+      const selected = input.category
+        ? await ctx.db.category.findFirst({
+            where: { name: { equals: input.category, mode: "insensitive" } },
+            select: { name: true, children: { select: { name: true } } },
+          })
+        : null;
+      const categoryNames = selected
+        ? [selected.name, ...selected.children.map((child) => child.name)]
+        : null;
+
+      if (!query && !categoryNames) return empty;
+
+      // Browsing needs only in-category rows. A search loads them all, because
+      // the response also counts matches in other categories.
+      const where =
+        categoryNames && !query
+          ? {
+              AND: [
+                mapListingWhere,
+                { categories: { some: { name: { in: categoryNames } } } },
+              ],
+            }
+          : mapListingWhere;
+      const take = MAP_SEARCH_CANDIDATE_CAP + 1;
+      const orderBy = { name: "asc" } as const;
+
+      const [products, services, shops] = await Promise.all([
+        ctx.db.product.findMany({
+          where,
+          select: {
+            ...mapSearchSelect,
+            materialTags: true,
+            environmentalTags: true,
+          },
+          orderBy,
+          take,
+        }),
+        ctx.db.service.findMany({
+          where,
+          select: mapSearchSelect,
+          orderBy,
+          take,
+        }),
+        query
+          ? ctx.db.shop.findMany({
+              where: { isPublic: true },
+              select: {
+                id: true,
+                name: true,
+                ownerName: true,
+                attributeTags: true,
+                bio: true,
+                description: true,
+                address: { select: { city: true, state: true } },
+              },
+            })
+          : [],
+      ]);
+
+      const truncated =
+        products.length > MAP_SEARCH_CANDIDATE_CAP ||
+        services.length > MAP_SEARCH_CANDIDATE_CAP;
+      if (truncated) {
+        console.warn(
+          `[search] map candidate cap (${MAP_SEARCH_CANDIDATE_CAP}) exceeded; ` +
+            `part of the catalog went unsearched. Time to move search into Postgres.`,
+        );
+      }
+
+      return searchMapListings({
+        query,
+        categoryNames,
+        items: [
+          ...products
+            .slice(0, MAP_SEARCH_CANDIDATE_CAP)
+            .map((product) => ({ ...product, kind: "product" as const })),
+          ...services
+            .slice(0, MAP_SEARCH_CANDIDATE_CAP)
+            .map((service) => ({ ...service, kind: "service" as const })),
+        ],
+        shops: shops.map(({ address, ...shop }) => ({
+          ...shop,
+          locality: formatLocality(address?.city, address?.state),
+        })),
+        truncated,
+      });
+    }),
+
+  /** One listing for the map's detail dialog. NOT_FOUND unless it is visible. */
+  getMapListing: publicProcedure
+    .input(
+      z.object({
+        kind: z.enum(["product", "service"]),
+        id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const where = { AND: [{ id: input.id }, mapListingWhere] };
+      const item =
+        input.kind === "product"
+          ? await ctx.db.product
+              .findFirst({
+                where,
+                select: { ...publicProductSelect, shopId: true },
+              })
+              .then((product) => product && addFullProductImageUrl(product))
+          : await ctx.db.service
+              .findFirst({
+                where,
+                select: { ...publicServiceSelect, shopId: true },
+              })
+              .then((service) => service && addFullServiceImageUrl(service));
+
+      if (!item) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Listing not found",
+        });
+      }
+      return item;
+    }),
 
   getAll: adminArtisanProcedure.query(async ({ ctx }) => {
     return ctx.db.shop.findMany({
@@ -1007,43 +1227,12 @@ export const shopsRouter = createTRPCRouter({
         ctx.db.product.findMany({
           where: { shopId, ...visibility },
           orderBy: { name: "asc" },
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            imageUrl: true,
-            priceInCents: true,
-            currency: true,
-            isFeatured: true,
-            createdAt: true,
-            tags: true,
-            attributeTags: true,
-            materialTags: true,
-            productUrl: true,
-            isPublic: true,
-            categories: { select: { name: true } },
-          },
+          select: publicProductSelect,
         }),
         ctx.db.service.findMany({
           where: { shopId, ...visibility },
           orderBy: { name: "asc" },
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            imageUrl: true,
-            priceInCents: true,
-            currency: true,
-            isFeatured: true,
-            createdAt: true,
-            tags: true,
-            attributeTags: true,
-            serviceUrl: true,
-            durationInMinutes: true,
-            locationType: true,
-            isPublic: true,
-            categories: { select: { name: true } },
-          },
+          select: publicServiceSelect,
         }),
       ]);
 

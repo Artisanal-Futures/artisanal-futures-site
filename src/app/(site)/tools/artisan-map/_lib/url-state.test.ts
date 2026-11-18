@@ -22,6 +22,7 @@ describe("parseMapUrlState", () => {
       collab: false,
       offers: [],
       needs: [],
+      category: null,
       shop: null,
       viewport: null,
       layer: null,
@@ -33,7 +34,7 @@ describe("parseMapUrlState", () => {
       new URLSearchParams(
         "q=pottery&attributes=Black+Owned,Woman+Owned&visit=1&sectors=food-land,bogus" +
           "&collab=1&offers=storage-space,local-delivery,nope&needs=referrals" +
-          "&shop=abc&lng=-83.05&lat=42.35&zoom=12&layer=neighborhoods",
+          "&category=Candles&shop=abc&lng=-83.05&lat=42.35&zoom=12&layer=neighborhoods",
       ),
       TEST_SLUGS,
     );
@@ -45,6 +46,7 @@ describe("parseMapUrlState", () => {
       collab: true,
       offers: ["Local delivery", "Storage space"],
       needs: ["Referrals"],
+      category: "Candles",
       shop: "abc",
       viewport: { longitude: -83.05, latitude: 42.35, zoom: 12 },
       layer: "neighborhoods",
@@ -56,6 +58,24 @@ describe("parseMapUrlState", () => {
       parseMapUrlState(new URLSearchParams("visit=true"), TEST_SLUGS).inPerson,
       false,
     );
+  });
+});
+
+describe("category", () => {
+  const category = (qs: string) =>
+    parseMapUrlState(new URLSearchParams(qs), TEST_SLUGS).category;
+
+  it("reads a name, trimmed, keeping spaces and ampersands", () => {
+    assert.equal(
+      category("category=%20Home%20%26%20Garden%20"),
+      "Home & Garden",
+    );
+  });
+
+  it("treats blank and over-long values as no category", () => {
+    assert.equal(category("category=%20"), null);
+    assert.equal(category(`category=${"x".repeat(121)}`), null);
+    assert.equal(category(`category=${"x".repeat(120)}`), "x".repeat(120));
   });
 });
 
@@ -177,7 +197,7 @@ describe("clearFilterUpdates", () => {
     assert.equal(
       applyUrlUpdates(
         "q=x&attributes=a&visit=1&sectors=food-land&collab=1&offers=referrals" +
-          "&needs=storage-space&shop=abc&lng=-83.05&lat=42.35&zoom=12" +
+          "&needs=storage-space&category=Candles&shop=abc&lng=-83.05&lat=42.35&zoom=12" +
           "&layer=zip&other=1",
         clearFilterUpdates(),
       ),

@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { type Category } from "generated/prisma";
+import { MapPin } from "lucide-react";
 
 import type { RouterOutputs } from "~/trpc/react";
 import { type ProductWithRelations } from "~/types/product";
-import { shopPath } from "~/lib/seo/paths";
+import { artisanMapPath, shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { FilterControls } from "~/app/(site)/(shops-goods-services)/_components/filter-controls";
@@ -31,6 +33,8 @@ type Props = {
   totalPages: number;
   isFuzzy?: boolean;
   suggestions?: string[];
+  /** Undefined on the all-products / all-services pages. */
+  categoryName?: string;
 };
 
 export function CategoryClient({
@@ -40,6 +44,7 @@ export function CategoryClient({
   totalPages,
   isFuzzy = false,
   suggestions = [],
+  categoryName,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +58,12 @@ export function CategoryClient({
   const currentPage = Math.max(1, Math.min(Math.max(totalPages, 1), rawPage));
 
   const searchTerm = searchParams.get("search") ?? "";
+  const subcategory = searchParams.get("subcategory") ?? "";
+  const mapCategory = subcategory || categoryName;
+  const mapHref =
+    mapCategory || searchTerm
+      ? artisanMapPath({ q: searchTerm, category: mapCategory })
+      : null;
   const hasFilters = ["search", "store", "attributes", "subcategory"].some(
     (key) => !!searchParams.get(key),
   );
@@ -104,6 +115,9 @@ export function CategoryClient({
     setDialogOpen(true);
   };
 
+  const selectedShopId =
+    (selectedItem as ProductWithRelations | null)?.shop?.id ?? null;
+
   return (
     <div className="mt-5 flex flex-col gap-6 md:flex-row md:items-start">
       <aside className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:sticky md:top-4 md:max-h-[calc(100vh-8rem)] md:w-72 md:shrink-0 md:overflow-y-auto">
@@ -131,23 +145,34 @@ export function CategoryClient({
                 } of ${totalCount} products`
               : "No products to show"}
           </p>
-          <div className="flex items-center gap-2">
-            <label htmlFor="itemsPerPage" className="text-sm font-medium">
-              Items per page:
-            </label>
-            <select
-              id="itemsPerPage"
-              value={itemsPerPage}
-              onChange={(e) =>
-                updateSearchParams({ limit: Number(e.target.value) })
-              }
-              className="border-input bg-background h-8 w-24 rounded-md border px-2 py-1 text-sm"
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {mapHref && (
+              <Link
+                href={mapHref}
+                className="text-foreground inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 hover:no-underline"
+              >
+                <MapPin className="size-3.5" />
+                See on map
+              </Link>
+            )}
+            <div className="flex items-center gap-2">
+              <label htmlFor="itemsPerPage" className="text-sm font-medium">
+                Items per page:
+              </label>
+              <select
+                id="itemsPerPage"
+                value={itemsPerPage}
+                onChange={(e) =>
+                  updateSearchParams({ limit: Number(e.target.value) })
+                }
+                className="border-input bg-background h-8 w-24 rounded-md border px-2 py-1 text-sm"
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -190,6 +215,11 @@ export function CategoryClient({
           trackingSource="COLLECTIONS"
           item={selectedItem as Product}
           open={dialogOpen}
+          mapHref={
+            selectedShopId
+              ? artisanMapPath({ q: selectedItem?.name, shop: selectedShopId })
+              : undefined
+          }
           onOpenChange={setDialogOpen}
           createdBy={(selectedItem as ProductWithRelations)?.shop?.name ?? ""}
           shopPrinciples={

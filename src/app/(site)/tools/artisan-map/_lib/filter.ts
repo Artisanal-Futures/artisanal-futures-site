@@ -1,8 +1,10 @@
 import type { MapShop } from "./types";
 import type { MapUrlState } from "./url-state";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
+import type { MapShopMatch } from "~/lib/search/map-listing-types";
 
 import { countCollabTags } from "./collab";
+import { countCategories } from "./listing-search";
 import { countAttributes } from "./map-stats";
 import { countSectors } from "./sectors";
 
@@ -26,10 +28,29 @@ export type MapFilters = Pick<
   | "collab"
   | "offers"
   | "needs"
+  | "category"
 >;
 
 type FilterKey = keyof MapFilters;
 type ShopPredicate = (shop: MapShop) => boolean;
+
+/** What the filters know beyond the shops: server search and the category tree. */
+export type MapFilterContext = {
+  /** Server matches by shop id; null when no search has settled. */
+  matches: ReadonlyMap<string, MapShopMatch> | null;
+  /** The selected category and its children; null when none or unknown. */
+  categoryScope: ReadonlySet<string> | null;
+  /** Child category name to parent name, so parents count their children. */
+  categoryParents: ReadonlyMap<string, string>;
+};
+
+export const EMPTY_FILTER_CONTEXT: MapFilterContext = {
+  matches: null,
+  categoryScope: null,
+  categoryParents: new Map(),
+};
+
+type FilterEnv = MapFilterContext & { needle: string };
 
 export type MapFilterResult = {
   /** Shops passing every filter, sorted by name. */
@@ -44,6 +65,8 @@ export type MapFilterResult = {
   offerCounts: Map<CollaborationTag, number>;
   /** Per-tag "Looking for" counts under every filter but `needs`. */
   needCounts: Map<CollaborationTag, number>;
+  /** Per-category counts under every filter but `category`. */
+  categoryCounts: Map<string, number>;
 };
 
 // ---------------------------------------------------------------------------
@@ -56,14 +79,30 @@ function matchesQuery(shop: MapShop, needle: string) {
   );
 }
 
+/**
+ * The categories a shop answers for under the current search. A shop found only
+ * through its listings answers for what matched: searching "candle" with "Home"
+ * selected must not keep a shop whose candles are elsewhere. A shop found by
+ * name or profile answers for its whole catalog.
+ */
+function categoriesInSearch(shop: MapShop, { needle, matches }: FilterEnv) {
+  const match = needle ? matches?.get(shop.id) : undefined;
+  return match?.shopMatch === "none" && !matchesQuery(shop, needle)
+    ? match.categories
+    : shop.categories;
+}
+
 /** Builds each filter's predicate, or null when that filter is inactive. */
 const FILTERS: {
-  [K in FilterKey]: (value: MapFilters[K]) => ShopPredicate | null;
+  [K in FilterKey]: (
+    value: MapFilters[K],
+    env: FilterEnv,
+  ) => ShopPredicate | null;
 } = {
-  query: (query) => {
-    const needle = query.trim().toLowerCase();
-    return needle ? (shop) => matchesQuery(shop, needle) : null;
-  },
+  query: (_query, { needle, matches }) =>
+    needle
+      ? (shop) => matchesQuery(shop, needle) || !!matches?.has(shop.id)
+      : null,
   // Storefronts you can visit: street-pinned (exact) shops.
   inPerson: (on) => (on ? (shop) => shop.precision === "exact" : null),
   attributes: (attributes) =>
@@ -81,17 +120,37 @@ const FILTERS: {
     needs.length > 0
       ? (shop) => !!shop.collab?.needTags.some((tag) => needs.includes(tag))
       : null,
+  category: (category, env) => {
+    const scope = env.categoryScope;
+    return category && scope
+      ? (shop) => categoriesInSearch(shop, env).some((name) => scope.has(name))
+      : null;
+  },
 };
 
-function predicatesFor(filters: MapFilters, ignore?: FilterKey) {
+const filterEnv = (
+  filters: MapFilters,
+  context: MapFilterContext,
+): FilterEnv => ({
+  ...context,
+  needle: filters.query.trim().toLowerCase(),
+});
+
+function predicatesFor(
+  filters: MapFilters,
+  ignore: FilterKey | undefined,
+  context: MapFilterContext,
+) {
+  const env = filterEnv(filters, context);
   const predicates: ShopPredicate[] = [];
   for (const key of Object.keys(FILTERS) as FilterKey[]) {
     if (key === ignore) continue;
     // Each builder takes its own key's value; TS can't correlate the two.
     const build = FILTERS[key] as (
       value: MapFilters[FilterKey],
+      env: FilterEnv,
     ) => ShopPredicate | null;
-    const predicate = build(filters[key]);
+    const predicate = build(filters[key], env);
     if (predicate) predicates.push(predicate);
   }
   return predicates;
@@ -106,15 +165,22 @@ export function matchShops(
   shops: MapShop[],
   filters: MapFilters,
   ignore?: FilterKey,
+  context: MapFilterContext = EMPTY_FILTER_CONTEXT,
 ): MapShop[] {
-  const predicates = predicatesFor(filters, ignore);
+  const predicates = predicatesFor(filters, ignore, context);
   if (predicates.length === 0) return shops;
   return shops.filter((shop) => predicates.every((p) => p(shop)));
 }
 
-/** True when any filter (not just the facets) narrows the list. */
+/**
+ * True when any filter (not just the facets) narrows the list. An unknown
+ * category filters nothing but still counts, so "Clear filters" can remove it.
+ */
 export function hasActiveFilters(filters: MapFilters): boolean {
-  return predicatesFor(filters).length > 0;
+  return (
+    !!filters.category ||
+    predicatesFor(filters, undefined, EMPTY_FILTER_CONTEXT).length > 0
+  );
 }
 
 const byName = (a: MapShop, b: MapShop) =>
@@ -125,24 +191,24 @@ export function filterMapShops(
   shops: MapShop[],
   filters: MapFilters,
   sectorSlugs: readonly string[],
+  context: MapFilterContext = EMPTY_FILTER_CONTEXT,
 ): MapFilterResult {
+  const matching = (ignore?: FilterKey) =>
+    matchShops(shops, filters, ignore, context);
+  const env = filterEnv(filters, context);
+
   return {
-    shops: [...matchShops(shops, filters)].sort(byName),
-    attributeCounts: countAttributes(matchShops(shops, filters, "attributes")),
-    sectorCounts: countSectors(
-      matchShops(shops, filters, "sectors"),
-      sectorSlugs,
-    ),
-    collabCount: matchShops(shops, filters, "collab").filter(
-      (shop) => shop.collab !== null,
-    ).length,
-    offerCounts: countCollabTags(
-      matchShops(shops, filters, "offers"),
-      "offerTags",
-    ),
-    needCounts: countCollabTags(
-      matchShops(shops, filters, "needs"),
-      "needTags",
+    shops: [...matching()].sort(byName),
+    attributeCounts: countAttributes(matching("attributes")),
+    sectorCounts: countSectors(matching("sectors"), sectorSlugs),
+    collabCount: matching("collab").filter((shop) => shop.collab !== null)
+      .length,
+    offerCounts: countCollabTags(matching("offers"), "offerTags"),
+    needCounts: countCollabTags(matching("needs"), "needTags"),
+    categoryCounts: countCategories(
+      matching("category"),
+      context.categoryParents,
+      (shop) => categoriesInSearch(shop, env),
     ),
   };
 }

@@ -42,6 +42,8 @@ type Props = {
   shopId?: string;
   /** Where the dialog was opened from, recorded with outbound clicks. */
   trackingSource: OutboundSource;
+  /** Optional "See on map" link target. */
+  mapHref?: string;
 };
 
 const removeHtmlTags = (text: string) => {
@@ -125,6 +127,7 @@ export function ProductDetailDialog({
   fallbackImage,
   shopId,
   trackingSource,
+  mapHref,
 }: Props) {
   if (!item) return null;
 
@@ -253,6 +256,16 @@ export function ProductDetailDialog({
                   text={removeHtmlTags(item.description)}
                 />
               </div>
+            )}
+
+            {mapHref && (
+              <Link
+                href={mapHref}
+                className="text-foreground inline-flex items-center gap-1.5 self-start text-sm font-medium underline underline-offset-4 hover:no-underline"
+              >
+                <MapPin className="size-3.5" />
+                See on map
+              </Link>
             )}
 
             {/* About the owner */}

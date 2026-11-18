@@ -17,12 +17,15 @@ import {
 import { toast } from "sonner";
 
 import type { MapShop } from "../_lib/types";
+import type { OpenMatchedItem } from "./matched-items";
+import type { MapShopMatch } from "~/lib/search/map-listing-types";
 import { shopPath } from "~/lib/seo/paths";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { OutboundLink } from "~/components/outbound-link";
 
+import { MatchedItems } from "./matched-items";
 import { SectorBadge } from "./sector-chips";
 import { ShopAvatar } from "./shop-avatar";
 
@@ -97,6 +100,11 @@ type ShopMapCardProps = {
   onClose?: () => void;
   /** Set when other shops share this pin; adds a "1 of N" strip at the bottom. */
   pager?: ShopMapCardPager;
+  /** What this shop matched in the current search. */
+  match?: MapShopMatch;
+  /** The category being browsed, when there is no text search. */
+  browseCategory?: string | null;
+  onOpenItem?: OpenMatchedItem;
   className?: string;
 };
 
@@ -104,6 +112,9 @@ export function ShopMapCard({
   shop,
   onClose,
   pager,
+  match,
+  browseCategory = null,
+  onOpenItem,
   className,
 }: ShopMapCardProps) {
   const website = normalizeWebsite(shop.website);
@@ -207,6 +218,15 @@ export function ShopMapCard({
             </li>
           ))}
         </ul>
+      )}
+
+      {match && onOpenItem && (
+        <MatchedItems
+          shop={shop}
+          match={match}
+          browseCategory={browseCategory}
+          onOpenItem={onOpenItem}
+        />
       )}
 
       {shop.collab && (
@@ -314,7 +334,7 @@ export function ShopMapCard({
           role="group"
           aria-label="Shops at this location"
           onKeyDown={handlePagerKeyDown}
-          className="-mx-4 -mb-4 flex items-center gap-1 border-t py-1.5 pr-2 pl-4"
+          className="bg-card sticky -bottom-4 -mx-4 -mb-4 flex items-center gap-1 border-t py-1.5 pr-2 pl-4"
         >
           <p className="text-muted-foreground flex min-w-0 flex-1 items-center gap-1.5 text-xs">
             <Store className="size-3.5 shrink-0" aria-hidden />

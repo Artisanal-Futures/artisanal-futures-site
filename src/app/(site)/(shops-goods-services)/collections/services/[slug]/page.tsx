@@ -145,6 +145,9 @@ export default async function ServiceCategoryPage({
           totalPages={totalPages}
           isFuzzy={isFuzzy}
           suggestions={suggestions}
+          categoryName={
+            categoryName === "all-services" ? undefined : category?.name
+          }
         />
       </section>
     </>

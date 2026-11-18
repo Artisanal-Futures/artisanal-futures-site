@@ -15,7 +15,10 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 
 import type { MapShop } from "../_lib/types";
+import type { CategoryFilterProps } from "./category-filter";
 import type { CollabFilterProps } from "./collab-filter";
+import type { OpenMatchedItem } from "./matched-items";
+import type { ListingSearch } from "./use-listing-search";
 import { findSector } from "~/lib/constants/shop-sectors";
 import { STORE_ATTRIBUTES } from "~/lib/constants/store-attributes";
 import { cn } from "~/lib/utils";
@@ -41,11 +44,14 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Toggle } from "~/components/ui/toggle";
+import { FuzzyNotice } from "~/app/(site)/(shops-goods-services)/_components/search-results-status";
 
 import { formatDistance } from "../_lib/map-stats";
+import { CategoryFilter } from "./category-filter";
 import { CollabFilter, collabFilterChips } from "./collab-filter";
 import { ActiveFilterChips, FilterChecklist } from "./filter-checklist";
 import { useMapSectors } from "./map-sectors-context";
+import { MatchedItems } from "./matched-items";
 import { SectorChips, SectorDot } from "./sector-chips";
 import { ShopAvatar } from "./shop-avatar";
 import { ShopMapCard } from "./shop-map-card";
@@ -58,10 +64,17 @@ type SearchBoxProps = {
   /** Committed query (from the URL). */
   value: string;
   onChange: (value: string) => void;
+  /** Narrow screens need a shorter hint than the sidebar's. */
+  placeholder?: string;
   className?: string;
 };
 
-export function SearchBox({ value, onChange, className }: SearchBoxProps) {
+export function SearchBox({
+  value,
+  onChange,
+  placeholder = "Search products, services, shops, or places…",
+  className,
+}: SearchBoxProps) {
   const [text, setText] = useState(value);
   const lastCommitted = useRef(value);
 
@@ -93,8 +106,8 @@ export function SearchBox({ value, onChange, className }: SearchBoxProps) {
       </InputGroupAddon>
       <InputGroupInput
         type="search"
-        aria-label="Search artisans by name, place, or tag"
-        placeholder="Search name, place, or tag…"
+        aria-label="Search products, services, shops, places, or tags"
+        placeholder={placeholder}
         value={text}
         onChange={(e) => {
           setText(e.target.value);
@@ -185,6 +198,14 @@ function AttributeFilter({ selected, onToggle, counts }: AttributeProps) {
 // Sidebar
 // ---------------------------------------------------------------------------
 
+function SearchNotice({ children }: { children: string }) {
+  return (
+    <p className="bg-muted/50 text-muted-foreground rounded-md border px-3 py-2 text-xs">
+      {children}
+    </p>
+  );
+}
+
 export type MapSidebarProps = CollabFilterProps & {
   /** Shops after search/sector/attribute filtering. */
   shops: MapShop[];
@@ -205,6 +226,11 @@ export type MapSidebarProps = CollabFilterProps & {
   sectorCounts: Map<string, number>;
   /** Per-sector counts over every shop, to hide empty sectors. */
   sectorTotals: Map<string, number>;
+  categoryFilter: CategoryFilterProps;
+  search: ListingSearch;
+  /** The category being browsed, when there is no text search. */
+  browseCategory: string | null;
+  onOpenItem: OpenMatchedItem;
   /** Miles from the user, keyed by shop id; null until "Near me" is used. */
   distances?: Map<string, number> | null;
   hasFilters: boolean;
@@ -236,6 +262,10 @@ export function MapSidebar({
   onSectorsChange,
   sectorCounts,
   sectorTotals,
+  categoryFilter,
+  search,
+  browseCategory,
+  onOpenItem,
   collab,
   onCollabChange,
   collabCount,
@@ -293,6 +323,7 @@ export function MapSidebar({
         : null,
     ].filter(Boolean);
     const approximate = shop.precision === "approximate";
+    const match = search.matches?.get(shop.id);
     return (
       <li
         key={shop.id}
@@ -301,18 +332,15 @@ export function MapSidebar({
           else itemRefs.current.delete(shop.id);
         }}
       >
-        <button
-          type="button"
-          aria-current={selected ? "true" : undefined}
-          onClick={() =>
-            onSelectShop(selected && toggleSelected ? null : shop.id)
-          }
+        {/* Hover and selection wrap the row and its matched items, which can't
+            sit inside the row's button. */}
+        <div
           onMouseEnter={() => onHoverShop(shop.id)}
           onMouseLeave={() => onHoverShop(null)}
           onFocus={() => onHoverShop(shop.id)}
           onBlur={() => onHoverShop(null)}
           className={cn(
-            "focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors outline-none focus-visible:ring-[3px]",
+            "rounded-lg transition-colors",
             selected
               ? "bg-accent ring-ring/40 ring-1"
               : hovered
@@ -320,88 +348,116 @@ export function MapSidebar({
                 : "hover:bg-accent/60",
           )}
         >
-          <ShopAvatar shop={shop} size={40} />
-          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="flex min-w-0 items-center gap-1.5">
-              <span className="truncate text-sm leading-tight font-medium">
-                {shop.name}
-              </span>
-              {shop.isNew && (
-                <Badge className="shrink-0 px-1.5 py-0 text-[10px]">New</Badge>
-              )}
-              {shop.collab && (
-                <Badge
-                  variant="outline"
-                  title="Open to collaborate"
-                  className="text-muted-foreground shrink-0 px-1 py-0"
-                >
-                  <Handshake className="size-3" aria-hidden />
-                  <span className="sr-only">Open to collaborate</span>
-                </Badge>
-              )}
-            </span>
-            {showOwner && (
-              <span className="text-muted-foreground truncate text-xs">
-                {shop.ownerName}
-              </span>
-            )}
-            <span
-              className={cn(
-                "flex items-center gap-1 text-xs",
-                shop.locality
-                  ? "text-muted-foreground"
-                  : "text-muted-foreground/70",
-              )}
-            >
-              <MapPin className="size-3 shrink-0" aria-hidden />
-              <span className="truncate">
-                {shop.locality ?? "Location not listed"}
-              </span>
-            </span>
-            <span className="text-muted-foreground flex items-center gap-1 text-xs">
-              <span className="grid size-3 shrink-0 place-items-center">
-                <SectorDot sector={shop.sector} />
-              </span>
-              <span className="truncate">
-                {[findSector(allSectors, shop.sector).shortName, ...meta].join(
-                  " · ",
-                )}
-              </span>
-            </span>
-            {shop.attributeTags.length > 0 && (
-              <span className="mt-0.5 flex flex-wrap gap-1">
-                {shop.attributeTags.slice(0, 2).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="max-w-40 px-1.5 py-0 text-[11px] font-normal"
-                  >
-                    <span className="truncate">{tag}</span>
+          <button
+            type="button"
+            aria-current={selected ? "true" : undefined}
+            onClick={() =>
+              onSelectShop(selected && toggleSelected ? null : shop.id)
+            }
+            className="focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left outline-none focus-visible:ring-[3px]"
+          >
+            <ShopAvatar shop={shop} size={40} />
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="flex min-w-0 items-center gap-1.5">
+                <span className="truncate text-sm leading-tight font-medium">
+                  {shop.name}
+                </span>
+                {shop.isNew && (
+                  <Badge className="shrink-0 px-1.5 py-0 text-[10px]">
+                    New
                   </Badge>
-                ))}
-                {shop.attributeTags.length > 2 && (
+                )}
+                {shop.collab && (
                   <Badge
                     variant="outline"
-                    className="px-1.5 py-0 text-[11px] font-normal"
+                    title="Open to collaborate"
+                    className="text-muted-foreground shrink-0 px-1 py-0"
                   >
-                    +{shop.attributeTags.length - 2}
+                    <Handshake className="size-3" aria-hidden />
+                    <span className="sr-only">Open to collaborate</span>
                   </Badge>
                 )}
               </span>
-            )}
-          </span>
-          {distance !== undefined && (
-            <span
-              title={approximate ? "Approximate distance" : undefined}
-              className="text-muted-foreground shrink-0 self-start text-xs tabular-nums"
-            >
-              {formatDistance(distance, approximate)}
+              {showOwner && (
+                <span className="text-muted-foreground truncate text-xs">
+                  {shop.ownerName}
+                </span>
+              )}
+              <span
+                className={cn(
+                  "flex items-center gap-1 text-xs",
+                  shop.locality
+                    ? "text-muted-foreground"
+                    : "text-muted-foreground/70",
+                )}
+              >
+                <MapPin className="size-3 shrink-0" aria-hidden />
+                <span className="truncate">
+                  {shop.locality ?? "Location not listed"}
+                </span>
+              </span>
+              <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                <span className="grid size-3 shrink-0 place-items-center">
+                  <SectorDot sector={shop.sector} />
+                </span>
+                <span className="truncate">
+                  {[
+                    findSector(allSectors, shop.sector).shortName,
+                    ...meta,
+                  ].join(" · ")}
+                </span>
+              </span>
+              {shop.attributeTags.length > 0 && (
+                <span className="mt-0.5 flex flex-wrap gap-1">
+                  {shop.attributeTags.slice(0, 2).map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="max-w-40 px-1.5 py-0 text-[11px] font-normal"
+                    >
+                      <span className="truncate">{tag}</span>
+                    </Badge>
+                  ))}
+                  {shop.attributeTags.length > 2 && (
+                    <Badge
+                      variant="outline"
+                      className="px-1.5 py-0 text-[11px] font-normal"
+                    >
+                      +{shop.attributeTags.length - 2}
+                    </Badge>
+                  )}
+                </span>
+              )}
             </span>
+            {distance !== undefined && (
+              <span
+                title={approximate ? "Approximate distance" : undefined}
+                className="text-muted-foreground shrink-0 self-start text-xs tabular-nums"
+              >
+                {formatDistance(distance, approximate)}
+              </span>
+            )}
+          </button>
+          {match && !expanded && (
+            <MatchedItems
+              shop={shop}
+              match={match}
+              browseCategory={browseCategory}
+              onOpenItem={onOpenItem}
+              // Lines up with the row's text, past the avatar.
+              className="pr-2.5 pb-2 pl-[62px]"
+            />
           )}
-        </button>
+        </div>
         {expanded && (
           <div className="px-1 pt-1 pb-2">
-            <ShopMapCard shop={shop} onClose={() => onSelectShop(null)} />
+            <ShopMapCard
+              shop={shop}
+              onClose={() => onSelectShop(null)}
+              match={match}
+              browseCategory={browseCategory}
+              onOpenItem={onOpenItem}
+            />
           </div>
         )}
       </li>
@@ -432,6 +488,7 @@ export function MapSidebar({
               totals={sectorTotals}
             />
             <div className="flex flex-wrap items-center gap-2">
+              <CategoryFilter {...categoryFilter} />
               <AttributeFilter
                 selected={attributes}
                 onToggle={onToggleAttribute}
@@ -463,6 +520,15 @@ export function MapSidebar({
             </div>
             <ActiveFilterChips
               chips={[
+                ...(categoryFilter.selected
+                  ? [
+                      {
+                        key: "category",
+                        label: categoryFilter.selected,
+                        onRemove: () => categoryFilter.onChange(null),
+                      },
+                    ]
+                  : []),
                 ...attributes.map((attribute) => ({
                   key: `attribute:${attribute}`,
                   label: attribute,
@@ -482,9 +548,11 @@ export function MapSidebar({
         )}
         <div className="flex items-center justify-between gap-2 text-sm">
           <p className="text-muted-foreground" aria-live="polite">
-            {hasFilters
-              ? `${shops.length} of ${totalCount} ${totalCount === 1 ? "artisan" : "artisans"}`
-              : `${shops.length} ${shops.length === 1 ? "artisan" : "artisans"}`}
+            {search.isFetching
+              ? "Searching…"
+              : hasFilters
+                ? `${shops.length} of ${totalCount} ${totalCount === 1 ? "artisan" : "artisans"}`
+                : `${shops.length} ${shops.length === 1 ? "artisan" : "artisans"}`}
           </p>
           {hasFilters && (
             <Button
@@ -498,6 +566,16 @@ export function MapSidebar({
             </Button>
           )}
         </div>
+        {search.failed && query.trim() && (
+          <SearchNotice>
+            Product search is unavailable; showing matches by shop name, place,
+            and tag.
+          </SearchNotice>
+        )}
+        {search.isFuzzy && <FuzzyNotice query={search.appliedQuery} />}
+        {search.truncated && (
+          <SearchNotice>Only part of the catalog was searched.</SearchNotice>
+        )}
       </div>
 
       <div
