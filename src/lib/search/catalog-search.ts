@@ -34,7 +34,7 @@ import { SYNONYM_GROUPS } from "./synonyms";
 export const SEARCH_CANDIDATE_CAP = 500;
 
 /** Longest accepted query, matching the zod schema below. */
-const MAX_QUERY_LENGTH = 100;
+export const MAX_QUERY_LENGTH = 100;
 
 /** Bounds the work done per query; queries longer than this are truncated. */
 const MAX_TOKENS = 6;
@@ -198,6 +198,8 @@ export type SearchableRow = {
   environmentalTags?: string[];
   aiGeneratedTags?: string[];
   shop?: { name?: string | null; ownerName?: string | null } | null;
+  /** Extra text scored with the shop field, e.g. the shop's locality. */
+  shopContext?: string | null;
   categories?: { name: string }[];
 };
 
@@ -251,7 +253,9 @@ function buildHaystack(row: SearchableRow): Haystack {
     categories: normalize(
       (row.categories ?? []).map((category) => category.name).join(" "),
     ),
-    shop: normalize(`${row.shop?.name ?? ""} ${row.shop?.ownerName ?? ""}`),
+    shop: normalize(
+      `${row.shop?.name ?? ""} ${row.shop?.ownerName ?? ""} ${row.shopContext ?? ""}`,
+    ),
   };
 }
 
@@ -275,8 +279,10 @@ const WEIGHTS = {
 const SYNONYM_FACTOR = 0.5;
 
 /**
- * Human-readable reasons a row matched, so the UI can explain itself.
- * Deliberately excludes anything that isn't match quality — there is no
+ * Human-readable reasons a row matched, so the UI can explain itself: every
+ * field a token was found in, not just the highest-weighted one, or a shop-name
+ * hit (8) would hide a description hit (4) on the same token. Deliberately
+ * excludes anything that isn't match quality — there is no
  * `isFeatured`, shop-size or recency signal here, so search rank can never be
  * bought or won by having a large catalog.
  */
@@ -315,7 +321,6 @@ function scoreHaystack(
   for (const token of tokens) {
     const variants = expandTerm(token);
     let best = 0;
-    let bestReason: MatchReason | null = null;
 
     for (const [index, variant] of variants.entries()) {
       // The token itself is variants[0]; anything after it is a synonym.
@@ -354,17 +359,14 @@ function scoreHaystack(
 
       for (const [weight, reason] of candidates) {
         const value = weight * factor;
-        if (value > best) {
-          best = value;
-          bestReason = reason;
-        }
+        if (value > 0) reasons.add(reason);
+        if (value > best) best = value;
       }
     }
 
     if (best > 0) {
       score += best;
       matchedTokens += 1;
-      if (bestReason) reasons.add(bestReason);
     }
   }
 
@@ -440,6 +442,44 @@ export type CatalogSearchResult<T> = {
 };
 
 /**
+ * Strict matches for `rawQuery`, best first, with their scores. Every token
+ * must match somewhere on the row. No usable tokens means no matches.
+ */
+export function scoreCatalog<T extends SearchableRow>(
+  candidates: T[],
+  rawQuery: string,
+): ScoredRow<T>[] {
+  const tokens = tokenize(rawQuery);
+  if (tokens.length === 0) return [];
+
+  const normalizedQuery = normalize(rawQuery);
+  const scored: ScoredRow<T>[] = [];
+  for (const row of candidates) {
+    const result = scoreHaystack(buildHaystack(row), tokens, normalizedQuery);
+    if (result.matchedAll) scored.push({ row, ...result });
+  }
+  return scored.sort(compareScored);
+}
+
+/**
+ * The typo-tolerant pass on its own, best first. Scores fall in (0, 1], and
+ * the weakest strict match scores 2 (a description hit through a synonym), so
+ * these always rank below strict matches.
+ */
+export function scoreFuzzy<T extends SearchableRow>(
+  candidates: T[],
+  rawQuery: string,
+): ScoredRow<T>[] {
+  const rows = fuzzyMatch(candidates, rawQuery);
+  return rows.map((row, index) => ({
+    row,
+    score: (rows.length - index) / rows.length,
+    matchedAll: true,
+    reasons: [],
+  }));
+}
+
+/**
  * Rank `candidates` against `rawQuery`.
  *
  * Pass 1 requires every token to match somewhere on the row (but not in the
@@ -454,7 +494,6 @@ export function searchCatalog<T extends SearchableRow>(
   rawQuery: string,
 ): CatalogSearchResult<T> {
   const tokens = tokenize(rawQuery);
-  const normalizedQuery = normalize(rawQuery);
 
   if (tokens.length === 0) {
     return {
@@ -465,14 +504,9 @@ export function searchCatalog<T extends SearchableRow>(
     };
   }
 
-  const scored: ScoredRow<T>[] = [];
-  for (const row of candidates) {
-    const result = scoreHaystack(buildHaystack(row), tokens, normalizedQuery);
-    if (result.matchedAll) scored.push({ row, ...result });
-  }
+  const scored = scoreCatalog(candidates, rawQuery);
 
   if (scored.length > 0) {
-    scored.sort(compareScored);
     return {
       ranked: interleaveByShop(
         scored.map((entry) => entry.row),

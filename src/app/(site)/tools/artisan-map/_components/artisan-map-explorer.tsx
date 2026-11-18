@@ -15,6 +15,9 @@ import type { BoundaryLayerId } from "../_lib/boundaries";
 import type { LatLng } from "../_lib/map-stats";
 import type { MapShop } from "../_lib/types";
 import type { MapUrlUpdates, MapViewport } from "../_lib/url-state";
+import type { MapCategoryTree } from "./category-filter";
+import type { MapListingTarget } from "./map-listing-dialog";
+import type { OpenMatchedItem } from "./matched-items";
 import type { ShopMapCardPager } from "./shop-map-card";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
 import { Badge } from "~/components/ui/badge";
@@ -39,6 +42,11 @@ import {
   toggleCollabTag,
 } from "../_lib/collab";
 import { filterMapShops, hasActiveFilters } from "../_lib/filter";
+import {
+  countCategories,
+  mapCategoryContext,
+  rankShopsByMatch,
+} from "../_lib/listing-search";
 import { computeMapStats, distanceMiles } from "../_lib/map-stats";
 import {
   countSectors,
@@ -55,13 +63,16 @@ import {
   viewportUpdates,
 } from "../_lib/url-state";
 import { ArtisanMapLazy } from "./artisan-map-lazy";
+import { CategoryList } from "./category-filter";
 import { activeCollabCount, CollabFilterPanel } from "./collab-filter";
 import { MapAbout } from "./map-about";
+import { MapListingDialog } from "./map-listing-dialog";
 import { useMapSectors } from "./map-sectors-context";
 import { AttributeChecklist, MapSidebar, SearchBox } from "./map-sidebar";
 import { MapStatsBar } from "./map-stats-bar";
 import { SectorChips } from "./sector-chips";
 import { ShopMapCard } from "./shop-map-card";
+import { useListingSearch } from "./use-listing-search";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -91,7 +102,13 @@ function useIsDesktop() {
 // Component
 // ---------------------------------------------------------------------------
 
-export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
+export function ArtisanMapExplorer({
+  shops,
+  categoryTree,
+}: {
+  shops: MapShop[];
+  categoryTree: MapCategoryTree;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isDesktop = useIsDesktop();
@@ -103,7 +120,7 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
   );
 
   const urlState = parseMapUrlState(searchParams, sectorSlugs);
-  const { query, inPerson, collab, layer } = urlState;
+  const { query, inPerson, collab, category, layer } = urlState;
   // List params are re-parsed from their raw strings so their identity (and
   // the filtering below) only changes with them, not with `?shop=`.
   const attributeParam = searchParams.get("attributes");
@@ -130,6 +147,9 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
+  // Kept after closing so the dialog can animate out with its content.
+  const [listing, setListing] = useState<MapListingTarget | null>(null);
+  const [listingOpen, setListingOpen] = useState(false);
 
   /**
    * Rewrites the query string in place. `history.replaceState` is wired into
@@ -160,11 +180,45 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     return window.location.href;
   }, [writeViewport]);
 
+  const search = useListingSearch(query, category);
+  const { appliedQuery, matches } = search;
+
+  const { categoryScope, categoryParents } = useMemo(
+    () => mapCategoryContext(categoryTree, category),
+    [categoryTree, category],
+  );
+  // The scope lists the selected name first, in the tree's spelling.
+  const selectedCategory = (categoryScope && [...categoryScope][0]) ?? category;
+  const browseCategory = appliedQuery.trim() ? null : selectedCategory;
+  const filterContext = useMemo(
+    () => ({ matches, categoryScope, categoryParents }),
+    [matches, categoryScope, categoryParents],
+  );
+
   // Every filter composes in `_lib/filter.ts`; each facet's counts ignore
-  // that facet's own selection.
+  // that facet's own selection. `query` is the applied one, so local and
+  // server matching always describe the same search.
   const filters = useMemo(
-    () => ({ query, inPerson, attributes, sectors, collab, offers, needs }),
-    [query, inPerson, attributes, sectors, collab, offers, needs],
+    () => ({
+      query: appliedQuery,
+      inPerson,
+      attributes,
+      sectors,
+      collab,
+      offers,
+      needs,
+      category,
+    }),
+    [
+      appliedQuery,
+      inPerson,
+      attributes,
+      sectors,
+      collab,
+      offers,
+      needs,
+      category,
+    ],
   );
   const {
     shops: filtered,
@@ -173,16 +227,29 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     collabCount,
     offerCounts,
     needCounts,
+    categoryCounts,
   } = useMemo(
-    () => filterMapShops(shops, filters, sectorSlugs),
-    [shops, filters, sectorSlugs],
+    () => filterMapShops(shops, filters, sectorSlugs, filterContext),
+    [shops, filters, sectorSlugs, filterContext],
   );
   // Unfiltered, so a sector's chip doesn't vanish when a search excludes it.
   const sectorTotals = useMemo(
     () => countSectors(shops, sectorSlugs),
     [shops, sectorSlugs],
   );
+  const categoryTotals = useMemo(
+    () => countCategories(shops, categoryParents),
+    [shops, categoryParents],
+  );
   const stats = useMemo(() => computeMapStats(filtered), [filtered]);
+
+  // Sidebar only: `filtered` stays name-sorted because the first shop in a
+  // co-located group sets that pin's id and colour.
+  const sidebarShops = useMemo(
+    () =>
+      appliedQuery.trim() ? rankShopsByMatch(filtered, matches) : filtered,
+    [appliedQuery, filtered, matches],
+  );
 
   // Miles from the user to each located shop, once "Near me" has succeeded.
   const distances = useMemo(() => {
@@ -196,11 +263,13 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     return map;
   }, [filtered, userLocation]);
 
-  const hasFilters = hasActiveFilters(filters);
+  // From the URL, not the applied query, so "Clear filters" shows at once.
+  const hasFilters = hasActiveFilters({ ...filters, query });
   // Sector chips stay visible on mobile, so the Filters badge leaves them out.
   const activeFilterCount =
     attributes.length +
     (inPerson ? 1 : 0) +
+    (category ? 1 : 0) +
     activeCollabCount({ collab, offers, needs });
   const selectedShop = useMemo(
     () => filtered.find((s) => s.id === selectedId) ?? null,
@@ -210,13 +279,14 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
   // Storefronts sharing one pin; the card pages through them.
   const coLocated = useMemo(() => groupCoLocatedShops(filtered), [filtered]);
 
-  // Drop a selection that was filtered out (or never existed).
+  // Drop a selection that was filtered out (or never existed). Only a settled
+  // search can say so: a shop may be missing just because results are pending.
   useEffect(() => {
-    if (selectedId && !selectedShop) {
+    if (search.settled && selectedId && !selectedShop) {
       setSelectedId(null);
       updateUrl({ shop: null });
     }
-  }, [selectedId, selectedShop, updateUrl]);
+  }, [search.settled, selectedId, selectedShop, updateUrl]);
 
   const selectShop = useCallback(
     (id: string | null) => {
@@ -297,6 +367,11 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     [sectorSlugs, sectorTotals, sectors, setSectors],
   );
 
+  const setCategory = useCallback(
+    (next: string | null) => updateUrl({ category: next }),
+    [updateUrl],
+  );
+
   const setLayer = useCallback(
     (next: BoundaryLayerId | null) => updateUrl({ layer: next }),
     [updateUrl],
@@ -316,6 +391,25 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     [selectShop],
   );
 
+  const openItem = useCallback<OpenMatchedItem>((item, shop) => {
+    setListing({ kind: item.kind, id: item.id, shop });
+    setListingOpen(true);
+  }, []);
+
+  const matchProps = (shop: MapShop) => ({
+    match: matches?.get(shop.id),
+    browseCategory,
+    onOpenItem: openItem,
+  });
+
+  const categoryFilter = {
+    tree: categoryTree,
+    selected: selectedCategory,
+    onChange: setCategory,
+    counts: categoryCounts,
+    totals: categoryTotals,
+  };
+
   const collabProps = {
     collab,
     onCollabChange: setCollab,
@@ -330,7 +424,7 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
 
   const sidebarProps = {
     ...collabProps,
-    shops: filtered,
+    shops: sidebarShops,
     totalCount: shops.length,
     query,
     onQueryChange: setQuery,
@@ -343,6 +437,10 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
     onSectorsChange: setSectors,
     sectorCounts,
     sectorTotals,
+    categoryFilter,
+    search,
+    browseCategory,
+    onOpenItem: openItem,
     distances,
     hasFilters,
     onClearFilters: clearFilters,
@@ -374,6 +472,14 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
         hasFilters={hasFilters}
       />
 
+      {listing && (
+        <MapListingDialog
+          listing={listing}
+          open={listingOpen}
+          onOpenChange={setListingOpen}
+        />
+      )}
+
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* Desktop sidebar */}
         <aside
@@ -390,7 +496,12 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
 
         {/* Mobile search bar */}
         <div className="bg-background flex shrink-0 items-center gap-2 border-b p-2 md:hidden">
-          <SearchBox value={query} onChange={setQuery} className="flex-1" />
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Products, services, shops…"
+            className="flex-1"
+          />
           <Button
             type="button"
             variant="outline"
@@ -439,7 +550,8 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
                 shop={shop}
                 onClose={() => selectShop(null)}
                 pager={pagerFor(shop)}
-                className="w-[300px]"
+                {...matchProps(shop)}
+                className="max-h-[min(24rem,50dvh)] w-[300px] overflow-y-auto overscroll-contain"
               />
             )}
           />
@@ -451,6 +563,7 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
                 shop={selectedShop}
                 onClose={() => selectShop(null)}
                 pager={pagerFor(selectedShop)}
+                {...matchProps(selectedShop)}
               />
             </div>
           ) : (
@@ -488,7 +601,8 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
             <DrawerHeader className="pb-2">
               <DrawerTitle>Filter artisans</DrawerTitle>
               <DrawerDescription>
-                Show storefronts, artisan attributes, and collaborators.
+                Show storefronts, categories, artisan attributes, and
+                collaborators.
               </DrawerDescription>
             </DrawerHeader>
             <div
@@ -515,6 +629,11 @@ export function ArtisanMapExplorer({ shops }: { shops: MapShop[] }) {
                 />
               </div>
               <h3 className="text-muted-foreground px-2 pt-3 pb-1 text-xs font-semibold tracking-wide uppercase">
+                Category
+              </h3>
+              <CategoryList {...categoryFilter} />
+              <Separator className="my-2" />
+              <h3 className="text-muted-foreground px-2 pt-1 pb-1 text-xs font-semibold tracking-wide uppercase">
                 Attributes
               </h3>
               <AttributeChecklist

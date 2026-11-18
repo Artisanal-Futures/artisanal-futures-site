@@ -9,3 +9,20 @@
 export function shopPath(shop: { id: string; slug?: string | null }) {
   return `/shops/${shop.slug ?? shop.id}`;
 }
+
+/** Artisan map URL, optionally pre-filtered. Empty params are omitted. */
+export function artisanMapPath(
+  params: {
+    q?: string | null;
+    category?: string | null;
+    shop?: string | null;
+  } = {},
+) {
+  const query = (["q", "category", "shop"] as const)
+    .flatMap((key) => {
+      const value = params[key]?.trim();
+      return value ? [`${key}=${encodeURIComponent(value)}`] : [];
+    })
+    .join("&");
+  return query ? `/tools/artisan-map?${query}` : "/tools/artisan-map";
+}

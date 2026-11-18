@@ -1,5 +1,6 @@
 import type { BoundaryLayerId } from "./boundaries";
 import type { CollaborationTag } from "~/lib/constants/collaboration-tags";
+import { MAX_CATEGORY_LENGTH } from "~/lib/search/map-listing-types";
 
 import { parseBoundaryLayer } from "./boundaries";
 import { parseCollabTags } from "./collab";
@@ -24,6 +25,7 @@ export type MapUrlParam =
   | "collab"
   | "offers"
   | "needs"
+  | "category"
   | "shop"
   | "lng"
   | "lat"
@@ -48,6 +50,8 @@ export type MapUrlState = {
   offers: CollaborationTag[];
   /** Looking for any of these (`needs=slug,…`). */
   needs: CollaborationTag[];
+  /** Selected product or service category name (`category=`), single-select. */
+  category: string | null;
   /** Selected shop id. */
   shop: string | null;
   /** Camera from `lng`/`lat`/`zoom`; null unless all three are valid. */
@@ -83,6 +87,7 @@ export const FILTER_PARAMS = [
   "collab",
   "offers",
   "needs",
+  "category",
 ] as const satisfies readonly MapUrlParam[];
 
 /** Valid camera ranges. Latitude stops where Web Mercator does. */
@@ -153,6 +158,12 @@ export function viewportUpdates({
   };
 }
 
+/** Trimmed, or null when blank or too long for the search endpoint to accept. */
+function parseCategory(raw: string | null): string | null {
+  const category = raw?.trim();
+  return category && category.length <= MAX_CATEGORY_LENGTH ? category : null;
+}
+
 export function parseMapUrlState(
   sp: SearchParamsLike,
   sectorSlugs: readonly string[],
@@ -166,6 +177,7 @@ export function parseMapUrlState(
     collab: sp.get("collab") === "1",
     offers: parseCollabTags(sp.get("offers")),
     needs: parseCollabTags(sp.get("needs")),
+    category: parseCategory(sp.get("category")),
     shop: shop?.trim() ? shop : null,
     viewport: parseViewport(sp),
     layer: parseBoundaryLayer(sp.get("layer")),

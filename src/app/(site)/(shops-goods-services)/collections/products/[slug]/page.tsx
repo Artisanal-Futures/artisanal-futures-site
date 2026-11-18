@@ -158,6 +158,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           totalPages={totalPages}
           isFuzzy={isFuzzy}
           suggestions={suggestions}
+          categoryName={
+            categoryName === "all-products" ? undefined : category?.name
+          }
         />
       </section>
     </>

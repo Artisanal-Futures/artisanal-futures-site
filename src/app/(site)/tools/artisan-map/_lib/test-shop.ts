@@ -45,6 +45,7 @@ export function mapShop(overrides: Partial<MapShop> = {}): MapShop {
     streetAddress: null,
     productCount: 0,
     serviceCount: 0,
+    categories: [],
     isNew: false,
     collab: null,
     ...overrides,

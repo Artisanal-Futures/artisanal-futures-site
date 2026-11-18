@@ -39,6 +39,8 @@ export type MapShop = {
   productCount: number;
   /** Public services listed by the shop. */
   serviceCount: number;
+  /** Category names of the shop's public products and services. */
+  categories: string[];
   /** Joined within the last 30 days. */
   isNew: boolean;
   /** Open-to-collaborate listing; null when the shop hasn't filled one in. */

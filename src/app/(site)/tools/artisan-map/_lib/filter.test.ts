@@ -2,8 +2,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { MapFilters } from "./filter";
+import type { MapFilterContext, MapFilters } from "./filter";
 import type { MapShopCollab } from "./types";
+import type { MapShopMatch } from "~/lib/search/map-listing-types";
 
 import { filterMapShops, hasActiveFilters, matchShops } from "./filter";
 import { mapShop, TEST_SLUGS } from "./test-shop";
@@ -16,6 +17,7 @@ const NO_FILTERS: MapFilters = {
   collab: false,
   offers: [],
   needs: [],
+  category: null,
 };
 
 const shops = [
@@ -215,6 +217,192 @@ describe("collaboration filters", () => {
   });
 });
 
+describe("listing search context", () => {
+  const match = (
+    shopId: string,
+    overrides: Partial<MapShopMatch> = {},
+  ): [string, MapShopMatch] => [
+    shopId,
+    {
+      shopId,
+      score: 10,
+      items: [],
+      total: 0,
+      shopMatch: "none",
+      categories: [],
+      ...overrides,
+    },
+  ];
+
+  const context = (
+    entries: [string, MapShopMatch][] | null,
+    categoryScope: string[] | null = null,
+  ): MapFilterContext => ({
+    matches: entries ? new Map(entries) : null,
+    categoryScope: categoryScope ? new Set(categoryScope) : null,
+    categoryParents: new Map([
+      ["Candles", "Home"],
+      ["Pottery", "Home"],
+    ]),
+  });
+
+  const catalog = [
+    mapShop({ id: "wax", name: "Wax Barn", categories: ["Candles", "Toys"] }),
+    mapShop({ id: "clay", name: "Clay Barn", categories: ["Pottery"] }),
+    mapShop({ id: "soap", name: "Soap Works", categories: ["Candles"] }),
+  ];
+
+  const search = { ...NO_FILTERS, query: "taper" };
+
+  it("keeps a shop the server matched and drops the rest", () => {
+    assert.deepEqual(
+      ids(matchShops(catalog, search, undefined, context([match("wax")]))),
+      ["wax"],
+    );
+  });
+
+  it("still unions the local shop match with server matches", () => {
+    const result = matchShops(
+      catalog,
+      { ...NO_FILTERS, query: "soap" },
+      undefined,
+      context([match("wax")]),
+    );
+    assert.deepEqual(ids(result), ["wax", "soap"]);
+  });
+
+  it("falls back to the local match with no server response", () => {
+    assert.deepEqual(
+      ids(
+        matchShops(
+          catalog,
+          { ...NO_FILTERS, query: "clay" },
+          undefined,
+          context(null),
+        ),
+      ),
+      ["clay"],
+    );
+  });
+
+  it("filters by category scope, with no search", () => {
+    const filters = { ...NO_FILTERS, category: "Home" };
+    assert.deepEqual(
+      ids(
+        matchShops(
+          catalog,
+          filters,
+          undefined,
+          context(null, ["Home", "Candles", "Pottery"]),
+        ),
+      ),
+      ["wax", "clay", "soap"],
+    );
+    assert.deepEqual(
+      ids(matchShops(catalog, filters, undefined, context(null, ["Pottery"]))),
+      ["clay"],
+    );
+  });
+
+  it("ignores a category with no resolved scope", () => {
+    assert.deepEqual(
+      ids(matchShops(catalog, { ...NO_FILTERS, category: "Nope" })),
+      ["wax", "clay", "soap"],
+    );
+  });
+
+  it("tests a listing-only match against what matched, not the whole shop", () => {
+    const result = matchShops(
+      catalog,
+      { ...search, category: "Candles" },
+      undefined,
+      context([match("wax", { categories: ["Toys"] })], ["Candles"]),
+    );
+    assert.deepEqual(ids(result), []);
+
+    const inScope = matchShops(
+      catalog,
+      { ...search, category: "Candles" },
+      undefined,
+      context([match("wax", { categories: ["Candles"] })], ["Candles"]),
+    );
+    assert.deepEqual(ids(inScope), ["wax"]);
+  });
+
+  it("tests a shop-level match against the shop's categories", () => {
+    for (const shopMatch of ["identity", "profile"] as const) {
+      const result = matchShops(
+        catalog,
+        { ...search, category: "Candles" },
+        undefined,
+        context(
+          [match("wax", { shopMatch, categories: ["Toys"] })],
+          ["Candles"],
+        ),
+      );
+      assert.deepEqual(ids(result), ["wax"]);
+    }
+  });
+
+  it("treats a local name match as shop-level under a category", () => {
+    const result = matchShops(
+      catalog,
+      { ...NO_FILTERS, query: "wax", category: "Candles" },
+      undefined,
+      context([match("wax", { categories: ["Toys"] })], ["Candles"]),
+    );
+    assert.deepEqual(ids(result), ["wax"]);
+  });
+
+  it("counts categories ignoring the category filter, rolling up to parents", () => {
+    const result = filterMapShops(
+      catalog,
+      { ...NO_FILTERS, category: "Pottery" },
+      TEST_SLUGS,
+      context(null, ["Pottery"]),
+    );
+    assert.deepEqual(ids(result.shops), ["clay"]);
+    assert.equal(result.categoryCounts.get("Candles"), 2);
+    assert.equal(result.categoryCounts.get("Pottery"), 1);
+    // One shop per parent, however many of its children the shop lists.
+    assert.equal(result.categoryCounts.get("Home"), 3);
+    assert.equal(result.categoryCounts.get("Toys"), 1);
+  });
+
+  it("counts a listing-only match under what matched", () => {
+    const result = filterMapShops(
+      catalog,
+      search,
+      TEST_SLUGS,
+      context([match("wax", { categories: ["Toys"] })]),
+    );
+    assert.equal(result.categoryCounts.get("Toys"), 1);
+    assert.equal(result.categoryCounts.get("Candles"), undefined);
+  });
+
+  it("other facets respect the category filter", () => {
+    const tagged = [
+      mapShop({
+        id: "a",
+        categories: ["Candles"],
+        attributeTags: ["Black Owned"],
+      }),
+      mapShop({
+        id: "b",
+        categories: ["Toys"],
+        attributeTags: ["Black Owned"],
+      }),
+    ];
+    const result = filterMapShops(
+      tagged,
+      { ...NO_FILTERS, category: "Candles" },
+      TEST_SLUGS,
+      context(null, ["Candles"]),
+    );
+    assert.equal(result.attributeCounts.get("Black Owned"), 1);
+  });
+});
+
 describe("hasActiveFilters", () => {
   it("is false for defaults and a blank query", () => {
     assert.equal(hasActiveFilters(NO_FILTERS), false);
@@ -225,6 +413,10 @@ describe("hasActiveFilters", () => {
     assert.equal(hasActiveFilters({ ...NO_FILTERS, inPerson: true }), true);
     assert.equal(hasActiveFilters({ ...NO_FILTERS, sectors: ["other"] }), true);
     assert.equal(hasActiveFilters({ ...NO_FILTERS, collab: true }), true);
+    assert.equal(
+      hasActiveFilters({ ...NO_FILTERS, category: "Candles" }),
+      true,
+    );
     assert.equal(
       hasActiveFilters({ ...NO_FILTERS, needs: ["Referrals"] }),
       true,
